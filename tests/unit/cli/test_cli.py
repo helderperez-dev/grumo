@@ -23,7 +23,9 @@ runner = CliRunner()
 
 
 def test_fetch_text_recovers_expected_remote_failures() -> None:
-    with patch("voodoo.cli.scaffolding.urllib.request.urlopen", side_effect=TimeoutError()):
+    with patch(
+        "voodoo.cli.scaffolding.urllib.request.urlopen", side_effect=TimeoutError()
+    ):
         assert _fetch_text("https://example.invalid") is None
 
 
@@ -70,7 +72,9 @@ def test_theme_cli_propagates_unexpected_resolution_failures(monkeypatch) -> Non
         use_theme("default")
 
 
-def test_routes_cli_propagates_unexpected_application_import_failures(monkeypatch) -> None:
+def test_routes_cli_propagates_unexpected_application_import_failures(
+    monkeypatch,
+) -> None:
     monkeypatch.setattr(
         "importlib.import_module",
         lambda _name: (_ for _ in ()).throw(RuntimeError("application invariant")),
@@ -88,8 +92,13 @@ def test_generate_cli_redacts_provider_failure_messages(monkeypatch) -> None:
 
     messages: list[str] = []
     monkeypatch.setenv("OPENAI_API_KEY", "test-key")
-    monkeypatch.setattr("voodoo.ai.providers.get_provider", lambda *_args, **_kwargs: Provider())
-    monkeypatch.setattr("voodoo.cli.generate.terminal.error", lambda message, **_kwargs: messages.append(message))
+    monkeypatch.setattr(
+        "voodoo.ai.providers.get_provider", lambda *_args, **_kwargs: Provider()
+    )
+    monkeypatch.setattr(
+        "voodoo.cli.generate.terminal.error",
+        lambda message, **_kwargs: messages.append(message),
+    )
 
     with pytest.raises(typer.Exit):
         generate("tool", "describe a tool")
@@ -345,8 +354,11 @@ def test_cli_new_generated_project_compiles_and_matches_runtime_contract(
     )
     assert compile_result.returncode == 0, compile_result.stderr
     pyproject = (project_dir / "pyproject.toml").read_text()
-    assert '"voodoo-framework>=3.2,<3.3"' in pyproject
-    assert "Runtime creates application.vstore" in (project_dir / "voodoo.toml").read_text()
+    assert '"grumo>=3.2.2,<3.3"' in pyproject
+    assert (
+        "Runtime creates application.vstore"
+        in (project_dir / "voodoo.toml").read_text()
+    )
     assert not (project_dir / "main.py").exists()
     assert not (project_dir / ".env").exists()
     assert not (project_dir / ".data").exists()

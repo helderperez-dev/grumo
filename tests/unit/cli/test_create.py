@@ -36,10 +36,10 @@ class TestCreateScaffold:
         assert (project / "README.md").exists()
         assert "deprecated" in result.output.lower()
 
-    def test_template_tracks_latest_voodoo_release(self, tmp_cwd: Path) -> None:
+    def test_template_tracks_latest_grumo_release(self, tmp_cwd: Path) -> None:
         runner.invoke(app, ["create", "myapp"])
         content = (tmp_cwd / "myapp" / "pyproject.toml").read_text()
-        assert '"voodoo-framework>=3.2,<3.3"' in content
+        assert '"grumo>=3.2.2,<3.3"' in content
 
     def test_store_first_runtime_guidance(self, tmp_cwd: Path) -> None:
         runner.invoke(app, ["create", "myapp"])

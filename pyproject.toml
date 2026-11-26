@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "voodoo-framework"
+name = "grumo"
 dynamic = ["version"]
 description = "The programmable runtime for adaptive applications and operational systems — from web and AI to distributed and physical systems."
 readme = "README.md"
@@ -46,7 +46,7 @@ dependencies = [
     "starlette",
     "uvicorn",
     "pydantic",
-    "voodoo-store>=0.3.0,<0.4",
+    "grumo-store>=0.3.2,<0.4",
     "websockets",
     "httpx",
     "python-dotenv",
@@ -66,8 +66,7 @@ Issues = "https://github.com/helderperez-dev/grumo/issues"
 Discussions = "https://github.com/helderperez-dev/grumo/discussions"
 
 [project.scripts]
-# Grumo CLI resolves through the compatibility namespace in this release.
-# Keep the legacy command and distribution until the new PyPI release gates pass.
+# Both CLI entrypoints share the same runtime during the transition.
 grumo = "grumo.cli:app"
 voodoo = "voodoo.cli:app"
 

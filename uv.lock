@@ -793,6 +793,122 @@ wheels = [
 ]
 
 [[package]]
+name = "grumo"
+source = { editable = "." }
+dependencies = [
+    { name = "aiofiles" },
+    { name = "grumo-store" },
+    { name = "httpx" },
+    { name = "pydantic" },
+    { name = "python-dotenv" },
+    { name = "pyyaml" },
+    { name = "rich" },
+    { name = "starlette" },
+    { name = "typer" },
+    { name = "uvicorn" },
+    { name = "websockets" },
+]
+
+[package.optional-dependencies]
+ai = [
+    { name = "anthropic" },
+    { name = "google-generativeai" },
+    { name = "ollama" },
+    { name = "openai" },
+]
+browser = [
+    { name = "playwright" },
+]
+dev = [
+    { name = "aiosqlite" },
+    { name = "cryptography" },
+    { name = "mypy" },
+    { name = "pip-audit" },
+    { name = "pre-commit" },
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+    { name = "ruff" },
+    { name = "types-pyyaml" },
+]
+edge = [
+    { name = "paho-mqtt" },
+]
+otel = [
+    { name = "opentelemetry-api" },
+    { name = "opentelemetry-exporter-otlp-proto-grpc" },
+    { name = "opentelemetry-sdk" },
+]
+postgres = [
+    { name = "psycopg", extra = ["binary"] },
+]
+redis = [
+    { name = "redis" },
+]
+s3 = [
+    { name = "boto3" },
+    { name = "botocore" },
+]
+secrets = [
+    { name = "cryptography" },
+]
+sqlite = [
+    { name = "aiosqlite" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "aiofiles" },
+    { name = "aiosqlite", marker = "extra == 'dev'" },
+    { name = "aiosqlite", marker = "extra == 'sqlite'" },
+    { name = "anthropic", marker = "extra == 'ai'" },
+    { name = "boto3", marker = "extra == 's3'", specifier = ">=1.34" },
+    { name = "botocore", marker = "extra == 's3'", specifier = ">=1.34" },
+    { name = "cryptography", marker = "extra == 'dev'", specifier = ">=42" },
+    { name = "cryptography", marker = "extra == 'secrets'", specifier = ">=42" },
+    { name = "google-generativeai", marker = "extra == 'ai'" },
+    { name = "grumo-store", specifier = ">=0.3.2,<0.4" },
+    { name = "httpx" },
+    { name = "mypy", marker = "extra == 'dev'" },
+    { name = "ollama", marker = "extra == 'ai'" },
+    { name = "openai", marker = "extra == 'ai'" },
+    { name = "opentelemetry-api", marker = "extra == 'otel'", specifier = ">=1.20" },
+    { name = "opentelemetry-exporter-otlp-proto-grpc", marker = "extra == 'otel'", specifier = ">=1.20" },
+    { name = "opentelemetry-sdk", marker = "extra == 'otel'", specifier = ">=1.20" },
+    { name = "paho-mqtt", marker = "extra == 'edge'", specifier = ">=2.0" },
+    { name = "pip-audit", marker = "extra == 'dev'" },
+    { name = "playwright", marker = "extra == 'browser'" },
+    { name = "pre-commit", marker = "extra == 'dev'" },
+    { name = "psycopg", extras = ["binary"], marker = "extra == 'postgres'", specifier = ">=3.3.4" },
+    { name = "pydantic" },
+    { name = "pytest", marker = "extra == 'dev'" },
+    { name = "pytest-asyncio", marker = "extra == 'dev'" },
+    { name = "python-dotenv" },
+    { name = "pyyaml" },
+    { name = "redis", marker = "extra == 'redis'", specifier = ">=5.0" },
+    { name = "rich" },
+    { name = "ruff", marker = "extra == 'dev'" },
+    { name = "starlette" },
+    { name = "typer" },
+    { name = "types-pyyaml", marker = "extra == 'dev'" },
+    { name = "uvicorn" },
+    { name = "websockets" },
+]
+provides-extras = ["ai", "mcp", "browser", "dev", "sqlite", "postgres", "s3", "redis", "edge", "otel", "secrets"]
+
+[[package]]
+name = "grumo-store"
+version = "0.3.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/96/98/72b8ef5655a184da8ad0960d73bc291b6690c8ba73eba9c563f4c9001d61/grumo_store-0.3.2.tar.gz", hash = "sha256:3c9f9d7276625859a7090d2d0666b04da2be92d8778dfbf4d6cada4259124ab9", size = 114877, upload-time = "2026-11-26T11:04:34.54Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9a/9c/700fdd93f6e11ab702828b7ec8c748e87bd0e9c3bab48690b22fddfa695d/grumo_store-0.3.2-cp39-abi3-macosx_10_12_x86_64.whl", hash = "sha256:addcea987f4001c6519841aec43f2463b1ab1db3d6a3784bfdbe7a2c839ec41c", size = 723396, upload-time = "2026-11-26T11:04:27.695Z" },
+    { url = "https://files.pythonhosted.org/packages/f0/4b/fc040b08c362fdb80c370c52459802f982a7f490e23741a0652bec9fec64/grumo_store-0.3.2-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:85c22ed70875f716b7b3ea2b2bbd02066996b4f7275cbb4999a5184e443fd88f", size = 699908, upload-time = "2026-11-26T11:04:28.891Z" },
+    { url = "https://files.pythonhosted.org/packages/c1/c5/7237b39ee5a3ac66d595849e8ecbd05e71621f8cf41a1f965fc4471a831c/grumo_store-0.3.2-cp39-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:5cda966baa069382c004f69424553a9bed216aabb1e7d73f38dd04f74b51f950", size = 767354, upload-time = "2026-11-26T11:04:30.417Z" },
+    { url = "https://files.pythonhosted.org/packages/0c/fe/eb27ea441db05ddfe4748d47de7547a22f4d3d39db39b210c128c9c90d57/grumo_store-0.3.2-cp39-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:6cf4a0489e5eba0ac1112d2e8091bdbf32feb9b7286abba4052740efef6b50da", size = 781162, upload-time = "2026-11-26T11:04:31.823Z" },
+    { url = "https://files.pythonhosted.org/packages/76/a3/90b07791350ca99a11988b83531648bd59a7dd6aef4951da625faec3863a/grumo_store-0.3.2-cp39-abi3-win_amd64.whl", hash = "sha256:80cf472afbb50db11973461ccee543528302c0e27c05198b38fee78d72144013", size = 621649, upload-time = "2026-11-26T11:04:33.178Z" },
+]
+
+[[package]]
 name = "h11"
 version = "0.16.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2166,122 +2282,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/c4/f9/f323b3b6058cff3853b31cf6a49c0425ed797bf9611572ec10d065e08bac/virtualenv-21.14.5.tar.gz", hash = "sha256:c4cb6c13e46b57225a999c7e22a09b163393878facc7ac4c059a57f46faa1647", size = 5467127, upload-time = "2026-10-02T17:42:25.613Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/df/93/084f10ebbecdedf7902ed68fbecc903f0e9c5742155bfffb05eccbc071da/virtualenv-21.14.5-py3-none-any.whl", hash = "sha256:b0651e0174982bba17cc6f0aaa2ef496730cb85a3f35eb5d1119d1c904f7d1da", size = 5487482, upload-time = "2026-10-02T17:42:23.38Z" },
-]
-
-[[package]]
-name = "voodoo-framework"
-source = { editable = "." }
-dependencies = [
-    { name = "aiofiles" },
-    { name = "httpx" },
-    { name = "pydantic" },
-    { name = "python-dotenv" },
-    { name = "pyyaml" },
-    { name = "rich" },
-    { name = "starlette" },
-    { name = "typer" },
-    { name = "uvicorn" },
-    { name = "voodoo-store" },
-    { name = "websockets" },
-]
-
-[package.optional-dependencies]
-ai = [
-    { name = "anthropic" },
-    { name = "google-generativeai" },
-    { name = "ollama" },
-    { name = "openai" },
-]
-browser = [
-    { name = "playwright" },
-]
-dev = [
-    { name = "aiosqlite" },
-    { name = "cryptography" },
-    { name = "mypy" },
-    { name = "pip-audit" },
-    { name = "pre-commit" },
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "ruff" },
-    { name = "types-pyyaml" },
-]
-edge = [
-    { name = "paho-mqtt" },
-]
-otel = [
-    { name = "opentelemetry-api" },
-    { name = "opentelemetry-exporter-otlp-proto-grpc" },
-    { name = "opentelemetry-sdk" },
-]
-postgres = [
-    { name = "psycopg", extra = ["binary"] },
-]
-redis = [
-    { name = "redis" },
-]
-s3 = [
-    { name = "boto3" },
-    { name = "botocore" },
-]
-secrets = [
-    { name = "cryptography" },
-]
-sqlite = [
-    { name = "aiosqlite" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "aiofiles" },
-    { name = "aiosqlite", marker = "extra == 'dev'" },
-    { name = "aiosqlite", marker = "extra == 'sqlite'" },
-    { name = "anthropic", marker = "extra == 'ai'" },
-    { name = "boto3", marker = "extra == 's3'", specifier = ">=1.34" },
-    { name = "botocore", marker = "extra == 's3'", specifier = ">=1.34" },
-    { name = "cryptography", marker = "extra == 'dev'", specifier = ">=42" },
-    { name = "cryptography", marker = "extra == 'secrets'", specifier = ">=42" },
-    { name = "google-generativeai", marker = "extra == 'ai'" },
-    { name = "httpx" },
-    { name = "mypy", marker = "extra == 'dev'" },
-    { name = "ollama", marker = "extra == 'ai'" },
-    { name = "openai", marker = "extra == 'ai'" },
-    { name = "opentelemetry-api", marker = "extra == 'otel'", specifier = ">=1.20" },
-    { name = "opentelemetry-exporter-otlp-proto-grpc", marker = "extra == 'otel'", specifier = ">=1.20" },
-    { name = "opentelemetry-sdk", marker = "extra == 'otel'", specifier = ">=1.20" },
-    { name = "paho-mqtt", marker = "extra == 'edge'", specifier = ">=2.0" },
-    { name = "pip-audit", marker = "extra == 'dev'" },
-    { name = "playwright", marker = "extra == 'browser'" },
-    { name = "pre-commit", marker = "extra == 'dev'" },
-    { name = "psycopg", extras = ["binary"], marker = "extra == 'postgres'", specifier = ">=3.3.4" },
-    { name = "pydantic" },
-    { name = "pytest", marker = "extra == 'dev'" },
-    { name = "pytest-asyncio", marker = "extra == 'dev'" },
-    { name = "python-dotenv" },
-    { name = "pyyaml" },
-    { name = "redis", marker = "extra == 'redis'", specifier = ">=5.0" },
-    { name = "rich" },
-    { name = "ruff", marker = "extra == 'dev'" },
-    { name = "starlette" },
-    { name = "typer" },
-    { name = "types-pyyaml", marker = "extra == 'dev'" },
-    { name = "uvicorn" },
-    { name = "voodoo-store", specifier = ">=0.3.0,<0.4" },
-    { name = "websockets" },
-]
-provides-extras = ["ai", "mcp", "browser", "dev", "sqlite", "postgres", "s3", "redis", "edge", "otel", "secrets"]
-
-[[package]]
-name = "voodoo-store"
-version = "0.3.2"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/92/15/5398a58b45a273fd08f2d6b8d17ba9abc3d3f07939d66ce6606c2b36656f/voodoo_store-0.3.2.tar.gz", hash = "sha256:57f5113bba56291ee6522b72c45386aa4a116c8997de918b9ecb25a045a927b7", size = 112810, upload-time = "2026-10-10T15:11:11.942Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/e9/0c/95037b75c10ceb3d7fe9836cc5732030f74856db888c170b3327afb8c7e8/voodoo_store-0.3.2-cp39-abi3-macosx_10_12_x86_64.whl", hash = "sha256:b18cf9112285e2d29ee3408232df35452fde06b1e6e8ac81fc5ec0e98280b0b7", size = 733640, upload-time = "2026-10-10T15:06:09.689Z" },
-    { url = "https://files.pythonhosted.org/packages/5e/26/6c6346c4da3365605c2ff5bbcb6a64353a10d02cd830273276205e538900/voodoo_store-0.3.2-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:7cf06740e57390733884794ad055d86ddf5563d3e3b49555b5daed132d24f586", size = 694136, upload-time = "2026-10-10T15:06:11.373Z" },
-    { url = "https://files.pythonhosted.org/packages/b3/9b/1dae517c0900022664044c120bc13708ae72e2883caecd3e0c652ea92b5a/voodoo_store-0.3.2-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:29053cf25c988a923d553ee49533245d3be5744782269d8c59c9ab49624fdc42", size = 762009, upload-time = "2026-10-10T15:06:13.223Z" },
-    { url = "https://files.pythonhosted.org/packages/e5/fd/9d0ecba387f19829bb7c9ce3837eff5a5ab30285e8d2eb5c00d72286720c/voodoo_store-0.3.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ee206198cf9edd6903d7f83646bd1274f25c778e8ca8393f70dfd48b3e571bfd", size = 776303, upload-time = "2026-10-10T15:06:14.788Z" },
-    { url = "https://files.pythonhosted.org/packages/0e/19/b75575deccdbb77b1605015b60610d6b78461425783489c04ef38df3b33b/voodoo_store-0.3.2-cp39-abi3-win_amd64.whl", hash = "sha256:d93483e9f6f95fc5686852d82c6a3b98a3e92ddb50e93fb987834ac6810b1e1a", size = 612053, upload-time = "2026-10-10T15:06:16.489Z" },
 ]
 
 [[package]]
