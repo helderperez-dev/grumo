@@ -1,8 +1,8 @@
-"""Voodoo Edge — external device boundary for the Voodoo Runtime (Sprint 23).
+"""Grumo Edge — external device boundary for the Grumo Runtime (Sprint 23).
 
 Physical and distributed devices (ESP32, Raspberry Pi, robots, industrial
-controllers) participate as first-class Voodoo Entities through the
-versioned ``voodoo-edge/v1`` protocol over HTTP and MQTT transports.
+controllers) participate as first-class Grumo Entities through the
+versioned ``grumo-edge/v1`` protocol over HTTP and MQTT transports.
 
 There is **no** DeviceExecutionEngine: device-triggered work enters the
 standard ExecutionEngine, device events use the standard event system,
@@ -11,7 +11,7 @@ and device state uses standard State semantics.
 
 from __future__ import annotations
 
-from voodoo.edge.auth import (
+from grumo.edge.auth import (
     authenticate_device,
     consume_enrollment,
     create_enrollment,
@@ -19,7 +19,7 @@ from voodoo.edge.auth import (
     hash_device_credential,
     rotate_device_credential,
 )
-from voodoo.edge.errors import (
+from grumo.edge.errors import (
     AuthenticationFailedError,
     AuthorizationFailedError,
     DeliveryFailedError,
@@ -40,8 +40,8 @@ from voodoo.edge.errors import (
     TransportError,
     error_response,
 )
-from voodoo.edge.gateway import DeviceGateway
-from voodoo.edge.models import (
+from grumo.edge.gateway import DeviceGateway
+from grumo.edge.models import (
     AuthenticatedDeviceContext,
     CredentialStatus,
     Device,
@@ -52,7 +52,7 @@ from voodoo.edge.models import (
     EnrollmentStatus,
     TransportKind,
 )
-from voodoo.edge.protocol import (
+from grumo.edge.protocol import (
     PROTOCOL_NAME,
     PROTOCOL_VERSION,
     EdgeMessage,
@@ -62,14 +62,14 @@ from voodoo.edge.protocol import (
     encode_message,
     make_message,
 )
-from voodoo.edge.store import (
+from grumo.edge.store import (
     DeviceStoreProtocol,
     EffectDelivery,
     InMemoryDeviceStore,
     SQLiteDeviceStore,
 )
-from voodoo.edge.store_voodoo import VoodooStoreDeviceStore
-from voodoo.edge.world import EdgeWorldBridge, WorldAwareDeviceGateway
+from grumo.edge.store_grumo import GrumoStoreDeviceStore
+from grumo.edge.world import EdgeWorldBridge, WorldAwareDeviceGateway
 
 __all__ = [
     "PROTOCOL_NAME",
@@ -92,7 +92,7 @@ __all__ = [
     "DeviceStoreProtocol",
     "InMemoryDeviceStore",
     "SQLiteDeviceStore",
-    "VoodooStoreDeviceStore",
+    "GrumoStoreDeviceStore",
     "EffectDelivery",
     "authenticate_device",
     "consume_enrollment",

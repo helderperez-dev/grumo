@@ -13,7 +13,7 @@ MQTT is session-oriented: AUTH establishes a persistent context keyed
 by ``device_id``. Subsequent messages reuse the stored context. Only
 AUTH is allowed before a session is established (Sprint 23.1).
 
-The paho-mqtt dependency is optional (``voodoo[edge]`` extra); importing
+The paho-mqtt dependency is optional (``grumo[edge]`` extra); importing
 this module without it raises a clear ImportError.
 """
 
@@ -25,25 +25,25 @@ import json
 import logging
 from typing import TYPE_CHECKING, Any, cast
 
-from voodoo.edge.errors import TransportError
-from voodoo.edge.gateway import DeviceGateway
-from voodoo.edge.models import AuthenticatedDeviceContext, TransportKind
-from voodoo.edge.protocol import EdgeMessageType, make_message
-from voodoo.security.redaction import redact_string
+from grumo.edge.errors import TransportError
+from grumo.edge.gateway import DeviceGateway
+from grumo.edge.models import AuthenticatedDeviceContext, TransportKind
+from grumo.edge.protocol import EdgeMessageType, make_message
+from grumo.security.redaction import redact_string
 
 if TYPE_CHECKING:
     pass
 
-logger = logging.getLogger("voodoo.edge.mqtt")
+logger = logging.getLogger("grumo.edge.mqtt")
 
 __all__ = ["EdgeMQTTTransport", "topic_for"]
 
 
 # ---------------------------------------------------------------------------
-# Topic namespace — voodoo/v1/devices/{device_id}/{inbox} (EDGE §35)
+# Topic namespace — grumo/v1/devices/{device_id}/{inbox} (EDGE §35)
 # ---------------------------------------------------------------------------
 
-TOPIC_PREFIX = "voodoo/v1/devices"
+TOPIC_PREFIX = "grumo/v1/devices"
 
 # device → runtime
 TOPIC_EVENTS = "events"
@@ -70,11 +70,11 @@ def topic_for(device_id: str, kind: str) -> str:
 
 
 def parse_topic(topic: str) -> tuple[str, str] | None:
-    """Split ``voodoo/v1/devices/{device_id}/{kind}`` → (device_id, kind)."""
+    """Split ``grumo/v1/devices/{device_id}/{kind}`` → (device_id, kind)."""
     parts = topic.split("/")
     if (
         len(parts) != 5
-        or parts[0] != "voodoo"
+        or parts[0] != "grumo"
         or parts[1] != "v1"
         or parts[2] != "devices"
     ):
@@ -109,14 +109,14 @@ class EdgeMQTTTransport:
         tls: bool = False,
         username: str | None = None,
         password: str | None = None,
-        client_id: str = "voodoo-edge-runtime",
+        client_id: str = "grumo-edge-runtime",
         keepalive: int = 60,
         qos: int = 1,
     ) -> None:
         if importlib.util.find_spec("paho.mqtt.client") is None:  # pragma: no cover
             raise ImportError(
                 "MQTT transport requires the optional extra "
-                "'voodoo-framework[edge]' (paho-mqtt). Install it or use "
+                "'grumo-framework[edge]' (paho-mqtt). Install it or use "
                 "the HTTP transport."
             )
 

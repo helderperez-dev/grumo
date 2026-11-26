@@ -1,4 +1,4 @@
-"""Device Gateway — the Edge boundary into the Voodoo Runtime (EDGE §32, §72).
+"""Device Gateway — the Edge boundary into the Grumo Runtime (EDGE §32, §72).
 
 The Gateway authenticates devices, validates protocol messages, ingests
 events and state, and delivers effects. It contains **no** business
@@ -18,8 +18,8 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Any, cast
 
-from voodoo.edge.auth import authenticate_device, consume_enrollment
-from voodoo.edge.errors import (
+from grumo.edge.auth import authenticate_device, consume_enrollment
+from grumo.edge.errors import (
     AuthenticationFailedError,
     AuthorizationFailedError,
     DeviceIdMismatchError,
@@ -29,14 +29,14 @@ from voodoo.edge.errors import (
     InvalidStateVersionError,
     PayloadTooLargeError,
 )
-from voodoo.edge.models import (
+from grumo.edge.models import (
     AuthenticatedDeviceContext,
     Device,
     DeviceSession,
     DeviceStatus,
     TransportKind,
 )
-from voodoo.edge.protocol import (
+from grumo.edge.protocol import (
     AuthPayload,
     EdgeMessage,
     EdgeMessageType,
@@ -47,12 +47,12 @@ from voodoo.edge.protocol import (
     decode_message,
     make_message,
 )
-from voodoo.edge.store import DeviceStoreProtocol, EffectDelivery
+from grumo.edge.store import DeviceStoreProtocol, EffectDelivery
 
 if TYPE_CHECKING:
-    from voodoo.runtime.execution.engine import ExecutionEngine
+    from grumo.runtime.execution.engine import ExecutionEngine
 
-logger = logging.getLogger("voodoo.edge")
+logger = logging.getLogger("grumo.edge")
 
 __all__ = ["DeviceGateway"]
 
@@ -73,7 +73,7 @@ _TELEMETRY_EVENTS = frozenset({"heartbeat", "device.heartbeat"})
 
 
 class DeviceGateway:
-    """Coordinates Edge transports and delegates to the Voodoo Runtime.
+    """Coordinates Edge transports and delegates to the Grumo Runtime.
 
     Parameters
     ----------
@@ -370,7 +370,7 @@ class DeviceGateway:
 
         execution_id: str | None = None
         if self._engine is not None:
-            from voodoo.primitives.intent import Intent
+            from grumo.primitives.intent import Intent
 
             intent = Intent(
                 name=f"device:{event_name}",
@@ -691,15 +691,15 @@ class DeviceGateway:
     ) -> None:
         """Publish a namespaced mesh event (best-effort, redacted)."""
         try:
-            from voodoo.mesh import mesh
-            from voodoo.security.redaction import redact
+            from grumo.mesh import mesh
+            from grumo.security.redaction import redact
 
             body = dict(payload)
             if trace_id:
                 body["trace_id"] = trace_id
             await mesh.broadcast(event, redact(body))
         except Exception as error:
-            from voodoo.security.redaction import redact_string
+            from grumo.security.redaction import redact_string
 
             logger.warning(
                 "edge event emission failed event=%s error=%s",

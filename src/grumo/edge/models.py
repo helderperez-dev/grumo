@@ -1,6 +1,6 @@
 """Edge device models — identity, credentials, enrollment, sessions (Sprint 23).
 
-A Device is a first-class Voodoo Entity: it holds identity, capabilities,
+A Device is a first-class Grumo Entity: it holds identity, capabilities,
 state, and participates in Executions exactly like agents, workers, and
 humans. There is no DeviceExecutionEngine — device-triggered work flows
 through the standard ExecutionEngine (EDGE §6).

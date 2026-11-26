@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from voodoo.core.errors import VoodooError
+from grumo.core.errors import GrumoError
 
 __all__ = [
     "EdgeErrorCode",
@@ -41,7 +41,7 @@ __all__ = [
 
 
 class EdgeErrorCode:
-    """Stable string codes — part of the voodoo-edge/v1 contract."""
+    """Stable string codes — part of the grumo-edge/v1 contract."""
 
     AUTHENTICATION_FAILED = "AUTHENTICATION_FAILED"
     AUTHORIZATION_FAILED = "AUTHORIZATION_FAILED"
@@ -80,7 +80,7 @@ HTTP_STATUS: dict[str, int] = {
 }
 
 
-class EdgeError(VoodooError):
+class EdgeError(GrumoError):
     """Base class for all Edge Protocol errors.
 
     ``code`` is a stable string from :class:`EdgeErrorCode`; ``status``

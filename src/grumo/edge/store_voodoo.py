@@ -1,9 +1,9 @@
-"""Voodoo Store-backed Edge device persistence.
+"""Grumo Store-backed Edge device persistence.
 
-The Edge gateway shares the Runtime-owned ``application.vstore`` instead of
+The Edge gateway shares the Runtime-owned ``application.grumo`` instead of
 opening a hidden SQLite database. The implementation preserves the existing
 DeviceStoreProtocol and uses the proven in-memory semantics as the mutation
-reference while durably mirroring each record into Voodoo Store.
+reference while durably mirroring each record into Grumo Store.
 """
 
 from __future__ import annotations
@@ -12,21 +12,21 @@ import json
 from collections.abc import Iterator
 from typing import Any
 
-from voodoo.edge.models import (
+from grumo.edge.models import (
     Device,
     DeviceCredential,
     DeviceEnrollment,
     DeviceSession,
     DeviceStatus,
 )
-from voodoo.edge.store import EffectDelivery, InMemoryDeviceStore
-from voodoo.runtime.store import (
+from grumo.edge.store import EffectDelivery, InMemoryDeviceStore
+from grumo.runtime.store import (
     RuntimeStore,
     StoreProviderError,
     get_active_runtime_store,
 )
 
-__all__ = ["VoodooStoreDeviceStore"]
+__all__ = ["GrumoStoreDeviceStore"]
 
 _DEVICE = b"runtime:edge:device:"
 _CREDENTIAL = b"runtime:edge:credential:"
@@ -50,8 +50,8 @@ _SCHEMA_KEY = "_schema_version"
 _SCHEMA_VERSION = 1
 
 
-class VoodooStoreDeviceStore(InMemoryDeviceStore):
-    """Durable Edge store sharing the one Runtime-owned Voodoo Store writer."""
+class GrumoStoreDeviceStore(InMemoryDeviceStore):
+    """Durable Edge store sharing the one Runtime-owned Grumo Store writer."""
 
     def __init__(self, runtime_store: RuntimeStore | None = None) -> None:
         super().__init__()
@@ -63,11 +63,11 @@ class VoodooStoreDeviceStore(InMemoryDeviceStore):
             raise StoreProviderError(
                 "RuntimeStore must be started for Edge persistence"
             )
-        if provider.name != "voodoo":
-            raise StoreProviderError("VoodooStoreDeviceStore requires Voodoo Store")
+        if provider.name != "grumo":
+            raise StoreProviderError("GrumoStoreDeviceStore requires Grumo Store")
         self._native: Any = getattr(provider, "native", None)
         if self._native is None:
-            raise StoreProviderError("Active Voodoo Store has no native handle")
+            raise StoreProviderError("Active Grumo Store has no native handle")
         self._ensure_collections()
         self._hydrate()
 

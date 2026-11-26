@@ -12,12 +12,12 @@ import secrets
 from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING
 
-from voodoo.edge.errors import (
+from grumo.edge.errors import (
     AuthenticationFailedError,
     DeviceNotFoundError,
     DeviceRevokedError,
 )
-from voodoo.edge.models import (
+from grumo.edge.models import (
     AuthenticatedDeviceContext,
     Device,
     DeviceCredential,
@@ -27,7 +27,7 @@ from voodoo.edge.models import (
     TransportKind,
     _iso_now,
 )
-from voodoo.edge.store import DeviceStoreProtocol
+from grumo.edge.store import DeviceStoreProtocol
 
 if TYPE_CHECKING:
     pass
@@ -53,7 +53,7 @@ def generate_device_credential() -> tuple[str, str]:
     """Generate a device credential. Returns ``(raw_credential, hash)``.
 
     The raw credential is shown exactly once — at enrollment or rotation.
-    Prefix ``vdk_`` (Voodoo Device Key) distinguishes device credentials
+    Prefix ``vdk_`` (Grumo Device Key) distinguishes device credentials
     from user API keys (``vd_live_``).
     """
     raw = f"vdk_{secrets.token_urlsafe(32)}"

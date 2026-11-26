@@ -12,8 +12,8 @@ import sqlite3
 from pathlib import Path
 from typing import Any, Protocol
 
-from voodoo.edge.errors import DeviceNotFoundError
-from voodoo.edge.models import (
+from grumo.edge.errors import DeviceNotFoundError
+from grumo.edge.models import (
     CredentialStatus,
     Device,
     DeviceCredential,

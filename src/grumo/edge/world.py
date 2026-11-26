@@ -2,7 +2,7 @@
 
 This module closes the semantic boundary between the Edge protocol and the
 World Model without creating a second runtime. ``WorldAwareDeviceGateway``
-subclasses the canonical :class:`voodoo.edge.gateway.DeviceGateway` and only
+subclasses the canonical :class:`grumo.edge.gateway.DeviceGateway` and only
 adds evidence projection after the normal authentication/idempotency/execution
 path has completed.
 
@@ -15,10 +15,10 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from voodoo.edge.gateway import DeviceGateway
-from voodoo.edge.models import AuthenticatedDeviceContext, Device
-from voodoo.edge.protocol import EdgeMessage
-from voodoo.world import Entity, Observation, WorldModel
+from grumo.edge.gateway import DeviceGateway
+from grumo.edge.models import AuthenticatedDeviceContext, Device
+from grumo.edge.protocol import EdgeMessage
+from grumo.world import Entity, Observation, WorldModel
 
 __all__ = ["EdgeWorldBridge", "WorldAwareDeviceGateway"]
 

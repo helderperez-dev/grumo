@@ -1,11 +1,11 @@
 """Edge device simulator — protocol-faithful test client (EDGE §41).
 
 Simulates an external device (the future ESP32 reference client) speaking
-``voodoo-edge/v1`` over HTTP or MQTT. It NEVER bypasses the Edge Protocol
+``grumo-edge/v1`` over HTTP or MQTT. It NEVER bypasses the Edge Protocol
 by calling internal runtime APIs — everything goes through the transports,
 which is exactly what makes it valuable as an integration test harness.
 
-    from voodoo.edge.simulator import DeviceSimulator, HTTPSimulatorTransport
+    from grumo.edge.simulator import DeviceSimulator, HTTPSimulatorTransport
 
     sim = DeviceSimulator(HTTPSimulatorTransport("http://testserver"))
     await sim.enroll(enrollment_key)
@@ -24,7 +24,7 @@ from uuid import uuid4
 
 import httpx
 
-from voodoo.edge.protocol import (
+from grumo.edge.protocol import (
     PROTOCOL_VERSION,
     EdgeMessageType,
     make_message,
@@ -168,7 +168,7 @@ class MQTTSimulatorTransport(SimulatorTransport):
         import time
 
         time.sleep(0.2)  # allow CONNACK + SUBACK
-        client.subscribe(f"voodoo/v1/devices/{self.device_id}/effects", qos=1)
+        client.subscribe(f"grumo/v1/devices/{self.device_id}/effects", qos=1)
         return client
 
     def _on_message(self, client: Any, userdata: Any, msg: Any) -> None:
@@ -208,7 +208,7 @@ class MQTTSimulatorTransport(SimulatorTransport):
             EdgeMessageType(message_type), device_id=self.device_id, payload=body
         )
         info = client.publish(
-            f"voodoo/v1/devices/{self.device_id}/{kind}",
+            f"grumo/v1/devices/{self.device_id}/{kind}",
             envelope.model_dump_json(),
             qos=1,
         )

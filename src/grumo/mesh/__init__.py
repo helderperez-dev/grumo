@@ -11,41 +11,41 @@ from typing import Any
 
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
-from voodoo.integrations.mcp import mcp
-from voodoo.mesh.client import MeshClient
-from voodoo.runtime.distributed.auth import (
+from grumo.integrations.mcp import mcp
+from grumo.mesh.client import MeshClient
+from grumo.runtime.distributed.auth import (
     ParticipantAuthenticationError,
     ParticipantEvidence,
     ParticipantIdentity,
     ParticipantResolver,
 )
-from voodoo.runtime.distributed.remote import (
+from grumo.runtime.distributed.remote import (
     ExposedOperation,
     RemoteAuthorityRegistry,
     RemoteExecutionOutcome,
     RemoteExecutionRequest,
 )
-from voodoo.runtime.distributed.replay import (
+from grumo.runtime.distributed.replay import (
     InMemoryRemoteReplayStore,
     RemoteReplayStore,
     request_fingerprint,
 )
-from voodoo.security.redaction import redact_string
-from voodoo.storage.events import VoodooEventBus
+from grumo.security.redaction import redact_string
+from grumo.storage.events import GrumoEventBus
 
-_logger = logging.getLogger("voodoo.mesh")
+_logger = logging.getLogger("grumo.mesh")
 
 
 def _make_envelope(
     event: str,
     payload: Any,
     *,
-    source: str = "voodoo",
+    source: str = "grumo",
     correlation_id: str | None = None,
 ) -> dict[str, Any]:
     """Build a standard event envelope with id, ts, source, correlation_id."""
     if correlation_id is None:
-        from voodoo.observability import trace_id_var
+        from grumo.observability import trace_id_var
 
         correlation_id = trace_id_var.get()
     return {
@@ -70,7 +70,7 @@ class MeshNetwork:
 
     def __init__(
         self,
-        bus: VoodooEventBus | None = None,
+        bus: GrumoEventBus | None = None,
         *,
         execution_engine: Any | None = None,
         remote_authority: RemoteAuthorityRegistry | None = None,
@@ -78,7 +78,7 @@ class MeshNetwork:
         participant_resolver: ParticipantResolver | None = None,
     ):
         if bus is None:
-            from voodoo.adapters.registry import registry
+            from grumo.adapters.registry import registry
 
             self.bus = registry.get_events()
         else:
@@ -153,7 +153,7 @@ class MeshNetwork:
                     redact_string(str(error)),
                 )
         self.bus.publish(
-            event, payload, source="voodoo", correlation_id=envelope["correlation_id"]
+            event, payload, source="grumo", correlation_id=envelope["correlation_id"]
         )
         await self._fire_local(event, payload)
 
@@ -163,15 +163,15 @@ class MeshNetwork:
     def _runtime_engine(self) -> Any:
         if self.execution_engine is not None:
             return self.execution_engine
-        from voodoo.runtime.execution.engine import engine as runtime_engine
+        from grumo.runtime.execution.engine import engine as runtime_engine
 
         return runtime_engine
 
     async def _fire_local(self, event: str, payload: Any) -> None:
         if event not in self.event_handlers:
             return
-        from voodoo.primitives.intent import Intent
-        from voodoo.runtime.context import current_context
+        from grumo.primitives.intent import Intent
+        from grumo.runtime.context import current_context
 
         parent = current_context()
         engine = (
@@ -316,7 +316,7 @@ class MeshNetwork:
             )
             return RemoteExecutionOutcome.from_execution(request, execution)
         except Exception as error:
-            from voodoo.runtime.errors import ExecutionError
+            from grumo.runtime.errors import ExecutionError
 
             execution = None
             if isinstance(error, ExecutionError):
@@ -357,7 +357,7 @@ class MeshNetwork:
         response: dict[str, Any] = {
             "jsonrpc": "2.0",
             "id": message_id,
-            "voodoo": outcome.transport_metadata(),
+            "grumo": outcome.transport_metadata(),
             "outcome": outcome.model_dump(mode="json"),
         }
         if outcome.status == "completed":

@@ -18,19 +18,19 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 from starlette.routing import Route
 
-from voodoo.edge.auth import create_enrollment
-from voodoo.edge.errors import (
+from grumo.edge.auth import create_enrollment
+from grumo.edge.errors import (
     AuthenticationFailedError,
     EdgeError,
     error_response,
 )
-from voodoo.edge.gateway import DeviceGateway
-from voodoo.edge.models import TransportKind
-from voodoo.edge.protocol import (
+from grumo.edge.gateway import DeviceGateway
+from grumo.edge.models import TransportKind
+from grumo.edge.protocol import (
     EdgeMessageType,
     make_message,
 )
-from voodoo.security.redaction import redact_string
+from grumo.security.redaction import redact_string
 
 __all__ = ["build_edge_routes", "EdgeHTTPRouter"]
 

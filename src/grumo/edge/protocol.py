@@ -1,6 +1,6 @@
-"""Voodoo Edge Protocol v1 — transport-independent message schemas (EDGE §14–§16, §54).
+"""Grumo Edge Protocol v1 — transport-independent message schemas (EDGE §14–§16, §54).
 
-The protocol is a stable external contract (``voodoo-edge/v1``) consumable
+The protocol is a stable external contract (``grumo-edge/v1``) consumable
 by non-Python clients (ESP32 C++). Messages are flat, JSON-friendly, and
 use only protocol-level primitives — string, integer, number, boolean,
 array, object, timestamp, identifier (EDGE §55).
@@ -20,7 +20,7 @@ from uuid import uuid4
 
 from pydantic import BaseModel, Field, ValidationError, field_validator
 
-from voodoo.edge.errors import InvalidMessageError, InvalidProtocolVersionError
+from grumo.edge.errors import InvalidMessageError, InvalidProtocolVersionError
 
 __all__ = [
     "PROTOCOL_NAME",
@@ -47,7 +47,7 @@ __all__ = [
 # Protocol identity
 # ---------------------------------------------------------------------------
 
-PROTOCOL_NAME = "voodoo-edge"
+PROTOCOL_NAME = "grumo-edge"
 PROTOCOL_VERSION = "1"
 SUPPORTED_PROTOCOL_VERSIONS = ("1",)
 
@@ -72,7 +72,7 @@ class EdgeMessageType(StrEnum):
 
 
 class EffectAckStatus(StrEnum):
-    """Acknowledgement statuses (EDGE §27) — consistent with Voodoo
+    """Acknowledgement statuses (EDGE §27) — consistent with Grumo
     lifecycle vocabulary (accepted ≈ authorized, completed ≈ succeeded)."""
 
     ACCEPTED = "accepted"
