@@ -27,6 +27,12 @@ jobs:
         run: uv python install 3.12
       - name: Install dependencies
         run: uv sync --python 3.12 --all-extras --dev
+      - name: Upload resolved lockfile for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: grumo-resolved-lockfile
+          path: uv.lock
+          if-no-files-found: error
       - name: Full tests
         run: uv run --python 3.12 pytest -q
       - name: Full type ratchet
@@ -86,6 +92,15 @@ jobs:
           from voodoo.cli import app as voodoo_app
 
           assert importlib.metadata.version("grumo") == grumo.__version__ == voodoo.__version__
+          import grumo_store
+          assert importlib.metadata.version("grumo-store") == grumo_store.__version__
+          for legacy in ("voodoo-framework", "voodoo-store"):
+              try:
+                  importlib.metadata.version(legacy)
+              except importlib.metadata.PackageNotFoundError:
+                  pass
+              else:
+                  raise AssertionError(f"Unexpected legacy distribution: {legacy}")
           assert grumo.App is voodoo.App
           assert grumo.Agent is voodoo.Agent
           assert grumo_app is voodoo_app
