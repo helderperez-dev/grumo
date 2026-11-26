@@ -1,12 +1,12 @@
-"""Compatibility shim — the component library lives in :mod:`voodoo.ui`.
+"""Compatibility shim — the component library lives in :mod:`grumo.ui`.
 
-``voodoo.components`` remains importable for existing apps and docs; new code
-should import from ``voodoo.ui`` or the ``voodoo`` top level. Importing through
+``grumo.components`` remains importable for existing apps and docs; new code
+should import from ``grumo.ui`` or the ``grumo`` top level. Importing through
 the public UI module ensures compatibility users receive the same Python-first
 interactive components as new applications.
 """
 
-from voodoo.ui import (
+from grumo.ui import (
     A,
     Accordion,
     AccordionItem,

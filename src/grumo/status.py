@@ -6,15 +6,15 @@ from typing import Any
 
 from starlette.responses import JSONResponse
 
-from voodoo.components import Card, Div, Heading
-from voodoo.core.errors import ConfigurationError
-from voodoo.data import get_db
-from voodoo.i18n import _
-from voodoo.routing.api import api
-from voodoo.runtime.scheduling.workers import _queue, _worker_tasks
-from voodoo.runtime.store import get_active_runtime_store
-from voodoo.security.redaction import redact_string
-from voodoo.storage import storage
+from grumo.components import Card, Div, Heading
+from grumo.core.errors import ConfigurationError
+from grumo.data import get_db
+from grumo.i18n import _
+from grumo.routing.api import api
+from grumo.runtime.scheduling.workers import _queue, _worker_tasks
+from grumo.runtime.store import get_active_runtime_store
+from grumo.security.redaction import redact_string
+from grumo.storage import storage
 
 logger = logging.getLogger(__name__)
 
@@ -112,7 +112,7 @@ async def check_agent() -> dict[str, Any]:
     invocation).  ``verified`` makes that distinction explicit to operators.
     """
     try:
-        from voodoo.ai.providers import default_model, resolve_model
+        from grumo.ai.providers import default_model, resolve_model
 
         model_ref = default_model()
         provider, model = resolve_model(model_ref)

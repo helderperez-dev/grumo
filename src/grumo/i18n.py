@@ -8,9 +8,9 @@ from typing import Any
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 
-from voodoo.security.redaction import redact_string
+from grumo.security.redaction import redact_string
 
-_logger = logging.getLogger("voodoo.i18n")
+_logger = logging.getLogger("grumo.i18n")
 
 # Context variables for the current request's language and translations
 current_language: ContextVar[str] = ContextVar("current_language", default="en")
@@ -20,7 +20,7 @@ translations: ContextVar[dict[str, Any] | None] = ContextVar(
 
 
 class I18n:
-    """Internationalization manager for Voodoo."""
+    """Internationalization manager for Grumo."""
 
     def __init__(self, default_lang: str = "en", locales_dir: str = "locales") -> None:
         self.default_lang = default_lang
@@ -90,7 +90,7 @@ def _(key: str, **kwargs: Any) -> str:
 class I18nMiddleware(BaseHTTPMiddleware):
     """
     Middleware to detect and set the language for the current request.
-    Priority: Query Param (?lang=) > Cookie (voodoo_lang) > Accept-Language Header > Default
+    Priority: Query Param (?lang=) > Cookie (grumo_lang) > Accept-Language Header > Default
     """
 
     def __init__(self, app: Any, i18n: I18n | None = None) -> None:
@@ -105,7 +105,7 @@ class I18nMiddleware(BaseHTTPMiddleware):
 
         # 2. Cookie
         if not lang:
-            lang = request.cookies.get("voodoo_lang")
+            lang = request.cookies.get("grumo_lang")
 
         # 3. Accept-Language Header
         if not lang:
@@ -123,7 +123,7 @@ class I18nMiddleware(BaseHTTPMiddleware):
             response = await call_next(request)
             # If lang was set via query, we might want to set a cookie for future requests
             if request.query_params.get("lang"):
-                response.set_cookie("voodoo_lang", lang)
+                response.set_cookie("grumo_lang", lang)
             return response
         finally:
             current_language.reset(token)

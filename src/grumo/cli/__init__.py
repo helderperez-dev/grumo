@@ -1,6 +1,6 @@
 import typer
 
-from voodoo.cli import (
+from grumo.cli import (
     agents,
     ai,
     approvals,
@@ -24,11 +24,11 @@ from voodoo.cli import (
     version,
     workers_cmd,
 )
-from voodoo.cli.auth import auth_app
-from voodoo.cli.inspect import inspect_app
+from grumo.cli.auth import auth_app
+from grumo.cli.inspect import inspect_app
 
 app = typer.Typer(
-    name="voodoo",
+    name="grumo",
     help="build systems, not glue.",
     no_args_is_help=True,
     add_completion=False,
@@ -53,8 +53,8 @@ app.add_typer(approvals.approvals_app, name="approvals")
 app.add_typer(theme.theme_app, name="theme")
 app.add_typer(protocol.protocol_app, name="protocol")
 app.add_typer(fabric.fabric_app, name="fabric")
-# Top-level aliases per the Sprint 3 CLI surface: `voodoo execution <id>`
-# (timeline from the journal) and `voodoo events` (recent journal events).
+# Top-level aliases per the Sprint 3 CLI surface: `grumo execution <id>`
+# (timeline from the journal) and `grumo events` (recent journal events).
 app.command("execution")(executions.show_execution)
 app.command("events")(executions.list_events)
 app.command()(status.status)

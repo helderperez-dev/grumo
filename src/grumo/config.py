@@ -13,10 +13,10 @@ import yaml
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 
-from voodoo.core.errors import ConfigurationError
-from voodoo.security.redaction import redact_string
+from grumo.core.errors import ConfigurationError
+from grumo.security.redaction import redact_string
 
-_logger = logging.getLogger("voodoo.config")
+_logger = logging.getLogger("grumo.config")
 
 __all__ = [
     "AIConfig",
@@ -33,7 +33,7 @@ __all__ = [
     "SecurityConfig",
     "StoreSettings",
     "ThemeConfig",
-    "VoodooConfig",
+    "GrumoConfig",
     "config",
     "get_config",
     "interpolate_env_vars",
@@ -42,7 +42,7 @@ __all__ = [
     "validate_production_config",
 ]
 
-DEVELOPMENT_SECRET_KEY = "dev-secret-key-change-in-production-voodoo-2026"
+DEVELOPMENT_SECRET_KEY = "dev-secret-key-change-in-production-grumo-2026"
 
 load_dotenv()
 
@@ -79,30 +79,30 @@ def _env_flag(name: str) -> bool | None:
 
 
 def _resolve_debug() -> bool:
-    explicit = _env_flag("VOODOO_DEBUG")
+    explicit = _env_flag("GRUMO_DEBUG")
     if explicit is not None:
         return explicit
-    return os.getenv("VOODOO_ENV", "development") != "production"
+    return os.getenv("GRUMO_ENV", "development") != "production"
 
 
 def _is_production() -> bool:
-    return os.getenv("VOODOO_ENV", "development").strip().lower() == "production"
+    return os.getenv("GRUMO_ENV", "development").strip().lower() == "production"
 
 
 def _default_cors_origins() -> list[str]:
-    configured = os.getenv("VOODOO_CORS_ORIGINS")
+    configured = os.getenv("GRUMO_CORS_ORIGINS")
     if configured is not None:
         return [origin.strip() for origin in configured.split(",") if origin.strip()]
     return [] if _is_production() else ["*"]
 
 
 def _default_cors_credentials() -> bool:
-    configured = _env_flag("VOODOO_CORS_ALLOW_CREDENTIALS")
+    configured = _env_flag("GRUMO_CORS_ALLOW_CREDENTIALS")
     return configured if configured is not None else not _is_production()
 
 
 def _default_csrf_enabled() -> bool:
-    configured = _env_flag("VOODOO_CSRF_ENABLED")
+    configured = _env_flag("GRUMO_CSRF_ENABLED")
     return configured if configured is not None else _is_production()
 
 
@@ -225,10 +225,10 @@ def _production_permissions_policy_problems(security: SecurityConfig) -> list[st
 def _resolve_db_path() -> str:
     """Resolve an explicitly configured legacy/external database location.
 
-    Voodoo Store is the default infrastructure substrate, so the fallback is
+    Grumo Store is the default infrastructure substrate, so the fallback is
     empty. SQLite/PostgreSQL locations only matter when an adapter is selected.
     """
-    explicit = os.getenv("VOODOO_DB_PATH")
+    explicit = os.getenv("GRUMO_DB_PATH")
     if explicit:
         return explicit
     url = os.getenv("DATABASE_URL")
@@ -248,14 +248,14 @@ def _resolve_db_path() -> str:
 
 
 class SEOConfig(BaseModel):
-    site_name: str = "Voodoo App"
+    site_name: str = "Grumo App"
     base_url: str = ""
     default_og_image: str = ""
     sitemap_enabled: bool = True
     robots_enabled: bool = True
     allow_ai_crawlers: bool = True
     robots_disallow: list[str] = Field(
-        default_factory=lambda: ["/_voodoo_ws", "/voodoo/mesh/ws"]
+        default_factory=lambda: ["/_grumo_ws", "/grumo/mesh/ws"]
     )
     default_lang: str = "en"
     generator_meta: bool = True
@@ -263,41 +263,41 @@ class SEOConfig(BaseModel):
 
 class AuthConfig(BaseModel):
     secret_key: str = Field(
-        default_factory=lambda: os.getenv("VOODOO_SECRET_KEY", DEVELOPMENT_SECRET_KEY)
+        default_factory=lambda: os.getenv("GRUMO_SECRET_KEY", DEVELOPMENT_SECRET_KEY)
     )
     token_expiry_seconds: int = Field(
         gt=0,
         le=31_536_000,
         default_factory=lambda: int(
-            os.getenv("VOODOO_TOKEN_EXPIRY", str(7 * 24 * 3600))
+            os.getenv("GRUMO_TOKEN_EXPIRY", str(7 * 24 * 3600))
         )
     )
     jwt_issuer: str | None = Field(
-        default_factory=lambda: os.getenv("VOODOO_JWT_ISSUER") or None
+        default_factory=lambda: os.getenv("GRUMO_JWT_ISSUER") or None
     )
     jwt_audience: str | None = Field(
-        default_factory=lambda: os.getenv("VOODOO_JWT_AUDIENCE") or None
+        default_factory=lambda: os.getenv("GRUMO_JWT_AUDIENCE") or None
     )
     jwt_clock_skew_seconds: int = Field(
-        default_factory=lambda: int(os.getenv("VOODOO_JWT_CLOCK_SKEW", "0")),
+        default_factory=lambda: int(os.getenv("GRUMO_JWT_CLOCK_SKEW", "0")),
         ge=0,
         le=300,
     )
     jwt_revocation_max_entries: int = Field(
-        default_factory=lambda: int(os.getenv("VOODOO_JWT_REVOCATION_MAX", "10000")),
+        default_factory=lambda: int(os.getenv("GRUMO_JWT_REVOCATION_MAX", "10000")),
         gt=0,
         le=1_000_000,
     )
     jwt_previous_secrets: list[str] = Field(
         default_factory=lambda: [
             value.strip()
-            for value in os.getenv("VOODOO_JWT_PREVIOUS_SECRETS", "").split(",")
+            for value in os.getenv("GRUMO_JWT_PREVIOUS_SECRETS", "").split(",")
             if value.strip()
         ]
     )
-    cookie_name: str = "voodoo_auth"
+    cookie_name: str = "grumo_auth"
     cookie_secure: bool = Field(
-        default_factory=lambda: os.getenv("VOODOO_ENV", "development") == "production"
+        default_factory=lambda: os.getenv("GRUMO_ENV", "development") == "production"
     )
     cookie_httponly: bool = True
     cookie_samesite: Literal["lax", "strict", "none"] = "lax"
@@ -307,7 +307,7 @@ class AuthConfig(BaseModel):
 class SecurityConfig(BaseModel):
     headers_enabled: bool = True
     hsts_enabled: bool = Field(
-        default_factory=lambda: os.getenv("VOODOO_ENV", "development") == "production"
+        default_factory=lambda: os.getenv("GRUMO_ENV", "development") == "production"
     )
     hsts_max_age: int = Field(default=31536000, gt=0, le=31_536_000)
     frame_options: str = "SAMEORIGIN"
@@ -322,7 +322,7 @@ class SecurityConfig(BaseModel):
     cors_allow_methods: list[str] = Field(default_factory=_default_cors_methods)
     cors_allow_headers: list[str] = Field(default_factory=_default_cors_headers)
     csrf_enabled: bool = Field(default_factory=_default_csrf_enabled)
-    csrf_cookie_name: str = "voodoo_csrf"
+    csrf_cookie_name: str = "grumo_csrf"
     csrf_header_name: str = "X-CSRF-Token"
     rate_limit_enabled: bool = True
     rate_limit_requests: int = Field(default=100, gt=0, le=1_000_000)
@@ -343,8 +343,8 @@ class ThemeConfig(BaseModel):
 class StoreSettings(BaseModel):
     """Canonical application Store settings."""
 
-    provider: str = "voodoo"
-    path: str = ".voodoo/application.vstore"
+    provider: str = "grumo"
+    path: str = ".grumo/application.grumo"
     enabled: bool = True
     durability: str = "data"
     repair_torn_tail: bool = True
@@ -355,7 +355,7 @@ class StoreSettings(BaseModel):
 class DatabaseConfig(BaseModel):
     """Optional database adapter configuration."""
 
-    provider: str = "voodoo"
+    provider: str = "grumo"
     url: str = ""
     path: str = ""
     extra: dict[str, Any] = Field(default_factory=dict)
@@ -364,7 +364,7 @@ class DatabaseConfig(BaseModel):
 class QueueConfig(BaseModel):
     """Task queue provider configuration."""
 
-    provider: str = "voodoo"
+    provider: str = "grumo"
     url: str = ""
     extra: dict[str, Any] = Field(default_factory=dict)
 
@@ -372,7 +372,7 @@ class QueueConfig(BaseModel):
 class EventsConfig(BaseModel):
     """Event bus provider configuration."""
 
-    provider: str = "voodoo"
+    provider: str = "grumo"
     url: str = ""
     path: str = ""
     extra: dict[str, Any] = Field(default_factory=dict)
@@ -381,7 +381,7 @@ class EventsConfig(BaseModel):
 class ObjectsConfig(BaseModel):
     """Object store provider configuration."""
 
-    provider: str = "voodoo"
+    provider: str = "grumo"
     bucket: str = ""
     endpoint: str = ""
     base_dir: str = ""
@@ -400,7 +400,7 @@ class CacheConfig(BaseModel):
     """Cache provider configuration.
 
     Memory remains the transient cache default; durable infrastructure belongs
-    to Voodoo Store and does not require a second persistence system.
+    to Grumo Store and does not require a second persistence system.
     """
 
     provider: str = "memory"
@@ -433,7 +433,7 @@ class EdgeConfig(BaseModel):
     mqtt_tls: bool = False
     mqtt_username: str = ""
     mqtt_password: str = ""
-    mqtt_client_id: str = "voodoo-runtime"
+    mqtt_client_id: str = "grumo-runtime"
     mqtt_keepalive: int = 60
     mqtt_qos: int = 1
     max_message_size: int = 262144
@@ -445,15 +445,15 @@ class EdgeConfig(BaseModel):
     max_effect_retries: int = 3
 
 
-class VoodooConfig(BaseModel):
-    env: str = Field(default_factory=lambda: os.getenv("VOODOO_ENV", "development"))
+class GrumoConfig(BaseModel):
+    env: str = Field(default_factory=lambda: os.getenv("GRUMO_ENV", "development"))
     debug: bool = Field(default_factory=_resolve_debug)
     db_path: str = Field(default_factory=_resolve_db_path)
     storage_dir: str = Field(
-        default_factory=lambda: os.getenv("VOODOO_STORAGE_DIR", "storage")
+        default_factory=lambda: os.getenv("GRUMO_STORAGE_DIR", "storage")
     )
-    port: int = Field(default_factory=lambda: int(os.getenv("VOODOO_PORT", "8000")))
-    host: str = Field(default_factory=lambda: os.getenv("VOODOO_HOST", "0.0.0.0"))
+    port: int = Field(default_factory=lambda: int(os.getenv("GRUMO_PORT", "8000")))
+    host: str = Field(default_factory=lambda: os.getenv("GRUMO_HOST", "0.0.0.0"))
 
     runtime: RuntimeConfig = Field(default_factory=RuntimeConfig)
     store: StoreSettings = Field(default_factory=StoreSettings)
@@ -473,7 +473,7 @@ class VoodooConfig(BaseModel):
     extra: dict[str, Any] = Field(default_factory=dict)
 
 
-def load_yaml_config(file_path: str = "voodoo.yaml") -> dict[str, Any]:
+def load_yaml_config(file_path: str = "grumo.yaml") -> dict[str, Any]:
     if os.path.exists(file_path):
         with open(file_path) as f:
             try:
@@ -493,7 +493,7 @@ def load_yaml_config(file_path: str = "voodoo.yaml") -> dict[str, Any]:
     return {}
 
 
-def load_toml_config(file_path: str = "voodoo.toml") -> dict[str, Any]:
+def load_toml_config(file_path: str = "grumo.toml") -> dict[str, Any]:
     if os.path.exists(file_path):
         try:
             import tomllib
@@ -520,16 +520,16 @@ def _build_store_config(file_data: dict[str, Any]) -> StoreSettings:
     if not isinstance(store_data, dict):
         store_data = {"provider": str(store_data)}
 
-    enabled_flag = _env_flag("VOODOO_STORE_ENABLED")
-    repair_flag = _env_flag("VOODOO_STORE_REPAIR_TORN_TAIL")
-    max_bytes_value = store_data.get("max_bytes") or os.getenv("VOODOO_STORE_MAX_BYTES")
+    enabled_flag = _env_flag("GRUMO_STORE_ENABLED")
+    repair_flag = _env_flag("GRUMO_STORE_REPAIR_TORN_TAIL")
+    max_bytes_value = store_data.get("max_bytes") or os.getenv("GRUMO_STORE_MAX_BYTES")
     return StoreSettings(
         provider=store_data.get("provider")
-        or os.getenv("VOODOO_STORE_PROVIDER")
-        or "voodoo",
+        or os.getenv("GRUMO_STORE_PROVIDER")
+        or "grumo",
         path=store_data.get("path")
-        or os.getenv("VOODOO_STORE_PATH")
-        or ".voodoo/application.vstore",
+        or os.getenv("GRUMO_STORE_PATH")
+        or ".grumo/application.grumo",
         enabled=(
             bool(store_data["enabled"])
             if "enabled" in store_data
@@ -538,7 +538,7 @@ def _build_store_config(file_data: dict[str, Any]) -> StoreSettings:
             else True
         ),
         durability=store_data.get("durability")
-        or os.getenv("VOODOO_STORE_DURABILITY")
+        or os.getenv("GRUMO_STORE_DURABILITY")
         or "data",
         repair_torn_tail=(
             bool(store_data["repair_torn_tail"])
@@ -569,7 +569,7 @@ def _build_database_config(file_data: dict[str, Any], db_path: str) -> DatabaseC
     if not isinstance(db_data, dict):
         db_data = {"provider": str(db_data)}
     db_provider = (
-        db_data.get("provider") or os.getenv("VOODOO_DATABASE_PROVIDER") or "voodoo"
+        db_data.get("provider") or os.getenv("GRUMO_DATABASE_PROVIDER") or "grumo"
     )
     db_url = db_data.get("url") or ""
     if not db_url and db_path.startswith(("postgres://", "postgresql://", "sqlite://")):
@@ -589,9 +589,9 @@ def _build_queue_config(file_data: dict[str, Any]) -> QueueConfig:
     if not isinstance(queue_data, dict):
         queue_data = {"provider": str(queue_data)}
     queue_provider = (
-        queue_data.get("provider") or os.getenv("VOODOO_QUEUE_PROVIDER") or "voodoo"
+        queue_data.get("provider") or os.getenv("GRUMO_QUEUE_PROVIDER") or "grumo"
     )
-    queue_url = queue_data.get("url") or os.getenv("VOODOO_QUEUE_URL") or ""
+    queue_url = queue_data.get("url") or os.getenv("GRUMO_QUEUE_URL") or ""
     return QueueConfig(
         provider=queue_provider,
         url=queue_url,
@@ -604,10 +604,10 @@ def _build_events_config(file_data: dict[str, Any], db_path: str) -> EventsConfi
     if not isinstance(events_data, dict):
         events_data = {"provider": str(events_data)}
     events_provider = (
-        events_data.get("provider") or os.getenv("VOODOO_EVENTS_PROVIDER") or "voodoo"
+        events_data.get("provider") or os.getenv("GRUMO_EVENTS_PROVIDER") or "grumo"
     )
-    events_url = events_data.get("url") or os.getenv("VOODOO_EVENTS_URL") or ""
-    events_path = events_data.get("path") or os.getenv("VOODOO_EVENTS_PATH") or db_path
+    events_url = events_data.get("url") or os.getenv("GRUMO_EVENTS_URL") or ""
+    events_path = events_data.get("path") or os.getenv("GRUMO_EVENTS_PATH") or db_path
     return EventsConfig(
         provider=events_provider,
         url=events_url,
@@ -623,28 +623,28 @@ def _build_objects_config(file_data: dict[str, Any]) -> ObjectsConfig:
     if not isinstance(objects_data, dict):
         objects_data = {"provider": str(objects_data)}
     objects_provider = (
-        objects_data.get("provider") or os.getenv("VOODOO_OBJECTS_PROVIDER") or "voodoo"
+        objects_data.get("provider") or os.getenv("GRUMO_OBJECTS_PROVIDER") or "grumo"
     )
     objects_bucket = (
         objects_data.get("bucket")
-        or os.getenv("VOODOO_BUCKET")
+        or os.getenv("GRUMO_BUCKET")
         or os.getenv("AWS_BUCKET")
         or ""
     )
     objects_endpoint = (
         objects_data.get("endpoint")
-        or os.getenv("VOODOO_OBJECTS_ENDPOINT")
+        or os.getenv("GRUMO_OBJECTS_ENDPOINT")
         or os.getenv("AWS_ENDPOINT_URL")
         or ""
     )
     objects_base_dir = (
         objects_data.get("base_dir")
-        or os.getenv("VOODOO_OBJECTS_DIR")
-        or ".voodoo/objects"
+        or os.getenv("GRUMO_OBJECTS_DIR")
+        or ".grumo/objects"
     )
     max_upload_raw = objects_data.get("max_upload_bytes")
     if max_upload_raw is None:
-        max_upload_raw = os.getenv("VOODOO_MAX_UPLOAD_BYTES")
+        max_upload_raw = os.getenv("GRUMO_MAX_UPLOAD_BYTES")
     if max_upload_raw in (None, ""):
         max_upload_bytes = 50 * 1024 * 1024
     else:
@@ -682,9 +682,9 @@ def _build_cache_config(file_data: dict[str, Any]) -> CacheConfig:
     if not isinstance(cache_data, dict):
         cache_data = {"provider": str(cache_data)}
     cache_provider = (
-        cache_data.get("provider") or os.getenv("VOODOO_CACHE_PROVIDER") or "memory"
+        cache_data.get("provider") or os.getenv("GRUMO_CACHE_PROVIDER") or "memory"
     )
-    cache_url = cache_data.get("url") or os.getenv("VOODOO_CACHE_URL") or ""
+    cache_url = cache_data.get("url") or os.getenv("GRUMO_CACHE_URL") or ""
     return CacheConfig(
         provider=cache_provider,
         url=cache_url,
@@ -698,7 +698,7 @@ def _build_models_config(file_data: dict[str, Any]) -> ModelsConfig:
         models_data = {"default": str(models_data)}
     models_default = (
         models_data.get("default")
-        or os.getenv("VOODOO_MODELS_DEFAULT")
+        or os.getenv("GRUMO_MODELS_DEFAULT")
         or "mock:default"
     )
     models_aliases = models_data.get("aliases") or {}
@@ -714,10 +714,10 @@ def _build_ai_config(file_data: dict[str, Any]) -> AIConfig:
     if not isinstance(ai_data, dict):
         ai_data = {"provider": str(ai_data)}
     return AIConfig(
-        provider=ai_data.get("provider") or os.getenv("VOODOO_AI_PROVIDER") or "",
-        model=ai_data.get("model") or os.getenv("VOODOO_AI_MODEL") or "",
-        base_url=ai_data.get("base_url") or os.getenv("VOODOO_AI_BASE_URL") or "",
-        api_key=ai_data.get("api_key") or os.getenv("VOODOO_AI_API_KEY") or "",
+        provider=ai_data.get("provider") or os.getenv("GRUMO_AI_PROVIDER") or "",
+        model=ai_data.get("model") or os.getenv("GRUMO_AI_MODEL") or "",
+        base_url=ai_data.get("base_url") or os.getenv("GRUMO_AI_BASE_URL") or "",
+        api_key=ai_data.get("api_key") or os.getenv("GRUMO_AI_API_KEY") or "",
         aliases=ai_data.get("aliases") or {},
     )
 
@@ -732,18 +732,18 @@ def _build_edge_config(file_data: dict[str, Any]) -> EdgeConfig:
             return bool(edge_data[key])
         return _env_flag(env)
 
-    enabled = _flag("enabled", "VOODOO_EDGE_ENABLED")
+    enabled = _flag("enabled", "GRUMO_EDGE_ENABLED")
     mqtt = edge_data.get("mqtt") or {}
     if not isinstance(mqtt, dict):
         mqtt = {}
 
     kwargs: dict[str, Any] = {
         "enabled": enabled if enabled is not None else False,
-        "http_enabled": (_flag("http_enabled", "VOODOO_EDGE_HTTP_ENABLED") or False)
-        if "http_enabled" in edge_data or "VOODOO_EDGE_HTTP_ENABLED" in os.environ
+        "http_enabled": (_flag("http_enabled", "GRUMO_EDGE_HTTP_ENABLED") or False)
+        if "http_enabled" in edge_data or "GRUMO_EDGE_HTTP_ENABLED" in os.environ
         else True,
-        "mqtt_enabled": (_flag("mqtt_enabled", "VOODOO_EDGE_MQTT_ENABLED") or False)
-        if "mqtt_enabled" in edge_data or "VOODOO_EDGE_MQTT_ENABLED" in os.environ
+        "mqtt_enabled": (_flag("mqtt_enabled", "GRUMO_EDGE_MQTT_ENABLED") or False)
+        if "mqtt_enabled" in edge_data or "GRUMO_EDGE_MQTT_ENABLED" in os.environ
         else (bool(mqtt) or "MQTT_BROKER_URL" in os.environ),
         "mqtt_broker_url": mqtt.get("broker_url") or os.getenv("MQTT_BROKER_URL", ""),
         "mqtt_port": int(str(mqtt.get("port") or os.getenv("MQTT_PORT", "1883"))),
@@ -751,7 +751,7 @@ def _build_edge_config(file_data: dict[str, Any]) -> EdgeConfig:
         "mqtt_username": mqtt.get("username") or os.getenv("MQTT_USERNAME", ""),
         "mqtt_password": mqtt.get("password") or os.getenv("MQTT_PASSWORD", ""),
         "mqtt_client_id": mqtt.get("client_id")
-        or os.getenv("MQTT_CLIENT_ID", "voodoo-runtime"),
+        or os.getenv("MQTT_CLIENT_ID", "grumo-runtime"),
         "mqtt_keepalive": int(mqtt.get("keepalive", 60)),
         "mqtt_qos": int(mqtt.get("qos", 1)),
     }
@@ -785,11 +785,11 @@ def _pick(
 def _build_core_scalars(file_data: dict[str, Any]) -> dict[str, Any]:
     args: dict[str, Any] = {}
     scalars: list[tuple[str, str, Callable[[Any], Any], Callable[[str], Any]]] = [
-        ("env", "VOODOO_ENV", str, str),
-        ("debug", "VOODOO_DEBUG", bool, lambda _val: _resolve_debug()),
-        ("port", "VOODOO_PORT", int, int),
-        ("host", "VOODOO_HOST", str, str),
-        ("storage_dir", "VOODOO_STORAGE_DIR", str, str),
+        ("env", "GRUMO_ENV", str, str),
+        ("debug", "GRUMO_DEBUG", bool, lambda _val: _resolve_debug()),
+        ("port", "GRUMO_PORT", int, int),
+        ("host", "GRUMO_HOST", str, str),
+        ("storage_dir", "GRUMO_STORAGE_DIR", str, str),
     ]
     for key, env, convert_file, convert_env in scalars:
         picked = _pick(file_data, key, env, convert_file, convert_env)
@@ -802,12 +802,12 @@ def _build_runtime_config(file_data: dict[str, Any]) -> RuntimeConfig:
     runtime_data = file_data.get("runtime") or {}
     if not isinstance(runtime_data, dict):
         runtime_data = {"mode": str(runtime_data)}
-    if "mode" not in runtime_data and "VOODOO_RUNTIME_MODE" in os.environ:
-        runtime_data["mode"] = os.environ["VOODOO_RUNTIME_MODE"]
-    elif "mode" not in runtime_data and "VOODOO_ENV" in os.environ:
-        runtime_data["mode"] = os.environ["VOODOO_ENV"]
+    if "mode" not in runtime_data and "GRUMO_RUNTIME_MODE" in os.environ:
+        runtime_data["mode"] = os.environ["GRUMO_RUNTIME_MODE"]
+    elif "mode" not in runtime_data and "GRUMO_ENV" in os.environ:
+        runtime_data["mode"] = os.environ["GRUMO_ENV"]
     if "run_api_through_runtime" not in runtime_data:
-        flag = _env_flag("VOODOO_RUN_API_THROUGH_RUNTIME")
+        flag = _env_flag("GRUMO_RUN_API_THROUGH_RUNTIME")
         if flag is not None:
             runtime_data["run_api_through_runtime"] = flag
     return RuntimeConfig(**runtime_data)
@@ -827,7 +827,7 @@ def _load_raw_file_data(file_path: str | None) -> dict[str, Any]:
 def get_config(
     file_path: str | None = None,
     overrides: dict[str, Any] | None = None,
-) -> VoodooConfig:
+) -> GrumoConfig:
     """Merge file config, environment and Store-first defaults."""
     file_data = _load_raw_file_data(file_path)
     if overrides:
@@ -841,7 +841,7 @@ def get_config(
     db_path = (
         (db_data.get("path") if isinstance(db_data, dict) else None)
         or (db_data.get("url") if isinstance(db_data, dict) else None)
-        or os.getenv("VOODOO_DB_PATH")
+        or os.getenv("GRUMO_DB_PATH")
         or os.getenv("DATABASE_URL")
         or _resolve_db_path()
     )
@@ -889,10 +889,10 @@ def get_config(
     }
     config_args["extra"] = {k: v for k, v in file_data.items() if k not in known_keys}
 
-    return VoodooConfig(**config_args)
+    return GrumoConfig(**config_args)
 
 
-def validate_production_config(resolved: VoodooConfig) -> None:
+def validate_production_config(resolved: GrumoConfig) -> None:
     """Reject configurations that are unsafe for the production profile.
 
     Development remains zero-configuration. Production is deliberately
@@ -920,7 +920,7 @@ def validate_production_config(resolved: VoodooConfig) -> None:
         or len(resolved.auth.secret_key) < 32
     ):
         problems.append(
-            "VOODOO_SECRET_KEY must be set to a unique value of at least 32 characters"
+            "GRUMO_SECRET_KEY must be set to a unique value of at least 32 characters"
         )
     if not resolved.auth.cookie_secure:
         problems.append("authentication cookies must use Secure")

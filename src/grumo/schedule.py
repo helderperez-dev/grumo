@@ -1,4 +1,4 @@
-"""Durable scheduling for Voodoo (Sprint 5)."""
+"""Durable scheduling for Grumo (Sprint 5)."""
 
 from __future__ import annotations
 
@@ -9,10 +9,10 @@ from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from voodoo.primitives.time import TimeSpec
-from voodoo.storage.database.interfaces import Migration
-from voodoo.storage.database.sqlite import register_framework_migration
-from voodoo.storage.queue import VoodooQueue
+from grumo.primitives.time import TimeSpec
+from grumo.storage.database.interfaces import Migration
+from grumo.storage.database.sqlite import register_framework_migration
+from grumo.storage.queue import GrumoQueue
 
 SCHEDULES_MIGRATION_VERSION = 5
 
@@ -44,7 +44,7 @@ register_framework_migration(SCHEDULES_MIGRATION)
 class Scheduler:
     """Durable scheduler backed by SQLite."""
 
-    def __init__(self, path: str | Path, queue: VoodooQueue) -> None:
+    def __init__(self, path: str | Path, queue: GrumoQueue) -> None:
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self._conn: Any = sqlite3.connect(str(self.path), check_same_thread=False)

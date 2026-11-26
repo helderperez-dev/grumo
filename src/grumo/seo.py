@@ -1,11 +1,11 @@
 """
-voodoo.seo — First-class SEO & GEO (Generative Engine Optimization) support.
+grumo.seo — First-class SEO & GEO (Generative Engine Optimization) support.
 
 Provides Pydantic models for page-level metadata that the framework
 automatically injects into the rendered HTML <head>.
 
 Usage in page.py:
-    from voodoo.seo import SEO, OpenGraph, GEO, FAQ
+    from grumo.seo import SEO, OpenGraph, GEO, FAQ
 
     def page():
         seo = SEO(
@@ -72,12 +72,12 @@ class GEO(BaseModel):
 
 class SEO(BaseModel):
     """
-    Page-level SEO & GEO metadata for Voodoo.
+    Page-level SEO & GEO metadata for Grumo.
     Return alongside a Component from any page() function:
         return SEO(title="My Page"), MyComponent(...)
     """
 
-    title: str = "Voodoo App"
+    title: str = "Grumo App"
     description: str = ""
     canonical: str | None = None
     robots: str = "index, follow"
@@ -130,7 +130,7 @@ class SEO(BaseModel):
         og = self.og
         title = (
             (og.title if og and og.title else self.title)
-            if (og or self.title != "Voodoo App")
+            if (og or self.title != "Grumo App")
             else None
         )
         desc = (
