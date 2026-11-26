@@ -1,8 +1,8 @@
-"""Durable SQLite storage for Voodoo world state.
+"""Durable SQLite storage for Grumo world state.
 
 The store persists entities, typed relationships, and append-only observations.
-Projection semantics remain in :mod:`voodoo.world.model`; this module only
-implements the :class:`~voodoo.world.store.WorldStore` contract.
+Projection semantics remain in :mod:`grumo.world.model`; this module only
+implements the :class:`~grumo.world.store.WorldStore` contract.
 """
 
 from __future__ import annotations
@@ -13,7 +13,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from voodoo.world.models import Entity, Observation, Relationship
+from grumo.world.models import Entity, Observation, Relationship
 
 __all__ = ["SQLiteWorldStore"]
 

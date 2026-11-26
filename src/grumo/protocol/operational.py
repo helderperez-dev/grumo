@@ -1,6 +1,6 @@
 """Operational Protocol schemas added by Sprint 27.
 
-These models extend the language-neutral Voodoo semantic boundary with the
+These models extend the language-neutral Grumo semantic boundary with the
 World, Goal and governed distributed-execution concepts that landed after the
 original protocol sprint. They are intentionally JSON-friendly and do not
 import runtime implementation classes.

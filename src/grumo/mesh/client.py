@@ -4,9 +4,9 @@ import logging
 import uuid
 from typing import Any
 
-from voodoo.security.redaction import redact_string
+from grumo.security.redaction import redact_string
 
-_logger = logging.getLogger("voodoo.mesh.client")
+_logger = logging.getLogger("grumo.mesh.client")
 
 
 class MeshClient:
@@ -64,7 +64,7 @@ class MeshClient:
                             )
                         )
                         continue
-                    from voodoo.runtime.distributed.remote import RemoteExecutionOutcome
+                    from grumo.runtime.distributed.remote import RemoteExecutionOutcome
 
                     future.set_result(
                         RemoteExecutionOutcome.model_validate(outcome_payload)
@@ -129,7 +129,7 @@ class MeshClient:
         target_entity_id: str | None = None,
         metadata: dict[str, Any] | None = None,
     ) -> Any:
-        """Execute remotely and return the canonical structured Voodoo outcome.
+        """Execute remotely and return the canonical structured Grumo outcome.
 
         ``actor`` remains for compatibility with unauthenticated Mesh nodes.
         When the receiving node configures a participant resolver, credential

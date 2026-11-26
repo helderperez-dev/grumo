@@ -1,4 +1,4 @@
-"""Canonical entity schemas for the Voodoo protocol.
+"""Canonical entity schemas for the Grumo protocol.
 
 These Pydantic models form the **stable semantic boundary** for
 cross-language interop (TypeScript, Go, Rust SDKs). Every entity
@@ -319,11 +319,11 @@ class Execution(BaseModel):
     def to_runtime_execution(self) -> object:
         """Convert this protocol ``Execution`` back to a runtime ``Execution``.
 
-        Requires ``voodoo.runtime.execution.Execution`` to be importable.
+        Requires ``grumo.runtime.execution.Execution`` to be importable.
         Uses a lazy import to avoid circular dependencies.
         """
-        from voodoo.runtime.execution import Execution as RuntimeExecution
-        from voodoo.runtime.execution import ExecutionStatus as RuntimeStatus
+        from grumo.runtime.execution import Execution as RuntimeExecution
+        from grumo.runtime.execution import ExecutionStatus as RuntimeStatus
 
         return RuntimeExecution(
             id=self.id,
@@ -376,7 +376,7 @@ class Event(BaseModel):
     event_id: str = Field(description="Unique event ID (UUID4).")
     event_type: str = Field(description="Dotted event type (e.g. 'agent.started').")
     timestamp: float = Field(description="Unix timestamp (seconds).")
-    source: str = "voodoo"
+    source: str = "grumo"
     subject: str | None = None
     correlation_id: str | None = None
     causation_id: str | None = None

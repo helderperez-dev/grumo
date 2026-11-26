@@ -1,6 +1,6 @@
-"""Voodoo protocol — stable semantic schemas for cross-language interop.
+"""Grumo protocol — stable semantic schemas for cross-language interop.
 
-The protocol is the boundary for participants that must understand Voodoo
+The protocol is the boundary for participants that must understand Grumo
 semantics without importing Python runtime internals. Sprint 28 extends the
 operational protocol with governed node-fabric membership and routed work.
 """

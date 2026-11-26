@@ -11,8 +11,8 @@ from copy import deepcopy
 from datetime import datetime
 from typing import Any
 
-from voodoo.world.models import Entity, Observation, Relationship, WorldSnapshot
-from voodoo.world.store import InMemoryWorldStore, WorldStore
+from grumo.world.models import Entity, Observation, Relationship, WorldSnapshot
+from grumo.world.store import InMemoryWorldStore, WorldStore
 
 __all__ = ["WorldModel"]
 

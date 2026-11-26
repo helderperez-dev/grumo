@@ -1,8 +1,8 @@
-"""JSON Schema export for Voodoo protocol entities.
+"""JSON Schema export for Grumo protocol entities.
 
 Usage::
 
-    from voodoo.protocol import export_json_schemas
+    from grumo.protocol import export_json_schemas
 
     schemas = export_json_schemas()
 """
@@ -37,8 +37,8 @@ def export_json_schemas() -> dict[str, Any]:
     for name, model in _entities().items():
         schema = cast(dict[str, Any], model.model_json_schema())
         schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
-        schema["$id"] = f"urn:voodoo:protocol:{name.lower()}:{SCHEMA_VERSION}"
-        schema["x-voodoo-schema-version"] = SCHEMA_VERSION
+        schema["$id"] = f"urn:grumo:protocol:{name.lower()}:{SCHEMA_VERSION}"
+        schema["x-grumo-schema-version"] = SCHEMA_VERSION
         schemas[name] = schema
     return schemas
 
@@ -53,6 +53,6 @@ def schema_for(entity_name: str) -> dict[str, Any]:
     model = _entities()[entity_name]
     schema = cast(dict[str, Any], model.model_json_schema())
     schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
-    schema["$id"] = f"urn:voodoo:protocol:{entity_name.lower()}:{SCHEMA_VERSION}"
-    schema["x-voodoo-schema-version"] = SCHEMA_VERSION
+    schema["$id"] = f"urn:grumo:protocol:{entity_name.lower()}:{SCHEMA_VERSION}"
+    schema["x-grumo-schema-version"] = SCHEMA_VERSION
     return schema

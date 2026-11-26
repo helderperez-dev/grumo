@@ -1,4 +1,4 @@
-"""Persistence contract for Voodoo world state.
+"""Persistence contract for Grumo world state.
 
 The store keeps ontology records; projection semantics live in ``WorldModel``.
 Backends must preserve append-only observations and stable relationship IDs.
@@ -9,7 +9,7 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Protocol
 
-from voodoo.world.models import Entity, Observation, Relationship
+from grumo.world.models import Entity, Observation, Relationship
 
 __all__ = ["WorldStore", "InMemoryWorldStore"]
 

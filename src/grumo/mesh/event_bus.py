@@ -1,6 +1,6 @@
 """Mesh integration with the event bus (Sprint 7).
 
-The mesh sits on top of the active :class:`~voodoo.storage.events.VoodooEventBus`
+The mesh sits on top of the active :class:`~grumo.storage.events.GrumoEventBus`
 for durable event publication, while preserving the existing ``emit``/``on``
 interface. Local handlers keep the mesh contract: they receive the *raw
 payload*, not the event envelope (the envelope is the remote/durable boundary).
@@ -11,18 +11,18 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
-from voodoo.storage.events import LocalEventBus, VoodooEventBus
+from grumo.storage.events import LocalEventBus, GrumoEventBus
 
 
 class EventBusAwareMesh:
-    """A mesh whose durability comes from a :class:`VoodooEventBus`.
+    """A mesh whose durability comes from a :class:`GrumoEventBus`.
 
     Keeps the existing ``MeshNetwork`` surface (``emit``/``on``/``expose``)
     semantics: handlers registered via ``on()`` receive the raw payload.
     Durability and replay are delegated to the underlying bus.
     """
 
-    def __init__(self, bus: VoodooEventBus | None = None) -> None:
+    def __init__(self, bus: GrumoEventBus | None = None) -> None:
         self.bus = bus or LocalEventBus()
         self._handlers: dict[str, list[Callable]] = {}
 
@@ -57,6 +57,6 @@ class EventBusAwareMesh:
             count = max(count, self.bus.replay(event_type, wrapper))
         return count
 
-    def get_bus(self) -> VoodooEventBus:
+    def get_bus(self) -> GrumoEventBus:
         """Return the underlying event bus."""
         return self.bus

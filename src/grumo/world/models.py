@@ -1,4 +1,4 @@
-"""World-model primitives for Voodoo's agency layer.
+"""World-model primitives for Grumo's agency layer.
 
 The world layer deliberately separates identity, relationships, and evidence:
 
@@ -32,7 +32,7 @@ def _id(prefix: str) -> str:
 
 @dataclass
 class Entity:
-    """A stable thing known to the Voodoo world model.
+    """A stable thing known to the Grumo world model.
 
     ``properties`` contains the current projection of observed state. Historical
     evidence lives in ``Observation`` records, never inside this mapping.

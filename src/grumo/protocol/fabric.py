@@ -1,4 +1,4 @@
-"""Stable protocol schemas for Voodoo Node fabric semantics.
+"""Stable protocol schemas for Grumo Node fabric semantics.
 
 These schemas describe membership and routed work without exposing Python Runtime
 classes or a specific transport. They do not imply consensus, replication, or
