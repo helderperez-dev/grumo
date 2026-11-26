@@ -1,6 +1,6 @@
-"""PostgreSQL implementation of the Voodoo queue capability (spec §12, §7).
+"""PostgreSQL implementation of the Grumo queue capability (spec §12, §7).
 
-Same semantics as :class:`~voodoo.storage.queue.sqlite.SQLiteQueue` —
+Same semantics as :class:`~grumo.storage.queue.sqlite.SQLiteQueue` —
 tasks are rows in the ``tasks`` table; claiming is one atomic
 ``UPDATE ... WHERE id = (SELECT ... FOR UPDATE SKIP LOCKED) RETURNING``
 statement so concurrent workers — even across processes — can never claim
@@ -10,7 +10,7 @@ recoverable via :meth:`release_expired`, identical to the SQLite adapter.
 The table schema is shared with SQLite (framework migration v2, translated
 by ``PostgresDatabase._translate``), so the application sees no difference
 between providers beyond the connection — swapping ``queue: sqlite`` →
-``queue: postgres`` in ``voodoo.yaml`` changes zero application code.
+``queue: postgres`` in ``grumo.yaml`` changes zero application code.
 """
 
 from __future__ import annotations
@@ -20,9 +20,9 @@ from collections.abc import Sequence
 from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, Any
 
-from voodoo.storage.database import Migration, register_framework_migration
-from voodoo.storage.database.postgres import PostgresDatabase
-from voodoo.storage.queue.interfaces import (
+from grumo.storage.database import Migration, register_framework_migration
+from grumo.storage.database.postgres import PostgresDatabase
+from grumo.storage.queue.interfaces import (
     ACTIVE_STATUSES,
     QueueCapabilities,
     QueueStats,
@@ -371,6 +371,6 @@ class PostgresQueue:
 
 
 if TYPE_CHECKING:
-    from voodoo.storage.queue.interfaces import VoodooQueue
+    from grumo.storage.queue.interfaces import GrumoQueue
 
-    _protocol_check: VoodooQueue = PostgresQueue(PostgresDatabase("check"))
+    _protocol_check: GrumoQueue = PostgresQueue(PostgresDatabase("check"))

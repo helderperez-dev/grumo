@@ -1,4 +1,4 @@
-"""Voodoo Store-backed durable scheduler adapter.
+"""Grumo Store-backed durable scheduler adapter.
 
 The adapter preserves the existing Framework schedule-management surface while
 letting Store own the critical temporal-work transition. Native Store ticks
@@ -13,10 +13,10 @@ import json
 from datetime import UTC, datetime
 from typing import Any, cast
 
-from voodoo.core.errors import ConfigurationError
-from voodoo.runtime.store import get_active_runtime_store
+from grumo.core.errors import ConfigurationError
+from grumo.runtime.store import get_active_runtime_store
 
-_META_PREFIX = b"voodoo:scheduler:meta:"
+_META_PREFIX = b"grumo:scheduler:meta:"
 _META_COLLECTION = b"runtime.scheduler_metadata"
 _SCHEMA_KEY = "_schema_version"
 _SCHEMA_VERSION = 1
@@ -59,22 +59,22 @@ def _job_payload(payload: Any) -> bytes:
     ).encode("utf-8")
 
 
-class VoodooStoreScheduleStore:
+class GrumoStoreScheduleStore:
     """Framework schedule facade over the active application RuntimeStore."""
 
-    provider = "voodoo"
+    provider = "grumo"
     creates_jobs_natively = True
 
     def __init__(self) -> None:
         runtime_store = get_active_runtime_store()
         if runtime_store is None:
             raise ConfigurationError(
-                "The Voodoo Store scheduler requires the active application RuntimeStore."
+                "The Grumo Store scheduler requires the active application RuntimeStore."
             )
         provider = runtime_store.provider or runtime_store.start()
         if provider is None:
             raise ConfigurationError(
-                "The Voodoo Store scheduler cannot run while Store is disabled."
+                "The Grumo Store scheduler cannot run while Store is disabled."
             )
         native = getattr(provider, "native", None)
         if native is None:
@@ -84,7 +84,7 @@ class VoodooStoreScheduleStore:
         missing = [name for name in _REQUIRED_API if not hasattr(native, name)]
         if missing:
             raise ConfigurationError(
-                "The installed voodoo-store binding is too old for the native "
+                "The installed grumo-store binding is too old for the native "
                 "scheduler; missing: " + ", ".join(missing)
             )
         self._store = native
@@ -200,7 +200,7 @@ class VoodooStoreScheduleStore:
     def _metadata_id_or_none(raw: bytes) -> str | None:
         """Return a metadata ID, ignoring malformed legacy entries."""
         try:
-            return str(VoodooStoreScheduleStore._decode_metadata(raw)["id"])
+            return str(GrumoStoreScheduleStore._decode_metadata(raw)["id"])
         except ValueError as error:
             if str(error).startswith("unsupported scheduler metadata schema"):
                 raise
@@ -265,7 +265,7 @@ class VoodooStoreScheduleStore:
             )
             if current_next != next_run_at:
                 raise ConfigurationError(
-                    "The active voodoo-store binding cannot reposition an existing "
+                    "The active grumo-store binding cannot reposition an existing "
                     "schedule cursor yet. Upgrade the Store binding before using "
                     "resume(..., next_run_at=...)."
                 )
@@ -318,7 +318,7 @@ class VoodooStoreScheduleStore:
             return None
         metadata = self._decode_metadata(raw)
         if metadata.get("id") != schedule_id:
-            raise RuntimeError("Voodoo Store scheduler metadata hash collision")
+            raise RuntimeError("Grumo Store scheduler metadata hash collision")
         return metadata
 
     @staticmethod
@@ -374,4 +374,4 @@ class VoodooStoreScheduleStore:
         }
 
 
-__all__ = ["VoodooStoreScheduleStore"]
+__all__ = ["GrumoStoreScheduleStore"]

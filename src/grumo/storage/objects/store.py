@@ -1,6 +1,6 @@
-"""Voodoo Store-backed object storage.
+"""Grumo Store-backed object storage.
 
-Object bytes are stored through Voodoo Store's native content-addressed Object
+Object bytes are stored through Grumo Store's native content-addressed Object
 subsystem. Public object keys are durable named references. Metadata is itself a
 content-addressed Object under a separate reference namespace, keeping the
 adapter fully on native Object primitives without a parallel KV index.
@@ -16,10 +16,10 @@ from datetime import UTC, datetime
 from typing import Any, cast
 from urllib.parse import quote
 
-from voodoo.core.errors import ConfigurationError
-from voodoo.observability import store_operation
-from voodoo.runtime.store import acquire_runtime_store
-from voodoo.storage.objects.interfaces import (
+from grumo.core.errors import ConfigurationError
+from grumo.observability import store_operation
+from grumo.runtime.store import acquire_runtime_store
+from grumo.storage.objects.interfaces import (
     ObjectStoreCapabilities,
     validate_content_type,
     validate_object_key,
@@ -73,10 +73,10 @@ def _validate_object_metadata(metadata: Any, key: str) -> dict[str, Any]:
     return cast(dict[str, Any], metadata)
 
 
-class VoodooStoreObjectStore:
-    """Object storage backed by native content-addressed Voodoo Store Objects."""
+class GrumoStoreObjectStore:
+    """Object storage backed by native content-addressed Grumo Store Objects."""
 
-    provider = "voodoo"
+    provider = "grumo"
 
     def capabilities(self) -> ObjectStoreCapabilities:
         return ObjectStoreCapabilities(
@@ -91,7 +91,7 @@ class VoodooStoreObjectStore:
         runtime = acquire_runtime_store()
         provider = runtime.provider or runtime.start()
         if provider is None:
-            raise ConfigurationError("Voodoo Store is disabled for object storage")
+            raise ConfigurationError("Grumo Store is disabled for object storage")
         native = getattr(provider, "native", None)
         required = (
             "resolve_object_ref",
@@ -104,7 +104,7 @@ class VoodooStoreObjectStore:
         ]
         if missing:
             raise ConfigurationError(
-                "Voodoo Store 0.3+ native Objects are required for object storage. "
+                "Grumo Store 0.3+ native Objects are required for object storage. "
                 f"Missing Store capabilities: {', '.join(missing)}."
             )
         return native
@@ -138,7 +138,7 @@ class VoodooStoreObjectStore:
             tx = store.transaction()
             if not hasattr(tx, "put_linked_object"):
                 raise ConfigurationError(
-                    "Voodoo Store 0.3+ cross-domain Object transactions are required."
+                    "Grumo Store 0.3+ cross-domain Object transactions are required."
                 )
             tx.put_linked_object(payload, _DATA_NAMESPACE, name)
             tx.put_linked_object(encoded_metadata, _META_NAMESPACE, name)
@@ -252,7 +252,7 @@ class VoodooStoreObjectStore:
         del expires_in
         if not self.exists(key):
             raise KeyError(f"object {key!r} not found")
-        return f"voodoo://objects/{quote(key, safe='/')}"
+        return f"grumo://objects/{quote(key, safe='/')}"
 
     def close(self) -> None:
         """Lifecycle is owned centrally by RuntimeStore."""

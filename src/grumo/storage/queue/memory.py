@@ -1,7 +1,7 @@
 """In-memory queue provider — the legacy ``asyncio.Queue`` broker.
 
 Kept for ephemeral, non-critical work where durability is not required.
-Selected via ``VOODOO_QUEUE_PROVIDER=memory``. Not the default.
+Selected via ``GRUMO_QUEUE_PROVIDER=memory``. Not the default.
 """
 
 from __future__ import annotations
@@ -11,8 +11,8 @@ from collections.abc import Sequence
 from datetime import UTC, datetime, timedelta
 from typing import Any, cast
 
-from voodoo.adapters.capabilities import require
-from voodoo.storage.queue.interfaces import (
+from grumo.adapters.capabilities import require
+from grumo.storage.queue.interfaces import (
     QueueCapabilities,
     QueueStats,
     TaskRecord,

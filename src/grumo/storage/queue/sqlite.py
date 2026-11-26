@@ -1,4 +1,4 @@
-"""SQLite implementation of the Voodoo queue capability (spec §12).
+"""SQLite implementation of the Grumo queue capability (spec §12).
 
 Tasks are rows in the ``tasks`` table; claiming is a single atomic
 ``UPDATE ... WHERE id = (SELECT ...) RETURNING`` statement, so concurrent
@@ -14,9 +14,9 @@ from collections.abc import Sequence
 from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, Any
 
-from voodoo.storage.database import Migration, register_framework_migration
-from voodoo.storage.database.sqlite import SQLiteDatabase
-from voodoo.storage.queue.interfaces import (
+from grumo.storage.database import Migration, register_framework_migration
+from grumo.storage.database.sqlite import SQLiteDatabase
+from grumo.storage.queue.interfaces import (
     ACTIVE_STATUSES,
     QueueCapabilities,
     QueueStats,
@@ -361,6 +361,6 @@ class SQLiteQueue:
 
 
 if TYPE_CHECKING:
-    from voodoo.storage.queue.interfaces import VoodooQueue
+    from grumo.storage.queue.interfaces import GrumoQueue
 
-    _protocol_check: VoodooQueue = SQLiteQueue(SQLiteDatabase("check"))
+    _protocol_check: GrumoQueue = SQLiteQueue(SQLiteDatabase("check"))

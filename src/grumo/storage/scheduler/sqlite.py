@@ -13,8 +13,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from voodoo.storage.database.interfaces import Migration
-from voodoo.storage.database.sqlite import register_framework_migration
+from grumo.storage.database.interfaces import Migration
+from grumo.storage.database.sqlite import register_framework_migration
 
 __all__ = ["SQLiteScheduleStore", "SCHEDULES_MIGRATION"]
 

@@ -1,10 +1,10 @@
-"""Voodoo queue capability interface (spec §12).
+"""Grumo queue capability interface (spec §12).
 
 Background work is a *durable* runtime concept: tasks are records that
 survive process restarts, are claimed transactionally under a lease, and
 retry with backoff until they succeed or exhaust their attempt budget.
 The in-memory ``asyncio.Queue`` broker remains available as an explicit
-``VOODOO_QUEUE_PROVIDER=memory`` choice for ephemeral, non-critical work.
+``GRUMO_QUEUE_PROVIDER=memory`` choice for ephemeral, non-critical work.
 """
 
 from __future__ import annotations
@@ -16,7 +16,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Protocol
 
-from voodoo.adapters.capabilities import QueueCapabilities
+from grumo.adapters.capabilities import QueueCapabilities
 
 __all__ = [
     "ACTIVE_STATUSES",
@@ -24,7 +24,7 @@ __all__ = [
     "QueueStats",
     "TaskRecord",
     "TaskStatus",
-    "VoodooQueue",
+    "GrumoQueue",
     "retry_delay",
 ]
 
@@ -144,7 +144,7 @@ class QueueStats:
         }
 
 
-class VoodooQueue(Protocol):
+class GrumoQueue(Protocol):
     """Backend-neutral durable task queue."""
 
     provider: str
@@ -248,6 +248,6 @@ __all__ = [
     "QueueStats",
     "TaskRecord",
     "TaskStatus",
-    "VoodooQueue",
+    "GrumoQueue",
     "retry_delay",
 ]

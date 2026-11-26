@@ -1,6 +1,6 @@
 """S3-compatible object store (Sprint 6, hardened in Sprint 12).
 
-``S3ObjectStore`` implements the ``VoodooObjectStore`` capability over any
+``S3ObjectStore`` implements the ``GrumoObjectStore`` capability over any
 S3-compatible endpoint (AWS S3, MinIO, R2, …). It extracts the S3 logic that
 previously lived inside ``StorageManager``, keeping that class a thin facade.
 
@@ -33,9 +33,9 @@ try:
 except ImportError:  # pragma: no cover - exercised when boto3 is absent
     boto3 = None
 
-from voodoo.observability import store_operation
-from voodoo.security.redaction import redact_string
-from voodoo.storage.objects.interfaces import (
+from grumo.observability import store_operation
+from grumo.security.redaction import redact_string
+from grumo.storage.objects.interfaces import (
     ObjectStoreCapabilities,
     validate_chunk_size,
     validate_content_type,
@@ -76,8 +76,8 @@ class S3ObjectStore:
     is prepended to every key, mirroring the old ``bucket/path`` scheme.
 
     Constructor accepts explicit values and falls back to environment
-    variables (``VOODOO_S3_BUCKET``, ``VOODOO_S3_ENDPOINT``,
-    ``VOODOO_S3_KEY``, ``VOODOO_S3_SECRET``, ``AWS_REGION`` /
+    variables (``GRUMO_S3_BUCKET``, ``GRUMO_S3_ENDPOINT``,
+    ``GRUMO_S3_KEY``, ``GRUMO_S3_SECRET``, ``AWS_REGION`` /
     ``AWS_DEFAULT_REGION``).
     """
 
@@ -94,10 +94,10 @@ class S3ObjectStore:
         root_prefix: str = "",
         multipart_threshold: int = MULTIPART_THRESHOLD,
     ) -> None:
-        self.bucket = bucket or os.getenv("VOODOO_S3_BUCKET")
-        self.endpoint = endpoint or os.getenv("VOODOO_S3_ENDPOINT")
-        self.key = key or os.getenv("VOODOO_S3_KEY")
-        self.secret = secret or os.getenv("VOODOO_S3_SECRET")
+        self.bucket = bucket or os.getenv("GRUMO_S3_BUCKET")
+        self.endpoint = endpoint or os.getenv("GRUMO_S3_ENDPOINT")
+        self.key = key or os.getenv("GRUMO_S3_KEY")
+        self.secret = secret or os.getenv("GRUMO_S3_SECRET")
         self.region = (
             region or os.getenv("AWS_REGION") or os.getenv("AWS_DEFAULT_REGION")
         )
@@ -134,8 +134,8 @@ class S3ObjectStore:
     def _require_client(self) -> Any:
         if not self.use_s3 or self.s3_client is None:
             raise RuntimeError(
-                "S3ObjectStore is not configured (set VOODOO_S3_BUCKET, "
-                "VOODOO_S3_KEY, VOODOO_S3_SECRET, VOODOO_S3_ENDPOINT)"
+                "S3ObjectStore is not configured (set GRUMO_S3_BUCKET, "
+                "GRUMO_S3_KEY, GRUMO_S3_SECRET, GRUMO_S3_ENDPOINT)"
             )
         return self.s3_client
 

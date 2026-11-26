@@ -1,6 +1,6 @@
 """Local object store (Sprint 6).
 
-Objects live under ``.voodoo/objects/`` with sharded paths (first two
+Objects live under ``.grumo/objects/`` with sharded paths (first two
 chars of the content hash) plus a metadata table for size, content type,
 and checksum.
 """
@@ -15,8 +15,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, cast
 
-from voodoo.observability import store_operation
-from voodoo.storage.objects.interfaces import (
+from grumo.observability import store_operation
+from grumo.storage.objects.interfaces import (
     ObjectStoreCapabilities,
     validate_chunk_size,
     validate_content_type,
@@ -32,7 +32,7 @@ class LocalObjectStore:
 
     provider = "local"
 
-    def __init__(self, root: str | Path = ".voodoo/objects") -> None:
+    def __init__(self, root: str | Path = ".grumo/objects") -> None:
         self.root = Path(root)
         self.root.mkdir(parents=True, exist_ok=True)
         self._db_path = self.root / "metadata.db"

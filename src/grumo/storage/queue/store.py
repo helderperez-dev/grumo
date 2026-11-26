@@ -1,7 +1,7 @@
-"""Voodoo Store implementation of the durable queue contract.
+"""Grumo Store implementation of the durable queue contract.
 
 The Runtime owns the Store lifecycle. This adapter projects native Store Jobs
-into the existing :class:`VoodooQueue` API without exposing ``voodoo_store``
+into the existing :class:`GrumoQueue` API without exposing ``grumo_store``
 objects to application code or opening a competing ``.vstore`` writer.
 """
 
@@ -12,11 +12,11 @@ from collections.abc import Sequence
 from datetime import UTC, datetime
 from typing import Any
 
-from voodoo.adapters.capabilities import QueueCapabilities
-from voodoo.core.errors import ConfigurationError
-from voodoo.observability import store_span
-from voodoo.runtime.store import acquire_runtime_store
-from voodoo.storage.queue.interfaces import QueueStats, TaskRecord, TaskStatus
+from grumo.adapters.capabilities import QueueCapabilities
+from grumo.core.errors import ConfigurationError
+from grumo.observability import store_span
+from grumo.runtime.store import acquire_runtime_store
+from grumo.storage.queue.interfaces import QueueStats, TaskRecord, TaskStatus
 
 _REQUIRED_JOB_API = (
     "submit_job",
@@ -50,13 +50,13 @@ def _from_ms(value: Any) -> datetime | None:
 def _public_id(job_id: bytes) -> int:
     raw = bytes(job_id)
     if len(raw) != 16:
-        raise ValueError("Voodoo Store job ids must be exactly 16 bytes")
+        raise ValueError("Grumo Store job ids must be exactly 16 bytes")
     return int.from_bytes(raw, "big", signed=False)
 
 
 def _native_id(task_id: int) -> bytes:
     if task_id < 0 or task_id >= 1 << 128:
-        raise ValueError("task id is outside the 128-bit Voodoo Store job id range")
+        raise ValueError("task id is outside the 128-bit Grumo Store job id range")
     return int(task_id).to_bytes(16, "big", signed=False)
 
 
@@ -75,10 +75,10 @@ def _status(job: dict[str, Any]) -> TaskStatus:
     return TaskStatus.FAILED
 
 
-class VoodooStoreQueue:
+class GrumoStoreQueue:
     """Durable background work backed by the process-shared Runtime Store."""
 
-    provider = "voodoo"
+    provider = "grumo"
 
     def __init__(self) -> None:
         self._native: Any | None = None
@@ -89,7 +89,7 @@ class VoodooStoreQueue:
         provider = runtime_store.provider or runtime_store.start()
         if provider is None:
             raise ConfigurationError(
-                "The 'voodoo' queue provider cannot run while Voodoo Store is disabled."
+                "The 'grumo' queue provider cannot run while Grumo Store is disabled."
             )
         native = getattr(provider, "native", None)
         if native is None:
@@ -100,15 +100,15 @@ class VoodooStoreQueue:
         if missing:
             names = ", ".join(missing)
             raise ConfigurationError(
-                "The installed voodoo-store binding is too old for the native queue "
-                f"provider; missing: {names}. Upgrade voodoo-store before setting "
-                "queue.provider: voodoo."
+                "The installed grumo-store binding is too old for the native queue "
+                f"provider; missing: {names}. Upgrade grumo-store before setting "
+                "queue.provider: grumo."
             )
         self._native = native
 
     def _store(self) -> Any:
         if self._native is None:
-            raise RuntimeError("VoodooStoreQueue.setup() must be called before use")
+            raise RuntimeError("GrumoStoreQueue.setup() must be called before use")
         return self._native
 
     async def enqueue(
@@ -150,7 +150,7 @@ class VoodooStoreQueue:
             )
             job = store.get_job(job_id)
         if job is None:
-            raise RuntimeError("Voodoo Store submitted a job that cannot be read back")
+            raise RuntimeError("Grumo Store submitted a job that cannot be read back")
         return self._record(job)
 
     async def claim(
@@ -354,4 +354,4 @@ class VoodooStoreQueue:
         )
 
 
-__all__ = ["VoodooStoreQueue", "_native_id", "_public_id"]
+__all__ = ["GrumoStoreQueue", "_native_id", "_public_id"]

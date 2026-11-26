@@ -1,12 +1,12 @@
 """Redis queue provider (Sprint 13).
 
-``RedisQueue`` implements the ``VoodooQueue`` capability over a Redis
+``RedisQueue`` implements the ``GrumoQueue`` capability over a Redis
 server using **sorted sets + per-task hashes + atomic Lua scripts** (not
 streams/consumer groups — streams cannot honor the priority ordering,
 delayed delivery, idempotency dedup, or per-status stats/list that the
 ``QueueContractTests`` suite requires).
 
-Data model (all keys under the ``voodoo:queue:`` namespace):
+Data model (all keys under the ``grumo:queue:`` namespace):
 
 - ``seq`` — INCR counter producing task ids.
 - ``task:{id}`` — hash holding all 16 ``TaskRecord`` fields (payload as JSON,
@@ -35,8 +35,8 @@ from collections.abc import Iterable, Sequence
 from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, Any, cast
 
-from voodoo.core.errors import ConfigurationError
-from voodoo.storage.queue.interfaces import (
+from grumo.core.errors import ConfigurationError
+from grumo.storage.queue.interfaces import (
     QueueCapabilities,
     QueueStats,
     TaskRecord,
@@ -394,11 +394,11 @@ class RedisQueue:
         if _redis is None:
             raise ConfigurationError(
                 "The redis queue provider requires the [redis] extra: "
-                "pip install 'voodoo-framework[redis]' (redis)."
+                "pip install 'grumo-framework[redis]' (redis)."
             )
         self.url = url
         self._client = _redis.asyncio.Redis.from_url(url, decode_responses=True)
-        self._ns = "voodoo:queue:"
+        self._ns = "grumo:queue:"
 
     # -- lifecycle -----------------------------------------------------------
 
@@ -657,6 +657,6 @@ class RedisQueue:
 
 
 if TYPE_CHECKING:
-    from voodoo.storage.queue.interfaces import VoodooQueue
+    from grumo.storage.queue.interfaces import GrumoQueue
 
-    _protocol_check: VoodooQueue = RedisQueue()
+    _protocol_check: GrumoQueue = RedisQueue()
