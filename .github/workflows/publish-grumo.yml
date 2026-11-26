@@ -3,6 +3,12 @@ name: Publish Grumo (Trusted Publishing)
 # Future release workflow. Cannot publish from the old Voodoo repository:
 # new package names must first pass the migration and publication gates.
 on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Exact version in source"
+        required: true
+        type: string
   push:
     tags:
       - "grumo-v*"
@@ -13,7 +19,7 @@ permissions:
 jobs:
   validate:
     name: Validate Grumo identity and source
-    if: github.repository == 'helderperez-dev/grumo'
+    if: github.repository == 'helderperez-dev/grumo' && (github.event_name == 'push' || github.ref == 'refs/heads/main')
     runs-on: ubuntu-24.04
     outputs:
       version: ${{ steps.identity.outputs.version }}
@@ -23,6 +29,8 @@ jobs:
         id: identity
         env:
           REF_NAME: ${{ github.ref_name }}
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_VERSION: ${{ inputs.version }}
         run: |
           python - <<'PY'
           import os
@@ -33,16 +41,20 @@ jobs:
               project = tomllib.load(fh)
           assert project["project"]["name"] == "grumo", "PyPI distribution rename incomplete"
           assert project["project"]["scripts"]["grumo"] == "grumo.cli:app"
-          assert project["tool"]["setuptools"]["dynamic"]["version"]["attr"] == "grumo.__version__"
+          assert project["tool"]["setuptools"]["dynamic"]["version"]["attr"] == "voodoo.__version__"
           assert Path("src/grumo/__init__.py").exists(), "Python import rename incomplete"
           assert "grumo-store" in " ".join(project["project"]["dependencies"])
           import ast
-          version_file = ast.parse(Path("src/grumo/__init__.py").read_text())
+          version_file = ast.parse(Path("src/voodoo/__init__.py").read_text())
           version = next(node.value.value for node in version_file.body
               if isinstance(node, ast.Assign)
               and any(isinstance(t, ast.Name) and t.id == "__version__" for t in node.targets)
               and isinstance(node.value, ast.Constant))
-          assert os.environ["REF_NAME"] == f"grumo-v{version}", "Release tag/version mismatch"
+          if os.environ["EVENT_NAME"] == "workflow_dispatch":
+              assert os.environ["INPUT_VERSION"] == version, "Input/version mismatch"
+              assert os.environ["REF_NAME"] == "main", "Manual release must use main"
+          else:
+              assert os.environ["REF_NAME"] == f"grumo-v{version}", "Release tag/version mismatch"
           with open(os.environ["GITHUB_OUTPUT"], "a") as handle:
               handle.write(f"version={version}\n")
           PY
@@ -69,12 +81,12 @@ jobs:
         run: |
           uv venv --python 3.12 /tmp/grumo-wheel-check
           uv pip install --python /tmp/grumo-wheel-check/bin/python dist/*.whl
-          /tmp/grumo-wheel-check/bin/python -c "import grumo, grumo_store"
+          /tmp/grumo-wheel-check/bin/python -c "import grumo, grumo_store, voodoo; from importlib.metadata import version; assert version('grumo') == grumo.__version__ == voodoo.__version__"
           /tmp/grumo-wheel-check/bin/grumo --help
 
           uv venv --python 3.12 /tmp/grumo-sdist-check
           uv pip install --python /tmp/grumo-sdist-check/bin/python dist/*.tar.gz
-          /tmp/grumo-sdist-check/bin/python -c "import grumo, grumo_store"
+          /tmp/grumo-sdist-check/bin/python -c "import grumo, grumo_store, voodoo; from importlib.metadata import version; assert version('grumo') == grumo.__version__ == voodoo.__version__"
           /tmp/grumo-sdist-check/bin/grumo --help
       - uses: actions/upload-artifact@v4
         with:
