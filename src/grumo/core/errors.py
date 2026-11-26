@@ -1,48 +1,48 @@
-"""Voodoo error hierarchy.
+"""Grumo error hierarchy.
 
-Every framework error derives from `VoodooError` so applications can catch the
+Every framework error derives from `GrumoError` so applications can catch the
 whole framework surface with one exception type. Subsystems may extend these
-(e.g. `voodoo.auth.AuthError`) without introducing new roots.
+(e.g. `grumo.auth.AuthError`) without introducing new roots.
 """
 
 
-class VoodooError(Exception):
-    """Base class for all Voodoo framework errors."""
+class GrumoError(Exception):
+    """Base class for all Grumo framework errors."""
 
 
-class ConfigurationError(VoodooError):
+class ConfigurationError(GrumoError):
     """Invalid or missing configuration (env vars, provider keys, options)."""
 
 
-class RoutingError(VoodooError):
+class RoutingError(GrumoError):
     """Route registration or path resolution failure."""
 
 
-class ComponentError(VoodooError):
+class ComponentError(GrumoError):
     """Component construction or rendering failure."""
 
 
-class StateError(VoodooError):
+class StateError(GrumoError):
     """Reactive state misuse or propagation failure."""
 
 
-class EventError(VoodooError):
+class EventError(GrumoError):
     """Browser/UI event handling failure."""
 
 
-class MeshError(VoodooError):
+class MeshError(GrumoError):
     """Mesh event or remote-call failure."""
 
 
-class MCPError(VoodooError):
+class MCPError(GrumoError):
     """MCP protocol or tool-exposure failure."""
 
 
-class DataError(VoodooError):
+class DataError(GrumoError):
     """Database or model operation failure."""
 
 
-class AuthError(VoodooError):
+class AuthError(GrumoError):
     """Authentication or authorization failure."""
 
     def __init__(self, message: str, status_code: int = 401):
@@ -51,9 +51,9 @@ class AuthError(VoodooError):
         self.status_code = status_code
 
 
-class AgentError(VoodooError):
+class AgentError(GrumoError):
     """Agent execution failure."""
 
 
-class ToolError(VoodooError):
+class ToolError(GrumoError):
     """Tool registration or execution failure."""

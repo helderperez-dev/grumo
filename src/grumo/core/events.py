@@ -1,8 +1,8 @@
-"""Compatibility alias for :mod:`voodoo.ui.events`."""
+"""Compatibility alias for :mod:`grumo.ui.events`."""
 
 import sys
 
-from voodoo.ui import events
+from grumo.ui import events
 
 WebSocketManager = events.WebSocketManager
 event = events.event

@@ -8,7 +8,7 @@ import os
 from datetime import datetime
 from typing import Any
 
-from voodoo.security.redaction import redact_string
+from grumo.security.redaction import redact_string
 
 logger = logging.getLogger(__name__)
 

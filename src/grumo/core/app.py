@@ -1,4 +1,4 @@
-"""The Voodoo application object (:class:`App`) and the underlying factory.
+"""The Grumo application object (:class:`App`) and the underlying factory.
 
 ``App`` is the central runtime facade: it wraps the existing ``create_app``
 machinery, exposes a dev-server entry point with a clean startup banner, and
@@ -24,10 +24,10 @@ from starlette.responses import JSONResponse, Response
 from starlette.routing import BaseRoute, Mount, Route, WebSocketRoute
 from starlette.staticfiles import StaticFiles
 
-from voodoo.core.sitemap import _generate_robots_txt, _generate_sitemap_xml
-from voodoo.routing.pages import call_page, page_registry
-from voodoo.security.redaction import redact_string
-from voodoo.ui.events import websocket_endpoint
+from grumo.core.sitemap import _generate_robots_txt, _generate_sitemap_xml
+from grumo.routing.pages import call_page, page_registry
+from grumo.security.redaction import redact_string
+from grumo.ui.events import websocket_endpoint
 
 logger = logging.getLogger(__name__)
 
@@ -82,7 +82,7 @@ class ObservationHandle:
 
 
 class App:
-    """Central Voodoo application."""
+    """Central Grumo application."""
 
     def __init__(
         self,
@@ -95,17 +95,17 @@ class App:
         self._starlette: Starlette | None = None
         self._plugins: list[Callable[[App], Any]] = []
         if runtime is None:
-            from voodoo.runtime import Runtime
+            from grumo.runtime import Runtime
 
             runtime = Runtime()
         self.runtime = runtime
         if theme is not None:
             if isinstance(theme, str):
-                from voodoo.ui.styles.presets import activate_theme
+                from grumo.ui.styles.presets import activate_theme
 
                 activate_theme(theme)
             else:
-                from voodoo.ui.styles.theme import set_theme
+                from grumo.ui.styles.theme import set_theme
 
                 set_theme(theme)
 
@@ -123,7 +123,7 @@ class App:
 
     @property
     def routes(self) -> list[BaseRoute]:
-        """All registered routes (consumed by ``voodoo routes``)."""
+        """All registered routes (consumed by ``grumo routes``)."""
         return list(self.starlette.routes)
 
     @property
@@ -162,7 +162,7 @@ class App:
         **kwargs: Any,
     ) -> Any:
         """Register an explicit Goal or decorate a desired-state predicate."""
-        from voodoo.runtime.agency import Goal
+        from grumo.runtime.agency import Goal
 
         observed_ids = tuple(
             item.resource_id if isinstance(item, ObservationHandle) else item
@@ -209,8 +209,8 @@ class App:
         name: str | None = None,
     ) -> Any:
         """Register capability authority or decorate its compute implementation."""
-        from voodoo.primitives.capability import Capability
-        from voodoo.runtime.planner import ComputeParticipant
+        from grumo.primitives.capability import Capability
+        from grumo.runtime.planner import ComputeParticipant
 
         if isinstance(capability, Capability):
             self.runtime.engine.capabilities.register(capability)
@@ -250,13 +250,13 @@ class App:
         reload: bool = False,
         **uvicorn_kwargs: Any,
     ) -> None:
-        """Start the development server with the Voodoo startup banner."""
+        """Start the development server with the Grumo startup banner."""
 
         import uvicorn
 
-        from voodoo import __version__
-        from voodoo.config import config
-        from voodoo.core.errors import ConfigurationError
+        from grumo import __version__
+        from grumo.config import config
+        from grumo.core.errors import ConfigurationError
 
         host = host or config.host
         port = port if port is not None else config.port
@@ -264,7 +264,7 @@ class App:
         if reload:
             raise ConfigurationError(
                 "app.run(reload=True) requires an import string. Use "
-                "`voodoo dev` or uvicorn.run('main:app', reload=True)."
+                "`grumo dev` or uvicorn.run('main:app', reload=True)."
             )
 
         self._print_banner(host, port, __version__)
@@ -273,7 +273,7 @@ class App:
     def _print_banner(self, host: str, port: int, version: str) -> None:
         display_host = "localhost" if host in ("0.0.0.0", "::", "") else host
         local_url = f"http://{display_host}:{port}"
-        lines = [f"  Voodoo v{version}", ""]
+        lines = [f"  Grumo v{version}", ""]
         lines.append(f"  ➜  Local:   {local_url}")
         lines.append(f"  ➜  Docs:    {local_url}/docs")
         ip = _local_ip()
@@ -298,7 +298,7 @@ def _build_probe_routes() -> list[BaseRoute]:
 
     async def healthz(request: Request) -> JSONResponse:
         """Liveness probe: process routing is available."""
-        from voodoo import __version__
+        from grumo import __version__
 
         return JSONResponse({"status": "ok", "version": __version__})
 
@@ -332,14 +332,14 @@ def _build_probe_routes() -> list[BaseRoute]:
                 },
                 status_code=503,
             )
-        from voodoo.status import _redact_store_details
+        from grumo.status import _redact_store_details
 
         safe_store_details = _redact_store_details(
             health.details if health is not None else {}
         )
         if not isinstance(safe_store_details, dict):
             safe_store_details = {}
-        from voodoo.data.base import migration_health
+        from grumo.data.base import migration_health
 
         migration = migration_health()
         migration_required = migration["status"] == "migration_required"
@@ -389,11 +389,11 @@ def _build_probe_routes() -> list[BaseRoute]:
 def _build_routes(
     app_dir: str, cwd: str, config: Any
 ) -> tuple[list[BaseRoute], list[Any]]:
-    from voodoo.mesh import mesh
+    from grumo.mesh import mesh
 
     routes: list[BaseRoute] = [
-        WebSocketRoute("/_voodoo_ws", websocket_endpoint),
-        WebSocketRoute("/voodoo/mesh/ws", mesh._handle_websocket),
+        WebSocketRoute("/_grumo_ws", websocket_endpoint),
+        WebSocketRoute("/grumo/mesh/ws", mesh._handle_websocket),
     ]
 
     routes.extend(_build_probe_routes())
@@ -427,15 +427,15 @@ def _build_routes(
     _scan_pages_directory(app_dir, routes)
     for name in ("models", "workers", "api"):
         _load_app_module(app_dir, name)
-    from voodoo.routing.api import api as voodoo_api
+    from grumo.routing.api import api as grumo_api
 
-    routes.extend(voodoo_api.routes)
+    routes.extend(grumo_api.routes)
 
     edge_gateway: list[Any] = []
     if config.edge.enabled and config.edge.http_enabled:
-        from voodoo.edge import DeviceGateway, InMemoryDeviceStore
-        from voodoo.edge.http import build_edge_routes
-        from voodoo.runtime.execution.engine import engine as runtime_engine
+        from grumo.edge import DeviceGateway, InMemoryDeviceStore
+        from grumo.edge.http import build_edge_routes
+        from grumo.runtime.execution.engine import engine as runtime_engine
 
         gateway = DeviceGateway(InMemoryDeviceStore(), runtime_engine)
         edge_gateway.append(gateway)
@@ -452,30 +452,30 @@ def _configure_execution_store(
     config: Any, runtime_engine: Any
 ) -> tuple[Any, str | None]:
     provider = config.database.provider.lower()
-    if provider == "voodoo":
-        from voodoo.storage.execution import VoodooStoreExecutionStore
+    if provider == "grumo":
+        from grumo.storage.execution import GrumoStoreExecutionStore
 
-        store = VoodooStoreExecutionStore()
+        store = GrumoStoreExecutionStore()
         schedule_path = None
     elif provider == "postgres":
-        from voodoo.storage.execution import PostgresExecutionStore
+        from grumo.storage.execution import PostgresExecutionStore
 
         store = PostgresExecutionStore(
-            config.database.url or os.getenv("VOODOO_DATABASE_URL", "")
+            config.database.url or os.getenv("GRUMO_DATABASE_URL", "")
         )
-        schedule_path = ".voodoo/state/schedules.db"
+        schedule_path = ".grumo/state/schedules.db"
     elif provider == "sqlite":
-        from voodoo.storage.execution import SQLiteExecutionStore
+        from grumo.storage.execution import SQLiteExecutionStore
 
-        path = config.db_path.replace(":memory:", ".voodoo/state/data.db")
+        path = config.db_path.replace(":memory:", ".grumo/state/data.db")
         store = SQLiteExecutionStore(path)
         schedule_path = path.replace("data.db", "schedules.db")
     else:
-        from voodoo.core.errors import ConfigurationError
+        from grumo.core.errors import ConfigurationError
 
         raise ConfigurationError(
             f"Unknown execution database provider '{config.database.provider}'. "
-            "Use 'voodoo' (default), 'sqlite', or 'postgres'."
+            "Use 'grumo' (default), 'sqlite', or 'postgres'."
         )
     runtime_engine.use_store(store)
     return store, schedule_path
@@ -487,15 +487,15 @@ async def _start_mqtt(
     if not (config.edge.enabled and config.edge.mqtt_enabled):
         return None
     try:
-        from voodoo.edge import DeviceGateway, VoodooStoreDeviceStore
-        from voodoo.edge.mqtt import EdgeMQTTTransport
-        from voodoo.runtime.execution.engine import engine as runtime_engine
+        from grumo.edge import DeviceGateway, GrumoStoreDeviceStore
+        from grumo.edge.mqtt import EdgeMQTTTransport
+        from grumo.runtime.execution.engine import engine as runtime_engine
     except ImportError:
         return None
     gateway = (
         edge_gateway[0]
         if edge_gateway
-        else DeviceGateway(VoodooStoreDeviceStore(application_store), runtime_engine)
+        else DeviceGateway(GrumoStoreDeviceStore(application_store), runtime_engine)
     )
     transport = EdgeMQTTTransport(
         gateway,
@@ -537,7 +537,7 @@ async def _cleanup_lifecycle_resources(
         # the original lifecycle failure with a warning.
         await asyncio.gather(worker_task, return_exceptions=True)
 
-    from voodoo.data import close_db
+    from grumo.data import close_db
 
     await close_db()
     if scheduler is not None:
@@ -549,20 +549,20 @@ async def _cleanup_lifecycle_resources(
         close_store()
     runtime_engine.use_store(None)
     if store_bound:
-        from voodoo.data.store_backend import bind_runtime_store
+        from grumo.data.store_backend import bind_runtime_store
 
         bind_runtime_store(None)
     if application_store is not None:
         application_store.stop()
-    from voodoo.ui.events import ws_manager
+    from grumo.ui.events import ws_manager
 
     ws_manager.reset()
 
 
 def create_app(app_dir: str = "app", *, runtime: Any = None) -> Starlette:
     """Build a fully wired Starlette application."""
-    from voodoo.config import get_config, validate_production_config
-    from voodoo.ui.styles.presets import activate_theme
+    from grumo.config import get_config, validate_production_config
+    from grumo.ui.styles.presets import activate_theme
 
     config = get_config()
     validate_production_config(config)
@@ -573,11 +573,11 @@ def create_app(app_dir: str = "app", *, runtime: Any = None) -> Starlette:
     activate_theme(config.theme.preset, project_root=cwd, mode=config.theme.mode)
     routes, edge_gateway = _build_routes(app_dir, cwd, config)
 
-    from voodoo.auth import AuthMiddleware
-    from voodoo.i18n import I18nMiddleware
-    from voodoo.observability import TelemetryMiddleware
-    from voodoo.runtime.scheduling.workers import start_workers, stop_workers
-    from voodoo.security import (
+    from grumo.auth import AuthMiddleware
+    from grumo.i18n import I18nMiddleware
+    from grumo.observability import TelemetryMiddleware
+    from grumo.runtime.scheduling.workers import start_workers, stop_workers
+    from grumo.security import (
         CORSMiddleware,
         CSRFMiddleware,
         RateLimitMiddleware,
@@ -586,9 +586,9 @@ def create_app(app_dir: str = "app", *, runtime: Any = None) -> Starlette:
 
     @asynccontextmanager
     async def lifespan(starlette: Starlette) -> AsyncIterator[None]:
-        from voodoo.data.store_backend import bind_runtime_store
-        from voodoo.runtime.execution.engine import engine as global_runtime_engine
-        from voodoo.runtime.store import StoreConfig, activate_runtime_store
+        from grumo.data.store_backend import bind_runtime_store
+        from grumo.runtime.execution.engine import engine as global_runtime_engine
+        from grumo.runtime.store import StoreConfig, activate_runtime_store
 
         starlette.state.lifecycle_phase = "starting"
         application_store = None
@@ -613,16 +613,16 @@ def create_app(app_dir: str = "app", *, runtime: Any = None) -> Starlette:
                 config, runtime_engine
             )
             if edge_gateway:
-                from voodoo.edge import VoodooStoreDeviceStore
+                from grumo.edge import GrumoStoreDeviceStore
 
-                edge_gateway[0]._store = VoodooStoreDeviceStore(application_store)
-            from voodoo.runtime.scheduling import ScheduleService
-            from voodoo.storage.scheduler import create_schedule_store
+                edge_gateway[0]._store = GrumoStoreDeviceStore(application_store)
+            from grumo.runtime.scheduling import ScheduleService
+            from grumo.storage.scheduler import create_schedule_store
 
             schedule_store = create_schedule_store(schedule_path)
             scheduler = ScheduleService(schedule_store)
             await scheduler.start()
-            from voodoo.runtime.scheduling.workers import _workers
+            from grumo.runtime.scheduling.workers import _workers
 
             worker_task = asyncio.create_task(start_workers()) if _workers else None
             mqtt_transport = await _start_mqtt(config, edge_gateway, application_store)
@@ -658,7 +658,7 @@ def create_app(app_dir: str = "app", *, runtime: Any = None) -> Starlette:
         Middleware(CSRFMiddleware, config_override=config),
     ]
     starlette = Starlette(routes=routes, middleware=middleware, lifespan=lifespan)
-    starlette.state.voodoo_config = config
+    starlette.state.grumo_config = config
     return starlette
 
 

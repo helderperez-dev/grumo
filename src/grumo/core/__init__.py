@@ -1,12 +1,12 @@
-"""Voodoo core runtime: application object, factory, error hierarchy.
+"""Grumo core runtime: application object, factory, error hierarchy.
 
 Reactive state/events and page routing are re-exported here for backwards
-compatibility; their implementations live in ``voodoo.ui`` and
-``voodoo.routing`` respectively.
+compatibility; their implementations live in ``grumo.ui`` and
+``grumo.routing`` respectively.
 """
 
-from voodoo.core.app import App, ObservationHandle, app, create_app
-from voodoo.core.errors import (
+from grumo.core.app import App, ObservationHandle, app, create_app
+from grumo.core.errors import (
     AgentError,
     AuthError,
     ComponentError,
@@ -18,10 +18,10 @@ from voodoo.core.errors import (
     RoutingError,
     StateError,
     ToolError,
-    VoodooError,
+    GrumoError,
 )
-from voodoo.routing.pages import PageRegistry, call_page, page, page_registry
-from voodoo.ui.events import (
+from grumo.routing.pages import PageRegistry, call_page, page, page_registry
+from grumo.ui.events import (
     WebSocketManager,
     event,
     event_handlers,
@@ -29,8 +29,8 @@ from voodoo.ui.events import (
     websocket_endpoint,
     ws_manager,
 )
-from voodoo.ui.rendering import render_page
-from voodoo.ui.state import State, StateRenderer, state, state_renderer
+from grumo.ui.rendering import render_page
+from grumo.ui.state import State, StateRenderer, state, state_renderer
 
 __all__ = [
     "App",
@@ -52,7 +52,7 @@ __all__ = [
     "StateRenderer",
     "state",
     "state_renderer",
-    "VoodooError",
+    "GrumoError",
     "ConfigurationError",
     "RoutingError",
     "ComponentError",
