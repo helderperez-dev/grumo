@@ -35,7 +35,26 @@ jobs:
           assert project["project"]["scripts"]["grumo"] == "grumo.cli:app"
           assert project["tool"]["setuptools"]["dynamic"]["version"]["attr"] == "grumo.__version__"
           assert Path("src/grumo/__init__.py").exists(), "Python import rename incomplete"
-          assert "grumo-store" in " ".join(project["project"]["dependencies"])
+          assert any(
+              dependency.startswith("grumo-store>=")
+              for dependency in project["project"]["dependencies"]
+          ), "Grumo Store dependency is missing"
+          assert not any(
+              dependency.startswith("voodoo-store")
+              for dependency in project["project"]["dependencies"]
+          ), "Legacy Store dependency must not be in Grumo release metadata"
+          with Path("uv.lock").open("rb") as fh:
+              lock = tomllib.load(fh)
+          versions = {
+              p["name"]: p["version"] for p in lock["package"]
+              if p["name"] in ("grumo", "grumo-store", "voodoo-framework")
+          }
+          assert "grumo" in versions and "grumo-store" in versions, (
+              f"Grumo release lockfile is not ready: {versions}"
+          )
+          assert "voodoo-framework" not in versions, (
+              "Lockfile still targets the legacy distribution"
+          )
           import ast
           version_file = ast.parse(Path("src/grumo/__init__.py").read_text())
           version = next(node.value.value for node in version_file.body
@@ -48,7 +67,7 @@ jobs:
           PY
       - uses: astral-sh/setup-uv@v5
       - run: uv python install 3.12
-      - run: uv sync --python 3.12 --all-extras --dev
+      - run: uv sync --locked --python 3.12 --all-extras --dev
       - name: Full test and type gates
         run: |
           uv run --python 3.12 pytest -q
