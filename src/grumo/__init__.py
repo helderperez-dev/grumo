@@ -1,13 +1,25 @@
-"""Grumo — public compatibility namespace for the programmable runtime.
+"""Voodoo — programmable runtime for adaptive applications and operational systems.
 
-During the coordinated distribution migration, implementations remain in
-`voodoo`. Importing from Grumo exposes the same public classes and decorators,
-without creating a second runtime or silently migrating existing projects.
-Advanced modules continue to live under `voodoo.*` until their individual
-compatibility contracts have been implemented.
+The package root is intentionally small. It exposes only the common application
+vocabulary. Catalogs and advanced primitives live in the namespace that owns
+their semantics: voodoo.ui, voodoo.runtime, voodoo.world, voodoo.edge,
+voodoo.protocol, voodoo.observability and voodoo.integrations.
 """
 
-from voodoo import Agent, App, Model, page, state, task, tool
-from voodoo import __version__ as __version__
+from .ai.agent import Agent
+from .ai.tools import tool
+from .core import App, page, state
+from .data import Model
+from .runtime.scheduling.tasks import task
 
-__all__ = ["Agent", "App", "Model", "page", "state", "task", "tool"]
+__version__ = "1.0.0"
+
+__all__ = [
+    "Agent",
+    "App",
+    "Model",
+    "page",
+    "state",
+    "task",
+    "tool",
+]
