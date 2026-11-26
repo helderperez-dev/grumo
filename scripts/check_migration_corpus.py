@@ -31,7 +31,10 @@ def main() -> int:  # noqa: C901 - migration corpus checks intentionally stay to
         source_name = record.get("source")
         fixture_name = record.get("fixture")
         version_marker = record.get("version")
-        if not all(isinstance(value, str) and value for value in (name, source_name, fixture_name, version_marker)):
+        if not all(
+            isinstance(value, str) and value
+            for value in (name, source_name, fixture_name, version_marker)
+        ):
             errors.append(f"invalid corpus entry: {record!r}")
             continue
         if name in names:

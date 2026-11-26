@@ -80,9 +80,7 @@ class MeshClient:
                 )
             )
         except Exception as e:
-            self._fail_pending(
-                ConnectionError("mesh receive loop failed")
-            )
+            self._fail_pending(ConnectionError("mesh receive loop failed"))
             _logger.warning(
                 "mesh client receive loop failed endpoint=%s error=%s",
                 self.endpoint_url,

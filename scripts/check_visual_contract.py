@@ -42,7 +42,9 @@ def _validate_cases(manifest: dict[str, object], viewports: dict[str, object]) -
         raise SystemExit("visual contract needs at least seven reviewed cases")
     missing_densities = REQUIRED_DENSITIES - densities
     if missing_densities:
-        raise SystemExit(f"visual contract misses densities: {sorted(missing_densities)}")
+        raise SystemExit(
+            f"visual contract misses densities: {sorted(missing_densities)}"
+        )
     return len(ids)
 
 
@@ -62,7 +64,9 @@ def main() -> int:  # noqa: C901 - visual contract validates all required states
     baseline_dir = ROOT / "tests/browser/visual_baselines"
     baseline_path = ROOT / "tests/browser/visual_baselines.json"
     if not baseline_dir.is_dir() or not baseline_path.is_file():
-        raise SystemExit("visual contract requires committed PNG and signature baselines")
+        raise SystemExit(
+            "visual contract requires committed PNG and signature baselines"
+        )
     signatures = json.loads(baseline_path.read_text())
     missing: list[str] = []
     mismatched: list[str] = []

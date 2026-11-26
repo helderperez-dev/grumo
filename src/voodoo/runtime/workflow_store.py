@@ -105,9 +105,13 @@ class VoodooStoreWorkflowStore:
                 if status == "completed":
                     store.complete_workflow(native_id, encoded, now_ms)
                 elif status == "failed":
-                    store.fail_workflow(native_id, str(body.get("error") or "").encode(), now_ms)
+                    store.fail_workflow(
+                        native_id, str(body.get("error") or "").encode(), now_ms
+                    )
                 elif status == "cancelled":
-                    store.cancel_workflow(native_id, str(body.get("error") or "").encode(), now_ms)
+                    store.cancel_workflow(
+                        native_id, str(body.get("error") or "").encode(), now_ms
+                    )
             return
         store.put(self._key(workflow_id), encoded)
 
@@ -154,10 +158,14 @@ class VoodooStoreWorkflowStore:
                     raise ValueError("workflow native index must be a JSON object")
                 version = payload.get(_SCHEMA_KEY, 0)
                 if version > _INDEX_SCHEMA_VERSION:
-                    raise ValueError("workflow native index schema is newer than supported")
+                    raise ValueError(
+                        "workflow native index schema is newer than supported"
+                    )
                 encoded_id = payload.get("native_id")
                 if not isinstance(encoded_id, str):
-                    raise ValueError("workflow native index native_id must be hexadecimal")
+                    raise ValueError(
+                        "workflow native index native_id must be hexadecimal"
+                    )
                 indexes.append((bytes(key), bytes.fromhex(encoded_id)))
         indexes.extend(
             (
@@ -269,19 +277,27 @@ class VoodooStoreWorkflowStore:
                 try:
                     payload = json.loads(raw.decode("utf-8"))
                 except (UnicodeDecodeError, json.JSONDecodeError) as error:
-                    raise ValueError("workflow native index is not valid JSON") from error
+                    raise ValueError(
+                        "workflow native index is not valid JSON"
+                    ) from error
                 if not isinstance(payload, dict):
                     raise ValueError("workflow native index must be a JSON object")
                 version = payload.get(_SCHEMA_KEY, 0)
                 if version > _INDEX_SCHEMA_VERSION:
-                    raise ValueError("workflow native index schema is newer than supported")
+                    raise ValueError(
+                        "workflow native index schema is newer than supported"
+                    )
                 encoded_id = payload.get("native_id")
                 if not isinstance(encoded_id, str):
-                    raise ValueError("workflow native index native_id must be hexadecimal")
+                    raise ValueError(
+                        "workflow native index native_id must be hexadecimal"
+                    )
                 try:
                     return bytes.fromhex(encoded_id)
                 except ValueError as error:
-                    raise ValueError("workflow native index native_id is invalid") from error
+                    raise ValueError(
+                        "workflow native index native_id is invalid"
+                    ) from error
         raw = store.get(cls._native_index_key(workflow_id))
         return None if raw is None else bytes(raw)
 
