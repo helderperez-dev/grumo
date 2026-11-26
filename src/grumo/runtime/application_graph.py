@@ -1,4 +1,4 @@
-"""Semantic application graph for Voodoo.
+"""Semantic application graph for Grumo.
 
 The ApplicationGraph describes the structure of the running application. It is
 not the World Model and it is not an execution engine. Runtime subsystems may
@@ -16,9 +16,9 @@ from dataclasses import dataclass, field
 from enum import StrEnum
 from typing import Any
 
-from voodoo.security.redaction import redact_string
+from grumo.security.redaction import redact_string
 
-_logger = logging.getLogger("voodoo.runtime.application_graph")
+_logger = logging.getLogger("grumo.runtime.application_graph")
 
 # Discovery is best-effort because optional subsystems may not be installed or
 # initialized yet. Keep the fallback boundary explicit so programming errors
@@ -96,7 +96,7 @@ class ApplicationEdge:
 
 
 class ApplicationGraph:
-    """Canonical in-process semantic graph for one Voodoo application."""
+    """Canonical in-process semantic graph for one Grumo application."""
 
     def __init__(self, application_id: str = "application") -> None:
         self.application_id = application_id
@@ -274,7 +274,7 @@ class Invalidation:
 class InvalidationEngine:
     """Deterministically translate a semantic change into affected graph nodes.
 
-    This engine understands only Voodoo semantic relationships. External
+    This engine understands only Grumo semantic relationships. External
     systems integrate by contributing generic resources, observations,
     capabilities and effects; vendor SDKs never belong in the Runtime core.
     """
@@ -369,7 +369,7 @@ def diff_application_graph(
 class ExtensionManifest:
     name: str
     version: str
-    requires_voodoo: str | None = None
+    requires_grumo: str | None = None
     capabilities: tuple[str, ...] = ()
     resources: tuple[str, ...] = ()
     effects: tuple[str, ...] = ()
@@ -379,7 +379,7 @@ class ExtensionManifest:
 
 
 class Extension:
-    """Stable Runtime-facing contract for external Voodoo integrations."""
+    """Stable Runtime-facing contract for external Grumo integrations."""
 
     manifest: ExtensionManifest
 
@@ -389,7 +389,7 @@ class Extension:
             self.manifest.name,
             metadata={
                 "version": self.manifest.version,
-                "requires_voodoo": self.manifest.requires_voodoo,
+                "requires_grumo": self.manifest.requires_grumo,
                 **self.manifest.metadata,
             },
         )
@@ -443,7 +443,7 @@ def _discover_routes(graph: ApplicationGraph, app: Any) -> None:
 
 def _discover_capabilities(graph: ApplicationGraph) -> None:
     try:
-        from voodoo.runtime.execution.engine import engine
+        from grumo.runtime.execution.engine import engine
 
         names = engine.capabilities.describe().get("capabilities", ())
     except _DISCOVERY_ERRORS as error:
@@ -456,7 +456,7 @@ def _discover_capabilities(graph: ApplicationGraph) -> None:
 
 def _discover_models(graph: ApplicationGraph) -> None:
     try:
-        from voodoo.data.base import model_table_name, registered_models
+        from grumo.data.base import model_table_name, registered_models
 
         models = registered_models()
     except _DISCOVERY_ERRORS as error:
@@ -474,7 +474,7 @@ def _discover_models(graph: ApplicationGraph) -> None:
 
 def _discover_workers(graph: ApplicationGraph) -> None:
     try:
-        from voodoo.runtime.scheduling.workers import registered_workers
+        from grumo.runtime.scheduling.workers import registered_workers
 
         workers = registered_workers()
     except _DISCOVERY_ERRORS as error:
@@ -491,7 +491,7 @@ def _discover_workers(graph: ApplicationGraph) -> None:
 
 def _discover_tools(graph: ApplicationGraph) -> None:
     try:
-        from voodoo.ai.tools.registry import default_registry
+        from grumo.ai.tools.registry import default_registry
 
         specs = default_registry.all()
     except _DISCOVERY_ERRORS as error:
@@ -518,7 +518,7 @@ def build_application_graph(
     """Build a useful graph from stable Runtime surfaces.
 
     Discovery is deliberately conservative. Only semantic information already
-    exposed by Voodoo is included; arbitrary Python objects are not crawled.
+    exposed by Grumo is included; arbitrary Python objects are not crawled.
     """
     graph = ApplicationGraph()
     _discover_routes(graph, app)

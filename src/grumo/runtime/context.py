@@ -17,12 +17,12 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 from uuid import uuid4
 
-from voodoo.primitives.capability import Capability
-from voodoo.primitives.constraint import Constraint
-from voodoo.primitives.effect import Effect
-from voodoo.primitives.intent import Intent
-from voodoo.primitives.resource import Resource
-from voodoo.runtime.identity import Principal
+from grumo.primitives.capability import Capability
+from grumo.primitives.constraint import Constraint
+from grumo.primitives.effect import Effect
+from grumo.primitives.intent import Intent
+from grumo.primitives.resource import Resource
+from grumo.runtime.identity import Principal
 
 __all__ = [
     "ExecutionContext",
@@ -32,7 +32,7 @@ __all__ = [
 ]
 
 _context_var: contextvars.ContextVar[ExecutionContext | None] = contextvars.ContextVar(
-    "voodoo_execution_context", default=None
+    "grumo_execution_context", default=None
 )
 
 
@@ -46,7 +46,7 @@ def current_context() -> ExecutionContext | None:
 
 @asynccontextmanager
 async def use_context(ctx: ExecutionContext) -> AsyncIterator[ExecutionContext]:
-    from voodoo.observability import trace_id_var
+    from grumo.observability import trace_id_var
 
     token = _context_var.set(ctx)
     prev_trace = trace_id_var.get()

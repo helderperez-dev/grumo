@@ -13,9 +13,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Protocol, cast
 
 if TYPE_CHECKING:
-    from voodoo.runtime.store import RuntimeStore
+    from grumo.runtime.store import RuntimeStore
 
-__all__ = ["GoalStore", "SQLiteGoalStore", "VoodooStoreGoalStore"]
+__all__ = ["GoalStore", "SQLiteGoalStore", "GrumoStoreGoalStore"]
 
 _GOAL_PREFIX = b"runtime:goals:checkpoint:"
 _COLLECTION = b"runtime.goals"
@@ -32,15 +32,15 @@ class GoalStore(Protocol):
     def load_unfinished(self) -> list[dict[str, Any]]: ...
 
 
-class VoodooStoreGoalStore:
-    """Goal checkpoints backed by the Runtime-owned Voodoo Store.
+class GrumoStoreGoalStore:
+    """Goal checkpoints backed by the Runtime-owned Grumo Store.
 
     The adapter resolves the process-shared RuntimeStore lazily so GoalRuntime
     can be used before an ASGI ``App`` lifespan without opening a competing
     writer. When an App is active, the same application Store is reused.
     """
 
-    provider = "voodoo"
+    provider = "grumo"
 
     def __init__(self, runtime_store: RuntimeStore | None = None) -> None:
         self._runtime_store = runtime_store
@@ -52,7 +52,7 @@ class VoodooStoreGoalStore:
     def _runtime(self) -> RuntimeStore:
         if self._runtime_store is not None:
             return self._runtime_store
-        from voodoo.runtime.store import acquire_runtime_store
+        from grumo.runtime.store import acquire_runtime_store
 
         return acquire_runtime_store()
 
@@ -60,18 +60,18 @@ class VoodooStoreGoalStore:
         runtime = self._runtime()
         provider = runtime.provider or runtime.start()
         if provider is None:
-            from voodoo.core.errors import ConfigurationError
+            from grumo.core.errors import ConfigurationError
 
             raise ConfigurationError(
-                "Voodoo Store is disabled; durable Goal checkpoints require an "
+                "Grumo Store is disabled; durable Goal checkpoints require an "
                 "explicit GoalStore adapter or an enabled Runtime Store."
             )
         native = getattr(provider, "native", None)
         if native is None:
-            from voodoo.core.errors import ConfigurationError
+            from grumo.core.errors import ConfigurationError
 
             raise ConfigurationError(
-                "The active Voodoo Store provider does not expose durable KV storage."
+                "The active Grumo Store provider does not expose durable KV storage."
             )
         return native
 

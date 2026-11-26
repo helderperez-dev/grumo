@@ -1,13 +1,13 @@
 """Goal-driven Runtime ownership domain."""
 
-from voodoo.runtime.agency.adaptive import (
+from grumo.runtime.agency.adaptive import (
     AdaptiveDecisionRecord,
     AdaptiveRun,
     AdaptiveSupervisor,
     SupervisorConfig,
     SupervisorDecision,
 )
-from voodoo.runtime.agency.goal import (
+from grumo.runtime.agency.goal import (
     Goal,
     GoalDecomposer,
     GoalIntentRun,
@@ -15,10 +15,10 @@ from voodoo.runtime.agency.goal import (
     GoalRuntime,
     GoalStatus,
 )
-from voodoo.runtime.agency.goal_store import (
+from grumo.runtime.agency.goal_store import (
     GoalStore,
     SQLiteGoalStore,
-    VoodooStoreGoalStore,
+    GrumoStoreGoalStore,
 )
 
 __all__ = [
@@ -35,5 +35,5 @@ __all__ = [
     "GoalStatus",
     "GoalStore",
     "SQLiteGoalStore",
-    "VoodooStoreGoalStore",
+    "GrumoStoreGoalStore",
 ]

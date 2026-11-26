@@ -1,6 +1,6 @@
 """Governed distributed Runtime ownership domain."""
 
-from voodoo.runtime.distributed.fabric import (
+from grumo.runtime.distributed.fabric import (
     FabricExecutor,
     FabricLease,
     FabricRoutingError,
@@ -11,11 +11,11 @@ from voodoo.runtime.distributed.fabric import (
     RuntimeFabric,
     WorkNotFailoverSafeError,
 )
-from voodoo.runtime.distributed.membership import (
+from grumo.runtime.distributed.membership import (
     MemberStatus,
     NodeAdvertisement,
     NodeMembership,
-    VoodooStoreMembershipStore,
+    GrumoStoreMembershipStore,
 )
 
 __all__ = [
@@ -30,6 +30,6 @@ __all__ = [
     "PlacementDecision",
     "PlacementRequirement",
     "RuntimeFabric",
-    "VoodooStoreMembershipStore",
+    "GrumoStoreMembershipStore",
     "WorkNotFailoverSafeError",
 ]

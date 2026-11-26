@@ -15,11 +15,11 @@ from enum import StrEnum
 from typing import Any
 from uuid import uuid4
 
-from voodoo.primitives.intent import Intent
-from voodoo.runtime.agency.adaptive import AdaptiveRun, AdaptiveSupervisor
-from voodoo.runtime.agency.goal_store import GoalStore
-from voodoo.runtime.execution import ExecutionStatus
-from voodoo.runtime.execution.world import bind_world
+from grumo.primitives.intent import Intent
+from grumo.runtime.agency.adaptive import AdaptiveRun, AdaptiveSupervisor
+from grumo.runtime.agency.goal_store import GoalStore
+from grumo.runtime.execution import ExecutionStatus
+from grumo.runtime.execution.world import bind_world
 
 __all__ = [
     "GoalStatus",

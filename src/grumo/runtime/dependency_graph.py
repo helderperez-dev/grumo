@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from voodoo.runtime.application_graph import ChangeReason, Invalidation
+from grumo.runtime.application_graph import ChangeReason, Invalidation
 
 
 @dataclass(frozen=True, slots=True)

@@ -1,4 +1,4 @@
-"""Voodoo runtime — the unified execution model.
+"""Grumo runtime — the unified execution model.
 
 This package makes the computational model *operational*.
 Every meaningful operation is represented as an Execution produced by a
@@ -9,9 +9,9 @@ single ExecutionEngine walking the operational model:
 
 from __future__ import annotations
 
-from voodoo.primitives.capability import Capability
-from voodoo.primitives.intent import Intent
-from voodoo.runtime.agency import (
+from grumo.primitives.capability import Capability
+from grumo.primitives.intent import Intent
+from grumo.runtime.agency import (
     AdaptiveRun,
     AdaptiveSupervisor,
     Goal,
@@ -24,9 +24,9 @@ from voodoo.runtime.agency import (
     SQLiteGoalStore,
     SupervisorConfig,
     SupervisorDecision,
-    VoodooStoreGoalStore,
+    GrumoStoreGoalStore,
 )
-from voodoo.runtime.application_graph import (
+from grumo.runtime.application_graph import (
     ApplicationEdge,
     ApplicationGraph,
     ApplicationGraphChange,
@@ -42,16 +42,16 @@ from voodoo.runtime.application_graph import (
     contribute_goal,
     diff_application_graph,
 )
-from voodoo.runtime.capability import CapabilityResolver, Resolution
-from voodoo.runtime.constraint import ConstraintEnforcer, Decision, ResourceAccountant
-from voodoo.runtime.context import ExecutionContext, current_context, use_context
-from voodoo.runtime.conventions import ApplicationLayout, discover_layout
-from voodoo.runtime.dependency_graph import (
+from grumo.runtime.capability import CapabilityResolver, Resolution
+from grumo.runtime.constraint import ConstraintEnforcer, Decision, ResourceAccountant
+from grumo.runtime.context import ExecutionContext, current_context, use_context
+from grumo.runtime.conventions import ApplicationLayout, discover_layout
+from grumo.runtime.dependency_graph import (
     DependencyGraph,
     DependencyRevision,
     DirtyNode,
 )
-from voodoo.runtime.distributed import (
+from grumo.runtime.distributed import (
     FabricLease,
     FabricRoutingError,
     FabricWork,
@@ -62,10 +62,10 @@ from voodoo.runtime.distributed import (
     PlacementDecision,
     PlacementRequirement,
     RuntimeFabric,
-    VoodooStoreMembershipStore,
+    GrumoStoreMembershipStore,
     WorkNotFailoverSafeError,
 )
-from voodoo.runtime.errors import (
+from grumo.runtime.errors import (
     AgentExecutionError,
     ApprovalRequired,
     CapabilityDenied,
@@ -78,60 +78,60 @@ from voodoo.runtime.errors import (
     ValidationError,
     WorkflowFailure,
 )
-from voodoo.runtime.execution import Execution, ExecutionStatus
-from voodoo.runtime.execution.engine import (
+from grumo.runtime.execution import Execution, ExecutionStatus
+from grumo.runtime.execution.engine import (
     ComputeFn,
     ComputeResult,
     ExecutionEngine,
     engine,
 )
-from voodoo.runtime.execution.world import (
+from grumo.runtime.execution.world import (
     bind_world,
     resolve_target_entity_id,
     world_aware,
 )
-from voodoo.runtime.extension import (
+from grumo.runtime.extension import (
     ExtensionState,
     ExtensionStatus,
     RuntimeExtensionRegistry,
 )
-from voodoo.runtime.graph import ExecutionGraph, ExecutionNode
-from voodoo.runtime.human import (
+from grumo.runtime.graph import ExecutionGraph, ExecutionNode
+from grumo.runtime.human import (
     Approval,
     ApprovalRegistry,
     ApprovalStatus,
     Human,
     ask_human,
 )
-from voodoo.runtime.identity import (
+from grumo.runtime.identity import (
     AuthenticationEvidence,
     Identity,
     IdentityKind,
     IdentityStatus,
     Principal,
 )
-from voodoo.runtime.identity_store import IdentityStore, VoodooStoreIdentityStore
-from voodoo.runtime.inspection import (
+from grumo.runtime.identity_store import IdentityStore, GrumoStoreIdentityStore
+from grumo.runtime.inspection import (
     LineageEvent,
     RuntimeLineage,
     lineage,
     runtime_dashboard,
 )
-from voodoo.runtime.operations import OperationalRuntime
-from voodoo.runtime.persistence import (
+from grumo.runtime.operations import OperationalRuntime
+from grumo.runtime.persistence import (
     ExecutionStore,
     InMemoryExecutionStore,
     JSONFileExecutionStore,
 )
-from voodoo.runtime.planner import ComputeParticipant, Plan, Planner, PlanStep
-from voodoo.runtime.policy import (
+from grumo.runtime.planner import ComputeParticipant, Plan, Planner, PlanStep
+from grumo.runtime.policy import (
     PolicyDecision,
     PolicyEngine,
     PolicyRequest,
     PolicyResult,
     PolicyRule,
 )
-from voodoo.runtime.reconciliation import (
+from grumo.runtime.reconciliation import (
     GoalIntentFactory,
     GoalPredicate,
     GoalReconciliation,
@@ -142,22 +142,22 @@ from voodoo.runtime.reconciliation import (
     ReconcileLedger,
     Reconciler,
 )
-from voodoo.runtime.runtime import (
+from grumo.runtime.runtime import (
     ConvergenceStatus,
     Runtime,
     RuntimeConvergence,
     RuntimeCycle,
 )
-from voodoo.runtime.scheduling.dispatch import DispatchPlan, RuntimeDispatcher
-from voodoo.runtime.scheduling.handoff import ExecutionHandoff, RemoteExecutionRequired
-from voodoo.runtime.scheduling.work import (
+from grumo.runtime.scheduling.dispatch import DispatchPlan, RuntimeDispatcher
+from grumo.runtime.scheduling.handoff import ExecutionHandoff, RemoteExecutionRequired
+from grumo.runtime.scheduling.work import (
     RuntimeScheduler,
     ScheduledWork,
     SchedulingDecision,
     WorkEligibility,
     scheduled_work_from_intent,
 )
-from voodoo.runtime.store import (
+from grumo.runtime.store import (
     DEFAULT_STORE_PATH,
     RuntimeStore,
     StoreConfig,
@@ -165,14 +165,14 @@ from voodoo.runtime.store import (
     StoreProvider,
     StoreProviderError,
     StoreProviderRegistry,
-    VoodooStoreProvider,
+    GrumoStoreProvider,
     bind_active_runtime_store,
     create_store_provider,
     get_active_runtime_store,
     store_registry,
 )
-from voodoo.runtime.task import Task, TaskStatus
-from voodoo.runtime.transaction import (
+from grumo.runtime.task import Task, TaskStatus
+from grumo.runtime.transaction import (
     OutboxDispatcher,
     OutboxMessage,
     RuntimeTransaction,
@@ -180,8 +180,8 @@ from voodoo.runtime.transaction import (
     dispatch_outbox,
     transaction,
 )
-from voodoo.runtime.workflow import Workflow, WorkflowRun, WorkflowStrategy
-from voodoo.runtime.workflow_store import VoodooStoreWorkflowStore, WorkflowStore
+from grumo.runtime.workflow import Workflow, WorkflowRun, WorkflowStrategy
+from grumo.runtime.workflow_store import GrumoStoreWorkflowStore, WorkflowStore
 
 __all__ = [
     "ConvergenceStatus",
@@ -246,11 +246,11 @@ __all__ = [
     "AuthenticationEvidence",
     "Principal",
     "IdentityStore",
-    "VoodooStoreIdentityStore",
+    "GrumoStoreIdentityStore",
     "MemberStatus",
     "NodeAdvertisement",
     "NodeMembership",
-    "VoodooStoreMembershipStore",
+    "GrumoStoreMembershipStore",
     "PlacementRequirement",
     "PlacementDecision",
     "FabricWork",
@@ -265,7 +265,7 @@ __all__ = [
     "WorkflowRun",
     "WorkflowStrategy",
     "WorkflowStore",
-    "VoodooStoreWorkflowStore",
+    "GrumoStoreWorkflowStore",
     "ExecutionGraph",
     "ExecutionNode",
     "Approval",
@@ -288,7 +288,7 @@ __all__ = [
     "StoreProviderError",
     "StoreProviderRegistry",
     "RuntimeStore",
-    "VoodooStoreProvider",
+    "GrumoStoreProvider",
     "bind_active_runtime_store",
     "create_store_provider",
     "get_active_runtime_store",
@@ -315,7 +315,7 @@ __all__ = [
     "GoalDecomposer",
     "GoalStore",
     "SQLiteGoalStore",
-    "VoodooStoreGoalStore",
+    "GrumoStoreGoalStore",
     "OperationalRuntime",
     "runtime_dashboard",
     "bind_world",

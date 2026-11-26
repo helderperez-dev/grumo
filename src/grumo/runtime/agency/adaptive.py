@@ -1,6 +1,6 @@
 """Adaptive runtime — a bounded, inspectable supervisor around ExecutionEngine.
 
-The supervisor consumes a deterministic :class:`~voodoo.runtime.planner.Plan`
+The supervisor consumes a deterministic :class:`~grumo.runtime.planner.Plan`
 and executes every step through the canonical runtime. AI agents are compute
 participants, not a second execution engine. Every retry, fallback and
 participant decision remains inspectable and bounded by ``max_iterations``.
@@ -13,19 +13,19 @@ from dataclasses import dataclass, field
 from enum import StrEnum
 from typing import Any
 
-from voodoo.primitives.intent import Intent
-from voodoo.primitives.resource import Resource
-from voodoo.runtime.constraint import ResourceAccountant
-from voodoo.runtime.errors import (
+from grumo.primitives.intent import Intent
+from grumo.primitives.resource import Resource
+from grumo.runtime.constraint import ResourceAccountant
+from grumo.runtime.errors import (
     ApprovalRequired,
     CapabilityDenied,
     ExecutionError,
     ExecutionTimeout,
     ResourceExceeded,
 )
-from voodoo.runtime.execution.engine import ComputeResult, ExecutionEngine
-from voodoo.runtime.execution.engine import engine as default_engine
-from voodoo.runtime.planner import ComputeParticipant, Plan, Planner, PlanStep
+from grumo.runtime.execution.engine import ComputeResult, ExecutionEngine
+from grumo.runtime.execution.engine import engine as default_engine
+from grumo.runtime.planner import ComputeParticipant, Plan, Planner, PlanStep
 
 __all__ = [
     "SupervisorDecision",

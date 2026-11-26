@@ -1,6 +1,6 @@
 """Capability resolution — enforceable runtime authority.
 
-This is the layer that turns :class:`~voodoo.primitives.capability.Capability`
+This is the layer that turns :class:`~grumo.primitives.capability.Capability`
 from a conceptual model into an enforced runtime property.
 
 Given an actor, an intent and a requested operation, the resolver decides:
@@ -23,10 +23,10 @@ from dataclasses import dataclass, field
 from enum import StrEnum
 from typing import Any
 
-from voodoo.primitives.capability import Capability
-from voodoo.runtime.context import ExecutionContext
-from voodoo.runtime.errors import ApprovalRequired, CapabilityDenied
-from voodoo.runtime.policy import PolicyDecision, PolicyEngine, PolicyResult
+from grumo.primitives.capability import Capability
+from grumo.runtime.context import ExecutionContext
+from grumo.runtime.errors import ApprovalRequired, CapabilityDenied
+from grumo.runtime.policy import PolicyDecision, PolicyEngine, PolicyResult
 
 __all__ = ["Resolution", "CapabilityResolver", "SENSITIVE_CAPABILITIES"]
 

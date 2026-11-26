@@ -18,9 +18,9 @@ from dataclasses import dataclass, field
 from enum import StrEnum
 from typing import Any
 
-from voodoo.primitives.resource import Resource
-from voodoo.runtime.context import ExecutionContext
-from voodoo.runtime.errors import ConstraintViolation, ResourceExceeded
+from grumo.primitives.resource import Resource
+from grumo.runtime.context import ExecutionContext
+from grumo.runtime.errors import ConstraintViolation, ResourceExceeded
 
 __all__ = [
     "Decision",
@@ -120,7 +120,7 @@ class ConstraintEnforcer:
                 },
             )
         if decision is Decision.STOP:
-            from voodoo.runtime.errors import ExecutionCancelled
+            from grumo.runtime.errors import ExecutionCancelled
 
             reason = "deadline expired" if context.deadline_expired else "cancelled"
             raise ExecutionCancelled(
@@ -129,7 +129,7 @@ class ConstraintEnforcer:
                 trace_id=context.trace_id,
             )
         if decision is Decision.REQUEST_APPROVAL:
-            from voodoo.runtime.errors import ApprovalRequired
+            from grumo.runtime.errors import ApprovalRequired
 
             raise ApprovalRequired(
                 "Human approval required by constraint",
