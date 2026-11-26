@@ -14,7 +14,7 @@ ROOT = Path(__file__).parents[1]
 CORPUS = ROOT / "docs/architecture/migration-corpus.json"
 
 
-def main() -> int:
+def main() -> int:  # noqa: C901 - migration corpus checks intentionally stay together
     if not CORPUS.is_file():
         raise SystemExit(f"missing migration corpus: {CORPUS}")
     payload = json.loads(CORPUS.read_text(encoding="utf-8"))
