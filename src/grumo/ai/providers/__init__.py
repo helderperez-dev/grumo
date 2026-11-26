@@ -14,8 +14,8 @@ from collections.abc import AsyncIterator
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
-from voodoo.core.errors import ConfigurationError
-from voodoo.security.redaction import redact_string
+from grumo.core.errors import ConfigurationError
+from grumo.security.redaction import redact_string
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ _CONFIGURATION_FALLBACK_ERRORS = (
 
 __all__ = [
     "LLMProvider",
-    "VoodooModelProvider",
+    "GrumoModelProvider",
     "ProviderResponse",
     "ProviderEvent",
     "ToolCall",
@@ -136,7 +136,7 @@ class ProviderEvent:
     data: dict[str, Any] = field(default_factory=dict)
 
 
-class VoodooModelProvider(Protocol):
+class GrumoModelProvider(Protocol):
     """Normalized model surface every model provider must satisfy (spec gap #7).
 
     Concrete providers subclass :class:`LLMProvider` (which supplies default
@@ -180,7 +180,7 @@ class LLMProvider(ABC):
     the Agent never sees provider-native formats. The base also supplies
     default :meth:`generate`, :meth:`embed`, :meth:`count_tokens`, and
     :meth:`describe` so every provider conforms to
-    :class:`VoodooModelProvider`.
+    :class:`GrumoModelProvider`.
     """
 
     #: Provider name used in ``model="provider:model"`` resolution.
@@ -244,15 +244,15 @@ class LLMProvider(ABC):
 
 #: Maps provider name → fully-qualified provider class path (lazy import).
 _PROVIDER_CLASSES: dict[str, str] = {
-    "openai": "voodoo.integrations.ai.openai.OpenAIProvider",
-    "anthropic": "voodoo.integrations.ai.anthropic.AnthropicProvider",
-    "gemini": "voodoo.integrations.ai.gemini.GeminiProvider",
-    "ollama": "voodoo.integrations.ai.ollama.OllamaProvider",
-    "mock": "voodoo.ai.providers.mock.MockProvider",
+    "openai": "grumo.integrations.ai.openai.OpenAIProvider",
+    "anthropic": "grumo.integrations.ai.anthropic.AnthropicProvider",
+    "gemini": "grumo.integrations.ai.gemini.GeminiProvider",
+    "ollama": "grumo.integrations.ai.ollama.OllamaProvider",
+    "mock": "grumo.ai.providers.mock.MockProvider",
 }
 
 #: Built-in routing aliases resolved when no explicit config alias exists.
-#: The ``models.aliases`` block in ``voodoo.yaml`` overrides these (ROADMAP §47).
+#: The ``models.aliases`` block in ``grumo.yaml`` overrides these (ROADMAP §47).
 DEFAULT_ALIASES: dict[str, str] = {
     "best": "openai:gpt-4o",
     "fast": "openai:gpt-4o-mini",
@@ -275,12 +275,12 @@ def _routing_aliases(aliases: dict[str, str] | None) -> dict[str, str]:
     """Merge config-provided aliases over the built-in defaults.
 
     Config aliases come from ``models.aliases`` and ``ai.aliases`` in
-    ``voodoo.yaml``/``voodoo.toml`` (surfaced via :data:`voodoo.config.config`);
+    ``grumo.yaml``/``grumo.toml`` (surfaced via :data:`grumo.config.config`);
     explicit caller-provided ``aliases`` win over both.
     """
     merged = dict(DEFAULT_ALIASES)
     try:
-        from voodoo.config import config
+        from grumo.config import config
 
         merged.update(config.models.aliases or {})
         merged.update(config.ai.aliases or {})
@@ -338,10 +338,10 @@ def default_model() -> str:
     is used. Falls back to ``mock:default`` when config is unavailable.
 
     This lets ``Agent()`` and other entry points be configured entirely from
-    ``voodoo.toml``/``voodoo.yaml`` with zero code.
+    ``grumo.toml``/``grumo.yaml`` with zero code.
     """
     try:
-        from voodoo.config import config
+        from grumo.config import config
 
         if config.ai.model:
             provider = config.ai.provider or "openai"
@@ -373,7 +373,7 @@ def get_provider(model: str, **kwargs: Any) -> LLMProvider:
 
     if provider_name == "openai":
         try:
-            from voodoo.config import config
+            from grumo.config import config
 
             if config.ai.base_url:
                 kwargs.setdefault("base_url", config.ai.base_url)

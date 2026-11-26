@@ -1,7 +1,7 @@
-"""Compatibility alias for :mod:`voodoo.integrations.ai.ollama`."""
+"""Compatibility alias for :mod:`grumo.integrations.ai.ollama`."""
 
 import sys
 
-from voodoo.integrations.ai import ollama
+from grumo.integrations.ai import ollama
 
 sys.modules[__name__] = ollama

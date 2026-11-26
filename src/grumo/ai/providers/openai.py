@@ -1,7 +1,7 @@
-"""Compatibility alias for :mod:`voodoo.integrations.ai.openai`."""
+"""Compatibility alias for :mod:`grumo.integrations.ai.openai`."""
 
 import sys
 
-from voodoo.integrations.ai import openai
+from grumo.integrations.ai import openai
 
 sys.modules[__name__] = openai

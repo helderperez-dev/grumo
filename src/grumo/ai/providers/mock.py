@@ -11,7 +11,7 @@ import hashlib
 from collections.abc import AsyncIterator
 from typing import Any
 
-from voodoo.ai.providers import (
+from grumo.ai.providers import (
     EmbeddingResponse,
     LLMProvider,
     Message,

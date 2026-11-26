@@ -1,4 +1,4 @@
-"""Voodoo AI — LLM provider abstraction, agent, and tools.
+"""Grumo AI — LLM provider abstraction, agent, and tools.
 
 Re-exports the provider interface and factory so subsystems import from a
 single place.
@@ -6,14 +6,14 @@ single place.
 
 from __future__ import annotations
 
-from voodoo.ai.providers import (
+from grumo.ai.providers import (
     EmbeddingResponse,
     LLMProvider,
     Message,
     ModelDescriptor,
     ProviderEvent,
     ProviderResponse,
-    VoodooModelProvider,
+    GrumoModelProvider,
     describe_model,
     get_provider,
     register_provider,
@@ -22,7 +22,7 @@ from voodoo.ai.providers import (
 
 __all__ = [
     "LLMProvider",
-    "VoodooModelProvider",
+    "GrumoModelProvider",
     "ProviderResponse",
     "ProviderEvent",
     "Message",

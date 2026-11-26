@@ -1,8 +1,8 @@
-"""Voodoo tools — ``@tool`` decorator and Tool Registry.
+"""Grumo tools — ``@tool`` decorator and Tool Registry.
 
 Usage::
 
-    from voodoo import tool
+    from grumo import tool
 
     @tool
     async def search_leads(query: str) -> list[dict]:
@@ -15,7 +15,7 @@ Usage::
 
 The decorated function remains callable as plain Python while carrying a
 ``__tool_spec__`` attribute (a :class:`ToolSpec`) and being registered in the
-default registry (``voodoo.ai.tools.registry.default_registry``).
+default registry (``grumo.ai.tools.registry.default_registry``).
 """
 
 from __future__ import annotations
@@ -23,18 +23,18 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any, overload
 
-from voodoo.ai.tools.registry import ToolRegistry, ToolSpec, build_spec
+from grumo.ai.tools.registry import ToolRegistry, ToolSpec, build_spec
 
 __all__ = ["tool", "ToolSpec", "ToolRegistry", "default_registry"]
 
 # Re-export the default registry instance (lives in the registry module so it
 # can be monkeypatched in tests without being shadowed by this package).
-from voodoo.ai.tools.registry import default_registry
+from grumo.ai.tools.registry import default_registry
 
 
 def _resolve_default_registry() -> ToolRegistry:
     """Fetch the current default registry dynamically (test-monkeypatchable)."""
-    from voodoo.ai.tools import registry as _registry_module
+    from grumo.ai.tools import registry as _registry_module
 
     return _registry_module.default_registry
 

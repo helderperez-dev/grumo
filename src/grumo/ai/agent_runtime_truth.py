@@ -1,7 +1,7 @@
-"""Runtime-truth behavior for Voodoo agents.
+"""Runtime-truth behavior for Grumo agents.
 
 This module centralizes the corrections required for Sprint 24.2 without
-creating a second agent runtime. It is imported by ``voodoo.ai.agent`` and
+creating a second agent runtime. It is imported by ``grumo.ai.agent`` and
 keeps ``Execution`` as the canonical lifecycle while preserving standalone
 Agent compatibility.
 """
@@ -11,11 +11,11 @@ from __future__ import annotations
 import logging
 from typing import Any, cast
 
-from voodoo.ai.agent_legacy import Agent as LegacyAgent
-from voodoo.ai.agent_legacy import AgentRun
-from voodoo.security.redaction import redact_string
+from grumo.ai.agent_legacy import Agent as LegacyAgent
+from grumo.ai.agent_legacy import AgentRun
+from grumo.security.redaction import redact_string
 
-_logger = logging.getLogger("voodoo.ai.runtime_truth")
+_logger = logging.getLogger("grumo.ai.runtime_truth")
 
 
 class RuntimeTruthAgent(LegacyAgent):
@@ -24,7 +24,7 @@ class RuntimeTruthAgent(LegacyAgent):
     @staticmethod
     def _runtime_context() -> Any | None:
         try:
-            from voodoo.runtime.context import current_context
+            from grumo.runtime.context import current_context
 
             return current_context()
         except ImportError as error:
@@ -62,7 +62,7 @@ class RuntimeTruthAgent(LegacyAgent):
         """Persist agent history with execution and trace identities separated."""
         if self._agent_registry is None:
             return
-        from voodoo.agents.models import AgentRunRecord
+        from grumo.agents.models import AgentRunRecord
 
         await self._ensure_registered()
         execution_id, trace_id = self._apply_lineage(run_record)
@@ -85,7 +85,7 @@ class RuntimeTruthAgent(LegacyAgent):
 
     async def _write_episodic_memory(self, run_record: AgentRun) -> None:
         """Write private episodic memory linked to the canonical execution."""
-        from voodoo.memory.interfaces import MemoryEntry, MemoryLayer
+        from grumo.memory.interfaces import MemoryEntry, MemoryLayer
 
         tool_summary = ""
         if run_record.tool_calls:
@@ -140,9 +140,9 @@ class RuntimeTruthAgent(LegacyAgent):
         The parent agent may still reason about the returned error and recover,
         but observability must never claim the tool Execution succeeded.
         """
-        from voodoo.primitives.intent import Intent
-        from voodoo.runtime.context import ExecutionContext
-        from voodoo.runtime.errors import ExecutionError
+        from grumo.primitives.intent import Intent
+        from grumo.runtime.context import ExecutionContext
+        from grumo.runtime.errors import ExecutionError
 
         intent = Intent(
             name=f"tool.{name}",
@@ -193,7 +193,7 @@ class RuntimeTruthAgent(LegacyAgent):
         execution_id, trace_id = self._apply_lineage(run_record)
 
         if run_record.status == "failed" and execution_id is not None:
-            from voodoo.runtime.errors import AgentExecutionError
+            from grumo.runtime.errors import AgentExecutionError
 
             raise AgentExecutionError(
                 run_record.error or "agent run failed",

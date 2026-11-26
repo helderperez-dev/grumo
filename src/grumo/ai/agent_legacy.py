@@ -5,8 +5,8 @@ The Agent turns a prompt into a final answer by iterating:
     prompt → provider → tool calls (via registry) → final
 
 The Agent is a *participant* in the runtime, not a parallel execution
-framework.  ``run()`` creates an :class:`~voodoo.runtime.execution.Execution`
-via the :class:`~voodoo.runtime.execution.engine.ExecutionEngine` so that agent
+framework.  ``run()`` creates an :class:`~grumo.runtime.execution.Execution`
+via the :class:`~grumo.runtime.execution.engine.ExecutionEngine` so that agent
 runs share the same lifecycle, persistence, recovery, authorization and
 observability as every other execution path (HTTP, Worker, Task, MCP, …).
 
@@ -33,12 +33,12 @@ from dataclasses import dataclass, field
 from enum import StrEnum
 from typing import Any
 
-from voodoo.ai.providers import LLMProvider, Message, default_model, get_provider
-from voodoo.ai.tools.registry import ToolRegistry, default_registry
-from voodoo.core.errors import ToolError
-from voodoo.security.redaction import redact_string
+from grumo.ai.providers import LLMProvider, Message, default_model, get_provider
+from grumo.ai.tools.registry import ToolRegistry, default_registry
+from grumo.core.errors import ToolError
+from grumo.security.redaction import redact_string
 
-_logger = logging.getLogger("voodoo.ai.agent")
+_logger = logging.getLogger("grumo.ai.agent")
 
 __all__ = ["Agent", "AgentRun", "AgentEvent"]
 
@@ -52,7 +52,7 @@ def _get_memory_store_class() -> Any:
     """Resolve the default memory store class (lazy)."""
     global _memory_store_cls
     if _memory_store_cls is None:
-        from voodoo.memory.interfaces import InMemoryMemoryStore
+        from grumo.memory.interfaces import InMemoryMemoryStore
 
         _memory_store_cls = InMemoryMemoryStore
     return _memory_store_cls
@@ -85,7 +85,7 @@ class AgentRun:
     """Full run record with token/cost accounting.
 
     This is a *projection* of the underlying
-    :class:`~voodoo.runtime.execution.Execution` — it exists for
+    :class:`~grumo.runtime.execution.Execution` — it exists for
     backward-compatible telemetry and agent-specific accounting, not as
     a second source of truth.  The ``execution_id`` links this record
     to the canonical Execution; ``trace_id`` is the correlation id
@@ -135,7 +135,7 @@ class Agent:
     model:
         ``"provider:model"`` string resolved via :func:`get_provider`. When
         omitted, the configured default (the ``ai`` block or
-        ``models.default`` in ``voodoo.toml``/``voodoo.yaml``) is used.
+        ``models.default`` in ``grumo.toml``/``grumo.yaml``) is used.
     tools:
         List of :class:`ToolSpec` objects or tool names registered in the
         chosen registry. ``None`` means "no tools available".
@@ -147,7 +147,7 @@ class Agent:
         Maximum tool-call iterations before forcing a final answer.
     memory:
         Memory store for durable entity state. When ``None``, an
-        :class:`~voodoo.memory.interfaces.InMemoryMemoryStore` is created
+        :class:`~grumo.memory.interfaces.InMemoryMemoryStore` is created
         lazily on first access. Context is NOT memory — context is an
         opaque dict passed to tool calls; memory is a queryable, durable
         record of what the entity knows.
@@ -158,7 +158,7 @@ class Agent:
     name:
         Human-readable display name for registry entry.
     agent_registry:
-        :class:`~voodoo.agents.registry.AgentRegistry` for durable
+        :class:`~grumo.agents.registry.AgentRegistry` for durable
         identity and run history. When ``None``, run history is not
         persisted (memory episodic entries still write).
     """
@@ -220,7 +220,7 @@ class Agent:
         """Auto-register this agent in the agent registry (lazy)."""
         if self._agent_registry is None or self._registered:
             return
-        from voodoo.agents.models import AgentEntity
+        from grumo.agents.models import AgentEntity
 
         existing = await self._agent_registry.get(self.agent_id)
         if existing is None:
@@ -239,7 +239,7 @@ class Agent:
         """Persist a run record to the agent registry."""
         if self._agent_registry is None:
             return
-        from voodoo.agents.models import AgentRunRecord
+        from grumo.agents.models import AgentRunRecord
 
         await self._ensure_registered()
         record = AgentRunRecord(
@@ -265,13 +265,13 @@ class Agent:
     def memory(self) -> Any:
         """The memory store for this agent.
 
-        Lazily creates an :class:`~voodoo.memory.interfaces.InMemoryMemoryStore`
+        Lazily creates an :class:`~grumo.memory.interfaces.InMemoryMemoryStore`
         if no store was provided at construction time. This is NOT context —
         context is an opaque dict passed to tool calls; memory is a queryable,
         durable record of what the entity knows.
         """
         if self._memory is None:
-            from voodoo.memory.interfaces import InMemoryMemoryStore
+            from grumo.memory.interfaces import InMemoryMemoryStore
 
             self._memory = InMemoryMemoryStore()
         return self._memory
@@ -287,7 +287,7 @@ class Agent:
         tool calls, and token accounting. This is Layer 1 (episodic) — the
         execution-derived record of what happened.
         """
-        from voodoo.memory.interfaces import MemoryEntry, MemoryLayer
+        from grumo.memory.interfaces import MemoryEntry, MemoryLayer
 
         tool_summary = ""
         if run_record.tool_calls:
@@ -372,7 +372,7 @@ class Agent:
         Flow: Agent → Intent → capability check → Tool → Effect → Mesh.
 
         When running inside an
-        :class:`~voodoo.runtime.execution.engine.ExecutionEngine` Execution, each
+        :class:`~grumo.runtime.execution.engine.ExecutionEngine` Execution, each
         tool call creates a *child* Execution so the full agent activity
         is visible in the execution graph:
 
@@ -385,11 +385,11 @@ class Agent:
 
         Tools that declare ``permissions`` require a matching capability,
         granted either to this agent or held by the active runtime
-        :class:`~voodoo.runtime.context.ExecutionContext`.  Unauthorized
+        :class:`~grumo.runtime.context.ExecutionContext`.  Unauthorized
         tool calls are denied before any side effect executes.
         """
-        from voodoo.primitives.effect import Effect
-        from voodoo.runtime.context import current_context
+        from grumo.primitives.effect import Effect
+        from grumo.runtime.context import current_context
 
         spec = self.registry.get(name)
         required = list(spec.permissions) if spec else []
@@ -462,8 +462,8 @@ class Agent:
         capabilities propagate to the child (Step 4: capability
         propagation).
         """
-        from voodoo.primitives.intent import Intent
-        from voodoo.runtime.context import ExecutionContext
+        from grumo.primitives.intent import Intent
+        from grumo.runtime.context import ExecutionContext
 
         intent = Intent(
             name=f"tool.{name}",
@@ -510,18 +510,18 @@ class Agent:
     ) -> AgentRun:
         """Execute prompt → provider → tool calls → final; return AgentRun.
 
-        When an :class:`~voodoo.runtime.execution.engine.ExecutionEngine` is
+        When an :class:`~grumo.runtime.execution.engine.ExecutionEngine` is
         available (either passed at construction or attached to the
-        active :class:`~voodoo.runtime.context.ExecutionContext`), the
+        active :class:`~grumo.runtime.context.ExecutionContext`), the
         run creates a first-class
-        :class:`~voodoo.runtime.execution.Execution` so it shares
+        :class:`~grumo.runtime.execution.Execution` so it shares
         lifecycle, persistence, recovery and observability with every
         other execution path.
 
         ``history`` prepends prior conversation turns (a list of ``Message``
         dicts) before the new user prompt, enabling multi-turn chat.
         """
-        from voodoo.runtime.context import current_context
+        from grumo.runtime.context import current_context
 
         # Resolve the engine: explicit on the agent, or from the active
         # context (set by ExecutionEngine._run_compute), or None.
@@ -550,11 +550,11 @@ class Agent:
         The engine owns lifecycle, persistence, recovery and
         observability.  The agent's provider loop is the *compute*
         participant — it receives an
-        :class:`~voodoo.runtime.context.ExecutionContext` and returns a
-        :class:`~voodoo.runtime.execution.engine.ComputeResult`.
+        :class:`~grumo.runtime.context.ExecutionContext` and returns a
+        :class:`~grumo.runtime.execution.engine.ComputeResult`.
         """
-        from voodoo.primitives.intent import Intent
-        from voodoo.runtime.context import ExecutionContext
+        from grumo.primitives.intent import Intent
+        from grumo.runtime.context import ExecutionContext
 
         # Build the intent that represents this agent run.
         intent = Intent(
@@ -630,7 +630,7 @@ class Agent:
         When ``run_id`` is ``None``, a new UUID is generated.  When
         called inside an engine Execution, ``run_id`` is the execution id.
         """
-        from voodoo.observability import telemetry_store
+        from grumo.observability import telemetry_store
 
         run_id = run_id or str(uuid.uuid4())
         trace_id = (
@@ -815,7 +815,7 @@ class Agent:
     ) -> AsyncIterator[AgentEvent]:
         """Yield normalized events: text, tool_started, tool_finished, thinking, error, completed."""
         run_id = str(uuid.uuid4())
-        from voodoo.observability import telemetry_store
+        from grumo.observability import telemetry_store
 
         trace_id = (
             telemetry_store.trace_id_var.get()
@@ -1113,7 +1113,7 @@ class Agent:
     async def _broadcast(self, event: str, payload: dict[str, Any]) -> None:
         """Publish a namespaced mesh event (best-effort, never breaks the run)."""
         try:
-            from voodoo.mesh import mesh
+            from grumo.mesh import mesh
 
             await mesh.broadcast(event, payload)
         except Exception as error:

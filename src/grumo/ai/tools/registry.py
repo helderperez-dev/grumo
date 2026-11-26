@@ -18,8 +18,8 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any, get_type_hints
 
-from voodoo.core.errors import ToolError
-from voodoo.security.redaction import redact_string
+from grumo.core.errors import ToolError
+from grumo.security.redaction import redact_string
 
 logger = logging.getLogger(__name__)
 
