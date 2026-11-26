@@ -6,11 +6,11 @@ import unicodedata
 from collections.abc import Iterator
 from typing import Any, Protocol
 
-from voodoo.adapters.capabilities import ObjectStoreCapabilities
+from grumo.adapters.capabilities import ObjectStoreCapabilities
 
 __all__ = [
     "ObjectStoreCapabilities",
-    "VoodooObjectStore",
+    "GrumoObjectStore",
     "validate_chunk_size",
     "validate_content_type",
     "validate_object_key",
@@ -78,7 +78,7 @@ def validate_object_prefix(prefix: str) -> str:
     return normalized
 
 
-class VoodooObjectStore(Protocol):
+class GrumoObjectStore(Protocol):
     """Backend-neutral object storage capability.
 
     Every implementation provides put/get/delete/exists/stat/list plus

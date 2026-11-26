@@ -1,7 +1,7 @@
-"""Voodoo Store-backed durable event bus.
+"""Grumo Store-backed durable event bus.
 
-Events are persisted as native Voodoo Store Topics inside the Runtime-owned
-``application.vstore``. The adapter consumes the central Runtime Store boundary
+Events are persisted as native Grumo Store Topics inside the Runtime-owned
+``application.grumo``. The adapter consumes the central Runtime Store boundary
 and never opens a competing writer.
 """
 
@@ -14,20 +14,20 @@ from collections.abc import Callable
 from datetime import UTC, datetime
 from typing import Any
 
-from voodoo.core.errors import ConfigurationError
-from voodoo.runtime.store import acquire_runtime_store
-from voodoo.storage.events.codec import EVENT_SCHEMA_VERSION, validate_event
-from voodoo.storage.events.diagnostics import report_handler_failure
-from voodoo.storage.events.interfaces import EventBusCapabilities
+from grumo.core.errors import ConfigurationError
+from grumo.runtime.store import acquire_runtime_store
+from grumo.storage.events.codec import EVENT_SCHEMA_VERSION, validate_event
+from grumo.storage.events.diagnostics import report_handler_failure
+from grumo.storage.events.interfaces import EventBusCapabilities
 
 _TOPIC_PREFIX = b"runtime.events:"
 _REPLAY_BATCH_SIZE = 1024
 
 
-class VoodooStoreEventBus:
-    """Durable event bus backed by native Voodoo Store Topics."""
+class GrumoStoreEventBus:
+    """Durable event bus backed by native Grumo Store Topics."""
 
-    provider = "voodoo"
+    provider = "grumo"
 
     def __init__(self) -> None:
         self._handlers: dict[str, list[Callable]] = {}
@@ -45,7 +45,7 @@ class VoodooStoreEventBus:
         runtime = acquire_runtime_store()
         provider = runtime.provider or runtime.start()
         if provider is None:
-            raise ConfigurationError("Voodoo Store is disabled for event persistence")
+            raise ConfigurationError("Grumo Store is disabled for event persistence")
         native = getattr(provider, "native", None)
         required = ("publish_topic", "read_topic")
         missing = [
@@ -53,7 +53,7 @@ class VoodooStoreEventBus:
         ]
         if missing:
             raise ConfigurationError(
-                "Voodoo Store 0.3+ native messaging is required for event persistence. "
+                "Grumo Store 0.3+ native messaging is required for event persistence. "
                 f"Missing Store capabilities: {', '.join(missing)}."
             )
         return native
@@ -65,13 +65,13 @@ class VoodooStoreEventBus:
 
     def publish(self, event_type: str, payload: Any, **envelope: Any) -> dict[str, Any]:
         """Persist an event to a native Topic, then notify in-process subscribers."""
-        from voodoo.observability import trace_id_var
+        from grumo.observability import trace_id_var
 
         ev = {
             "event_id": str(uuid.uuid4()),
             "event_type": event_type,
             "timestamp": datetime.now(UTC).isoformat(),
-            "source": envelope.get("source", "voodoo"),
+            "source": envelope.get("source", "grumo"),
             "subject": envelope.get("subject"),
             "correlation_id": envelope.get("correlation_id", trace_id_var.get()),
             "causation_id": envelope.get("causation_id"),

@@ -11,8 +11,8 @@ and the server-backed stores.
 
 from __future__ import annotations
 
-from voodoo.storage.database.interfaces import Migration
-from voodoo.storage.database.sqlite import register_framework_migration
+from grumo.storage.database.interfaces import Migration
+from grumo.storage.database.sqlite import register_framework_migration
 
 # Versions follow the global framework namespace: … 6 events, 7 artifacts,
 # 8 approvals (Sprint 18 added the `participant` column to the v8 CREATE —

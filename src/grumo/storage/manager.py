@@ -6,10 +6,10 @@ from urllib.parse import quote
 
 import aiofiles  # type: ignore[import-untyped]
 
-from voodoo.adapters.registry import registry
-from voodoo.config import get_config
-from voodoo.storage.objects.interfaces import validate_chunk_size
-from voodoo.storage.objects.s3 import S3ObjectStore
+from grumo.adapters.registry import registry
+from grumo.config import get_config
+from grumo.storage.objects.interfaces import validate_chunk_size
+from grumo.storage.objects.s3 import S3ObjectStore
 
 
 def _safe_object_key(bucket: str, path: str) -> str:
@@ -31,7 +31,7 @@ class StorageManager:
     """Thin facade over the active storage adapter (Sprint 6, Sprint 9, Sprint 28).
 
     The configured object adapter owns persistence. S3 keeps its existing remote
-    URL behavior, local storage keeps the ``/storage/...`` route, and the Voodoo
+    URL behavior, local storage keeps the ``/storage/...`` route, and the Grumo
     Store provider persists object bytes in the application-owned Runtime Store.
     """
 
@@ -47,15 +47,15 @@ class StorageManager:
         self.secret = self._s3.secret
         self.endpoint = self._s3.endpoint
         self.use_s3 = isinstance(self._store, S3ObjectStore) and self._s3.use_s3
-        self.use_voodoo = getattr(self._store, "provider", "") == "voodoo"
+        self.use_grumo = getattr(self._store, "provider", "") == "grumo"
         self.s3_client = self._s3.s3_client
 
     @property
     def base_dir(self) -> str:
         try:
-            return os.path.join(os.getcwd(), os.getenv("VOODOO_STORAGE_DIR", "storage"))
+            return os.path.join(os.getcwd(), os.getenv("GRUMO_STORAGE_DIR", "storage"))
         except FileNotFoundError:
-            return os.path.join(".", os.getenv("VOODOO_STORAGE_DIR", "storage"))
+            return os.path.join(".", os.getenv("GRUMO_STORAGE_DIR", "storage"))
 
     def _get_local_path(self, bucket: str, path: str) -> str:
         """Helper to resolve the local file path for a specific bucket."""
@@ -99,7 +99,7 @@ class StorageManager:
                 self._s3.put, object_key, file_content, content_type
             )
             return self.url(path, bucket)
-        if self.use_voodoo:
+        if self.use_grumo:
             await asyncio.to_thread(
                 self._store.put,
                 object_key,
@@ -120,7 +120,7 @@ class StorageManager:
         if self.use_s3 and self.s3_client:
             await asyncio.to_thread(self._s3.delete, object_key)
             return True
-        if self.use_voodoo:
+        if self.use_grumo:
             return bool(await asyncio.to_thread(self._store.delete, object_key))
 
         local_path = self._get_local_path(bucket, path)
@@ -135,7 +135,7 @@ class StorageManager:
         """Stream an object through the configured provider in bounded chunks."""
         validate_chunk_size(chunk_size)
         object_key = _safe_object_key(bucket, path)
-        if self.use_s3 or self.use_voodoo:
+        if self.use_s3 or self.use_grumo:
             yield from self._store.iter_chunks(object_key, chunk_size)
             return
 
@@ -153,7 +153,7 @@ class StorageManager:
         object_key = _safe_object_key(bucket, path)
         if self.use_s3 and self.s3_client:
             return self._s3.url(object_key)
-        if self.use_voodoo:
+        if self.use_grumo:
             return cast(str, self._store.presign(object_key))
         return f"/storage/{quote(object_key, safe='/')}"
 

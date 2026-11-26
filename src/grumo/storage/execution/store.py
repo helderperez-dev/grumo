@@ -1,6 +1,6 @@
-"""Voodoo Store-backed durable execution persistence.
+"""Grumo Store-backed durable execution persistence.
 
-The Runtime owns execution semantics; Voodoo Store owns durable mechanics. This
+The Runtime owns execution semantics; Grumo Store owns durable mechanics. This
 adapter keeps the existing synchronous ExecutionStore surface while persisting
 materialized executions, journals, artifacts and approvals in the one active
 application Store. It never opens a second ``.vstore``.
@@ -12,12 +12,12 @@ import json
 from datetime import UTC, datetime
 from typing import Any
 
-from voodoo.core.errors import ConfigurationError
-from voodoo.observability import store_span
-from voodoo.runtime.execution import Execution, ExecutionStatus
-from voodoo.runtime.store import get_active_runtime_store
+from grumo.core.errors import ConfigurationError
+from grumo.observability import store_span
+from grumo.runtime.execution import Execution, ExecutionStatus
+from grumo.runtime.store import get_active_runtime_store
 
-__all__ = ["VoodooStoreExecutionStore"]
+__all__ = ["GrumoStoreExecutionStore"]
 
 _EXECUTION_PREFIX = b"runtime:execution:data:"
 _EVENT_PREFIX = b"runtime:execution:event:"
@@ -98,10 +98,10 @@ def _execution_payload(execution: Execution) -> dict[str, object]:
     }
 
 
-class VoodooStoreExecutionStore:
+class GrumoStoreExecutionStore:
     """Execution persistence backed by the active Runtime Store."""
 
-    provider = "voodoo"
+    provider = "grumo"
 
     def __init__(self) -> None:
         runtime_store = get_active_runtime_store()
@@ -111,11 +111,11 @@ class VoodooStoreExecutionStore:
             )
         provider = runtime_store.provider or runtime_store.start()
         if provider is None:
-            raise ConfigurationError("Voodoo Store is disabled for this Runtime.")
+            raise ConfigurationError("Grumo Store is disabled for this Runtime.")
         native = getattr(provider, "native", None)
         if native is None:
             raise ConfigurationError(
-                "The active Voodoo Store provider does not expose durable storage."
+                "The active Grumo Store provider does not expose durable storage."
             )
         self._store = native
         self.path = runtime_store.config.path

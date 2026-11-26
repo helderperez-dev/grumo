@@ -8,9 +8,9 @@ import uuid
 from collections.abc import Callable
 from typing import Any
 
-from voodoo.storage.events.codec import EVENT_SCHEMA_VERSION, validate_event
-from voodoo.storage.events.diagnostics import report_handler_failure
-from voodoo.storage.events.interfaces import EventBusCapabilities
+from grumo.storage.events.codec import EVENT_SCHEMA_VERSION, validate_event
+from grumo.storage.events.diagnostics import report_handler_failure
+from grumo.storage.events.interfaces import EventBusCapabilities
 
 
 class LocalEventBus:
@@ -32,13 +32,13 @@ class LocalEventBus:
 
     def publish(self, event_type: str, payload: Any, **envelope: Any) -> dict[str, Any]:
         """Publish an event to subscribers. Returns the envelope."""
-        from voodoo.observability import trace_id_var
+        from grumo.observability import trace_id_var
 
         ev = {
             "event_id": str(uuid.uuid4()),
             "event_type": event_type,
             "timestamp": time.time(),
-            "source": envelope.get("source", "voodoo"),
+            "source": envelope.get("source", "grumo"),
             "subject": envelope.get("subject"),
             "correlation_id": envelope.get("correlation_id", trace_id_var.get()),
             "causation_id": envelope.get("causation_id"),

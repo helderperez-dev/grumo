@@ -6,7 +6,7 @@ history; the materialized table is a queryable projection rebuilt on every
 ``save()`` (last write wins).
 
 The store implements the sync ``ExecutionStore`` protocol from
-``voodoo.runtime.persistence`` so the engine can swap between JSONL (legacy)
+``grumo.runtime.persistence`` so the engine can swap between JSONL (legacy)
 and SQLite without changing its recovery surface. Persistence failures are
 never silently swallowed here — they raise, per spec §51.16.
 """
@@ -18,10 +18,10 @@ import sqlite3
 from pathlib import Path
 from typing import Any
 
-from voodoo.runtime.execution import Execution, ExecutionStatus
-from voodoo.storage.database.interfaces import Migration
-from voodoo.storage.database.sqlite import register_framework_migration
-from voodoo.storage.execution.migrations import (
+from grumo.runtime.execution import Execution, ExecutionStatus
+from grumo.storage.database.interfaces import Migration
+from grumo.storage.database.sqlite import register_framework_migration
+from grumo.storage.execution.migrations import (
     EXECUTION_APPROVALS_MIGRATION,
     EXECUTION_ARTIFACTS_MIGRATION,
 )
@@ -86,10 +86,10 @@ class SQLiteExecutionStore:
     """Durable execution store backed by a SQLite database file.
 
     Implements ``ExecutionStore`` (sync surface) plus journal append and
-    timeline queries used by ``voodoo execution <id>`` and ``voodoo events``.
+    timeline queries used by ``grumo execution <id>`` and ``grumo events``.
 
     The store owns its own sqlite3 connection — execution persistence must
-    not require the async VoodooDatabase lifecycle (engine checkpoints are
+    not require the async GrumoDatabase lifecycle (engine checkpoints are
     sync). WAL mode keeps reads cheap under concurrent access.
     """
 

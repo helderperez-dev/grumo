@@ -1,6 +1,6 @@
 """PostgreSQL implementation of the durable execution store (Sprint 11).
 
-Mirrors :class:`~voodoo.storage.execution.sqlite.SQLiteExecutionStore` —
+Mirrors :class:`~grumo.storage.execution.sqlite.SQLiteExecutionStore` —
 materialized ``executions`` table plus an append-only ``execution_events``
 journal, artifacts (Sprint 6) and approvals (Sprint 4). The store keeps a
 single synchronous psycopg connection (the ``ExecutionStore`` protocol is
@@ -21,13 +21,13 @@ from datetime import UTC, datetime
 from threading import Lock
 from typing import Any
 
-from voodoo.runtime.execution import Execution, ExecutionStatus
-from voodoo.storage.database.postgres import _translate
-from voodoo.storage.execution.migrations import (
+from grumo.runtime.execution import Execution, ExecutionStatus
+from grumo.storage.database.postgres import _translate
+from grumo.storage.execution.migrations import (
     EXECUTION_APPROVALS_MIGRATION,
     EXECUTION_ARTIFACTS_MIGRATION,
 )
-from voodoo.storage.execution.sqlite import (
+from grumo.storage.execution.sqlite import (
     EXECUTION_MIGRATION,
     _execution_payload,
     _status_event_type,

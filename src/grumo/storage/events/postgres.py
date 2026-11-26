@@ -1,9 +1,9 @@
 """Durable PostgreSQL event bus (Sprint 7, Sprint 11).
 
-Same log + replay semantics as :class:`~voodoo.storage.events.sqlite.SQLiteEventBus`
+Same log + replay semantics as :class:`~grumo.storage.events.sqlite.SQLiteEventBus`
 — events are rows in the shared ``events`` table (framework migration v6),
 subscribers are notified in-process after a durable publish, and ``replay``
-re-reads history in timestamp order. Because the ``VoodooEventBus`` protocol
+re-reads history in timestamp order. Because the ``GrumoEventBus`` protocol
 is *synchronous* (publish/subscribe/replay are blocking), this adapter owns
 its own psycopg (sync) connection instead of reusing the async
 ``PostgresDatabase`` connection, mirroring how the SQLite bus owns a
@@ -25,12 +25,12 @@ from datetime import UTC, datetime
 from threading import Lock
 from typing import TYPE_CHECKING, Any
 
-from voodoo.adapters.capabilities import EventBusCapabilities
-from voodoo.storage.database.interfaces import Migration
-from voodoo.storage.database.sqlite import register_framework_migration
-from voodoo.storage.events.codec import EVENT_SCHEMA_VERSION, validate_event
-from voodoo.storage.events.diagnostics import report_handler_failure
-from voodoo.storage.events.interfaces import VoodooEventBus
+from grumo.adapters.capabilities import EventBusCapabilities
+from grumo.storage.database.interfaces import Migration
+from grumo.storage.database.sqlite import register_framework_migration
+from grumo.storage.events.codec import EVENT_SCHEMA_VERSION, validate_event
+from grumo.storage.events.diagnostics import report_handler_failure
+from grumo.storage.events.interfaces import GrumoEventBus
 
 EVENTS_MIGRATION_VERSION = 6
 
@@ -61,7 +61,7 @@ register_framework_migration(EVENTS_MIGRATION)
 
 def _translate(query: str) -> str:
     """SQLite-style ``?`` → psycopg ``%s`` (punts to the shared DB adapter)."""
-    from voodoo.storage.database.postgres import _translate as _pg_translate
+    from grumo.storage.database.postgres import _translate as _pg_translate
 
     return _pg_translate(query)
 
@@ -123,13 +123,13 @@ class PostgresEventStore:
 
     def publish(self, event_type: str, payload: Any, **envelope: Any) -> dict[str, Any]:
         """Persist to log, then notify subscribers."""
-        from voodoo.observability import trace_id_var
+        from grumo.observability import trace_id_var
 
         ev = {
             "event_id": str(uuid.uuid4()),
             "event_type": event_type,
             "timestamp": datetime.now(UTC).isoformat(),
-            "source": envelope.get("source", "voodoo"),
+            "source": envelope.get("source", "grumo"),
             "subject": envelope.get("subject"),
             "correlation_id": envelope.get("correlation_id", trace_id_var.get()),
             "causation_id": envelope.get("causation_id"),
@@ -207,4 +207,4 @@ class PostgresEventStore:
 
 
 if TYPE_CHECKING:
-    _protocol_check: VoodooEventBus = PostgresEventStore("postgresql://check")
+    _protocol_check: GrumoEventBus = PostgresEventStore("postgresql://check")

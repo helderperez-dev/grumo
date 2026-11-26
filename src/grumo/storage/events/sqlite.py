@@ -11,11 +11,11 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from voodoo.storage.database.interfaces import Migration
-from voodoo.storage.database.sqlite import register_framework_migration
-from voodoo.storage.events.codec import EVENT_SCHEMA_VERSION, validate_event
-from voodoo.storage.events.diagnostics import report_handler_failure
-from voodoo.storage.events.interfaces import EventBusCapabilities
+from grumo.storage.database.interfaces import Migration
+from grumo.storage.database.sqlite import register_framework_migration
+from grumo.storage.events.codec import EVENT_SCHEMA_VERSION, validate_event
+from grumo.storage.events.diagnostics import report_handler_failure
+from grumo.storage.events.interfaces import EventBusCapabilities
 
 EVENTS_MIGRATION_VERSION = 6
 
@@ -94,13 +94,13 @@ class SQLiteEventBus:
 
     def publish(self, event_type: str, payload: Any, **envelope: Any) -> dict[str, Any]:
         """Persist to log, then notify subscribers."""
-        from voodoo.observability import trace_id_var
+        from grumo.observability import trace_id_var
 
         ev = {
             "event_id": str(uuid.uuid4()),
             "event_type": event_type,
             "timestamp": datetime.now(UTC).isoformat(),
-            "source": envelope.get("source", "voodoo"),
+            "source": envelope.get("source", "grumo"),
             "subject": envelope.get("subject"),
             "correlation_id": envelope.get("correlation_id", trace_id_var.get()),
             "causation_id": envelope.get("causation_id"),
