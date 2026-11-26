@@ -5,13 +5,13 @@ telemetry records, mesh payloads, and log output.
 
 The guard scrubs:
 
-1. Values of registered secrets (from :mod:`voodoo.security.secrets`).
+1. Values of registered secrets (from :mod:`grumo.security.secrets`).
 2. Common secret patterns (API keys, bearer tokens, password URIs).
 3. Keys named ``secret``, ``password``, ``token``, ``api_key``, etc.
 
 Usage::
 
-    from voodoo.security.redaction import redact
+    from grumo.security.redaction import redact
 
     safe = redact({"api_key": "sk-abc123", "name": "test"})
     # → {"api_key": "[REDACTED]", "name": "test"}
@@ -106,7 +106,7 @@ class RedactionGuard:
         names:
             Secret names to resolve from the active secrets store.
         """
-        from voodoo.security.secrets import get
+        from grumo.security.secrets import get
 
         for name in names:
             value = get(name)

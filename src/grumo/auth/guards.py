@@ -6,7 +6,7 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import JSONResponse, RedirectResponse
 
-from voodoo.auth.user import get_current_user
+from grumo.auth.user import get_current_user
 
 
 def _request(args: tuple[Any, ...], kwargs: dict[str, Any]) -> Request | None:

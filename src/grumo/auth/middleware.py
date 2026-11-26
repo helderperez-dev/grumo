@@ -9,9 +9,9 @@ from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoin
 from starlette.requests import Request
 from starlette.responses import Response
 
-from voodoo.auth.jwt import AuthError, decode_access_token
-from voodoo.auth.user import AuthUser, User, current_user
-from voodoo.config import config
+from grumo.auth.jwt import AuthError, decode_access_token
+from grumo.auth.user import AuthUser, User, current_user
+from grumo.config import config
 
 __all__ = ["AuthMiddleware"]
 

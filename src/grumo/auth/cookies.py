@@ -2,7 +2,7 @@ from typing import Literal
 
 from starlette.responses import Response
 
-from voodoo.config import config
+from grumo.config import config
 
 # =========================================================================
 # Cookie Helpers

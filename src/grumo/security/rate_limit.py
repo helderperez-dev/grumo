@@ -12,7 +12,7 @@ from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoin
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from voodoo.config import config
+from grumo.config import config
 
 __all__ = ["RateLimiter", "RateLimitMiddleware", "rate_limiter"]
 

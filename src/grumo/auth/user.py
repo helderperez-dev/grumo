@@ -5,14 +5,14 @@ from uuid import UUID
 
 from starlette.requests import Request
 
-from voodoo.auth.passwords import (
+from grumo.auth.passwords import (
     generate_api_key,
     hash_api_key,
     hash_password,
     verify_password,
 )
-from voodoo.data import BaseModel, get_db
-from voodoo.runtime.identity import (
+from grumo.data import BaseModel, get_db
+from grumo.runtime.identity import (
     AuthenticationEvidence,
     Identity,
     IdentityKind,
@@ -95,7 +95,7 @@ class AuthUser:
         evidence = AuthenticationEvidence(
             method=self.auth_type,
             subject=str(self.id),
-            issuer="voodoo",
+            issuer="grumo",
         )
         return Principal(
             identity=identity,
@@ -135,9 +135,9 @@ def get_current_user(request: Request | None = None) -> AuthUser | None:
 
 
 def _uses_store() -> bool:
-    from voodoo.config import get_config
+    from grumo.config import get_config
 
-    return get_config().database.provider.lower() == "voodoo"
+    return get_config().database.provider.lower() == "grumo"
 
 
 def _from_record(record: dict[str, Any]) -> "User":
@@ -156,10 +156,10 @@ class User(BaseModel):
     """Built-in Runtime user identity persisted in Store by default.
 
     SQLite/Postgres remain explicit compatibility adapters. Identity semantics
-    stay in the Runtime while Voodoo Store owns default durable mechanics.
+    stay in the Runtime while Grumo Store owns default durable mechanics.
     """
 
-    __tablename__ = "voodoo_users"
+    __tablename__ = "grumo_users"
     id: UUID
     email: str
     username: str
@@ -194,7 +194,7 @@ class User(BaseModel):
         }
 
         if _uses_store():
-            from voodoo.data.store_backend import insert_record
+            from grumo.data.store_backend import insert_record
 
             user_id = insert_record(cls.__tablename__, values)
             return _from_record({"id": user_id, **values}), raw_key
@@ -212,7 +212,7 @@ class User(BaseModel):
         cls, email_or_username: str, password: str
     ) -> Optional["User"]:
         if _uses_store():
-            from voodoo.data.store_backend import scan_records
+            from grumo.data.store_backend import scan_records
 
             for record in scan_records(cls.__tablename__):
                 if not record.get("is_active"):
@@ -230,7 +230,7 @@ class User(BaseModel):
         db = await get_db()
         await cls._create_table()
         query = (
-            "SELECT * FROM voodoo_users "
+            "SELECT * FROM grumo_users "
             "WHERE (email = ? OR username = ?) AND is_active = ?"
         )
         async with db.execute(
@@ -256,7 +256,7 @@ class User(BaseModel):
         key_hash = hash_api_key(api_key)
 
         if _uses_store():
-            from voodoo.data.store_backend import scan_records
+            from grumo.data.store_backend import scan_records
 
             for record in scan_records(cls.__tablename__):
                 if record.get("is_active") and record.get("api_key_hash") == key_hash:
@@ -265,7 +265,7 @@ class User(BaseModel):
 
         db = await get_db()
         await cls._create_table()
-        query = "SELECT * FROM voodoo_users WHERE api_key_hash = ? AND is_active = ?"
+        query = "SELECT * FROM grumo_users WHERE api_key_hash = ? AND is_active = ?"
         async with db.execute(query, [key_hash, True]) as cursor:
             row = await cursor.fetchone()
             if not row:

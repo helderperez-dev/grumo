@@ -9,7 +9,7 @@ Provides a single interface for accessing secrets so that:
 
 Usage::
 
-    from voodoo.security.secrets import secrets
+    from grumo.security.secrets import secrets
 
     api_key = secrets.get("OPENAI_API_KEY")
     db_pass = secrets.get("DATABASE_PASSWORD")
@@ -94,8 +94,8 @@ class LocalSecretStore:
     path:
         Path to the secrets JSON file.
     key:
-        Fernet encryption key.  If ``None``, reads from ``VOODOO_SECRETS_KEY``
-        env var or ``.voodoo-secrets-key`` file.
+        Fernet encryption key.  If ``None``, reads from ``GRUMO_SECRETS_KEY``
+        env var or ``.grumo-secrets-key`` file.
     """
 
     def __init__(self, path: str | Path, key: str | None = None) -> None:
@@ -117,18 +117,18 @@ class LocalSecretStore:
     def _ensure_key(self) -> str:
         if self._key:
             return self._key
-        env_key = os.environ.get("VOODOO_SECRETS_KEY")
+        env_key = os.environ.get("GRUMO_SECRETS_KEY")
         if env_key:
             self._key = env_key
             return env_key
-        key_file = Path(".voodoo-secrets-key")
+        key_file = Path(".grumo-secrets-key")
         if key_file.exists():
-            self._require_private(key_file, label=".voodoo-secrets-key")
+            self._require_private(key_file, label=".grumo-secrets-key")
             self._key = key_file.read_text().strip()
             return self._key
         raise SecretsError(
-            "No encryption key found. Set VOODOO_SECRETS_KEY env var, "
-            "create .voodoo-secrets-key file, or pass key= to LocalSecretStore."
+            "No encryption key found. Set GRUMO_SECRETS_KEY env var, "
+            "create .grumo-secrets-key file, or pass key= to LocalSecretStore."
         )
 
     def _fernet(self) -> Any:
@@ -137,14 +137,14 @@ class LocalSecretStore:
         except ImportError as exc:
             raise SecretsError(
                 "Encrypted local secrets require the 'secrets' extra. "
-                "Install it with: pip install 'voodoo-framework[secrets]'"
+                "Install it with: pip install 'grumo-framework[secrets]'"
             ) from exc
 
         try:
             key = self._ensure_key()
             return Fernet(key.encode())
         except (TypeError, ValueError) as exc:
-            raise SecretsError("VOODOO_SECRETS_KEY is not a valid Fernet key.") from exc
+            raise SecretsError("GRUMO_SECRETS_KEY is not a valid Fernet key.") from exc
 
     def _load(self) -> dict[str, str]:
         if self._data is not None:

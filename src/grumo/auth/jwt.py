@@ -9,12 +9,12 @@ import time
 from typing import Any
 from uuid import UUID, uuid4
 
-from voodoo.config import AuthConfig, config
-from voodoo.core.errors import AuthError as _VoodooAuthError
+from grumo.config import AuthConfig, config
+from grumo.core.errors import AuthError as _GrumoAuthError
 
 
-class AuthError(_VoodooAuthError):
-    """Base exception for authentication errors (part of the VoodooError tree)."""
+class AuthError(_GrumoAuthError):
+    """Base exception for authentication errors (part of the GrumoError tree)."""
 
     def __init__(self, message: str, status_code: int = 401):
         super().__init__(message)
@@ -211,7 +211,7 @@ def _validate_time_claim(
     if claim not in payload:
         return
     raw_value = payload[claim]
-    # JWT NumericDate claims are JSON numbers. Voodoo emits integer seconds;
+    # JWT NumericDate claims are JSON numbers. Grumo emits integer seconds;
     # reject bools, strings, and fractional values instead of silently
     # truncating or accepting type-confused claims.
     if isinstance(raw_value, bool) or not isinstance(raw_value, int):

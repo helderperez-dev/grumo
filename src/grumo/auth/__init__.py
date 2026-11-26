@@ -1,18 +1,18 @@
-"""Voodoo authentication: JWT tokens, passwords & API keys, user context,
+"""Grumo authentication: JWT tokens, passwords & API keys, user context,
 guards, cookies, and ASGI middleware.
 
 Split by concern; this package re-exports the complete public surface of the
-former flat ``voodoo.auth`` module for backwards compatibility::
+former flat ``grumo.auth`` module for backwards compatibility::
 
-    from voodoo.auth import AuthMiddleware, AuthUser, login_required
+    from grumo.auth import AuthMiddleware, AuthUser, login_required
 """
 
-from voodoo.auth.cookies import (
+from grumo.auth.cookies import (
     _normalize_samesite,
     clear_auth_cookie,
     set_auth_cookie,
 )
-from voodoo.auth.guards import (
+from grumo.auth.guards import (
     login_required,
     require_api_key,
     require_auth,
@@ -25,7 +25,7 @@ from voodoo.auth.guards import (
     requires_roles,
     requires_scopes,
 )
-from voodoo.auth.jwt import (
+from grumo.auth.jwt import (
     AuthError,
     ExpiredTokenError,
     InvalidCredentialsError,
@@ -39,8 +39,8 @@ from voodoo.auth.jwt import (
     revoke_access_token,
     revoke_subject_sessions,
 )
-from voodoo.auth.middleware import AuthMiddleware
-from voodoo.auth.passwords import (
+from grumo.auth.middleware import AuthMiddleware
+from grumo.auth.passwords import (
     generate_api_key,
     generate_secret_key,
     hash_api_key,
@@ -48,7 +48,7 @@ from voodoo.auth.passwords import (
     verify_api_key,
     verify_password,
 )
-from voodoo.auth.user import AuthUser, User, current_user, get_current_user
+from grumo.auth.user import AuthUser, User, current_user, get_current_user
 
 __all__ = [
     "AuthError",

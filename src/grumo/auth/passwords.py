@@ -1,7 +1,7 @@
 import hashlib
 import secrets
 
-from voodoo.config import config
+from grumo.config import config
 
 # =========================================================================
 # Cryptographic Password Hashing (Zero-dependency PBKDF2-HMAC-SHA256)

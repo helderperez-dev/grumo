@@ -9,7 +9,7 @@ from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoin
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from voodoo.config import config
+from grumo.config import config
 
 __all__ = ["CSRFMiddleware", "generate_csrf_token", "set_csrf_cookie"]
 
@@ -49,7 +49,7 @@ class CSRFMiddleware(BaseHTTPMiddleware):
     # route, it must not become a CSRF bypass (and production deployments
     # should disable TRACE at the edge).
     EXEMPT_METHODS: set[str] = {"GET", "HEAD", "OPTIONS"}
-    EXEMPT_PATHS: set[str] = {"/_voodoo_ws", "/voodoo/mesh/ws", "/openapi.json"}
+    EXEMPT_PATHS: set[str] = {"/_grumo_ws", "/grumo/mesh/ws", "/openapi.json"}
 
     def __init__(self, app: Any, *, config_override: Any = None) -> None:
         super().__init__(app)

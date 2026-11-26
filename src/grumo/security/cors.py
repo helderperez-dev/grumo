@@ -8,7 +8,7 @@ from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoin
 from starlette.requests import Request
 from starlette.responses import Response
 
-from voodoo.config import config
+from grumo.config import config
 
 __all__ = ["CORSMiddleware"]
 
