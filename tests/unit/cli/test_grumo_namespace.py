@@ -6,10 +6,11 @@ import importlib
 import tomllib
 from pathlib import Path
 
+from typer.testing import CliRunner
+
 import grumo
 import voodoo
 from grumo.cli import app as grumo_cli
-from typer.testing import CliRunner
 from voodoo.cli import app as voodoo_cli
 
 
