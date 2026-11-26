@@ -22,6 +22,7 @@ jobs:
           version: latest
       - name: Apply the pinned formatter to only touched Python files
         run: |
+          uvx ruff==0.16.3 check --fix scripts/check_visual_contract.py
           uvx ruff==0.16.3 format             scripts/check_migration_corpus.py             scripts/check_visual_contract.py             src/voodoo/mesh/client.py             src/voodoo/runtime/workflow_store.py             tests/browser/test_component_lab_browser.py             tests/unit/cli/test_grumo_transition.py
           python -m compileall -q scripts/check_migration_corpus.py scripts/check_visual_contract.py src/voodoo/mesh/client.py src/voodoo/runtime/workflow_store.py
           uvx ruff==0.16.3 check .
