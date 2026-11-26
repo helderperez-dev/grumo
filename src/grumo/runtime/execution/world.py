@@ -11,7 +11,7 @@ import inspect
 from collections.abc import Awaitable, Callable
 from typing import Any
 
-from voodoo.runtime.context import ExecutionContext
+from grumo.runtime.context import ExecutionContext
 
 __all__ = ["bind_world", "world_aware", "resolve_target_entity_id"]
 

@@ -17,7 +17,7 @@ import secrets
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
-from voodoo.runtime.identity import (
+from grumo.runtime.identity import (
     AuthenticationEvidence,
     Identity,
     IdentityKind,
@@ -64,7 +64,7 @@ class ParticipantIdentity:
                 AuthenticationEvidence(
                     method=f"mesh:{self.metadata.get('transport', 'unknown')}",
                     subject=self.participant_id,
-                    issuer="voodoo-mesh",
+                    issuer="grumo-mesh",
                     metadata={
                         key: value
                         for key, value in self.metadata.items()
@@ -123,7 +123,7 @@ class InMemoryParticipantResolver:
         credential: str | None = None,
         metadata: dict[str, Any] | None = None,
     ) -> str:
-        """Register an authenticated Voodoo Node identity without granting authority."""
+        """Register an authenticated Grumo Node identity without granting authority."""
         return self.register(
             node_id,
             credential=credential,

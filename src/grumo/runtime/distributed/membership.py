@@ -1,4 +1,4 @@
-"""Durable Voodoo Node membership semantics.
+"""Durable Grumo Node membership semantics.
 
 Authentication establishes who a node is. Membership records whether that
 node currently belongs to a Runtime fabric and what it advertises. Advertised
@@ -14,8 +14,8 @@ from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any
 
-from voodoo.runtime.identity import IdentityKind, Principal
-from voodoo.runtime.store import (
+from grumo.runtime.identity import IdentityKind, Principal
+from grumo.runtime.store import (
     RuntimeStore,
     StoreProviderError,
     get_active_runtime_store,
@@ -25,7 +25,7 @@ __all__ = [
     "MemberStatus",
     "NodeAdvertisement",
     "NodeMembership",
-    "VoodooStoreMembershipStore",
+    "GrumoStoreMembershipStore",
 ]
 
 _MEMBERSHIP_PREFIX = b"runtime:membership:node:"
@@ -121,7 +121,7 @@ class NodeMembership:
         )
 
 
-class VoodooStoreMembershipStore:
+class GrumoStoreMembershipStore:
     """Persist node membership in the Runtime-owned application Store."""
 
     def __init__(self, runtime_store: RuntimeStore | None = None) -> None:
@@ -131,13 +131,13 @@ class VoodooStoreMembershipStore:
         provider = self.runtime_store.provider
         if provider is None or not provider.opened:
             raise StoreProviderError("RuntimeStore must be started for node membership")
-        if provider.name != "voodoo":
+        if provider.name != "grumo":
             raise StoreProviderError(
-                "VoodooStoreMembershipStore requires the Voodoo Store provider"
+                "GrumoStoreMembershipStore requires the Grumo Store provider"
             )
         self._native: Any = getattr(provider, "native", None)
         if self._native is None:
-            raise StoreProviderError("Active Voodoo Store has no native handle")
+            raise StoreProviderError("Active Grumo Store has no native handle")
 
     @staticmethod
     def _native_collections(store: Any) -> bool:

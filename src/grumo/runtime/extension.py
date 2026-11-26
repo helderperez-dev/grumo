@@ -9,7 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import StrEnum
 
-from voodoo.runtime.application_graph import (
+from grumo.runtime.application_graph import (
     ApplicationGraph,
     Extension,
     ExtensionManifest,

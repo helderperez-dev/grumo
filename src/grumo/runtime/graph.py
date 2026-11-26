@@ -5,7 +5,7 @@ traceable to an execution, with dependencies, events, results, errors,
 timing, resources and effects.
 
 This is not a separate execution system — it is a read view over the
-:class:`~voodoo.runtime.execution.engine.ExecutionEngine`'s recorded executions.
+:class:`~grumo.runtime.execution.engine.ExecutionEngine`'s recorded executions.
 """
 
 from __future__ import annotations
@@ -13,7 +13,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from voodoo.runtime.execution import Execution
+from grumo.runtime.execution import Execution
 
 __all__ = ["ExecutionNode", "ExecutionGraph"]
 

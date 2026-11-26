@@ -1,4 +1,4 @@
-"""Canonical remote-execution semantics for the Voodoo Mesh.
+"""Canonical remote-execution semantics for the Grumo Mesh.
 
 This module is deliberately transport-independent. WebSocket/JSON-RPC is only
 one carrier for a :class:`RemoteExecutionRequest`; the semantic request is
@@ -11,7 +11,7 @@ unverified network claim cannot be confused with a local actor identity.
 
 Sprint 26.3 adds a server-side authority registry. Network payloads may identify
 an asserted actor but they never carry authoritative capability grants. Those
-are assigned by the receiving Voodoo node and injected into the canonical
+are assigned by the receiving Grumo node and injected into the canonical
 ExecutionContext before capability/policy evaluation.
 """
 
@@ -24,9 +24,9 @@ from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from voodoo.primitives.capability import Capability
-from voodoo.primitives.intent import Intent
-from voodoo.runtime.execution import Execution
+from grumo.primitives.capability import Capability
+from grumo.primitives.intent import Intent
+from grumo.runtime.execution import Execution
 
 REMOTE_SCHEMA_VERSION = 1
 

@@ -18,7 +18,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Protocol
 
-from voodoo.runtime.distributed.remote import (
+from grumo.runtime.distributed.remote import (
     RemoteExecutionOutcome,
     RemoteExecutionRequest,
 )

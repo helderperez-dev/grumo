@@ -1,14 +1,14 @@
-"""Execution Engine — the heart of the Voodoo runtime.
+"""Execution Engine — the heart of the Grumo runtime.
 
-The engine turns an :class:`~voodoo.primitives.intent.Intent` (plus an
-optional compute callable) into an :class:`~voodoo.runtime.execution.Execution`
+The engine turns an :class:`~grumo.primitives.intent.Intent` (plus an
+optional compute callable) into an :class:`~grumo.runtime.execution.Execution`
 by walking the canonical pipeline:
 
     Intent → Capability Resolution → Compute → Effect → State → Mesh events
 
 Everything that executes (Python function, Agent, Tool, Worker, Human,
 Workflow task) is expressed as a *compute callable* receiving the shared
-:class:`~voodoo.runtime.context.ExecutionContext` and returning a result
+:class:`~grumo.runtime.context.ExecutionContext` and returning a result
 plus optional effects/state changes. This keeps the architecture
 AI-independent: agents are one kind of compute participant, not the
 foundation.
@@ -28,21 +28,21 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Union, cast
 
-from voodoo.primitives.effect import Effect
-from voodoo.primitives.intent import Intent
-from voodoo.primitives.resource import Resource
-from voodoo.runtime.capability import CapabilityResolver
-from voodoo.runtime.constraint import ConstraintEnforcer, ResourceAccountant
-from voodoo.runtime.context import ExecutionContext, use_context
-from voodoo.runtime.errors import (
+from grumo.primitives.effect import Effect
+from grumo.primitives.intent import Intent
+from grumo.primitives.resource import Resource
+from grumo.runtime.capability import CapabilityResolver
+from grumo.runtime.constraint import ConstraintEnforcer, ResourceAccountant
+from grumo.runtime.context import ExecutionContext, use_context
+from grumo.runtime.errors import (
     ApprovalRequired,
     ExecutionCancelled,
     ExecutionError,
     ExecutionTimeout,
 )
-from voodoo.runtime.execution.model import Execution, ExecutionStatus
-from voodoo.runtime.identity import Principal
-from voodoo.security.redaction import redact_string
+from grumo.runtime.execution.model import Execution, ExecutionStatus
+from grumo.runtime.identity import Principal
+from grumo.security.redaction import redact_string
 
 __all__ = [
     "ComputeFn",
@@ -55,7 +55,7 @@ ComputeFn = Callable[
     [ExecutionContext], Union[Awaitable["ComputeResult"], "ComputeResult"]
 ]
 
-_logger = logging.getLogger("voodoo.runtime.execution")
+_logger = logging.getLogger("grumo.runtime.execution")
 
 
 @dataclass
@@ -72,7 +72,7 @@ class ComputeResult:
         """Validate ``value`` against ``output_type`` (pydantic/BaseModel)."""
         if self.output_type is None or self.value is None:
             return self.value
-        from voodoo.runtime.errors import ValidationError
+        from grumo.runtime.errors import ValidationError
 
         try:
             if hasattr(self.output_type, "model_validate"):
@@ -95,7 +95,7 @@ class ComputeResult:
 
 @dataclass
 class ExecutionEngine:
-    """The single execution engine for the Voodoo runtime."""
+    """The single execution engine for the Grumo runtime."""
 
     capabilities: CapabilityResolver = field(default_factory=CapabilityResolver)
     constraints: ConstraintEnforcer = field(default_factory=ConstraintEnforcer)
@@ -103,7 +103,7 @@ class ExecutionEngine:
     executions: dict[str, Execution] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
-        from voodoo.runtime.human import ApprovalRegistry
+        from grumo.runtime.human import ApprovalRegistry
 
         self.approvals = ApprovalRegistry()
         self._execution_store: Any = None
@@ -156,7 +156,7 @@ class ExecutionEngine:
         """Record a redacted approval decision as a journal event."""
         store = self._execution_store
         if store is not None and hasattr(store, "append_event"):
-            from voodoo.security.redaction import redact
+            from grumo.security.redaction import redact
 
             store.append_event(execution_id, event, redact(payload))
 
@@ -167,7 +167,7 @@ class ExecutionEngine:
 
     def _build_checkpoint(self, execution: Execution) -> None:
         """Build a JSON-serializable checkpoint payload (spec §14)."""
-        from voodoo.primitives.effect import EffectStatus
+        from grumo.primitives.effect import EffectStatus
 
         completed_effects = [
             e.id for e in execution.effects if e.status is EffectStatus.SUCCEEDED
@@ -191,7 +191,7 @@ class ExecutionEngine:
 
     def recover(self) -> list[Execution]:
         """Reload unfinished executions from the attached store."""
-        from voodoo.runtime.persistence import filter_unfinished
+        from grumo.runtime.persistence import filter_unfinished
 
         if self._execution_store is None:
             return []
@@ -224,7 +224,7 @@ class ExecutionEngine:
 
     def _rehydrate_approval(self, execution: Execution, record: dict) -> None:
         """Reconstruct an approval record from its persisted form (Sprint 4)."""
-        from voodoo.runtime.human import Approval, ApprovalStatus
+        from grumo.runtime.human import Approval, ApprovalStatus
 
         approval = Approval(
             id=record["id"],
@@ -251,7 +251,7 @@ class ExecutionEngine:
         self, waiting: Execution | None, approval: Any
     ) -> ExecutionContext:
         """Rebuild the exact parent boundary used for an approved resume."""
-        from voodoo.primitives.capability import Capability
+        from grumo.primitives.capability import Capability
 
         if approval.context is not None:
             parent = approval.context
@@ -300,8 +300,8 @@ class ExecutionEngine:
         note: str | None,
     ) -> Execution | None:
         """Resume approved compute as one direct child of the waiting execution."""
-        from voodoo.primitives.capability import Capability
-        from voodoo.runtime.human import ApprovalStatus
+        from grumo.primitives.capability import Capability
+        from grumo.runtime.human import ApprovalStatus
 
         self._resolve_approved_compute(approval, waiting)
         if approval.compute is None or approval.intent is None:
@@ -339,7 +339,7 @@ class ExecutionEngine:
         self, execution_id: str, *, by: str = "human", note: str | None = None
     ) -> Execution | None:
         """Approve a waiting execution and durably resume it as a child."""
-        from voodoo.runtime.human import ApprovalStatus
+        from grumo.runtime.human import ApprovalStatus
 
         approval = self.approvals.decide(
             execution_id, ApprovalStatus.APPROVED, by=by, reason=note
@@ -374,7 +374,7 @@ class ExecutionEngine:
         self, execution_id: str, *, by: str = "human", reason: str = "denied"
     ) -> Execution | None:
         """Deny a waiting execution and persist its terminal failure."""
-        from voodoo.runtime.human import ApprovalStatus
+        from grumo.runtime.human import ApprovalStatus
 
         approval = self.approvals.decide(
             execution_id, ApprovalStatus.DENIED, by=by, reason=reason
@@ -416,7 +416,7 @@ class ExecutionEngine:
             intent, actor=actor, principal=principal, parent=parent
         )
         if capabilities:
-            from voodoo.primitives.capability import Capability
+            from grumo.primitives.capability import Capability
 
             for name in capabilities:
                 cap = self.capabilities.capabilities.get(name)
@@ -502,7 +502,7 @@ class ExecutionEngine:
             if effect.idempotency_key is None:
                 effect.idempotency_key = f"{execution.id}:{effect.id}"
             execution.add_effect(effect)
-            from voodoo.observability import telemetry_store
+            from grumo.observability import telemetry_store
 
             telemetry_store.record_trace(
                 "effect.recorded",
@@ -563,7 +563,7 @@ class ExecutionEngine:
             # present, every named effect is re-authorized below.
             if not self.capabilities.capabilities:
                 return
-            from voodoo.runtime.errors import CapabilityDenied
+            from grumo.runtime.errors import CapabilityDenied
 
             raise CapabilityDenied(
                 f"Effect '{effect.name}' has no authorizing capability",
@@ -673,7 +673,7 @@ class ExecutionEngine:
         ]
         if not candidates:
             return
-        from voodoo.runtime.scheduling.workers import enqueue_compensation
+        from grumo.runtime.scheduling.workers import enqueue_compensation
 
         for effect in candidates:
             try:
@@ -790,8 +790,8 @@ class ExecutionEngine:
     async def _emit(self, event: str, payload: dict[str, Any]) -> None:
         """Publish a redacted namespaced mesh event best-effort."""
         try:
-            from voodoo.mesh import mesh
-            from voodoo.security.redaction import redact
+            from grumo.mesh import mesh
+            from grumo.security.redaction import redact
 
             await mesh.broadcast(event, redact(payload))
         except Exception as error:
@@ -806,7 +806,7 @@ class ExecutionEngine:
     def _record_telemetry(self, execution: Execution) -> None:
         """Record execution telemetry with redaction (Sprint 19)."""
         try:
-            from voodoo.observability import telemetry_store
+            from grumo.observability import telemetry_store
 
             telemetry_store.record_trace(
                 f"execution.{execution.intent.name if execution.intent else 'anonymous'}",

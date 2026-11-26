@@ -27,11 +27,11 @@ from uuid import uuid4
 
 from pydantic import BaseModel, Field
 
-from voodoo.primitives.compute import ComputeSpec
-from voodoo.primitives.effect import Effect
-from voodoo.primitives.intent import Intent
-from voodoo.primitives.resource import Resource
-from voodoo.primitives.state import State
+from grumo.primitives.compute import ComputeSpec
+from grumo.primitives.effect import Effect
+from grumo.primitives.intent import Intent
+from grumo.primitives.resource import Resource
+from grumo.primitives.state import State
 
 __all__ = ["ExecutionStatus", "LEGAL_TRANSITIONS", "Execution"]
 
@@ -117,7 +117,7 @@ class Execution(BaseModel):
     """A single runtime execution.
 
     This is the canonical record produced and consumed by the
-    :class:`~voodoo.runtime.execution.engine.ExecutionEngine`. It is serializable
+    :class:`~grumo.runtime.execution.engine.ExecutionEngine`. It is serializable
     (Pydantic) so it can be checkpointed, inspected, and emitted as telemetry.
     """
 

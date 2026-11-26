@@ -1,4 +1,4 @@
-"""Governed Voodoo Node fabric semantics.
+"""Governed Grumo Node fabric semantics.
 
 This module closes the Sprint 28 distributed-runtime boundary without pretending
 that node-local Stores form a distributed database. Membership/discovery,
@@ -16,12 +16,12 @@ from datetime import UTC, datetime, timedelta
 from typing import Any, Protocol
 from uuid import uuid4
 
-from voodoo.runtime.distributed.membership import (
+from grumo.runtime.distributed.membership import (
     MemberStatus,
     NodeMembership,
-    VoodooStoreMembershipStore,
+    GrumoStoreMembershipStore,
 )
-from voodoo.runtime.store import (
+from grumo.runtime.store import (
     RuntimeStore,
     StoreProviderError,
     get_active_runtime_store,
@@ -163,7 +163,7 @@ class RuntimeFabric:
 
     def __init__(
         self,
-        membership: VoodooStoreMembershipStore | None = None,
+        membership: GrumoStoreMembershipStore | None = None,
         *,
         runtime_store: RuntimeStore | None = None,
         policy: PolicyPredicate | None = None,
@@ -175,13 +175,13 @@ class RuntimeFabric:
         provider = self.runtime_store.provider
         if provider is None or not provider.opened:
             raise StoreProviderError("RuntimeStore must be started for Runtime fabric")
-        if provider.name != "voodoo":
-            raise StoreProviderError("RuntimeFabric currently requires Voodoo Store")
+        if provider.name != "grumo":
+            raise StoreProviderError("RuntimeFabric currently requires Grumo Store")
         self._native: Any = getattr(provider, "native", None)
         if self._native is None:
-            raise StoreProviderError("Active Voodoo Store has no native handle")
+            raise StoreProviderError("Active Grumo Store has no native handle")
         self._ensure_collection()
-        self.membership = membership or VoodooStoreMembershipStore(self.runtime_store)
+        self.membership = membership or GrumoStoreMembershipStore(self.runtime_store)
         self.policy = policy
         self.lease_seconds = lease_seconds
 
@@ -266,7 +266,7 @@ class RuntimeFabric:
         candidates = self.candidates(requirement, exclude=exclude)
         if not candidates:
             raise NoEligibleNodeError(
-                "No ACTIVE Voodoo Node satisfies placement requirements"
+                "No ACTIVE Grumo Node satisfies placement requirements"
             )
 
         ranked: list[PlacementDecision] = []
