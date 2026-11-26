@@ -8,8 +8,8 @@ remain live until the replacement packages build, publish, and pass validation.
 
 | Distribution | Python import | Owner repository | Publisher workflow |
 | --- | --- | --- | --- |
-| `grumo-store` | `grumo_store` | `helderperez-dev/grumo-store` | `.github/workflows/python-wheels.yml` |
-| `grumo` | `grumo` | `helderperez-dev/grumo` | ` .github/workflows/release.yml` (verify actual filename before configuring) |
+| `grumo-store` | `grumo_store` | `helderperez-dev/grumo-store` | `.github/workflows/publish-grumo-store.yml` |
+| `grumo` | `grumo` | `helderperez-dev/grumo` | `.github/workflows/publish-grumo.yml` |
 
 The project names are *targets only*: do not assume availability/ownership
 until checked in a fresh PyPI authenticated session or official JSON endpoint.
@@ -17,8 +17,9 @@ until checked in a fresh PyPI authenticated session or official JSON endpoint.
 ## Before adding a trusted publisher
 
 1. Rename the repositories **after** branch CI and cross-repo package tests.
-2. Determine the canonical workflow filename for each actual repository
-   (the Framework workflow above is provisional).
+2. Use the new OIDC workflows `publish-grumo.yml` and
+   `publish-grumo-store.yml`, which gate publishing on canonical package
+   identity and release artifacts.
 3. On PyPI, create a **pending Trusted Publisher** for each new distribution
    and provide exact GitHub owner, repo, workflow filename, and environment
    (recommended `pypi`).
