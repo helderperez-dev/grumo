@@ -18,8 +18,8 @@ def test_grumo_and_voodoo_console_scripts_share_a_stable_entrypoint() -> None:
     project = Path(__file__).parents[3] / "pyproject.toml"
     with project.open("rb") as file:
         scripts = tomllib.load(file)["project"]["scripts"]
-    assert scripts["grumo"] == "voodoo.cli:app"
-    assert scripts["voodoo"] == scripts["grumo"]
+    assert scripts["grumo"] == "grumo.cli:app"
+    assert scripts["voodoo"] == "voodoo.cli:app"
 
 
 def test_interim_grumo_cli_exposes_help_and_core_commands() -> None:
