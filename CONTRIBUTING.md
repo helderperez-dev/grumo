@@ -1,6 +1,6 @@
-# Contributing to Voodoo
+# Contributing to Grumo
 
-Thank you for contributing to Voodoo. This guide describes the development
+Thank you for contributing to Grumo. This guide describes the development
 workflow, architectural contract, quality gates, and release discipline.
 
 ## Getting started
@@ -8,8 +8,8 @@ workflow, architectural contract, quality gates, and release discipline.
 Requirements: Python 3.12+, uv, Git, and optionally just.
 
 ```bash
-git clone https://github.com/helderperez-dev/voodoo.git
-cd voodoo
+git clone https://github.com/helderperez-dev/grumo.git
+cd grumo
 uv sync --all-extras --dev
 just test
 ```
@@ -150,8 +150,8 @@ Do not introduce vendor imports into `core`, `runtime`, `primitives`,
 
 ## Public API and compatibility
 
-`voodoo.__init__` is the intentionally small Voodoo 3.x application happy
-path, not a catalog or compatibility facade. Advanced APIs belong to their
+`grumo.__init__` exposes the intentionally small application API backed by
+`voodoo.__init__`. Advanced imports remain in `voodoo.*` in Grumo 1.0. Advanced APIs belong to their
 semantic owners.
 
 Before moving or removing a public symbol:
@@ -182,19 +182,11 @@ restoring duplicate public import paths.
 
 ## Release process
 
-Releases are automated by `.github/workflows/release.yml`.
+Publish Grumo through `.github/workflows/publish-grumo.yml` using PyPI Trusted Publishing.
 
-Before releasing:
-
-1. ensure the final `main` commit is green;
-2. convert the relevant `[Unreleased]` changelog content into the release
-   version/date;
-3. verify the requested version follows Semantic Versioning;
-4. trigger `just release X.Y.Z`;
-5. verify tag, PyPI artifact, GitHub Release, and optional Homebrew update.
-
-The workflow performs the source version bump, tag, build, clean package gate,
-publication, and release asset creation.
+Prepare the version and changelog in a PR, verify all gates, merge to `main`,
+then dispatch the publish workflow with the exact version. Verify the PyPI
+artifacts and isolated installation before announcing the release.
 
 Minor versions add backward-compatible capability; patches are fixes only;
 major versions are reserved for intentional compatibility breaks.
