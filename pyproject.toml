@@ -68,7 +68,7 @@ Discussions = "https://github.com/helderperez-dev/voodoo/discussions"
 [project.scripts]
 # Temporary CLI alias during the coordinated Store/Framework package rename.
 # Preserve `voodoo` until the new `grumo` distribution passes release gates.
-grumo = "voodoo.cli:app"
+grumo = "grumo.cli:app"
 voodoo = "voodoo.cli:app"
 
 [project.optional-dependencies]
@@ -126,9 +126,10 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["voodoo*"]
+include = ["voodoo*", "grumo*"]
 
 [tool.setuptools.package-data]
+grumo = ["py.typed"]
 voodoo = [
     "py.typed",
     "static/*.js",
