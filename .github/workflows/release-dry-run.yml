@@ -26,24 +26,7 @@ jobs:
       - name: Set up Python
         run: uv python install 3.12
       - name: Install dependencies
-        run: uv sync --python 3.12 --all-extras --dev
-      - name: Upload resolved lockfile for review
-        uses: actions/upload-artifact@v4
-        with:
-          name: grumo-resolved-lockfile
-          path: uv.lock
-          if-no-files-found: error
-      - name: Emit resolved public lockfile for migration review
-        run: |
-          python - <<'PY'
-          import hashlib
-          from pathlib import Path
-          raw = Path('uv.lock').read_bytes()
-          print('GRUMO_LOCK_SHA256=' + hashlib.sha256(raw).hexdigest())
-          for line in raw.decode('utf-8').splitlines():
-              print('GRUMO_LOCK_LINE:' + line)
-          print('GRUMO_LOCK_END')
-          PY
+        run: uv sync --locked --python 3.12 --all-extras --dev
       - name: Full tests
         run: uv run --python 3.12 pytest -q
       - name: Full type ratchet
