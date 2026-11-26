@@ -66,24 +66,47 @@ about.
 
 ## Quick start
 
-Voodoo requires Python 3.12+.
+Grumo requires Python 3.12 or newer. The canonical PyPI distribution is
+`grumo`; Grumo Store is installed automatically.
+
+### Install the standalone CLI (recommended)
 
 ```bash
-pip install voodoo-framework
-
-voodoo new my_app
+uv tool install --python 3.12 grumo
+grumo version
+grumo new my_app
 cd my_app
-voodoo dev
+grumo dev
 ```
 
-Open `http://localhost:8000`.
+Upgrade with `uv tool upgrade grumo`, or run without a persistent tool
+installation using `uvx --python 3.12 --from grumo grumo --help`.
 
-A fresh application needs no external database, Redis server, queue service or
-object server. On first run, Voodoo creates its local durable substrate:
+### Add Grumo to an existing uv project
 
-```text
-.voodoo/application.vstore
+```bash
+uv add grumo
+uv run grumo --help
 ```
+
+### Install with pip
+
+Use an activated virtual environment with Python 3.12 or newer.
+
+```bash
+pip install grumo
+grumo new my_app
+cd my_app
+grumo dev
+```
+
+The Homebrew tap is being validated in
+[homebrew-grumo](https://github.com/helderperez-dev/homebrew-grumo).
+Do not install the old Voodoo formula for a new Grumo project.
+
+Open `http://localhost:8000`. A fresh application requires no external
+database, Redis, queue or object server. Existing Voodoo applications and
+their durable data remain supported through the compatibility layer.
 
 ### Small application
 
