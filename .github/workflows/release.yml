@@ -58,6 +58,16 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.RELEASE_TOKEN }}
 
+      - name: Guard legacy release pipeline
+        run: |
+          python - <<'PY'
+          import tomllib
+          from pathlib import Path
+          name = tomllib.loads(Path("pyproject.toml").read_text())["project"]["name"]
+          if name != "voodoo-framework":
+              raise SystemExit("Legacy release disabled; use publish-grumo.yml")
+          PY
+
       - name: ⚙️ Configure git identity
         run: |
           git config user.name "github-actions[bot]"
