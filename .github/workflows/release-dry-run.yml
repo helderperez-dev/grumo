@@ -72,8 +72,8 @@ jobs:
           uv venv --python 3.12 /tmp/voodoo-release-env
           uv pip install --python /tmp/voodoo-release-env/bin/python /tmp/voodoo-release-dry-run/*.whl
           cd /tmp
-          /tmp/voodoo-release-env/bin/voodoo new voodoo-release-dry-run --no-install
-          cd voodoo-release-dry-run
+          /tmp/voodoo-release-env/bin/grumo new grumo-release-smoke-app --no-install
+          cd grumo-release-smoke-app
           /tmp/voodoo-release-env/bin/python -m compileall -q app
 
       - name: Clean-install exact source distribution

@@ -14,7 +14,7 @@ ROOT = Path(__file__).parents[1]
 CORPUS = ROOT / "docs/architecture/migration-corpus.json"
 
 
-def main() -> int:
+def main() -> int:  # noqa: C901 - migration corpus checks intentionally stay together
     if not CORPUS.is_file():
         raise SystemExit(f"missing migration corpus: {CORPUS}")
     payload = json.loads(CORPUS.read_text(encoding="utf-8"))
@@ -31,7 +31,10 @@ def main() -> int:
         source_name = record.get("source")
         fixture_name = record.get("fixture")
         version_marker = record.get("version")
-        if not all(isinstance(value, str) and value for value in (name, source_name, fixture_name, version_marker)):
+        if not all(
+            isinstance(value, str) and value
+            for value in (name, source_name, fixture_name, version_marker)
+        ):
             errors.append(f"invalid corpus entry: {record!r}")
             continue
         if name in names:

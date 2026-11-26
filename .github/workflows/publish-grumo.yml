@@ -1,0 +1,109 @@
+name: Publish Grumo (Trusted Publishing)
+
+# Future release workflow. Cannot publish from the old Voodoo repository:
+# new package names must first pass the migration and publication gates.
+on:
+  push:
+    tags:
+      - "grumo-v*"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate Grumo identity and source
+    if: github.repository == 'helderperez-dev/grumo'
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.identity.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate distribution, imports and tag
+        id: identity
+        env:
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          python - <<'PY'
+          import os
+          import tomllib
+          from pathlib import Path
+
+          with Path("pyproject.toml").open("rb") as fh:
+              project = tomllib.load(fh)
+          assert project["project"]["name"] == "grumo", "PyPI distribution rename incomplete"
+          assert project["project"]["scripts"]["grumo"] == "grumo.cli:app"
+          assert project["tool"]["setuptools"]["dynamic"]["version"]["attr"] == "grumo.__version__"
+          assert Path("src/grumo/__init__.py").exists(), "Python import rename incomplete"
+          assert "grumo-store" in " ".join(project["project"]["dependencies"])
+          import ast
+          version_file = ast.parse(Path("src/grumo/__init__.py").read_text())
+          version = next(node.value.value for node in version_file.body
+              if isinstance(node, ast.Assign)
+              and any(isinstance(t, ast.Name) and t.id == "__version__" for t in node.targets)
+              and isinstance(node.value, ast.Constant))
+          assert os.environ["REF_NAME"] == f"grumo-v{version}", "Release tag/version mismatch"
+          with open(os.environ["GITHUB_OUTPUT"], "a") as handle:
+              handle.write(f"version={version}\n")
+          PY
+      - uses: astral-sh/setup-uv@v5
+      - run: uv python install 3.12
+      - run: uv sync --python 3.12 --all-extras --dev
+      - name: Full test and type gates
+        run: |
+          uv run --python 3.12 pytest -q
+          uv run --python 3.12 python scripts/check_mypy_ratchet.py
+          uv run --python 3.12 python scripts/check_docs_imports.py
+
+  build:
+    name: Build and test exact distributions
+    needs: validate
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv python install 3.12
+      - name: Build wheel and source distribution
+        run: uv build --out-dir dist
+      - name: Test wheel and sdist in isolated environments
+        run: |
+          uv venv --python 3.12 /tmp/grumo-wheel-check
+          uv pip install --python /tmp/grumo-wheel-check/bin/python dist/*.whl
+          /tmp/grumo-wheel-check/bin/python -c "import grumo, grumo_store"
+          /tmp/grumo-wheel-check/bin/grumo --help
+
+          uv venv --python 3.12 /tmp/grumo-sdist-check
+          uv pip install --python /tmp/grumo-sdist-check/bin/python dist/*.tar.gz
+          /tmp/grumo-sdist-check/bin/python -c "import grumo, grumo_store"
+          /tmp/grumo-sdist-check/bin/grumo --help
+      - uses: actions/upload-artifact@v4
+        with:
+          name: grumo-python-distributions
+          path: |
+            dist/*.whl
+            dist/*.tar.gz
+          if-no-files-found: error
+
+  publish:
+    name: Publish Grumo to PyPI via OIDC
+    needs: [validate, build]
+    runs-on: ubuntu-24.04
+    environment:
+      name: pypi
+      url: https://pypi.org/project/grumo/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: grumo-python-distributions
+          path: dist
+      - name: Check artifact naming
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          artifacts = list(Path("dist").iterdir())
+          assert len(artifacts) >= 2
+          assert all(a.is_file() and a.name.startswith("grumo-") for a in artifacts)
+          PY
+      - uses: pypa/gh-action-pypi-publish@release/v1
