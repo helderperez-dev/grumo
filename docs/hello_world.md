@@ -2,7 +2,7 @@
 
 ## What it is
 
-The smallest official Voodoo project starts with `voodoo new`. The generated
+The smallest official Grumo project starts with `grumo new`. The generated
 app is Store-first: local durable infrastructure lives in
 `.voodoo/application.vstore` and requires no external database, queue, or
 object server.
@@ -10,9 +10,9 @@ object server.
 ## Create the app
 
 ```bash
-voodoo new hello
+grumo new hello
 cd hello
-voodoo dev
+grumo dev
 ```
 
 Open `http://localhost:8000` in your browser.
@@ -31,15 +31,17 @@ hello/
 
 `main.py` demonstrates persistent `Model` data, durable background work,
 reactive UI state, events, and a local mock Agent. The persistent counter is
-stored through Voodoo Store, so stopping and starting the process does not
+stored through Grumo Store, so stopping and starting the process does not
 reset the application record.
+
+The legacy configuration filename and Store path remain unchanged in 1.0. Advanced APIs still use `voodoo.*` imports.
 
 ## Minimal page
 
 If you only want a page, the application can still be tiny:
 
 ```python
-from voodoo import App, page
+from grumo import App, page
 from voodoo.ui import Heading, Text
 
 app = App()
@@ -47,7 +49,7 @@ app = App()
 
 @page("/")
 def home():
-    return Heading("Hello, Voodoo", level=1), Text("Build differently.")
+    return Heading("Hello, Grumo", level=1), Text("Build differently.")
 
 
 if __name__ == "__main__":
@@ -55,12 +57,12 @@ if __name__ == "__main__":
 ```
 
 No provider configuration is required. Starting the Runtime activates the
-default Voodoo Store lifecycle.
+default Grumo Store lifecycle.
 
 ## Persistent data
 
 ```python
-from voodoo import Model
+from grumo import Model
 
 
 class Visit(Model):
@@ -84,7 +86,7 @@ With the default configuration this record is stored in
 ### With a layout
 
 ```python
-from voodoo import page
+from grumo import page
 from voodoo.ui import Container, Heading, Text
 
 
@@ -115,11 +117,11 @@ async def user_profile(id: int):
 
 ## How it works
 
-1. `voodoo dev` discovers `main:app` when the generated `main.py` is present.
+1. `grumo dev` discovers `main:app` when the generated `main.py` is present.
 2. The App lifespan opens one Runtime-owned `.voodoo/application.vstore`.
 3. `Model`, durable queue work, events and canonical Execution reuse that Store.
 4. `@page("/")` registers the SSR route.
-5. The handler returns Components that Voodoo renders to HTML.
+5. The handler returns Components that Grumo renders to HTML.
 6. On graceful shutdown Runtime-owned adapters close before the Store handle.
 7. On restart the same Store is reopened and durable state is recovered.
 
@@ -136,5 +138,5 @@ systems.
 - `page(path)` — decorator registering an HTML route.
 - `Model` — Store-first persistent business-data facade.
 - `voodoo new <name>` — create the official Store-first project scaffold.
-- `voodoo create <name>` — deprecated compatibility alias for `voodoo new`.
-- `voodoo dev` — run the development server with reload support.
+- `voodoo create <name>` — deprecated compatibility alias for `grumo new`.
+- `grumo dev` — run the development server with reload support.

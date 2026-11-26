@@ -1,15 +1,15 @@
-# Voodoo
+# Grumo
 
 **The programmable runtime for adaptive applications and operational systems.**
 
-[GitHub](https://github.com/helderperez-dev/voodoo) · [Documentation](#documentation) · [Architecture](ARCHITECTURE.md) · [Roadmap](ROADMAP.md) · [Changelog](CHANGELOG.md)
+[GitHub](https://github.com/helderperez-dev/grumo) · [Documentation](#documentation) · [Architecture](ARCHITECTURE.md) · [Roadmap](ROADMAP.md) · [Changelog](CHANGELOG.md)
 
-[![CI](https://github.com/helderperez-dev/voodoo/actions/workflows/ci.yml/badge.svg)](https://github.com/helderperez-dev/voodoo/actions/workflows/ci.yml)
-[![PyPI](https://img.shields.io/pypi/v/voodoo-framework)](https://pypi.org/project/voodoo-framework/)
-[![Python](https://img.shields.io/pypi/pyversions/voodoo-framework)](https://pypi.org/project/voodoo-framework/)
+[![CI](https://github.com/helderperez-dev/grumo/actions/workflows/ci.yml/badge.svg)](https://github.com/helderperez-dev/grumo/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/grumo)](https://pypi.org/project/grumo/)
+[![Python](https://img.shields.io/pypi/pyversions/grumo)](https://pypi.org/project/grumo/)
 [![License](https://img.shields.io/badge/license-MIT-informational)](LICENSE)
 
-Voodoo lets a Python application start small — a page, API, model, task or agent —
+Grumo lets a Python application start small — a page, API, model, task or agent —
 and grow into durable workflows, human approvals, adaptive goals, distributed
 participants and physical-device systems **without replacing the execution model
 underneath it**.
@@ -17,14 +17,14 @@ underneath it**.
 > Composition over configuration. Python over DSLs. Adapters over lock-in.
 > Explicit capabilities over ambient authority.
 
-## What Voodoo is
+## What Grumo is
 
 Most application stacks accumulate separate execution models as they grow:
 HTTP handlers, frontend state, database jobs, queues, schedulers, agent loops,
 workflow engines, event buses, human approvals, distributed workers and device
 control.
 
-Voodoo treats those as different manifestations of one programmable Runtime.
+Grumo treats those as different manifestations of one programmable Runtime.
 
 ```text
 Entity → State → Intent → Capability + Policy → Execution → Effect → State
@@ -111,7 +111,7 @@ their durable data remain supported through the compatibility layer.
 ### Small application
 
 ```python
-from voodoo import App, page
+from grumo import App, page
 from voodoo.ui import Heading, Page, Stack, Text
 
 app = App()
@@ -121,7 +121,7 @@ app = App()
 def home():
     return Page(
         Stack(
-            Heading("Hello, Voodoo", level=1),
+            Heading("Hello, Grumo", level=1),
             Text("One application. One runtime."),
             gap="md",
         )
@@ -134,7 +134,7 @@ if __name__ == "__main__":
 
 ## Start simple, grow only when needed
 
-Voodoo is designed for progressive complexity. You do not need World Models,
+Grumo is designed for progressive complexity. You do not need World Models,
 Goals, AI or distributed execution to build a normal application.
 
 | You need | Use |
@@ -142,7 +142,7 @@ Goals, AI or distributed execution to build a normal application.
 | UI-local mutable value | `state()` |
 | Persistent business data | `Model` |
 | Indexed business queries | `field(index=True)` + `where/order_by` |
-| Page / browser interaction | Voodoo UI + Python-callable events |
+| Page / browser interaction | Grumo UI + Python-callable events |
 | HTTP/API surface | routing / API primitives |
 | Retryable background work | `@task` |
 | Future or recurring work | Runtime scheduling |
@@ -162,13 +162,13 @@ executions.
 
 ## One Runtime, one durable substrate
 
-Voodoo Store is the default embedded infrastructure for a local application.
+Grumo Store is the default embedded infrastructure for a local application.
 
 ```text
 Application
     │
     ▼
-Voodoo Runtime
+Grumo Runtime
     │
     ├── Model / Data
     ├── Jobs / Queue
@@ -196,7 +196,7 @@ intelligence.
 Models may declare native secondary indexes without changing the query API:
 
 ```python
-from voodoo import Model
+from grumo import Model
 from voodoo.data import field
 
 
@@ -209,7 +209,7 @@ customers = await Customer.where(email="ada@example.com")
 top = await Customer.where().order_by("-score").limit(10)
 ```
 
-Indexed equality and single-column ordering are pushed into Voodoo Store;
+Indexed equality and single-column ordering are pushed into Grumo Store;
 queries without a matching declared index preserve the same API and fall back
 to collection scans.
 
@@ -226,9 +226,9 @@ Relationships use `relation(...)` with explicit `Delete.RESTRICT`,
 `Delete.CASCADE` or `Delete.SET_NULL` policies. Backend-specific `db_type`
 metadata is deliberately not part of the default Model API.
 
-## The Voodoo 3.0 architecture
+## Runtime architecture
 
-Voodoo 3.0 deliberately converges concepts under one semantic owner instead of
+Grumo deliberately converges concepts under one semantic owner instead of
 preserving duplicate historical namespaces.
 
 ```text
@@ -262,8 +262,10 @@ src/voodoo/
 The package root stays intentionally small:
 
 ```python
-from voodoo import Agent, App, Model, page, state, task, tool
+from grumo import Agent, App, Model, page, state, task, tool
 ```
+
+The canonical distribution and root imports are `grumo`. In 1.0, advanced APIs still live under `voodoo.*`; the implementation remains in `src/voodoo/`. Configuration keys, `voodoo.toml`, and `.voodoo/application.vstore` retain their existing names for compatibility. Do not rename persisted data manually.
 
 Advanced APIs come from the namespace that owns them:
 
@@ -276,7 +278,7 @@ from voodoo.protocol import RemoteExecutionRequest, WorldSnapshot
 from voodoo.integrations.mcp import mcp
 ```
 
-See [Voodoo 3.0 public API law](docs/public-api-3.md) for the canonical import
+See [Public API contract (inherited from Voodoo 3.0)](docs/public-api-3.md) for the canonical import
 model and the clean-break migration map from 2.x.
 
 For contributor-facing ownership and package placement, see the [canonical
@@ -288,7 +290,7 @@ An adaptive application can observe facts, express desired outcomes and allow
 the Runtime to reconcile the two without creating a second orchestration model.
 
 ```python
-from voodoo import App
+from grumo import App
 from voodoo.primitives import Intent
 
 app = App()
@@ -319,14 +321,14 @@ Execution, scheduling, reconciliation and authority remain Runtime concerns.
 AI is optional. The core package does not install provider SDKs.
 
 ```bash
-pip install "voodoo-framework[ai]"
+pip install "grumo[ai]"
 ```
 
 A tool remains normal Python while also becoming introspectable Runtime
 capability for agent/tool workflows:
 
 ```python
-from voodoo import Agent, tool
+from grumo import Agent, tool
 
 
 @tool
@@ -346,7 +348,7 @@ not a second tool registry or execution model.
 
 ## Operational systems and Edge
 
-Voodoo can connect software decisions to external or physical participants
+Grumo can connect software decisions to external or physical participants
 without treating a sent command as reality.
 
 ```text
@@ -386,7 +388,7 @@ sent.
 
 ## Distributed Runtime
 
-Voodoo scales by adding Runtime nodes, not by letting multiple processes write
+Grumo scales by adding Runtime nodes, not by letting multiple processes write
 the same Store file.
 
 ```text
@@ -429,27 +431,27 @@ ambiguous external or physical effects must not be blindly reissued.
 ## Installation options
 
 ```bash
-# Core Runtime + Voodoo Store
-pip install voodoo-framework
+# Core Runtime + Grumo Store
+pip install grumo
 
 # AI providers
-pip install "voodoo-framework[ai]"
+pip install "grumo[ai]"
 
 # External infrastructure adapters
-pip install "voodoo-framework[postgres,redis,s3,otel]"
+pip install "grumo[postgres,redis,s3,otel]"
 
 # Explicit SQLite adapter
-pip install "voodoo-framework[sqlite]"
+pip install "grumo[sqlite]"
 
 # Edge MQTT transport
-pip install "voodoo-framework[edge]"
+pip install "grumo[edge]"
 
 # Development dependencies
-pip install "voodoo-framework[dev]"
+pip install "grumo[dev]"
 ```
 
-You can also install the CLI with `uv tool install voodoo-framework` or
-`pipx install voodoo-framework`.
+You can also install the CLI with `uv tool install grumo` or
+`pipx install grumo`.
 
 ## Configuration
 
@@ -489,7 +491,7 @@ provider = "s3"
 bucket = "my-bucket"
 ```
 
-Voodoo does not silently migrate or copy legacy external data into Voodoo Store
+Grumo does not silently migrate or copy legacy external data into Grumo Store
 at startup. Migration is an explicit operation.
 
 ## Examples
@@ -517,18 +519,18 @@ A useful reading order:
 7. [Human-in-the-loop](docs/hitl.md)
 8. [MCP](docs/mcp.md)
 9. [Protocol](docs/protocol.md)
-10. [Voodoo 3.0 public API law](docs/public-api-3.md)
+10. [Public API contract (inherited from Voodoo 3.0)](docs/public-api-3.md)
 11. [Architecture](ARCHITECTURE.md)
 12. [Roadmap](ROADMAP.md)
 
 `SPRINT_PLAN.md` is the implementation tracker; it should not be treated as a
 marketing promise for future capabilities.
 
-## What Voodoo deliberately does not claim
+## What Grumo deliberately does not claim
 
-Voodoo's architecture is broad, but its guarantees are intentionally explicit.
+Grumo's architecture is broad, but its guarantees are intentionally explicit.
 
-Current Voodoo 3.0 does **not** claim:
+Grumo 1.0 does **not** claim:
 
 - automatic Store replication or synchronization between nodes;
 - shared multi-writer `.vstore` files;
@@ -536,15 +538,15 @@ Current Voodoo 3.0 does **not** claim:
 - globally serializable cross-node transactions;
 - global exactly-once execution;
 - production PKI/OIDC/mTLS infrastructure;
-- a managed Voodoo Cloud control plane.
+- a managed Grumo Cloud control plane.
 
-The Voodoo Store 0.3 integration line exposes native Collections/index
+Grumo Store 1.x exposes native Collections/index
 queries, Queues, Topics/Streams, Consumer Groups, Objects, RPC, CDC,
 Workflow/HITL state, lifecycle operations and heterogeneous transactions to the
 Runtime. Those primitives remain single-node/local Store semantics; they do not
 imply replication, consensus or global exactly-once behavior.
 
-## What Voodoo is trying to preserve
+## What Grumo is trying to preserve
 
 As the project grows, these properties are architectural constraints:
 
@@ -560,12 +562,10 @@ As the project grows, these properties are architectural constraints:
 
 ## Project status
 
-Voodoo is **beta software**.
+Grumo is **beta software**.
 
-**v3.2.1** is the current published architecture baseline: Runtime adapters
-converge on the published Voodoo Store 0.3 native surface, with the modern
-Model contract, UUIDv7 identity, and the current Voodoo Design System component system.
-The `main` branch may contain post-release documentation or implementation
+**v1.0.0** is the first published Grumo release, with Grumo Store 1.x.
+The architecture builds on the former Voodoo runtime. The `main` branch may contain post-release documentation or implementation
 work, so a merge to `main` is not itself a package release.
 
 The next numbered development sprint is intentionally selected from real
