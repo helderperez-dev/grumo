@@ -4,13 +4,14 @@ from __future__ import annotations
 
 import json
 import sys
+from importlib import import_module
 from pathlib import Path
 
 # Scripts execute with their own directory first on ``sys.path``; expose the
 # repository root so the dependency-free browser signature helper is reusable.
 ROOT = Path(__file__).parents[1]
 sys.path.insert(0, str(ROOT))
-from tests.browser.visual_signature import signature  # noqa: E402 - import requires repository root on sys.path
+signature = import_module("tests.browser.visual_signature").signature
 
 REQUIRED_STATES = {"default", "focus", "overlay", "empty-error", "long-content"}
 REQUIRED_DENSITIES = {"compact", "comfortable", "spacious"}
