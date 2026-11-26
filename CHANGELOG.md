@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## [1.0.0]
+
+- First official Grumo Framework release, continuing the Voodoo runtime architecture under the new product identity.
+- Require Grumo Store 1.x and generate new applications with Grumo 1.x.
+- Preserve legacy imports, command aliases, storage format and protocol contracts.
+- Retain historical Voodoo releases below.
+
+### Inherited improvements
+
 ### Added
 
 - Added a package-owned default scaffold shared by `voodoo new` and the
