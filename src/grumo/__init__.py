@@ -8,7 +8,6 @@ compatibility contracts have been implemented.
 """
 
 from voodoo import Agent, App, Model, page, state, task, tool
-
-__version__ = "3.2.2"
+from voodoo import __version__ as __version__
 
 __all__ = ["Agent", "App", "Model", "page", "state", "task", "tool"]
