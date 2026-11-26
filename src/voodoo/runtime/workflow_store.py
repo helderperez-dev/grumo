@@ -32,7 +32,7 @@ class WorkflowStore(Protocol):
 
     def load(self, workflow_id: str) -> dict[str, Any] | None: ...
 
-    def load_unfinished(self) -> list[dict[str, Any]]:  # noqa: C901 - recovery paths preserve explicit cases ...
+    def load_unfinished(self) -> list[dict[str, Any]]: ...
 
 
 class VoodooStoreWorkflowStore:
@@ -126,7 +126,7 @@ class VoodooStoreWorkflowStore:
             return None
         return self._decode(workflow_id, bytes(raw))
 
-    def load_unfinished(self) -> list[dict[str, Any]]:
+    def load_unfinished(self) -> list[dict[str, Any]]:  # noqa: C901 - recovery paths preserve explicit cases
         records: list[dict[str, Any]] = []
         store = self._store()
         seen: set[str] = set()
