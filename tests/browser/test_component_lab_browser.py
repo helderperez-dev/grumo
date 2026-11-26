@@ -260,7 +260,9 @@ def test_inputs_focus_and_theme_toggle_are_real_browser_behaviors(browser_page) 
 
 
 @pytest.mark.parametrize("path", ["/forms", "/navigation", "/feedback"])
-def test_production_surfaces_have_basic_accessible_names(browser_page, path: str) -> None:
+def test_production_surfaces_have_basic_accessible_names(
+    browser_page, path: str
+) -> None:
     """Catch missing names before visual/browser changes ship."""
     page, base = browser_page
     page.goto(f"{base}{path}")
@@ -386,9 +388,7 @@ def test_touch_targets_and_high_contrast_tokens(browser_page) -> None:
             button.inner_text(),
             box,
         )
-    assert page.locator("body").evaluate(
-        "(el) => getComputedStyle(el).color"
-    )
+    assert page.locator("body").evaluate("(el) => getComputedStyle(el).color")
 
 
 def test_visual_contract_captures_every_reviewed_case(browser_page) -> None:
@@ -400,9 +400,7 @@ def test_visual_contract_captures_every_reviewed_case(browser_page) -> None:
     """
     page, base = browser_page
     root = Path(__file__).resolve().parents[2]
-    contract = json.loads(
-        (root / "tests/browser/visual_contract.json").read_text()
-    )
+    contract = json.loads((root / "tests/browser/visual_contract.json").read_text())
     viewports = contract["viewports"]
     output = Path(".test-results/browser/visual")
     output.mkdir(parents=True, exist_ok=True)
