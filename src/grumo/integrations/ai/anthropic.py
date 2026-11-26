@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import AsyncIterator
 from typing import Any
 
-from voodoo.ai.providers import (
+from grumo.ai.providers import (
     LLMProvider,
     Message,
     ModelDescriptor,
@@ -13,7 +13,7 @@ from voodoo.ai.providers import (
     ProviderResponse,
     ToolCall,
 )
-from voodoo.core.errors import ConfigurationError
+from grumo.core.errors import ConfigurationError
 
 __all__ = ["AnthropicProvider"]
 
@@ -24,7 +24,7 @@ def _require_anthropic() -> Any:
     except ImportError as exc:  # pragma: no cover - exercised only without SDK
         raise ConfigurationError(
             "The 'anthropic' package is required for the anthropic provider. "
-            "Install it with: pip install voodoo-framework[ai]"
+            "Install it with: pip install grumo-framework[ai]"
         ) from exc
     return anthropic
 

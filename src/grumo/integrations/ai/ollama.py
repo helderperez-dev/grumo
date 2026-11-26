@@ -5,14 +5,14 @@ from __future__ import annotations
 from collections.abc import AsyncIterator
 from typing import Any
 
-from voodoo.ai.providers import (
+from grumo.ai.providers import (
     LLMProvider,
     Message,
     ModelDescriptor,
     ProviderEvent,
     ProviderResponse,
 )
-from voodoo.core.errors import ConfigurationError
+from grumo.core.errors import ConfigurationError
 
 __all__ = ["OllamaProvider"]
 
@@ -23,7 +23,7 @@ def _require_ollama() -> Any:
     except ImportError as exc:  # pragma: no cover - exercised only without SDK
         raise ConfigurationError(
             "The 'ollama' package is required for the ollama provider. "
-            "Install it with: pip install voodoo-framework[ai]"
+            "Install it with: pip install grumo-framework[ai]"
         ) from exc
     return ollama
 

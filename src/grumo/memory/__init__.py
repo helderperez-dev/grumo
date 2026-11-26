@@ -15,13 +15,13 @@ Memory is NOT context. Context is an opaque dict passed to tool calls.
 Memory is a queryable, durable record of what the entity knows.
 """
 
-from voodoo.memory.interfaces import (
+from grumo.memory.interfaces import (
     MemoryEntry,
     MemoryLayer,
     MemorySearchResult,
     MemoryStore,
 )
-from voodoo.memory.sqlite import SQLiteMemoryStore
+from grumo.memory.sqlite import SQLiteMemoryStore
 
 __all__ = [
     "MemoryEntry",

@@ -7,7 +7,7 @@ import logging
 from collections.abc import AsyncIterator
 from typing import Any
 
-from voodoo.ai.providers import (
+from grumo.ai.providers import (
     EmbeddingResponse,
     LLMProvider,
     Message,
@@ -16,8 +16,8 @@ from voodoo.ai.providers import (
     ProviderResponse,
     ToolCall,
 )
-from voodoo.core.errors import ConfigurationError
-from voodoo.security.redaction import redact_string
+from grumo.core.errors import ConfigurationError
+from grumo.security.redaction import redact_string
 
 __all__ = ["OpenAIProvider"]
 
@@ -103,7 +103,7 @@ def _require_openai() -> Any:
     except ImportError as exc:  # pragma: no cover - exercised only without SDK
         raise ConfigurationError(
             "The 'openai' package is required for the openai provider. "
-            "Install it with: pip install voodoo-framework[ai]"
+            "Install it with: pip install grumo-framework[ai]"
         ) from exc
     return openai
 

@@ -18,15 +18,15 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
-from voodoo.ai.tools.registry import (
+from grumo.ai.tools.registry import (
     ToolRegistry,
     ToolSpec,
     build_spec,
     default_registry,
 )
-from voodoo.integrations.mcp.client import MCPClient
-from voodoo.routing.api import api
-from voodoo.security.redaction import redact_string
+from grumo.integrations.mcp.client import MCPClient
+from grumo.routing.api import api
+from grumo.security.redaction import redact_string
 
 __all__ = ["MCPClient", "MCPServer", "mcp"]
 
@@ -42,7 +42,7 @@ def _safe_error_message(error: BaseException, *, limit: int = 256) -> str:
 class MCPServer:
     def __init__(
         self,
-        name: str = "voodoo-mcp",
+        name: str = "grumo-mcp",
         version: str = "1.0.0",
         registry: ToolRegistry | None = None,
         engine: Any | None = None,
@@ -292,13 +292,13 @@ class MCPServer:
     ) -> Any:
         """Execute an MCP tool call through the runtime execution engine.
 
-        The call becomes an :class:`~voodoo.runtime.execution.Execution`
+        The call becomes an :class:`~grumo.runtime.execution.Execution`
         (intent ``mcp:<tool>``) with the tool's declared permissions enforced
         as required capabilities. Unauthorized calls raise ``CapabilityDenied``
         before the tool executes — same authority model as agents.
         """
-        from voodoo.primitives.intent import Intent
-        from voodoo.runtime.execution.engine import engine as default_engine
+        from grumo.primitives.intent import Intent
+        from grumo.runtime.execution.engine import engine as default_engine
 
         eng = getattr(self, "engine", None) or default_engine
         permissions = list(spec.permissions) if spec else []

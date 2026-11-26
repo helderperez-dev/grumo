@@ -1,1 +1,1 @@
-"""Optional integrations for Voodoo capabilities."""
+"""Optional integrations for Grumo capabilities."""

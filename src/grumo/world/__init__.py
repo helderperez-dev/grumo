@@ -1,9 +1,9 @@
-"""Voodoo world model — entities, relationships, observations, and projection."""
+"""Grumo world model — entities, relationships, observations, and projection."""
 
-from voodoo.world.model import WorldModel
-from voodoo.world.models import Entity, Observation, Relationship, WorldSnapshot
-from voodoo.world.sqlite import SQLiteWorldStore
-from voodoo.world.store import InMemoryWorldStore, WorldStore
+from grumo.world.model import WorldModel
+from grumo.world.models import Entity, Observation, Relationship, WorldSnapshot
+from grumo.world.sqlite import SQLiteWorldStore
+from grumo.world.store import InMemoryWorldStore, WorldStore
 
 __all__ = [
     "Entity",

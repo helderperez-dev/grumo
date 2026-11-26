@@ -1,14 +1,14 @@
 """Optional OpenTelemetry OTLP exporter.
 
 Activated only when the ``[otel]`` extra is installed **and**
-``VOODOO_OTEL_EXPORTER`` is set (any non-empty value).  When
+``GRUMO_OTEL_EXPORTER`` is set (any non-empty value).  When
 active, completed :class:`Span` objects are forwarded to the
 configured OTLP endpoint (default ``http://localhost:4317``).
 
 Usage::
 
-    pip install voodoo-framework[otel]
-    export VOODOO_OTEL_EXPORTER=1
+    pip install grumo-framework[otel]
+    export GRUMO_OTEL_EXPORTER=1
     # optional: export OTEL_EXPORTER_OTLP_ENDPOINT=http://my-collector:4317
 """
 
@@ -19,9 +19,9 @@ import logging
 import os
 from typing import Any
 
-from voodoo.security.redaction import redact_string
+from grumo.security.redaction import redact_string
 
-logger = logging.getLogger("voodoo.integrations.otel")
+logger = logging.getLogger("grumo.integrations.otel")
 
 __all__ = ["OTLPExporter", "is_available", "export_span"]
 
@@ -33,7 +33,7 @@ _checked: bool = False
 def is_available() -> bool:
     """Return ``True`` if OTel SDK is importable and the env var is set."""
     return importlib.util.find_spec("opentelemetry") is not None and bool(
-        os.environ.get("VOODOO_OTEL_EXPORTER")
+        os.environ.get("GRUMO_OTEL_EXPORTER")
     )
 
 
@@ -41,7 +41,7 @@ class OTLPExporter:
     """Thin wrapper around the OTel SDK's OTLP gRPC exporter.
 
     Each call to :meth:`export_span` builds an OTel ``Span`` from our
-    :class:`voodoo.observability.store.Span` and forwards it via the
+    :class:`grumo.observability.store.Span` and forwards it via the
     configured ``TracerProvider``.
     """
 
@@ -60,11 +60,11 @@ class OTLPExporter:
         processor = BatchSpanProcessor(OTLPSpanExporter(endpoint=endpoint))
         provider.add_span_processor(processor)
         otel_trace.set_tracer_provider(provider)
-        self._tracer = otel_trace.get_tracer("voodoo")
+        self._tracer = otel_trace.get_tracer("grumo")
         logger.info("OTLP exporter initialised → %s", endpoint)
 
     def export_span(self, span: Any) -> None:
-        """Convert a voodoo :class:`Span` to an OTel span and export it."""
+        """Convert a grumo :class:`Span` to an OTel span and export it."""
         from opentelemetry import trace as otel_trace
         from opentelemetry.trace import StatusCode
 

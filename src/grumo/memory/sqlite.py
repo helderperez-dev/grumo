@@ -15,7 +15,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from voodoo.memory.interfaces import (
+from grumo.memory.interfaces import (
     MemoryEntry,
     MemoryLayer,
     MemorySearchResult,
@@ -87,7 +87,7 @@ class SQLiteMemoryStore:
 
     Implements the ``MemoryStore`` protocol. The store owns its own sync
     ``sqlite3`` connection — memory reads/writes must not require the async
-    VoodooDatabase lifecycle.
+    GrumoDatabase lifecycle.
 
     Parameters
     ----------
