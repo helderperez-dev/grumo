@@ -1,26 +1,26 @@
-"""Event bus capability with Voodoo Store as the dependency-light default."""
+"""Event bus capability with Grumo Store as the dependency-light default."""
 
 from __future__ import annotations
 
 from importlib import import_module
 from typing import Any
 
-from voodoo.storage.events.interfaces import EventBusCapabilities, VoodooEventBus
-from voodoo.storage.events.local import LocalEventBus
-from voodoo.storage.events.store import VoodooStoreEventBus
+from grumo.storage.events.interfaces import EventBusCapabilities, GrumoEventBus
+from grumo.storage.events.local import LocalEventBus
+from grumo.storage.events.store import GrumoStoreEventBus
 
 __all__ = [
     "EventBusCapabilities",
-    "VoodooEventBus",
-    "VoodooStoreEventBus",
+    "GrumoEventBus",
+    "GrumoStoreEventBus",
     "LocalEventBus",
     "PostgresEventStore",
     "SQLiteEventBus",
 ]
 
 _LAZY_EXPORTS = {
-    "PostgresEventStore": ("voodoo.storage.events.postgres", "PostgresEventStore"),
-    "SQLiteEventBus": ("voodoo.storage.events.sqlite", "SQLiteEventBus"),
+    "PostgresEventStore": ("grumo.storage.events.postgres", "PostgresEventStore"),
+    "SQLiteEventBus": ("grumo.storage.events.sqlite", "SQLiteEventBus"),
 }
 
 
@@ -28,7 +28,7 @@ def __getattr__(name: str) -> Any:
     target = _LAZY_EXPORTS.get(name)
     if target is None:
         raise AttributeError(
-            f"module 'voodoo.storage.events' has no attribute {name!r}"
+            f"module 'grumo.storage.events' has no attribute {name!r}"
         )
     module_name, symbol = target
     value = getattr(import_module(module_name), symbol)

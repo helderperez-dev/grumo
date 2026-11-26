@@ -10,16 +10,16 @@ from __future__ import annotations
 from importlib import import_module
 from typing import Any
 
-from voodoo.storage.database.interfaces import (
+from grumo.storage.database.interfaces import (
     DatabaseCapabilities,
     Migration,
-    VoodooDatabase,
+    GrumoDatabase,
 )
 
 __all__ = [
     "DatabaseCapabilities",
     "Migration",
-    "VoodooDatabase",
+    "GrumoDatabase",
     "FRAMEWORK_MIGRATIONS",
     "LEDGER_TABLE",
     "PostgresDatabase",
@@ -28,12 +28,12 @@ __all__ = [
 ]
 
 _LAZY_EXPORTS = {
-    "PostgresDatabase": ("voodoo.storage.database.postgres", "PostgresDatabase"),
-    "SQLiteDatabase": ("voodoo.storage.database.sqlite", "SQLiteDatabase"),
-    "FRAMEWORK_MIGRATIONS": ("voodoo.storage.database.sqlite", "FRAMEWORK_MIGRATIONS"),
-    "LEDGER_TABLE": ("voodoo.storage.database.sqlite", "LEDGER_TABLE"),
+    "PostgresDatabase": ("grumo.storage.database.postgres", "PostgresDatabase"),
+    "SQLiteDatabase": ("grumo.storage.database.sqlite", "SQLiteDatabase"),
+    "FRAMEWORK_MIGRATIONS": ("grumo.storage.database.sqlite", "FRAMEWORK_MIGRATIONS"),
+    "LEDGER_TABLE": ("grumo.storage.database.sqlite", "LEDGER_TABLE"),
     "register_framework_migration": (
-        "voodoo.storage.database.sqlite",
+        "grumo.storage.database.sqlite",
         "register_framework_migration",
     ),
 }
@@ -43,7 +43,7 @@ def __getattr__(name: str) -> Any:
     target = _LAZY_EXPORTS.get(name)
     if target is None:
         raise AttributeError(
-            f"module 'voodoo.storage.database' has no attribute {name!r}"
+            f"module 'grumo.storage.database' has no attribute {name!r}"
         )
     module_name, symbol = target
     value = getattr(import_module(module_name), symbol)

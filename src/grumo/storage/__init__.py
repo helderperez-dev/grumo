@@ -1,4 +1,4 @@
-"""Voodoo storage namespace.
+"""Grumo storage namespace.
 
 The default package import is dependency-light. Store-native runtime paths do
 not import SQLite, PostgreSQL, Redis, or S3 adapters. Compatibility adapters are
@@ -10,71 +10,71 @@ from __future__ import annotations
 from importlib import import_module
 from typing import Any
 
-from voodoo.storage.manager import StorageManager, storage
+from grumo.storage.manager import StorageManager, storage
 
 __all__ = [
     "StorageManager",
     "storage",
     "EventBusCapabilities",
-    "VoodooEventBus",
-    "VoodooStoreEventBus",
+    "GrumoEventBus",
+    "GrumoStoreEventBus",
     "LocalEventBus",
     "SQLiteEventBus",
     "PostgresEventStore",
     "SQLiteExecutionStore",
     "PostgresExecutionStore",
-    "VoodooStoreExecutionStore",
-    "VoodooQueue",
-    "VoodooStoreQueue",
+    "GrumoStoreExecutionStore",
+    "GrumoQueue",
+    "GrumoStoreQueue",
     "MemoryQueue",
     "SQLiteQueue",
     "PostgresQueue",
     "RedisQueue",
     "CacheCapabilities",
-    "VoodooCache",
+    "GrumoCache",
     "MemoryCache",
     "RedisCache",
 ]
 
 _LAZY_EXPORTS = {
     "EventBusCapabilities": (
-        "voodoo.storage.events.interfaces",
+        "grumo.storage.events.interfaces",
         "EventBusCapabilities",
     ),
-    "VoodooEventBus": ("voodoo.storage.events.interfaces", "VoodooEventBus"),
-    "VoodooStoreEventBus": ("voodoo.storage.events.store", "VoodooStoreEventBus"),
-    "LocalEventBus": ("voodoo.storage.events.local", "LocalEventBus"),
-    "SQLiteEventBus": ("voodoo.storage.events.sqlite", "SQLiteEventBus"),
-    "PostgresEventStore": ("voodoo.storage.events.postgres", "PostgresEventStore"),
+    "GrumoEventBus": ("grumo.storage.events.interfaces", "GrumoEventBus"),
+    "GrumoStoreEventBus": ("grumo.storage.events.store", "GrumoStoreEventBus"),
+    "LocalEventBus": ("grumo.storage.events.local", "LocalEventBus"),
+    "SQLiteEventBus": ("grumo.storage.events.sqlite", "SQLiteEventBus"),
+    "PostgresEventStore": ("grumo.storage.events.postgres", "PostgresEventStore"),
     "SQLiteExecutionStore": (
-        "voodoo.storage.execution.sqlite",
+        "grumo.storage.execution.sqlite",
         "SQLiteExecutionStore",
     ),
     "PostgresExecutionStore": (
-        "voodoo.storage.execution.postgres",
+        "grumo.storage.execution.postgres",
         "PostgresExecutionStore",
     ),
-    "VoodooStoreExecutionStore": (
-        "voodoo.storage.execution.store",
-        "VoodooStoreExecutionStore",
+    "GrumoStoreExecutionStore": (
+        "grumo.storage.execution.store",
+        "GrumoStoreExecutionStore",
     ),
-    "VoodooQueue": ("voodoo.storage.queue.interfaces", "VoodooQueue"),
-    "VoodooStoreQueue": ("voodoo.storage.queue.store", "VoodooStoreQueue"),
-    "MemoryQueue": ("voodoo.storage.queue.memory", "MemoryQueue"),
-    "SQLiteQueue": ("voodoo.storage.queue.sqlite", "SQLiteQueue"),
-    "PostgresQueue": ("voodoo.storage.queue.postgres", "PostgresQueue"),
-    "RedisQueue": ("voodoo.storage.queue.redis", "RedisQueue"),
-    "CacheCapabilities": ("voodoo.storage.cache.interfaces", "CacheCapabilities"),
-    "VoodooCache": ("voodoo.storage.cache.interfaces", "VoodooCache"),
-    "MemoryCache": ("voodoo.storage.cache.memory", "MemoryCache"),
-    "RedisCache": ("voodoo.storage.cache.redis", "RedisCache"),
+    "GrumoQueue": ("grumo.storage.queue.interfaces", "GrumoQueue"),
+    "GrumoStoreQueue": ("grumo.storage.queue.store", "GrumoStoreQueue"),
+    "MemoryQueue": ("grumo.storage.queue.memory", "MemoryQueue"),
+    "SQLiteQueue": ("grumo.storage.queue.sqlite", "SQLiteQueue"),
+    "PostgresQueue": ("grumo.storage.queue.postgres", "PostgresQueue"),
+    "RedisQueue": ("grumo.storage.queue.redis", "RedisQueue"),
+    "CacheCapabilities": ("grumo.storage.cache.interfaces", "CacheCapabilities"),
+    "GrumoCache": ("grumo.storage.cache.interfaces", "GrumoCache"),
+    "MemoryCache": ("grumo.storage.cache.memory", "MemoryCache"),
+    "RedisCache": ("grumo.storage.cache.redis", "RedisCache"),
 }
 
 
 def __getattr__(name: str) -> Any:
     target = _LAZY_EXPORTS.get(name)
     if target is None:
-        raise AttributeError(f"module 'voodoo.storage' has no attribute {name!r}")
+        raise AttributeError(f"module 'grumo.storage' has no attribute {name!r}")
     module_name, symbol = target
     value = getattr(import_module(module_name), symbol)
     globals()[name] = value

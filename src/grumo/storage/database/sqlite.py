@@ -1,4 +1,4 @@
-"""SQLite implementation of the Voodoo database capability.
+"""SQLite implementation of the Grumo database capability.
 
 The local source of truth (spec §11): WAL journaling for file-backed
 databases, ordered idempotent migrations tracked in ``schema_migrations``,
@@ -16,17 +16,17 @@ from typing import TYPE_CHECKING, Any
 
 import aiosqlite
 
-from voodoo.storage.database.interfaces import (
+from grumo.storage.database.interfaces import (
     DatabaseCapabilities,
     Migration,
-    VoodooDatabase,
+    GrumoDatabase,
 )
 
 LEDGER_TABLE = "schema_migrations"
 
 # Framework-owned schema changes, dynamically registered by subsystems
 # (tasks, executions, schedules, …). Version 1 is the user-model baseline
-# registered by ``voodoo.data``; the framework reserves 2+. Migrations are
+# registered by ``grumo.data``; the framework reserves 2+. Migrations are
 # re-merged on every ``migrate()`` call so late-imported subsystems still
 # get their tables.
 _FRAMEWORK_MIGRATIONS: list[Migration] = []
@@ -68,7 +68,7 @@ async def _close_open_sqlite_databases() -> None:
 
 
 class SQLiteDatabase:
-    """Embedded SQLite backend — the default Voodoo database."""
+    """Embedded SQLite backend — the default Grumo database."""
 
     provider = "sqlite"
 
@@ -220,5 +220,5 @@ class SQLiteDatabase:
 
 if TYPE_CHECKING:
     # Structural conformance assertion — mypy errors here if the adapter
-    # drifts from the VoodooDatabase protocol.
-    _protocol_check: VoodooDatabase = SQLiteDatabase("check")
+    # drifts from the GrumoDatabase protocol.
+    _protocol_check: GrumoDatabase = SQLiteDatabase("check")

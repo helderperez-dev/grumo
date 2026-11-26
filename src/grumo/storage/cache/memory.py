@@ -1,6 +1,6 @@
 """In-memory cache provider — the default, zero-infra cache.
 
-Selected via ``VOODOO_CACHE_PROVIDER=memory`` (the default). Ephemeral:
+Selected via ``GRUMO_CACHE_PROVIDER=memory`` (the default). Ephemeral:
 data lives only for the process lifetime. TTLs are not supported — a
 ``set(ttl=...)`` call is rejected loudly with a :class:`CapabilityError`
 (spec §10) rather than silently dropping the expiry, mirroring how the
@@ -11,8 +11,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from voodoo.adapters.capabilities import CacheCapabilities, require
-from voodoo.storage.cache.interfaces import VoodooCache
+from grumo.adapters.capabilities import CacheCapabilities, require
+from grumo.storage.cache.interfaces import GrumoCache
 
 
 class MemoryCache:
@@ -50,4 +50,4 @@ class MemoryCache:
 
 
 if TYPE_CHECKING:
-    _protocol_check: VoodooCache = MemoryCache()
+    _protocol_check: GrumoCache = MemoryCache()

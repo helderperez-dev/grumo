@@ -1,6 +1,6 @@
 """Redis cache provider (Sprint 13).
 
-``RedisCache`` implements the ``VoodooCache`` capability over a Redis
+``RedisCache`` implements the ``GrumoCache`` capability over a Redis
 server. It is the production cache backend: TTLs are honored and data is
 durable (survives process restarts, shared across processes/nodes).
 
@@ -13,9 +13,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from voodoo.adapters.capabilities import CacheCapabilities
-from voodoo.core.errors import ConfigurationError
-from voodoo.storage.cache.interfaces import VoodooCache
+from grumo.adapters.capabilities import CacheCapabilities
+from grumo.core.errors import ConfigurationError
+from grumo.storage.cache.interfaces import GrumoCache
 
 try:
     import redis
@@ -32,7 +32,7 @@ class RedisCache:
         if redis is None:
             raise ConfigurationError(
                 "The redis cache provider requires the [redis] extra: "
-                "pip install 'voodoo-framework[redis]' (redis)."
+                "pip install 'grumo-framework[redis]' (redis)."
             )
         self.url = url
         self._client = redis.Redis.from_url(url, decode_responses=True)
@@ -67,4 +67,4 @@ class RedisCache:
 
 
 if TYPE_CHECKING:
-    _protocol_check: VoodooCache = RedisCache()
+    _protocol_check: GrumoCache = RedisCache()

@@ -1,8 +1,8 @@
-"""Voodoo cache capability interface (Sprint 13).
+"""Grumo cache capability interface (Sprint 13).
 
 Caching is a first-class runtime capability: providers declare what they
 guarantee through :class:`CacheCapabilities` (TTL support, durability) and
-code that *requires* a feature calls :func:`~voodoo.adapters.capabilities.require`
+code that *requires* a feature calls :func:`~grumo.adapters.capabilities.require`
 so an unsupported operation fails loudly instead of silently degrading.
 
 The default provider is the in-process :class:`MemoryCache`; ``RedisCache``
@@ -13,12 +13,12 @@ from __future__ import annotations
 
 from typing import Any, Protocol
 
-from voodoo.adapters.capabilities import CacheCapabilities
+from grumo.adapters.capabilities import CacheCapabilities
 
-__all__ = ["CacheCapabilities", "VoodooCache"]
+__all__ = ["CacheCapabilities", "GrumoCache"]
 
 
-class VoodooCache(Protocol):
+class GrumoCache(Protocol):
     """Backend-neutral key/value cache capability.
 
     Every implementation provides get/set/delete/clear plus a capability

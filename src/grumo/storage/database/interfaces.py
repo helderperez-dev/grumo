@@ -1,7 +1,7 @@
-"""Voodoo database capability interface.
+"""Grumo database capability interface.
 
-Every durable Voodoo subsystem (state, executions, tasks, events, schedules)
-persists through a ``VoodooDatabase`` implementation. SQLite is the default
+Every durable Grumo subsystem (state, executions, tasks, events, schedules)
+persists through a ``GrumoDatabase`` implementation. SQLite is the default
 embedded backend (spec §11); PostgreSQL arrives later as an optional adapter
 behind the same protocol.
 
@@ -16,9 +16,9 @@ from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from typing import Any, Protocol
 
-from voodoo.adapters.capabilities import DatabaseCapabilities
+from grumo.adapters.capabilities import DatabaseCapabilities
 
-__all__ = ["DatabaseCapabilities", "Migration", "VoodooDatabase"]
+__all__ = ["DatabaseCapabilities", "Migration", "GrumoDatabase"]
 
 
 @dataclass(frozen=True)
@@ -29,7 +29,7 @@ class Migration:
     and the application: version 1 is the user-model baseline, the framework
     reserves 2+, applications may use 100+.
 
-    ``fn`` receives the ``VoodooDatabase`` instance, keeping migrations
+    ``fn`` receives the ``GrumoDatabase`` instance, keeping migrations
     backend-neutral. ``rerun=True`` steps re-execute ``fn`` on every
     ``migrate()`` call (idempotent DDL only) so items registered after the
     baseline — e.g. models imported later — still get their tables.
@@ -38,11 +38,11 @@ class Migration:
     version: int
     name: str
     statements: tuple[str, ...] = ()
-    fn: Callable[[VoodooDatabase], Awaitable[None]] | None = None
+    fn: Callable[[GrumoDatabase], Awaitable[None]] | None = None
     rerun: bool = False
 
 
-class VoodooDatabase(Protocol):
+class GrumoDatabase(Protocol):
     """Backend-neutral database capability.
 
     Implementations provide: connection lifecycle, an ordered idempotent

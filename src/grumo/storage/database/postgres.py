@@ -1,9 +1,9 @@
-"""PostgreSQL implementation of the Voodoo database capability (Sprint 10).
+"""PostgreSQL implementation of the Grumo database capability (Sprint 10).
 
-An optional server backend behind the same ``VoodooDatabase`` protocol as
-:class:`~voodoo.storage.database.sqlite.SQLiteDatabase` (spec §7, §11).
-Enabled by ``database.provider: postgres`` in ``voodoo.yaml`` (or
-``VOODOO_DATABASE_PROVIDER=postgres``) plus a ``url`` — install the
+An optional server backend behind the same ``GrumoDatabase`` protocol as
+:class:`~grumo.storage.database.sqlite.SQLiteDatabase` (spec §7, §11).
+Enabled by ``database.provider: postgres`` in ``grumo.yaml`` (or
+``GRUMO_DATABASE_PROVIDER=postgres``) plus a ``url`` — install the
 ``[postgres]`` extra to use it.
 
 Design notes:
@@ -33,11 +33,11 @@ from collections.abc import AsyncIterator, Sequence
 from contextlib import asynccontextmanager
 from typing import TYPE_CHECKING, Any
 
-from voodoo.core.errors import ConfigurationError
-from voodoo.storage.database.interfaces import (
+from grumo.core.errors import ConfigurationError
+from grumo.storage.database.interfaces import (
     DatabaseCapabilities,
     Migration,
-    VoodooDatabase,
+    GrumoDatabase,
 )
 
 LEDGER_TABLE = "schema_migrations"
@@ -173,7 +173,7 @@ class _PgConnection:
 
 
 class PostgresDatabase:
-    """Server-backed PostgreSQL backend behind the VoodooDatabase protocol."""
+    """Server-backed PostgreSQL backend behind the GrumoDatabase protocol."""
 
     provider = "postgres"
 
@@ -181,7 +181,7 @@ class PostgresDatabase:
         if not url:
             raise ConfigurationError(
                 "PostgreSQL database requires a URL: set database.url in "
-                "voodoo.yaml, or export VOODOO_DATABASE_URL."
+                "grumo.yaml, or export GRUMO_DATABASE_URL."
             )
         self.url = url
         self._extra_migrations = tuple(migrations)
@@ -192,7 +192,7 @@ class PostgresDatabase:
         self._merge_migrations()
 
     def _merge_migrations(self) -> tuple[Migration, ...]:
-        from voodoo.storage.database import FRAMEWORK_MIGRATIONS
+        from grumo.storage.database import FRAMEWORK_MIGRATIONS
 
         by_version: dict[int, Migration] = {}
         for migration in (*FRAMEWORK_MIGRATIONS, *self._extra_migrations):
@@ -233,7 +233,7 @@ class PostgresDatabase:
         except ImportError as exc:  # pragma: no cover - import guard
             raise ConfigurationError(
                 "The postgres database provider requires the [postgres] extra: "
-                "pip install 'voodoo-framework[postgres]' (psycopg[binary])."
+                "pip install 'grumo-framework[postgres]' (psycopg[binary])."
             ) from exc
         self._conn = await psycopg.AsyncConnection.connect(
             self.url,
@@ -344,5 +344,5 @@ class PostgresDatabase:
 
 if TYPE_CHECKING:
     # Structural conformance assertion — mypy errors here if the adapter
-    # drifts from the VoodooDatabase protocol.
-    _protocol_check: VoodooDatabase = PostgresDatabase("postgresql://check")
+    # drifts from the GrumoDatabase protocol.
+    _protocol_check: GrumoDatabase = PostgresDatabase("postgresql://check")

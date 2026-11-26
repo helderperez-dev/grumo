@@ -5,12 +5,12 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any, Protocol
 
-from voodoo.adapters.capabilities import EventBusCapabilities
+from grumo.adapters.capabilities import EventBusCapabilities
 
-__all__ = ["EventBusCapabilities", "VoodooEventBus"]
+__all__ = ["EventBusCapabilities", "GrumoEventBus"]
 
 
-class VoodooEventBus(Protocol):
+class GrumoEventBus(Protocol):
     provider: str
 
     def capabilities(self) -> EventBusCapabilities: ...

@@ -5,9 +5,9 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from voodoo.security.redaction import redact_string
+from grumo.security.redaction import redact_string
 
-logger = logging.getLogger("voodoo.events")
+logger = logging.getLogger("grumo.events")
 
 
 def report_handler_failure(provider: str, event_type: str, error: Any) -> None:
