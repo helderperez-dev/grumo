@@ -40,7 +40,6 @@ class MeshClient:
             self._receive_task = asyncio.create_task(self._receive_loop())
 
     async def _receive_loop(self) -> None:
-        import websockets
         from websockets.exceptions import ConnectionClosed
 
         try:
@@ -81,9 +80,7 @@ class MeshClient:
                 )
             )
         except Exception as e:
-            self._fail_pending(
-                ConnectionError("mesh receive loop failed")
-            )
+            self._fail_pending(ConnectionError("mesh receive loop failed"))
             _logger.warning(
                 "mesh client receive loop failed endpoint=%s error=%s",
                 self.endpoint_url,

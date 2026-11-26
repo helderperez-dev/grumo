@@ -4,13 +4,14 @@ from __future__ import annotations
 
 import json
 import sys
+from importlib import import_module
 from pathlib import Path
 
 # Scripts execute with their own directory first on ``sys.path``; expose the
 # repository root so the dependency-free browser signature helper is reusable.
 ROOT = Path(__file__).parents[1]
 sys.path.insert(0, str(ROOT))
-from tests.browser.visual_signature import signature
+signature = import_module("tests.browser.visual_signature").signature
 
 REQUIRED_STATES = {"default", "focus", "overlay", "empty-error", "long-content"}
 REQUIRED_DENSITIES = {"compact", "comfortable", "spacious"}
@@ -41,11 +42,13 @@ def _validate_cases(manifest: dict[str, object], viewports: dict[str, object]) -
         raise SystemExit("visual contract needs at least seven reviewed cases")
     missing_densities = REQUIRED_DENSITIES - densities
     if missing_densities:
-        raise SystemExit(f"visual contract misses densities: {sorted(missing_densities)}")
+        raise SystemExit(
+            f"visual contract misses densities: {sorted(missing_densities)}"
+        )
     return len(ids)
 
 
-def main() -> int:
+def main() -> int:  # noqa: C901 - visual contract validates all required states together
     manifest = json.loads((ROOT / "tests/browser/visual_contract.json").read_text())
     comparison = manifest.get("comparison", {})
     if not comparison.get("review_required_on_baseline_change"):
@@ -61,7 +64,9 @@ def main() -> int:
     baseline_dir = ROOT / "tests/browser/visual_baselines"
     baseline_path = ROOT / "tests/browser/visual_baselines.json"
     if not baseline_dir.is_dir() or not baseline_path.is_file():
-        raise SystemExit("visual contract requires committed PNG and signature baselines")
+        raise SystemExit(
+            "visual contract requires committed PNG and signature baselines"
+        )
     signatures = json.loads(baseline_path.read_text())
     missing: list[str] = []
     mismatched: list[str] = []

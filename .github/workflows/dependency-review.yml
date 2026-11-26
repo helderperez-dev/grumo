@@ -1,4 +1,4 @@
-name: Dependency review
+name: Dependency security review
 
 on:
   pull_request:
@@ -6,9 +6,31 @@ on:
 permissions:
   contents: read
 
+# The GitHub dependency-review-action requires Dependency Graph, currently
+# disabled for this repository. Audit the resolved runtime dependencies instead.
+# This checks vulnerabilities but does not replace dependency-diff analysis.
+concurrency:
+  group: dependency-security-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
-  dependency-review:
+  dependency-security-review:
+    name: Audit resolved Python runtime dependencies
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/dependency-review-action@v4
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: latest
+      - name: Install Python
+        run: uv python install 3.12
+      - name: Export locked runtime dependency graph
+        run: uv export --python 3.12 --no-dev --no-hashes --locked > /tmp/grumo-runtime-requirements.txt
+      - name: Audit dependencies against published vulnerability advisories
+        run: |
+          python -m venv /tmp/grumo-dependency-audit
+          /tmp/grumo-dependency-audit/bin/python -m pip install --quiet "pip-audit==2.10.1"
+          /tmp/grumo-dependency-audit/bin/pip-audit -r /tmp/grumo-runtime-requirements.txt
+      - name: Report scope
+        run: echo "::notice::Vulnerability audit passed; GitHub dependency-diff review requires Dependency Graph."
