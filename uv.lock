@@ -866,7 +866,7 @@ requires-dist = [
     { name = "cryptography", marker = "extra == 'dev'", specifier = ">=42" },
     { name = "cryptography", marker = "extra == 'secrets'", specifier = ">=42" },
     { name = "google-generativeai", marker = "extra == 'ai'" },
-    { name = "grumo-store", specifier = ">=0.3.2,<0.4" },
+    { name = "grumo-store", specifier = ">=1.0.0,<2.0.0" },
     { name = "httpx" },
     { name = "mypy", marker = "extra == 'dev'" },
     { name = "ollama", marker = "extra == 'ai'" },
@@ -897,15 +897,15 @@ provides-extras = ["ai", "mcp", "browser", "dev", "sqlite", "postgres", "s3", "r
 
 [[package]]
 name = "grumo-store"
-version = "0.3.2"
+version = "1.0.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/96/98/72b8ef5655a184da8ad0960d73bc291b6690c8ba73eba9c563f4c9001d61/grumo_store-0.3.2.tar.gz", hash = "sha256:3c9f9d7276625859a7090d2d0666b04da2be92d8778dfbf4d6cada4259124ab9", size = 114877, upload-time = "2026-11-26T11:04:34.54Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/87/04/966ee9cce043c6c4f2553a76ace4de9411eaf5f5440101bfaf49dea692c0/grumo_store-1.0.0.tar.gz", hash = "sha256:6799f54b1146a8f1c21dc99a76eb544616cc635f2059678922f1adcb7da73426", size = 114914, upload-time = "2026-11-26T12:31:15.953Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9a/9c/700fdd93f6e11ab702828b7ec8c748e87bd0e9c3bab48690b22fddfa695d/grumo_store-0.3.2-cp39-abi3-macosx_10_12_x86_64.whl", hash = "sha256:addcea987f4001c6519841aec43f2463b1ab1db3d6a3784bfdbe7a2c839ec41c", size = 723396, upload-time = "2026-11-26T11:04:27.695Z" },
-    { url = "https://files.pythonhosted.org/packages/f0/4b/fc040b08c362fdb80c370c52459802f982a7f490e23741a0652bec9fec64/grumo_store-0.3.2-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:85c22ed70875f716b7b3ea2b2bbd02066996b4f7275cbb4999a5184e443fd88f", size = 699908, upload-time = "2026-11-26T11:04:28.891Z" },
-    { url = "https://files.pythonhosted.org/packages/c1/c5/7237b39ee5a3ac66d595849e8ecbd05e71621f8cf41a1f965fc4471a831c/grumo_store-0.3.2-cp39-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:5cda966baa069382c004f69424553a9bed216aabb1e7d73f38dd04f74b51f950", size = 767354, upload-time = "2026-11-26T11:04:30.417Z" },
-    { url = "https://files.pythonhosted.org/packages/0c/fe/eb27ea441db05ddfe4748d47de7547a22f4d3d39db39b210c128c9c90d57/grumo_store-0.3.2-cp39-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:6cf4a0489e5eba0ac1112d2e8091bdbf32feb9b7286abba4052740efef6b50da", size = 781162, upload-time = "2026-11-26T11:04:31.823Z" },
-    { url = "https://files.pythonhosted.org/packages/76/a3/90b07791350ca99a11988b83531648bd59a7dd6aef4951da625faec3863a/grumo_store-0.3.2-cp39-abi3-win_amd64.whl", hash = "sha256:80cf472afbb50db11973461ccee543528302c0e27c05198b38fee78d72144013", size = 621649, upload-time = "2026-11-26T11:04:33.178Z" },
+    { url = "https://files.pythonhosted.org/packages/dc/f8/20d579d096b660e579faa27cd3fff4b2de6cab54555b58fec75e8115408e/grumo_store-1.0.0-cp39-abi3-macosx_10_12_x86_64.whl", hash = "sha256:8def78b832b6a67fb38f0f0f2b82fd5a941d65c4ab10ecb0cf2f57ba8f8656e1", size = 723389, upload-time = "2026-11-26T12:31:08.706Z" },
+    { url = "https://files.pythonhosted.org/packages/4a/39/6e9282267ae6d8ccfa34835ced891d196a6628bdedd092df76fe932a1d5d/grumo_store-1.0.0-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:4ab18df4cea00293650b9975162b479ea6798185864cc60a529c8b1630b98a72", size = 699900, upload-time = "2026-11-26T12:31:10.117Z" },
+    { url = "https://files.pythonhosted.org/packages/c9/a0/c3bc4779d17a69d1f4f881a2cac705419e5563ac62ae137d21f79bef5267/grumo_store-1.0.0-cp39-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:8824f57f2bf0c02692f488105d85e0066998b6e55dcff0107c781e37a882bfa6", size = 766793, upload-time = "2026-11-26T12:31:11.626Z" },
+    { url = "https://files.pythonhosted.org/packages/51/2a/993e8112288815233e267198049e386f8d66bd5e5e878b48bb30d76085cd/grumo_store-1.0.0-cp39-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:420b78c09c71f9c2bb89c820791ebb6013ed1c83e40217e8e6726263b4fc5741", size = 781177, upload-time = "2026-11-26T12:31:12.961Z" },
+    { url = "https://files.pythonhosted.org/packages/a0/b3/714e25de140da30889fa597a51d2547c17bfb9fd6040f1a5290de7512db9/grumo_store-1.0.0-cp39-abi3-win_amd64.whl", hash = "sha256:b00f956ea6d3a076eb738605d640a1f3e547c66339fb4ac7fdbb79e9593b4799", size = 621740, upload-time = "2026-11-26T12:31:14.465Z" },
 ]
 
 [[package]]

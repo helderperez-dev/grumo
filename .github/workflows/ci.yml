@@ -183,7 +183,7 @@ jobs:
         run: uv export --python 3.12 --no-dev --no-hashes > /tmp/voodoo-requirements.txt
       - name: 🔐 Audit shipped Python dependencies
         run: |
-          python -m venv /tmp/voodoo-audit
+          uv venv --python 3.12 --seed /tmp/voodoo-audit
           /tmp/voodoo-audit/bin/python -m pip install --quiet "pip-audit==2.10.1"
           /tmp/voodoo-audit/bin/pip-audit -r /tmp/voodoo-requirements.txt
       - name: 📋 Generate shipped dependency SBOM
