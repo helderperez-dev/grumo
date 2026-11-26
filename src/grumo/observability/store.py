@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
-from voodoo.security.redaction import redact_string
+from grumo.security.redaction import redact_string
 
 # Context variable for tracing
 trace_id_var: contextvars.ContextVar[str | None] = contextvars.ContextVar(
@@ -24,13 +24,13 @@ correlation_id_var: contextvars.ContextVar[str | None] = contextvars.ContextVar(
 
 # Context variable for current span (enables parent-span tracking)
 _span_id_var: contextvars.ContextVar[str | None] = contextvars.ContextVar(
-    "voodoo_span_id", default=None
+    "grumo_span_id", default=None
 )
 
 
 def _report_observability_failure(operation: str, error: Exception) -> None:
     """Make best-effort observability failures visible without leaking secrets."""
-    logging.getLogger("voodoo.observability").warning(
+    logging.getLogger("grumo.observability").warning(
         "observability operation failed operation=%s error=%s",
         operation,
         redact_string(str(error)),
@@ -134,7 +134,7 @@ class Span:
 
 
 class TelemetryStore:
-    _SUMMARY_PATH = Path(".voodoo/telemetry_summary.json")
+    _SUMMARY_PATH = Path(".grumo/telemetry_summary.json")
 
     def __init__(self) -> None:
         self.metrics: dict[str, Any] = {
@@ -304,7 +304,7 @@ class TelemetryStore:
             self.metrics["spans"].pop(0)
         # Forward to OTLP exporter if available (lazy import to avoid circular deps).
         try:
-            from voodoo.integrations.otel import export_span
+            from grumo.integrations.otel import export_span
 
             export_span(span)
         except Exception as error:
@@ -364,7 +364,7 @@ class TelemetryStore:
     # -- persistence ---------------------------------------------------
 
     def _persist_summary(self) -> None:
-        """Persist a rolling summary to disk so ``voodoo status`` survives restarts."""
+        """Persist a rolling summary to disk so ``grumo status`` survives restarts."""
         try:
             self._SUMMARY_PATH.parent.mkdir(parents=True, exist_ok=True)
             summary = self.get_summary()
@@ -376,7 +376,7 @@ class TelemetryStore:
             _report_observability_failure("persist_summary", error)
 
     def _load_summary(self) -> None:
-        """Restore persisted counters so ``voodoo status`` works after restart."""
+        """Restore persisted counters so ``grumo status`` works after restart."""
         try:
             if self._SUMMARY_PATH.exists():
                 data = json.loads(self._SUMMARY_PATH.read_text())
@@ -440,7 +440,7 @@ class TelemetryStore:
 
 telemetry_store = TelemetryStore()
 
-logger = logging.getLogger("voodoo.observability")
+logger = logging.getLogger("grumo.observability")
 if not logger.handlers:
     handler = logging.StreamHandler()
     formatter = logging.Formatter(

@@ -1,8 +1,8 @@
-"""Native Voodoo observability primitives."""
+"""Native Grumo observability primitives."""
 
-from voodoo.observability.api import get_metrics, get_metrics_prometheus
-from voodoo.observability.middleware import TelemetryMiddleware
-from voodoo.observability.store import (
+from grumo.observability.api import get_metrics
+from grumo.observability.middleware import TelemetryMiddleware
+from grumo.observability.store import (
     Span,
     TelemetryStore,
     TraceFilter,
@@ -23,7 +23,6 @@ __all__ = [
     "TraceFilter",
     "correlation_id_var",
     "get_metrics",
-    "get_metrics_prometheus",
     "logger",
     "new_trace_id",
     "store_operation",

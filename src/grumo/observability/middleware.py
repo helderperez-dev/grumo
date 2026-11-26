@@ -5,7 +5,7 @@ import uuid
 
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
-from voodoo.observability.store import (
+from grumo.observability.store import (
     correlation_id_var,
     logger,
     telemetry_store,
@@ -63,7 +63,7 @@ class TelemetryMiddleware:
             await self.app(scope, receive, send_with_context)
         except Exception as e:
             error = True
-            from voodoo.security.redaction import redact_string
+            from grumo.security.redaction import redact_string
 
             logger.error(
                 "Unhandled exception in %s [%s]: %s\n%s",

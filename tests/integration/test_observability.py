@@ -4,7 +4,7 @@ Covers:
   1. Unified trace_id propagation across the full chain.
   2. OTel-compatible Span model (record, start_span, parent hierarchy).
   3. Telemetry summary persistence across restarts.
-  4. CLI ``voodoo status`` and ``voodoo workers``.
+  4. CLI ``grumo status`` and ``grumo workers``.
   5. OTLP exporter availability check.
 """
 
@@ -16,8 +16,8 @@ from pathlib import Path
 
 import pytest
 
-from voodoo.observability import trace
-from voodoo.observability.store import (
+from grumo.observability import trace
+from grumo.observability.store import (
     Span,
     TelemetryStore,
     new_trace_id,
@@ -304,7 +304,7 @@ class TestTracePropagation:
 
     async def test_trace_id_propagates_through_execution_context(self):
         """use_context bridges ExecutionContext.trace_id → trace_id_var."""
-        from voodoo.runtime.context import ExecutionContext, use_context
+        from grumo.runtime.context import ExecutionContext, use_context
 
         ctx = ExecutionContext(trace_id="ctx-bridge-123")
         async with use_context(ctx):
@@ -314,7 +314,7 @@ class TestTracePropagation:
 
     async def test_trace_id_propagates_to_mesh_envelope(self):
         """Mesh broadcast carries the trace_id as correlation_id."""
-        from voodoo.mesh import mesh
+        from grumo.mesh import mesh
 
         received: list[str] = []
 
@@ -333,8 +333,8 @@ class TestTracePropagation:
 
     async def test_trace_id_propagates_to_queue_enqueue(self):
         """Enqueue captures the current trace_id."""
-        from voodoo.runtime.scheduling import enqueue
-        from voodoo.runtime.scheduling.workers import _get_queue, _workers
+        from grumo.runtime.scheduling import enqueue
+        from grumo.runtime.scheduling.workers import _get_queue, _workers
 
         async def _handler(payload):
             pass
@@ -354,7 +354,7 @@ class TestTracePropagation:
 
     def test_local_object_operations_emit_redacted_store_spans(self, tmp_path: Path):
         """Object adapters expose operation timing without keys or payloads."""
-        from voodoo.storage.objects import LocalObjectStore
+        from grumo.storage.objects import LocalObjectStore
 
         _clear_spans()
         telemetry_store.metrics["store_operations"].clear()
@@ -387,10 +387,10 @@ class TestTracePropagation:
 
     async def test_full_chain_correlation_with_spans(self):
         """Full chain: trace_id → agent → tool → telemetry with spans."""
-        from voodoo.ai.agent import Agent
-        from voodoo.ai.providers import ProviderResponse
-        from voodoo.ai.providers.mock import MockProvider
-        from voodoo.ai.tools.registry import ToolRegistry, build_spec
+        from grumo.ai.agent import Agent
+        from grumo.ai.providers import ProviderResponse
+        from grumo.ai.providers.mock import MockProvider
+        from grumo.ai.tools.registry import ToolRegistry, build_spec
 
         _clear_spans()
 
@@ -444,16 +444,16 @@ class TestTracePropagation:
 
 
 class TestCLICommands:
-    """``voodoo status`` and ``voodoo workers`` commands."""
+    """``grumo status`` and ``grumo workers`` commands."""
 
     def test_status_command_runs_without_error(self):
-        from voodoo.cli.status import status
+        from grumo.cli.status import status
 
         # Should not raise
         status()
 
     def test_workers_command_runs_without_error(self):
-        from voodoo.cli.workers_cmd import workers
+        from grumo.cli.workers_cmd import workers
 
         # Should not raise
         workers()
@@ -480,30 +480,30 @@ class TestOTLPExporter:
     """OTLP availability check and graceful degradation."""
 
     def test_is_available_false_without_env(self):
-        from voodoo.integrations.otel import is_available
+        from grumo.integrations.otel import is_available
 
-        old = os.environ.pop("VOODOO_OTEL_EXPORTER", None)
+        old = os.environ.pop("GRUMO_OTEL_EXPORTER", None)
         try:
             assert is_available() is False
         finally:
             if old is not None:
-                os.environ["VOODOO_OTEL_EXPORTER"] = old
+                os.environ["GRUMO_OTEL_EXPORTER"] = old
 
     def test_export_span_noop_without_env(self):
         """export_span should be a no-op when OTLP is not configured."""
-        from voodoo.integrations.otel import export_span
+        from grumo.integrations.otel import export_span
 
-        old = os.environ.pop("VOODOO_OTEL_EXPORTER", None)
+        old = os.environ.pop("GRUMO_OTEL_EXPORTER", None)
         try:
             # Should not raise
             span = Span(trace_id="t1", name="test")
             export_span(span)
         finally:
             if old is not None:
-                os.environ["VOODOO_OTEL_EXPORTER"] = old
+                os.environ["GRUMO_OTEL_EXPORTER"] = old
 
     def test_exporter_setup_runtime_failure_degrades(self, monkeypatch):
-        import voodoo.integrations.otel as otel
+        import grumo.integrations.otel as otel
 
         monkeypatch.setattr(otel, "_checked", False)
         monkeypatch.setattr(otel, "_exporter", None)
@@ -518,7 +518,7 @@ class TestOTLPExporter:
         assert otel._checked is True
 
     def test_exporter_setup_unexpected_failure_propagates(self, monkeypatch):
-        import voodoo.integrations.otel as otel
+        import grumo.integrations.otel as otel
 
         monkeypatch.setattr(otel, "_checked", False)
         monkeypatch.setattr(otel, "_exporter", None)
