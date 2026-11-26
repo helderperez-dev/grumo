@@ -10,7 +10,7 @@ from pathlib import Path
 # repository root so the dependency-free browser signature helper is reusable.
 ROOT = Path(__file__).parents[1]
 sys.path.insert(0, str(ROOT))
-from tests.browser.visual_signature import signature
+from tests.browser.visual_signature import signature  # noqa: E402 - import requires repository root on sys.path
 
 REQUIRED_STATES = {"default", "focus", "overlay", "empty-error", "long-content"}
 REQUIRED_DENSITIES = {"compact", "comfortable", "spacious"}
@@ -45,7 +45,7 @@ def _validate_cases(manifest: dict[str, object], viewports: dict[str, object]) -
     return len(ids)
 
 
-def main() -> int:
+def main() -> int:  # noqa: C901 - visual contract validates all required states together
     manifest = json.loads((ROOT / "tests/browser/visual_contract.json").read_text())
     comparison = manifest.get("comparison", {})
     if not comparison.get("review_required_on_baseline_change"):
