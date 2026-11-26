@@ -57,13 +57,13 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/helderperez-dev/voodoo"
-Documentation = "https://github.com/helderperez-dev/voodoo#documentation"
-Repository = "https://github.com/helderperez-dev/voodoo"
-Changelog = "https://github.com/helderperez-dev/voodoo/blob/main/CHANGELOG.md"
-Roadmap = "https://github.com/helderperez-dev/voodoo/blob/main/ROADMAP.md"
-Issues = "https://github.com/helderperez-dev/voodoo/issues"
-Discussions = "https://github.com/helderperez-dev/voodoo/discussions"
+Homepage = "https://github.com/helderperez-dev/grumo"
+Documentation = "https://github.com/helderperez-dev/grumo#documentation"
+Repository = "https://github.com/helderperez-dev/grumo"
+Changelog = "https://github.com/helderperez-dev/grumo/blob/main/CHANGELOG.md"
+Roadmap = "https://github.com/helderperez-dev/grumo/blob/main/ROADMAP.md"
+Issues = "https://github.com/helderperez-dev/grumo/issues"
+Discussions = "https://github.com/helderperez-dev/grumo/discussions"
 
 [project.scripts]
 # Grumo CLI resolves through the compatibility namespace in this release.
