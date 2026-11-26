@@ -7,7 +7,7 @@ The `Agent` is a provider-driven execution loop: prompt → LLM → tool calls �
 ## Minimal example
 
 ```python
-from voodoo import Agent
+from grumo import Agent
 
 agent = Agent(model="mock:test")
 run = await agent.run("What is 2 + 2?")
@@ -30,7 +30,7 @@ run = await agent.run("Summarize this article")
 ### With tools
 
 ```python
-from voodoo import Agent, tool
+from grumo import Agent, tool
 
 
 @tool
@@ -104,13 +104,13 @@ configuration + model descriptors:
 - `best`, `fast`, `cheap`, `vision`, `reasoning`
 
 ```python
-from voodoo.ai import get_provider, resolve_model
+from grumo.ai import get_provider, resolve_model
 
 resolve_model("best")  # ("openai", "gpt-4o")
 provider = get_provider("best")  # OpenAIProvider(model="gpt-4o")
 ```
 
-Aliases resolve through the `models.aliases` block in `voodoo.yaml` first,
+Aliases resolve through the `models.aliases` block in `grumo.yaml` first,
 then built-in defaults:
 
 ```yaml
@@ -124,7 +124,7 @@ models:
 ### Config-driven providers (`[ai]` block) — zero-code endpoints
 
 Any OpenAI-compatible endpoint (DeepSeek, OpenRouter, Together, …) is
-configured entirely in `voodoo.toml`/`voodoo.yaml` — no provider class, no
+configured entirely in `grumo.toml`/`grumo.yaml` — no provider class, no
 SDK wiring, no code:
 
 ```toml
@@ -139,7 +139,7 @@ aliases = { agent = "openai:deepseek-v4-flash" }
 With that block, `Agent()` (no `model` argument) resolves everything from
 config: `default_model()` prefers `ai.model` + `ai.provider`; `get_provider()`
 applies `ai.base_url`/`ai.api_key` as fallback kwargs. Env vars
-`VOODOO_AI_PROVIDER` / `_MODEL` / `_BASE_URL` / `_API_KEY` are the fallbacks
+`GRUMO_AI_PROVIDER` / `_MODEL` / `_BASE_URL` / `_API_KEY` are the fallbacks
 when the file has no `[ai]` block. `ai.aliases` merge into routing.
 
 ### Multi-turn conversations
@@ -164,12 +164,12 @@ echoing `tool_call_id`), so OpenAI/Anthropic-style APIs map tool results
 correctly. The legacy `[TOOL: name]` text marker remains only as the
 mock-provider fallback.
 
-### The `VoodooModelProvider` interface
+### The `GrumoModelProvider` interface
 
 Every model provider conforms to a normalized interface (spec gap #7):
 
 ```python
-from voodoo.ai.providers import VoodooModelProvider
+from grumo.ai.providers import GrumoModelProvider
 
 # generate() -> ProviderResponse        (alias of complete)
 # stream()  -> AsyncIterator[ProviderEvent]
@@ -183,7 +183,7 @@ context window, tool use, structured output, streaming, reasoning, vision,
 audio, embeddings, and pricing metadata:
 
 ```python
-from voodoo.ai import describe_model
+from grumo.ai import describe_model
 
 desc = describe_model("mock:test")
 desc.provider  # "mock"
@@ -192,14 +192,14 @@ desc.embeddings  # True
 desc.qualified_name  # "mock:test"
 ```
 
-### `voodoo generate`
+### `grumo generate`
 
 ```bash
-voodoo generate agent "A lead-scoring agent"
+grumo generate agent "A lead-scoring agent"
 ```
 
 Resolves the model through the provider abstraction (no direct SDK use). Set
-`VOODOO_MODELS_DEFAULT` to pick a different model, or `OPENAI_API_KEY` /
+`GRUMO_MODELS_DEFAULT` to pick a different model, or `OPENAI_API_KEY` /
 `OPENROUTER_API_KEY` to authenticate.
 
 ### Agent memory (Sprint 16)
@@ -209,8 +209,8 @@ queryable recall. Memories are distinct from context: context is what you pass
 into a single run; memory is what the agent persists across runs.
 
 ```python
-from voodoo import Agent
-from voodoo.memory import MemoryLayer
+from grumo import Agent
+from grumo.memory import MemoryLayer
 
 agent = Agent(model="mock:test")
 
@@ -232,8 +232,8 @@ and execution metadata. This happens without any manual wiring.
 **Custom memory store:** Inject a `SQLiteMemoryStore` for durable persistence:
 
 ```python
-from voodoo import Agent
-from voodoo.memory import SQLiteMemoryStore
+from grumo import Agent
+from grumo.memory import SQLiteMemoryStore
 
 agent = Agent(
     model="openai:gpt-4o",
@@ -260,8 +260,8 @@ Protocol provides `InMemoryAgentRegistry` (tests) and `SQLiteAgentRegistry`
 automatically registered on its first `run()` or `stream()`:
 
 ```python
-from voodoo import Agent
-from voodoo.agents import SQLiteAgentRegistry
+from grumo import Agent
+from grumo.agents import SQLiteAgentRegistry
 
 registry = SQLiteAgentRegistry("agents.db")
 agent = Agent(
@@ -317,11 +317,11 @@ print(await registry.count_runs("emailer"))  # 1
 **CLI inspection:**
 
 ```bash
-voodoo agents list              # list all registered agents
-voodoo agents list --state active  # filter by state
-voodoo agents list --json       # JSON output
-voodoo agents show <agent-id>   # inspect agent details + recent runs
-voodoo agents show <agent-id> --limit 20  # more run history
+grumo agents list              # list all registered agents
+grumo agents list --state active  # filter by state
+grumo agents list --json       # JSON output
+grumo agents show <agent-id>   # inspect agent details + recent runs
+grumo agents show <agent-id> --limit 20  # more run history
 ```
 
 ## API reference
@@ -337,13 +337,13 @@ voodoo agents show <agent-id> --limit 20  # more run history
 - `AgentRegistry` — Protocol for agent persistence (`register`, `get`, `list_agents`, `update`, `delete`, `record_run`, `get_runs`).
 - `InMemoryAgentRegistry` — in-memory registry for tests.
 - `SQLiteAgentRegistry(path)` — durable SQLite registry (WAL mode).
-- `VoodooModelProvider` — normalized model provider Protocol.
+- `GrumoModelProvider` — normalized model provider Protocol.
 - `ModelDescriptor` — static model capability descriptor.
 - `get_provider(model)`, `resolve_model(model)`, `describe_model(model)` — model resolution helpers.
 
 ## Architecture: Agent as Runtime Participant
 
-The Agent is a *participant* in the Voodoo runtime, not a parallel execution
+The Agent is a *participant* in the Grumo runtime, not a parallel execution
 framework. When an `ExecutionEngine` is available, `Agent.run()` creates a
 first-class `Execution` so agent runs share the same lifecycle, persistence,
 recovery and observability as every other execution path (HTTP, Worker, Task,
@@ -371,8 +371,8 @@ must never silently acquire authority simply because it was invoked by an
 Agent:
 
 ```python
-from voodoo import Agent
-from voodoo.runtime import ExecutionEngine
+from grumo import Agent
+from grumo.runtime import ExecutionEngine
 
 engine = ExecutionEngine()
 agent = Agent(

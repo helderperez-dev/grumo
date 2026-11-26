@@ -4,12 +4,12 @@
 
 `state(initial)` creates an observable value cell. Interactive state is isolated
 per browser session by default. Read with `get()`, update with `set()` /
-`update()`, and let Voodoo target the resulting DOM patch to that session.
+`update()`, and let Grumo target the resulting DOM patch to that session.
 
 ## Minimal example
 
 ```python
-from voodoo import state
+from grumo import state
 
 count = state(0)
 
@@ -25,8 +25,8 @@ count.get()  # 6
 ### In a page
 
 ```python
-from voodoo import page, state
-from voodoo.ui import Button, Stack, Text
+from grumo import page, state
+from grumo.ui import Button, Stack, Text
 
 counter = state(0)
 
@@ -68,7 +68,7 @@ re-render of that binding (no explicit `rerender()` call needed in your
 event handlers) — the "zero JS" reactive loop:
 
 ```python
-from voodoo.ui.state import StateRenderer, state
+from grumo.ui.state import StateRenderer, state
 
 count = state(0)
 renderer = StateRenderer()
@@ -102,7 +102,7 @@ released after the final WebSocket disconnect and idle grace period.
 
 ### WebSocket patches
 
-When a browser event mutates state, Voodoo targets the `patch` message to the
+When a browser event mutates state, Grumo targets the `patch` message to the
 owning UI session. It is never implicitly broadcast to other users.
 
 ## API reference

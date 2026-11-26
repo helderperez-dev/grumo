@@ -102,17 +102,17 @@ grumo dev
 
 The Homebrew tap is being validated in
 [homebrew-grumo](https://github.com/helderperez-dev/homebrew-grumo).
-Do not install the old Voodoo formula for a new Grumo project.
+Do not install the old Grumo formula for a new Grumo project.
 
 Open `http://localhost:8000`. A fresh application requires no external
-database, Redis, queue or object server. Existing Voodoo applications and
+database, Redis, queue or object server. Existing Grumo applications and
 their durable data remain supported through the compatibility layer.
 
 ### Small application
 
 ```python
 from grumo import App, page
-from voodoo.ui import Heading, Page, Stack, Text
+from grumo.ui import Heading, Page, Stack, Text
 
 app = App()
 
@@ -183,7 +183,7 @@ Grumo Runtime
 RuntimeStore
     │
     ▼
-.voodoo/application.vstore
+.grumo/application.grumo
 ```
 
 The default path is **local-first and single-writer**. PostgreSQL, SQLite,
@@ -197,7 +197,7 @@ Models may declare native secondary indexes without changing the query API:
 
 ```python
 from grumo import Model
-from voodoo.data import field
+from grumo.data import field
 
 
 class Customer(Model):
@@ -232,7 +232,7 @@ Grumo deliberately converges concepts under one semantic owner instead of
 preserving duplicate historical namespaces.
 
 ```text
-src/voodoo/
+src/grumo/
 ├── core/          application facade, lifecycle, state and events
 ├── primitives/    foundational semantic concepts
 ├── runtime/       canonical Runtime semantics
@@ -265,20 +265,20 @@ The package root stays intentionally small:
 from grumo import Agent, App, Model, page, state, task, tool
 ```
 
-The canonical distribution and root imports are `grumo`. In 1.0, advanced APIs still live under `voodoo.*`; the implementation remains in `src/voodoo/`. Configuration keys, `voodoo.toml`, and `.voodoo/application.vstore` retain their existing names for compatibility. Do not rename persisted data manually.
+The canonical distribution and root imports are `grumo`. In 1.0, advanced APIs still live under `grumo.*`; the implementation remains in `src/grumo/`. Configuration keys, `grumo.toml`, and `.grumo/application.grumo` retain their existing names for compatibility. Do not rename persisted data manually.
 
 Advanced APIs come from the namespace that owns them:
 
 ```python
-from voodoo.ui import Button, Card, DataTable
-from voodoo.runtime import ExecutionEngine, Goal, GoalRuntime, Planner
-from voodoo.world import Entity, Observation, WorldModel
-from voodoo.edge import DeviceGateway, WorldAwareDeviceGateway
-from voodoo.protocol import RemoteExecutionRequest, WorldSnapshot
-from voodoo.integrations.mcp import mcp
+from grumo.ui import Button, Card, DataTable
+from grumo.runtime import ExecutionEngine, Goal, GoalRuntime, Planner
+from grumo.world import Entity, Observation, WorldModel
+from grumo.edge import DeviceGateway, WorldAwareDeviceGateway
+from grumo.protocol import RemoteExecutionRequest, WorldSnapshot
+from grumo.integrations.mcp import mcp
 ```
 
-See [Public API contract (inherited from Voodoo 3.0)](docs/public-api-3.md) for the canonical import
+See [Public API contract (inherited from Grumo 3.0)](docs/public-api-3.md) for the canonical import
 model and the clean-break migration map from 2.x.
 
 For contributor-facing ownership and package placement, see the [canonical
@@ -291,7 +291,7 @@ the Runtime to reconcile the two without creating a second orchestration model.
 
 ```python
 from grumo import App
-from voodoo.primitives import Intent
+from grumo.primitives import Intent
 
 app = App()
 
@@ -343,7 +343,7 @@ agent = Agent(
 )
 ```
 
-MCP is an interoperability boundary under `voodoo.integrations.mcp`; it is
+MCP is an interoperability boundary under `grumo.integrations.mcp`; it is
 not a second tool registry or execution model.
 
 ## Operational systems and Edge
@@ -459,20 +459,20 @@ A fresh application is zero-config. The effective defaults are equivalent to:
 
 ```toml
 [store]
-provider = "voodoo"
-path = ".voodoo/application.vstore"
+provider = "grumo"
+path = ".grumo/application.grumo"
 
 [database]
-provider = "voodoo"
+provider = "grumo"
 
 [queue]
-provider = "voodoo"
+provider = "grumo"
 
 [events]
-provider = "voodoo"
+provider = "grumo"
 
 [objects]
-provider = "voodoo"
+provider = "grumo"
 ```
 
 Override only the domain that actually needs external infrastructure:
@@ -519,7 +519,7 @@ A useful reading order:
 7. [Human-in-the-loop](docs/hitl.md)
 8. [MCP](docs/mcp.md)
 9. [Protocol](docs/protocol.md)
-10. [Public API contract (inherited from Voodoo 3.0)](docs/public-api-3.md)
+10. [Public API contract (inherited from Grumo 3.0)](docs/public-api-3.md)
 11. [Architecture](ARCHITECTURE.md)
 12. [Roadmap](ROADMAP.md)
 
@@ -565,7 +565,7 @@ As the project grows, these properties are architectural constraints:
 Grumo is **beta software**.
 
 **v1.0.0** is the first published Grumo release, with Grumo Store 1.x.
-The architecture builds on the former Voodoo runtime. The `main` branch may contain post-release documentation or implementation
+The architecture builds on the former Grumo runtime. The `main` branch may contain post-release documentation or implementation
 work, so a merge to `main` is not itself a package release.
 
 The next numbered development sprint is intentionally selected from real

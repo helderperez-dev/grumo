@@ -8,8 +8,8 @@ opaque and owned by the browser session that rendered them.
 ## Minimal example
 
 ```python
-from voodoo import state
-from voodoo.ui import Button
+from grumo import state
+from grumo.ui import Button
 
 count = state(0)
 
@@ -21,7 +21,7 @@ async def increment():
 button = Button("Increment", on_click=increment)
 ```
 
-Voodoo emits a semantic `data-vd-event-*` binding; no inline handler is needed.
+Grumo emits a semantic `data-vd-event-*` binding; no inline handler is needed.
 
 ## Common usage
 
@@ -55,7 +55,7 @@ short reconnect grace period, then release bindings, state and render tasks.
 ### Registering events programmatically
 
 ```python
-from voodoo.ui.events import register_event
+from grumo.ui.events import register_event
 
 register_event("custom_event", my_handler)
 ```
@@ -69,7 +69,7 @@ The `WebSocketManager` targets the current event/render session. The historical
 method names remain for compatibility but do not fan out globally:
 
 ```python
-from voodoo.ui.events import ws_manager
+from grumo.ui.events import ws_manager
 
 await ws_manager.broadcast_patch("element-id", "<div>New content</div>")
 await ws_manager.broadcast_append("list-id", "<li>New item</li>")

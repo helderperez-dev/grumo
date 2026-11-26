@@ -2,12 +2,12 @@
 
 ## What it is
 
-Voodoo includes a built-in Model Context Protocol (MCP) server. Every `@tool` is automatically exposed to MCP consumers (AI IDEs, other applications) via SSE. The MCP server consumes the same `ToolRegistry` as agents and Python code.
+Grumo includes a built-in Model Context Protocol (MCP) server. Every `@tool` is automatically exposed to MCP consumers (AI IDEs, other applications) via SSE. The MCP server consumes the same `ToolRegistry` as agents and Python code.
 
 ## Minimal example
 
 ```python
-from voodoo import tool
+from grumo import tool
 
 
 @tool
@@ -31,7 +31,7 @@ This tool is now available:
 ### Using the MCP client
 
 ```python
-from voodoo.mcp import MCPClient
+from grumo.mcp import MCPClient
 
 client = MCPClient("http://localhost:8000/mcp/messages")
 result = await client.call_tool("get_user", {"id": 1})
@@ -40,10 +40,10 @@ result = await client.call_tool("get_user", {"id": 1})
 ### Registering MCP resources
 
 ```python
-from voodoo.mcp import mcp
+from grumo.mcp import mcp
 
 
-@mcp.resource("voodoo://config", name="app_config")
+@mcp.resource("grumo://config", name="app_config")
 def app_config():
     return json.dumps({"version": "1.0.0"})
 ```
@@ -68,7 +68,7 @@ def app_config():
 ### Auto-bridge from mesh
 
 ```python
-from voodoo.mesh import mesh
+from grumo.mesh import mesh
 
 
 @mesh.expose(name="sync_crm")
@@ -82,8 +82,8 @@ async def sync_crm(contact_id: int) -> str:
 ### Custom registry
 
 ```python
-from voodoo.mcp import MCPServer
-from voodoo.tools.registry import ToolRegistry
+from grumo.mcp import MCPServer
+from grumo.tools.registry import ToolRegistry
 
 custom_registry = ToolRegistry()
 mcp_server = MCPServer(registry=custom_registry)
@@ -92,7 +92,7 @@ mcp_server = MCPServer(registry=custom_registry)
 ## API reference
 
 - `mcp` — the global `MCPServer` singleton.
-- `MCPServer(name="voodoo-mcp", version="1.0.0", registry=None)` — create an MCP server.
+- `MCPServer(name="grumo-mcp", version="1.0.0", registry=None)` — create an MCP server.
 - `mcp.tool(name=None, description=None)` — register an MCP tool (also registers in ToolRegistry).
 - `mcp.resource(uri, name=None)` — register a resource.
 - `MCPClient(endpoint_url)` — client for calling MCP tools.
