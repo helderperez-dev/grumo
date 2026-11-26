@@ -85,7 +85,7 @@ jobs:
           from grumo.cli import app as grumo_app
           from voodoo.cli import app as voodoo_app
 
-          assert importlib.metadata.version("voodoo-framework") == grumo.__version__
+          assert importlib.metadata.version("voodoo-framework") == grumo.__version__ == voodoo.__version__
           assert grumo.App is voodoo.App
           assert grumo.Agent is voodoo.Agent
           assert grumo_app is voodoo_app
@@ -101,15 +101,19 @@ jobs:
           /tmp/voodoo-release-sdist-env/bin/python - <<'PY'
           import importlib.metadata
           import subprocess
+          import grumo
+          import voodoo
 
           version = importlib.metadata.version("voodoo-framework")
-          result = subprocess.run(
-              ["/tmp/voodoo-release-sdist-env/bin/voodoo", "version"],
-              check=False,
-              capture_output=True,
-              text=True,
-          )
-          assert result.returncode == 0, result.stderr
-          assert version in result.stdout, result.stdout
+          assert version == grumo.__version__ == voodoo.__version__
+          for cli in ("grumo", "voodoo"):
+              result = subprocess.run(
+                  [f"/tmp/voodoo-release-sdist-env/bin/{cli}", "version"],
+                  check=False,
+                  capture_output=True,
+                  text=True,
+              )
+              assert result.returncode == 0, result.stderr
+              assert version in result.stdout, result.stdout
           print(f"verified exact source distribution {version}")
           PY
