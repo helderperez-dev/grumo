@@ -85,7 +85,7 @@ jobs:
           from grumo.cli import app as grumo_app
           from voodoo.cli import app as voodoo_app
 
-          assert importlib.metadata.version("voodoo-framework") == grumo.__version__
+          assert importlib.metadata.version("grumo") == grumo.__version__
           assert grumo.App is voodoo.App
           assert grumo.Agent is voodoo.Agent
           assert grumo_app is voodoo_app
@@ -102,7 +102,7 @@ jobs:
           import importlib.metadata
           import subprocess
 
-          version = importlib.metadata.version("voodoo-framework")
+          version = importlib.metadata.version("grumo")
           result = subprocess.run(
               ["/tmp/voodoo-release-sdist-env/bin/voodoo", "version"],
               check=False,
