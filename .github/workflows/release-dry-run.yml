@@ -76,6 +76,24 @@ jobs:
           cd grumo-release-smoke-app
           /tmp/voodoo-release-env/bin/python -m compileall -q app
 
+      - name: Verify Grumo and Voodoo from installed wheel
+        run: |
+          /tmp/voodoo-release-env/bin/python - <<'PY'
+          import importlib.metadata
+          import grumo
+          import voodoo
+          from grumo.cli import app as grumo_app
+          from voodoo.cli import app as voodoo_app
+
+          assert importlib.metadata.version("voodoo-framework") == grumo.__version__
+          assert grumo.App is voodoo.App
+          assert grumo.Agent is voodoo.Agent
+          assert grumo_app is voodoo_app
+          print("verified Grumo compatibility namespace in installed wheel")
+          PY
+          /tmp/voodoo-release-env/bin/grumo --help
+          /tmp/voodoo-release-env/bin/voodoo --help
+
       - name: Clean-install exact source distribution
         run: |
           uv venv --python 3.12 /tmp/voodoo-release-sdist-env
