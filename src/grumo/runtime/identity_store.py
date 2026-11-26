@@ -1,16 +1,16 @@
-"""Durable Runtime identity registry backed by application.vstore."""
+"""Durable Runtime identity registry backed by application.grumo."""
 
 from __future__ import annotations
 
 import json
 from typing import TYPE_CHECKING, Any, Protocol
 
-from voodoo.runtime.identity import Identity, IdentityKind
+from grumo.runtime.identity import Identity, IdentityKind
 
 if TYPE_CHECKING:
-    from voodoo.runtime.store import RuntimeStore
+    from grumo.runtime.store import RuntimeStore
 
-__all__ = ["IdentityStore", "VoodooStoreIdentityStore"]
+__all__ = ["IdentityStore", "GrumoStoreIdentityStore"]
 
 _PREFIX = b"runtime:identity:data:"
 _COLLECTION = b"runtime.identity"
@@ -28,10 +28,10 @@ class IdentityStore(Protocol):
     def delete(self, identity_id: str) -> bool: ...
 
 
-class VoodooStoreIdentityStore:
+class GrumoStoreIdentityStore:
     """Persist Runtime identity state without defining authorization semantics."""
 
-    provider = "voodoo"
+    provider = "grumo"
 
     def __init__(self, runtime_store: RuntimeStore | None = None) -> None:
         self._runtime_store = runtime_store
@@ -39,7 +39,7 @@ class VoodooStoreIdentityStore:
     def _runtime(self) -> RuntimeStore:
         if self._runtime_store is not None:
             return self._runtime_store
-        from voodoo.runtime.store import acquire_runtime_store
+        from grumo.runtime.store import acquire_runtime_store
 
         return acquire_runtime_store()
 
@@ -47,18 +47,18 @@ class VoodooStoreIdentityStore:
         runtime = self._runtime()
         provider = runtime.provider or runtime.start()
         if provider is None:
-            from voodoo.core.errors import ConfigurationError
+            from grumo.core.errors import ConfigurationError
 
             raise ConfigurationError(
-                "Voodoo Store is disabled; durable Identity requires an explicit "
+                "Grumo Store is disabled; durable Identity requires an explicit "
                 "IdentityStore adapter or an enabled Runtime Store."
             )
         native = getattr(provider, "native", None)
         if native is None:
-            from voodoo.core.errors import ConfigurationError
+            from grumo.core.errors import ConfigurationError
 
             raise ConfigurationError(
-                "The active Voodoo Store provider does not expose durable KV storage."
+                "The active Grumo Store provider does not expose durable KV storage."
             )
         return native
 

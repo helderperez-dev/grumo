@@ -1,4 +1,4 @@
-"""Operational inspection projection for Voodoo Runtime.
+"""Operational inspection projection for Grumo Runtime.
 
 The inspector is read-only. It projects the runtime's existing sources of truth
 (Executions, Goals, approvals, Policy and World) into one UI/API-friendly view.
@@ -16,7 +16,7 @@ __all__ = ["OperationalRuntime"]
 
 @dataclass
 class OperationalRuntime:
-    """Read-only projection over a live Voodoo runtime."""
+    """Read-only projection over a live Grumo runtime."""
 
     engine: Any
     goals: Any | None = None

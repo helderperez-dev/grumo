@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 _SCHEMA_VERSION = 1
-_logger = logging.getLogger("voodoo.runtime.lineage")
+_logger = logging.getLogger("grumo.runtime.lineage")
 
 
 @dataclass(frozen=True, slots=True)

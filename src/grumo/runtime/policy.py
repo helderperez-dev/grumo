@@ -15,9 +15,9 @@ from dataclasses import dataclass, field
 from enum import StrEnum
 from typing import Any, cast
 
-from voodoo.runtime.context import ExecutionContext
-from voodoo.runtime.identity import Principal
-from voodoo.world.models import WorldSnapshot
+from grumo.runtime.context import ExecutionContext
+from grumo.runtime.identity import Principal
+from grumo.world.models import WorldSnapshot
 
 __all__ = [
     "PolicyDecision",

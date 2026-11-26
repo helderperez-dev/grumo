@@ -17,8 +17,8 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 from typing import Any, Literal
 
-from voodoo.primitives.intent import Intent
-from voodoo.runtime.workflow import WorkflowStrategy
+from grumo.primitives.intent import Intent
+from grumo.runtime.workflow import WorkflowStrategy
 
 __all__ = [
     "ParticipantKind",

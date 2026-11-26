@@ -10,7 +10,7 @@ from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.routing import Route
 
-from voodoo.runtime.operations import OperationalRuntime
+from grumo.runtime.operations import OperationalRuntime
 
 __all__ = ["runtime_dashboard"]
 
@@ -18,7 +18,7 @@ __all__ = ["runtime_dashboard"]
 def runtime_dashboard(
     inspector: OperationalRuntime,
     *,
-    path: str = "/_voodoo/runtime",
+    path: str = "/_grumo/runtime",
 ) -> Callable[[Any], None]:
     """Return an ``App.use`` plugin mounting runtime dashboard + JSON API."""
 
@@ -94,7 +94,7 @@ def _render(snapshot: dict[str, Any]) -> str:
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Voodoo Runtime</title>
+<title>Grumo Runtime</title>
 <style>
 :root {{ color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }}
 * {{ box-sizing: border-box; }}
@@ -116,7 +116,7 @@ section {{ overflow:hidden; }} section h2 {{ font-size:14px; margin:0; padding:1
 </style>
 </head>
 <body><main>
-<header><div><h1>Voodoo Runtime</h1><div class="sub">Operational state, agency, approvals and world projection.</div></div><div class="badge">live projection</div></header>
+<header><div><h1>Grumo Runtime</h1><div class="sub">Operational state, agency, approvals and world projection.</div></div><div class="badge">live projection</div></header>
 <div class="cards">{cards}</div>
 <div class="grid">
 <section><h2>Goals</h2>{goal_rows}</section>

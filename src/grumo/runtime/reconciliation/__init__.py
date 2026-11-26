@@ -1,6 +1,6 @@
 """Deterministic Runtime reconciliation ownership domain."""
 
-from voodoo.runtime.reconciliation.reconcile import (
+from grumo.runtime.reconciliation.reconcile import (
     GoalIntentFactory,
     GoalPredicate,
     GoalReconciliation,

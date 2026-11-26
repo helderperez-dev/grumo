@@ -15,9 +15,9 @@ from datetime import UTC, datetime, timedelta
 from enum import StrEnum
 from typing import Any
 
-from voodoo.primitives.intent import Intent
-from voodoo.runtime.agency.goal import Goal
-from voodoo.runtime.application_graph import (
+from grumo.primitives.intent import Intent
+from grumo.runtime.agency.goal import Goal
+from grumo.runtime.application_graph import (
     ApplicationGraph,
     ApplicationNode,
     ApplicationNodeKind,

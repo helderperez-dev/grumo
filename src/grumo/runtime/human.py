@@ -8,7 +8,7 @@ state with a pending :class:`Approval`. A human then decides:
     engine.deny(execution_id, by="admin")      → execution fails
 
 The :class:`Human` compute participant raises
-:class:`~voodoo.runtime.errors.ApprovalRequired` until the runtime
+:class:`~grumo.runtime.errors.ApprovalRequired` until the runtime
 re-executes it with an approval decision in the context metadata —
 making the whole flow deterministic and auditable.
 """
@@ -21,13 +21,13 @@ from enum import StrEnum
 from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
-from voodoo.primitives.intent import Intent
-from voodoo.runtime.context import ExecutionContext
-from voodoo.runtime.errors import ApprovalRequired
-from voodoo.runtime.execution.engine import ComputeFn, ComputeResult
+from grumo.primitives.intent import Intent
+from grumo.runtime.context import ExecutionContext
+from grumo.runtime.errors import ApprovalRequired
+from grumo.runtime.execution.engine import ComputeFn, ComputeResult
 
 if TYPE_CHECKING:
-    from voodoo.runtime.execution import Execution
+    from grumo.runtime.execution import Execution
 
 __all__ = ["ApprovalStatus", "Approval", "ApprovalRegistry", "Human", "ask_human"]
 

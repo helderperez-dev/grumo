@@ -24,8 +24,8 @@ import logging
 from pathlib import Path
 from typing import Protocol
 
-from voodoo.runtime.execution import Execution, ExecutionStatus
-from voodoo.security.redaction import redact_string
+from grumo.runtime.execution import Execution, ExecutionStatus
+from grumo.security.redaction import redact_string
 
 logger = logging.getLogger(__name__)
 
