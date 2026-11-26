@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "voodoo-framework"
+name = "grumo"
 dynamic = ["version"]
 description = "The programmable runtime for adaptive applications and operational systems — from web and AI to distributed and physical systems."
 readme = "README.md"
@@ -46,7 +46,7 @@ dependencies = [
     "starlette",
     "uvicorn",
     "pydantic",
-    "voodoo-store>=0.3.0,<0.4",
+    "grumo-store>=0.3.2,<0.4",
     "websockets",
     "httpx",
     "python-dotenv",
@@ -119,7 +119,7 @@ secrets = [
 ]
 
 [tool.setuptools.dynamic]
-version = { attr = "voodoo.__version__" }
+version = { attr = "grumo.__version__" }
 
 [tool.setuptools]
 include-package-data = true
