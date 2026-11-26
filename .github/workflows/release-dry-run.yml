@@ -33,6 +33,17 @@ jobs:
           name: grumo-resolved-lockfile
           path: uv.lock
           if-no-files-found: error
+      - name: Emit resolved public lockfile for migration review
+        run: |
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          raw = Path('uv.lock').read_bytes()
+          print('GRUMO_LOCK_SHA256=' + hashlib.sha256(raw).hexdigest())
+          for line in raw.decode('utf-8').splitlines():
+              print('GRUMO_LOCK_LINE:' + line)
+          print('GRUMO_LOCK_END')
+          PY
       - name: Full tests
         run: uv run --python 3.12 pytest -q
       - name: Full type ratchet
