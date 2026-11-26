@@ -5,13 +5,13 @@
 (``where``/``order_by``/``limit``/``offset`` → ``await``/``first``/
 ``count``/``delete``), while reusing the existing aiosqlite storage layer
 and the ``on_insert`` / ``on_update`` hook system from
-:mod:`voodoo.data.base`.
+:mod:`grumo.data.base`.
 
 Storage backend boundary
 -------------------------
 Everything in this module talks to the database through ``get_db()``
 and builds portable ANSI-SQL strings.  Schema management flows through
-the ``VoodooDatabase`` adapter in :mod:`voodoo.storage.database`
+the ``GrumoDatabase`` adapter in :mod:`grumo.storage.database`
 (SQLite default); the user-model DDL is migration 0001 in its ledger.
 Swapping backends means providing another adapter — no call-site here
 changes.
@@ -21,13 +21,13 @@ from __future__ import annotations
 
 from typing import Any, cast, get_type_hints
 
-from voodoo.data.base import BaseModel, _get_table_name, get_db
+from grumo.data.base import BaseModel, _get_table_name, get_db
 
 __all__ = ["Model", "Query"]
 
 
 class Model(BaseModel):
-    """Async CRUD facade over :class:`voodoo.data.BaseModel`.
+    """Async CRUD facade over :class:`grumo.data.BaseModel`.
 
     Subclass it just like ``BaseModel`` and use the async helpers::
 
@@ -67,7 +67,7 @@ class Model(BaseModel):
     @classmethod
     async def get(cls, id: int) -> Model | None:
         """Fetch a single row by primary key; ``None`` if not found."""
-        from voodoo.observability import telemetry_store
+        from grumo.observability import telemetry_store
 
         telemetry_store.record_db_query()
         db = await get_db()
@@ -142,8 +142,8 @@ class Model(BaseModel):
         Registered ``FK`` cascades fire first: child rows referencing this
         row are removed before the row itself.
         """
-        from voodoo.data.base import _cascade_delete_children
-        from voodoo.observability import telemetry_store
+        from grumo.data.base import _cascade_delete_children
+        from grumo.observability import telemetry_store
 
         telemetry_store.record_db_query()
         db = await get_db()
@@ -225,7 +225,7 @@ class Query:
     # -- terminals (async) --------------------------------------------------
 
     def _execute_select(self) -> Any:
-        from voodoo.observability import telemetry_store
+        from grumo.observability import telemetry_store
 
         telemetry_store.record_db_query()
         table_name = _get_table_name(self._model)
@@ -248,7 +248,7 @@ class Query:
 
     async def count(self) -> int:
         """Return the number of rows matching the filters."""
-        from voodoo.observability import telemetry_store
+        from grumo.observability import telemetry_store
 
         telemetry_store.record_db_query()
         db = await get_db()
@@ -261,7 +261,7 @@ class Query:
 
     async def delete(self) -> int:
         """Delete matching rows; return the number of rows removed."""
-        from voodoo.observability import telemetry_store
+        from grumo.observability import telemetry_store
 
         telemetry_store.record_db_query()
         db = await get_db()

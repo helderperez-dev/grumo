@@ -60,17 +60,17 @@ window and emits a warning.
 ```
 my_app/
 ├── main.py              # App entry point — full runtime demo
-├── voodoo.toml          # Runtime configuration
+├── grumo.toml          # Runtime configuration
 ├── pyproject.toml       # Python project metadata
 ├── app/                 # Folder-based routes (add page.py files here)
-└── .voodoo/
-    └── application.vstore  # Local durable Store state
+└── .grumo/
+    └── application.grumo  # Local durable Store state
 ```
 
 > **Tip:** Keep the generated project minimal and add capabilities as they are
 > needed; this keeps the first deployment surface understandable.
 
-The generated project includes `main.py` and `voodoo.toml`. The default embedded Store requires no external infrastructure.
+The generated project includes `main.py` and `grumo.toml`. The default embedded Store requires no external infrastructure.
 
 ## AI development context (optional)
 
@@ -80,7 +80,7 @@ grumo ai init --ide cursor # specific IDE
 grumo ai init --ide all    # all supported IDEs
 ```
 
-Generates `.voodoo/ai/` context docs and IDE-specific rule files. Removing `.voodoo/ai` never breaks the application.
+Generates `.grumo/ai/` context docs and IDE-specific rule files. Removing `.grumo/ai` never breaks the application.
 
 ## Python version
 
@@ -100,13 +100,13 @@ pytest
 
 ## Configuration
 
-Grumo 1.0 retains `voodoo.toml`, `VOODOO_*` variables, `.voodoo/application.vstore` and advanced `voodoo.*` imports for compatibility.
+Grumo 1.0 retains `grumo.toml`, `GRUMO_*` variables, `.grumo/application.grumo` and advanced `grumo.*` imports for compatibility.
 
-Grumo reads configuration from `voodoo.toml` (preferred), `voodoo.yaml` (compatibility), and environment variables.
+Grumo reads configuration from `grumo.toml` (preferred), `grumo.yaml` (compatibility), and environment variables.
 
-**Precedence:** `voodoo.toml` > `voodoo.yaml` > environment variables > defaults
+**Precedence:** `grumo.toml` > `grumo.yaml` > environment variables > defaults
 
-Minimal `voodoo.toml`:
+Minimal `grumo.toml`:
 
 ```toml
 [app]
@@ -117,17 +117,17 @@ Environment variables:
 
 | Variable | Default | Description |
 |---|---|---|
-| `VOODOO_ENV` | `development` | Environment name |
-| `VOODOO_DEBUG` | `true` (dev) | Debug mode |
-| `VOODOO_SECRET_KEY` | dev secret | JWT signing secret |
-| `VOODOO_JWT_ISSUER` | unset | Optional exact JWT issuer claim |
-| `VOODOO_JWT_AUDIENCE` | unset | Optional exact JWT audience claim |
-| `VOODOO_JWT_CLOCK_SKEW` | `0` | Accepted clock drift in seconds, bounded to 300 |
-| `VOODOO_JWT_PREVIOUS_SECRETS` | unset | Comma-separated old signing secrets during rotation |
-| `VOODOO_JWT_REVOCATION_MAX` | `10000` | Maximum process-local revoked-token entries |
-| `VOODOO_DB_PATH` | `.voodoo/state/data.db` | SQLite database path |
+| `GRUMO_ENV` | `development` | Environment name |
+| `GRUMO_DEBUG` | `true` (dev) | Debug mode |
+| `GRUMO_SECRET_KEY` | dev secret | JWT signing secret |
+| `GRUMO_JWT_ISSUER` | unset | Optional exact JWT issuer claim |
+| `GRUMO_JWT_AUDIENCE` | unset | Optional exact JWT audience claim |
+| `GRUMO_JWT_CLOCK_SKEW` | `0` | Accepted clock drift in seconds, bounded to 300 |
+| `GRUMO_JWT_PREVIOUS_SECRETS` | unset | Comma-separated old signing secrets during rotation |
+| `GRUMO_JWT_REVOCATION_MAX` | `10000` | Maximum process-local revoked-token entries |
+| `GRUMO_DB_PATH` | `.grumo/state/data.db` | SQLite database path |
 | `DATABASE_URL` | — | Database URL (overrides path) |
-| `VOODOO_HOST` | `0.0.0.0` | Server host |
-| `VOODOO_PORT` | `8000` | Server port |
+| `GRUMO_HOST` | `0.0.0.0` | Server host |
+| `GRUMO_PORT` | `8000` | Server port |
 
 Infrastructure configuration (database provider, storage provider, etc.) is optional — Grumo provides intelligent defaults.

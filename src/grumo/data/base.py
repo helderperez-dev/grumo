@@ -7,10 +7,10 @@ import logging
 from collections.abc import Callable
 from typing import Any, cast, get_type_hints
 
-from voodoo.security.redaction import redact_string
-from voodoo.storage.database import Migration, SQLiteDatabase, VoodooDatabase
+from grumo.security.redaction import redact_string
+from grumo.storage.database import Migration, SQLiteDatabase, GrumoDatabase
 
-_logger = logging.getLogger("voodoo.data")
+_logger = logging.getLogger("grumo.data")
 
 # Compatibility fallbacks may handle malformed/absent optional adapter state,
 # but must not conceal an arbitrary implementation defect from the caller.
@@ -70,7 +70,7 @@ def _backend_uses_identity() -> bool:
     return bool(caps.provider == "postgres")
 
 
-async def _ensure_user_tables(db: VoodooDatabase) -> None:
+async def _ensure_user_tables(db: GrumoDatabase) -> None:
     """Create tables for every registered user model (idempotent DDL)."""
     for model in _models:
         await cast(Any, model)._create_table()
@@ -102,7 +102,7 @@ async def _cascade_delete_children(parent_table: str, parent_id: Any) -> None:
 async def init_db(db_path: str | None = None) -> Any:
     """Initializes the database connection using the configured provider (Sprint 9).
 
-    Uses the central :class:`~voodoo.adapters.registry.ProviderRegistry` to
+    Uses the central :class:`~grumo.adapters.registry.ProviderRegistry` to
     resolve the active database adapter from ``config.database``, running
     migrations and ensuring user model tables are created.
 
@@ -114,8 +114,8 @@ async def init_db(db_path: str | None = None) -> Any:
     called, otherwise ``_create_table`` → ``get_db`` would re-enter
     ``init_db`` (there is no connection yet) and recurse forever.
     """
-    from voodoo.adapters.registry import registry
-    from voodoo.config import DatabaseConfig, get_config
+    from grumo.adapters.registry import registry
+    from grumo.config import DatabaseConfig, get_config
 
     cfg = get_config().database
     if db_path:
@@ -347,7 +347,7 @@ class BaseModel(metaclass=ModelMeta):
     async def find_all(
         cls, user_context: dict[str, Any] | None = None
     ) -> list[BaseModel]:
-        from voodoo.observability import telemetry_store
+        from grumo.observability import telemetry_store
 
         telemetry_store.record_db_query()
         db = await get_db()
@@ -357,7 +357,7 @@ class BaseModel(metaclass=ModelMeta):
 
         if user_context is None:
             try:
-                from voodoo.auth import current_user
+                from grumo.auth import current_user
 
                 u = current_user.get()
                 if u and u.is_authenticated:
@@ -386,7 +386,7 @@ class BaseModel(metaclass=ModelMeta):
             return results
 
     async def insert(self) -> BaseModel:
-        from voodoo.observability import telemetry_store
+        from grumo.observability import telemetry_store
 
         telemetry_store.record_db_query()
         db = await get_db()
@@ -430,7 +430,7 @@ class BaseModel(metaclass=ModelMeta):
         return self
 
     async def update(self) -> BaseModel:
-        from voodoo.observability import telemetry_store
+        from grumo.observability import telemetry_store
 
         telemetry_store.record_db_query()
         db = await get_db()

@@ -1,8 +1,8 @@
-"""Store-native public data model for Voodoo applications.
+"""Store-native public data model for Grumo applications.
 
-The public ``Model`` API is backed directly by Voodoo Store Collections. SQL is
+The public ``Model`` API is backed directly by Grumo Store Collections. SQL is
 not part of this module's import graph. Optional SQL adapters live under
-``voodoo.storage.database`` and are loaded only when explicitly imported.
+``grumo.storage.database`` and are loaded only when explicitly imported.
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ from types import UnionType
 from typing import Annotated, Any, get_args, get_origin, get_type_hints
 from uuid import UUID
 
-from voodoo.data.store_backend import (
+from grumo.data.store_backend import (
     delete_record,
     get_record,
     insert_record,
@@ -27,7 +27,7 @@ from voodoo.data.store_backend import (
     scan_records,
     uuid7,
 )
-from voodoo.security.redaction import redact_string
+from grumo.security.redaction import redact_string
 
 logger = logging.getLogger(__name__)
 
@@ -228,7 +228,7 @@ def validate(*fields: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]
         raise TypeError("validate() requires at least one field name")
 
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
-        func.__voodoo_validate_fields__ = tuple(fields)  # type: ignore[attr-defined]
+        func.__grumo_validate_fields__ = tuple(fields)  # type: ignore[attr-defined]
         return func
 
     return decorator
@@ -236,7 +236,7 @@ def validate(*fields: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]
 
 def validate_model(func: Callable[..., Any]) -> Callable[..., Any]:
     """Mark a method as a whole-model invariant validator."""
-    func.__voodoo_validate_model__ = True  # type: ignore[attr-defined]
+    func.__grumo_validate_model__ = True  # type: ignore[attr-defined]
     return func
 
 
@@ -402,7 +402,7 @@ def _validate_schema(obj: Any) -> None:
 async def _run_declared_validators(obj: Any) -> None:
     for name in dir(obj.__class__):
         member = getattr(obj.__class__, name, None)
-        fields = getattr(member, "__voodoo_validate_fields__", ())
+        fields = getattr(member, "__grumo_validate_fields__", ())
         if fields:
             bound = getattr(obj, name)
             for field_name in fields:
@@ -412,7 +412,7 @@ async def _run_declared_validators(obj: Any) -> None:
                     result = await result
                 if result is not None:
                     setattr(obj, field_name, result)
-        if getattr(member, "__voodoo_validate_model__", False):
+        if getattr(member, "__grumo_validate_model__", False):
             result = getattr(obj, name)()
             if inspect.isawaitable(result):
                 result = await result
@@ -549,11 +549,11 @@ def _fire_hooks(table: str, event: str, obj: Any) -> None:
 
 def _identity_context() -> dict[str, Any] | None:
     try:
-        from voodoo.auth import current_user
+        from grumo.auth import current_user
 
         user = current_user.get()
     except (ImportError, LookupError, RuntimeError) as error:
-        from voodoo.data.base import _report_data_fallback
+        from grumo.data.base import _report_data_fallback
 
         _report_data_fallback("store_identity_context", error)
         return None
@@ -574,7 +574,7 @@ class BaseModel(metaclass=ModelMeta):
 
     @classmethod
     async def _create_table(cls) -> None:
-        """Ensure the model collection exists in Voodoo Store.
+        """Ensure the model collection exists in Grumo Store.
 
         The historical method name is retained as a Store-native collection
         initializer; it does not create SQL tables or import a SQL adapter.
@@ -625,7 +625,7 @@ class BaseModel(metaclass=ModelMeta):
 
 
 class Model(BaseModel):
-    """Async CRUD facade backed exclusively by Voodoo Store."""
+    """Async CRUD facade backed exclusively by Grumo Store."""
 
     @classmethod
     async def create(cls, **kwargs: Any) -> Model:
@@ -698,7 +698,7 @@ class Model(BaseModel):
 
 
 class StoreQuery:
-    """Lazy query over one Voodoo Store collection."""
+    """Lazy query over one Grumo Store collection."""
 
     def __init__(self, model: type[Model], filters: dict[str, Any]) -> None:
         self._model = model

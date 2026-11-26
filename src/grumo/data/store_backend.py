@@ -1,6 +1,6 @@
-"""Voodoo Store-backed record persistence for the public Model facade.
+"""Grumo Store-backed record persistence for the public Model facade.
 
-Voodoo Store 0.3+ provides the native Collections/index query contract used
+Grumo Store 0.3+ provides the native Collections/index query contract used
 here. The public data path has no SQL fallback and therefore no optional SQL
 dependency in its import graph.
 """
@@ -16,10 +16,10 @@ from threading import Lock
 from typing import TYPE_CHECKING, Any, cast
 from uuid import UUID
 
-from voodoo.core.errors import ConfigurationError
+from grumo.core.errors import ConfigurationError
 
 if TYPE_CHECKING:
-    from voodoo.runtime.store import RuntimeStore
+    from grumo.runtime.store import RuntimeStore
 
 _runtime_store: RuntimeStore | None = None
 _collection_indexes: dict[str, dict[str, bool]] = {}
@@ -42,7 +42,7 @@ _REQUIRED_COLLECTION_API = (
 def bind_runtime_store(runtime_store: RuntimeStore | None) -> None:
     """Bind the application-owned RuntimeStore for Model persistence."""
     global _runtime_store
-    from voodoo.runtime.store import bind_active_runtime_store
+    from grumo.runtime.store import bind_active_runtime_store
 
     _runtime_store = runtime_store
     bind_active_runtime_store(runtime_store)
@@ -58,7 +58,7 @@ def register_indexes(collection: str, indexes: dict[str, bool]) -> None:
 def _get_runtime_store() -> RuntimeStore:
     if _runtime_store is not None:
         return _runtime_store
-    from voodoo.runtime.store import acquire_runtime_store
+    from grumo.runtime.store import acquire_runtime_store
 
     return acquire_runtime_store()
 
@@ -80,14 +80,14 @@ def _native() -> Any:
     runtime_store = _get_runtime_store()
     provider = runtime_store.provider or runtime_store.start()
     if provider is None:
-        raise RuntimeError("Voodoo Store is disabled")
+        raise RuntimeError("Grumo Store is disabled")
     native = getattr(provider, "native", None)
     if native is None:
         raise RuntimeError("Active Store provider does not expose record storage")
     missing = [name for name in _REQUIRED_COLLECTION_API if not hasattr(native, name)]
     if missing:
         raise ConfigurationError(
-            "Voodoo Store 0.3+ is required for native Model persistence. "
+            "Grumo Store 0.3+ is required for native Model persistence. "
             f"Missing Store capabilities: {', '.join(missing)}."
         )
     return native
@@ -214,7 +214,7 @@ def insert_record(
     tx = store.transaction()
     if not hasattr(tx, "upsert_record"):
         raise ConfigurationError(
-            "Voodoo Store 0.3+ transactional Collections support is required."
+            "Grumo Store 0.3+ transactional Collections support is required."
         )
 
     identity = record_id or uuid7()

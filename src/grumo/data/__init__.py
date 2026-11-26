@@ -1,15 +1,15 @@
-"""Voodoo Store-native data layer.
+"""Grumo Store-native data layer.
 
-``Model`` and ``BaseModel`` use Voodoo Store directly. SQL adapters are optional
+``Model`` and ``BaseModel`` use Grumo Store directly. SQL adapters are optional
 and are never imported by the default data package. Applications that need a
-SQL adapter should import it explicitly from ``voodoo.storage.database``.
+SQL adapter should import it explicitly from ``grumo.storage.database``.
 """
 
 from __future__ import annotations
 
 from typing import Any
 
-from voodoo.data.store_facade import (
+from grumo.data.store_facade import (
     FK,
     BaseModel,
     Delete,
@@ -61,12 +61,12 @@ _sql_initialized = False
 async def init_db(*args: Any, **kwargs: Any) -> Any:
     """Compatibility entry point for the optional SQL subsystem.
 
-    Importing ``voodoo`` does not load SQL or require ``aiosqlite``. Calling
+    Importing ``grumo`` does not load SQL or require ``aiosqlite``. Calling
     this function explicitly opts into the legacy SQL adapter surface.
     """
     global _sql_initialized
 
-    from voodoo.data.base import init_db as _init_db
+    from grumo.data.base import init_db as _init_db
 
     result = await _init_db(*args, **kwargs)
     _sql_initialized = True
@@ -75,7 +75,7 @@ async def init_db(*args: Any, **kwargs: Any) -> Any:
 
 async def get_db() -> Any:
     """Return the explicitly initialized optional SQL connection."""
-    from voodoo.data.base import get_db as _get_db
+    from grumo.data.base import get_db as _get_db
 
     return await _get_db()
 
@@ -92,7 +92,7 @@ async def close_db() -> None:
     if not _sql_initialized:
         return
 
-    from voodoo.data.base import close_db as _close_db
+    from grumo.data.base import close_db as _close_db
 
     await _close_db()
     _sql_initialized = False

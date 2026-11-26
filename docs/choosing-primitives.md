@@ -1,6 +1,6 @@
-# Choosing Voodoo primitives
+# Choosing Grumo primitives
 
-Voodoo intentionally has several kinds of state, events, and executable units. They exist at different semantic levels and should not be used interchangeably.
+Grumo intentionally has several kinds of state, events, and executable units. They exist at different semantic levels and should not be used interchangeably.
 
 ## Decision table
 
@@ -70,4 +70,4 @@ Do not create an Execution solely because a Python function ran. Helper calls, r
 
 Start with the smallest primitive that expresses the problem. A page does not need the adaptive supervisor. A simple function does not need to become a Task. A Task does not need an Agent. An Agent does not need a Planner unless capability resolution or adaptive behavior is useful.
 
-Voodoo's unified runtime means these pieces can converge when needed; it does not mean every application must use every subsystem.
+Grumo's unified runtime means these pieces can converge when needed; it does not mean every application must use every subsystem.

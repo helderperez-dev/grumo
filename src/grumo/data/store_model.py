@@ -1,11 +1,11 @@
-"""Store-backed persistence behavior for ``voodoo.data.Model``."""
+"""Store-backed persistence behavior for ``grumo.data.Model``."""
 
 from __future__ import annotations
 
 import asyncio
 from typing import Any, cast, get_type_hints
 
-from voodoo.data.store_backend import (
+from grumo.data.store_backend import (
     delete_record,
     insert_record,
     put_record,
@@ -15,7 +15,7 @@ from voodoo.data.store_backend import (
 
 
 class StoreModelMixin:
-    """Intercept BaseModel persistence when Voodoo Store is the active backend."""
+    """Intercept BaseModel persistence when Grumo Store is the active backend."""
 
     @classmethod
     async def find_all(cls, user_context: dict | None = None) -> list[Any]:
@@ -24,7 +24,7 @@ class StoreModelMixin:
                 list[Any], await cast(Any, super()).find_all(user_context=user_context)
             )
 
-        from voodoo.data.base import (
+        from grumo.data.base import (
             _get_table_name,
             _report_data_fallback,
             _rls_policies,
@@ -33,7 +33,7 @@ class StoreModelMixin:
         rows = scan_records(_get_table_name(cls))
         if user_context is None:
             try:
-                from voodoo.auth import current_user
+                from grumo.auth import current_user
 
                 user = current_user.get()
                 if user and user.is_authenticated:
@@ -53,7 +53,7 @@ class StoreModelMixin:
             # SQL-string RLS policies are legacy adapter semantics. A native
             # predicate policy will replace this in the Identity/Policy slice.
             raise RuntimeError(
-                "SQL-string rls_policy is not supported by the Voodoo Store backend; "
+                "SQL-string rls_policy is not supported by the Grumo Store backend; "
                 "use an explicit SQL adapter until the policy-native migration lands."
             )
 
@@ -63,7 +63,7 @@ class StoreModelMixin:
         if not should_use_store():
             return await cast(Any, super()).insert()
 
-        from voodoo.data.base import _get_table_name, _triggers
+        from grumo.data.base import _get_table_name, _triggers
 
         table_name = _get_table_name(self)
         values = _model_values(self, include_id=False)
@@ -75,7 +75,7 @@ class StoreModelMixin:
         if not should_use_store():
             return await cast(Any, super()).update()
 
-        from voodoo.data.base import _get_table_name, _triggers
+        from grumo.data.base import _get_table_name, _triggers
 
         table_name = _get_table_name(self)
         put_record(table_name, self.id, _model_values(self, include_id=False))
@@ -83,7 +83,7 @@ class StoreModelMixin:
         return self
 
     async def _store_delete(self) -> None:
-        from voodoo.data.base import _get_table_name
+        from grumo.data.base import _get_table_name
 
         delete_record(_get_table_name(self), self.id)
 
