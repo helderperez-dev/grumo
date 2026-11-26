@@ -186,7 +186,10 @@ def test_sidebar_switches_between_mobile_and_desktop_modes(browser_page) -> None
     assert sidebar.get_attribute("data-vd-sidebar-mode") == "hidden"
 
     page.set_viewport_size({"width": 1024, "height": 844})
-    page.wait_for_timeout(50)
+    sidebar.locator("xpath=.").wait_for(state="attached")
+    page.wait_for_function(
+        "() => document.querySelector('[data-vd-sidebar]')?.getAttribute('data-vd-sidebar-mode') === 'expanded'"
+    )
     assert sidebar.get_attribute("data-vd-sidebar-mode") == "expanded"
 
 
