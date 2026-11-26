@@ -40,7 +40,6 @@ class MeshClient:
             self._receive_task = asyncio.create_task(self._receive_loop())
 
     async def _receive_loop(self) -> None:
-        import websockets
         from websockets.exceptions import ConnectionClosed
 
         try:
