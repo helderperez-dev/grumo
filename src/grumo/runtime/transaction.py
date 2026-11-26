@@ -1,6 +1,6 @@
 """Provider-neutral atomic boundary for Store-backed Runtime state.
 
-Sprint 28.11 deliberately exposes only semantics that Voodoo Store 0.2.x can
+Sprint 28.11 deliberately exposes only semantics that Grumo Store 0.2.x can
 actually commit atomically: KV mutations, Collection upserts, and durable
 outbox records staged in the same native transaction. Jobs, external effects,
 and work performed by another node are not claimed to be part of this atomic
@@ -16,7 +16,7 @@ from datetime import UTC, datetime
 from typing import Any, Literal
 from uuid import uuid4
 
-from voodoo.runtime.store import (
+from grumo.runtime.store import (
     RuntimeStore,
     StoreProviderError,
     get_active_runtime_store,
@@ -83,10 +83,10 @@ class OutboxMessage:
 
 
 class RuntimeTransaction:
-    """One atomic transaction over the active Runtime-owned Voodoo Store.
+    """One atomic transaction over the active Runtime-owned Grumo Store.
 
     The wrapper prevents higher Runtime layers from depending on the native
-    ``voodoo_store.Transaction`` type while making the supported atomicity
+    ``grumo_store.Transaction`` type while making the supported atomicity
     boundary explicit.
     """
 
@@ -99,14 +99,14 @@ class RuntimeTransaction:
             raise StoreProviderError(
                 "RuntimeStore must be started before a transaction"
             )
-        if provider.name != "voodoo":
+        if provider.name != "grumo":
             raise StoreProviderError(
-                "RuntimeTransaction currently requires the Voodoo Store provider"
+                "RuntimeTransaction currently requires the Grumo Store provider"
             )
         native = getattr(provider, "native", None)
         if native is None or not hasattr(native, "transaction"):
             raise StoreProviderError(
-                "Active Voodoo Store does not expose transactional capability"
+                "Active Grumo Store does not expose transactional capability"
             )
         self._native_collections = all(
             hasattr(native, method)
@@ -224,13 +224,13 @@ class OutboxDispatcher:
         provider = self.runtime_store.provider
         if provider is None or not provider.opened:
             raise StoreProviderError("RuntimeStore must be started for outbox dispatch")
-        if provider.name != "voodoo":
+        if provider.name != "grumo":
             raise StoreProviderError(
-                "OutboxDispatcher currently requires the Voodoo Store provider"
+                "OutboxDispatcher currently requires the Grumo Store provider"
             )
         self._native: Any = getattr(provider, "native", None)
         if self._native is None:
-            raise StoreProviderError("Active Voodoo Store has no native handle")
+            raise StoreProviderError("Active Grumo Store has no native handle")
         self._native_outbox = all(
             hasattr(self._native, method)
             for method in ("outbox_events_after", "ack_outbox_event")
@@ -344,7 +344,7 @@ class OutboxDispatcher:
     ) -> int:
         """Dispatch pending messages through the configured Runtime EventBus."""
         if event_bus is None:
-            from voodoo.adapters.registry import registry
+            from grumo.adapters.registry import registry
 
             event_bus = registry.get_events()
 

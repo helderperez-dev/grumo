@@ -11,8 +11,8 @@ from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any
 
-from voodoo.primitives.intent import Intent, IntentStatus
-from voodoo.runtime.distributed.fabric import PlacementRequirement
+from grumo.primitives.intent import Intent, IntentStatus
+from grumo.runtime.distributed.fabric import PlacementRequirement
 
 
 class WorkEligibility(StrEnum):

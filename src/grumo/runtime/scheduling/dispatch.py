@@ -8,11 +8,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from voodoo.runtime.distributed.fabric import PlacementDecision, RuntimeFabric
-from voodoo.runtime.inspection.lineage import LineageEvent, RuntimeLineage
-from voodoo.runtime.inspection.lineage import lineage as default_lineage
-from voodoo.runtime.reconciliation.reconcile import ReconcileAction, ReconcileDecision
-from voodoo.runtime.scheduling.work import (
+from grumo.runtime.distributed.fabric import PlacementDecision, RuntimeFabric
+from grumo.runtime.inspection.lineage import LineageEvent, RuntimeLineage
+from grumo.runtime.inspection.lineage import lineage as default_lineage
+from grumo.runtime.reconciliation.reconcile import ReconcileAction, ReconcileDecision
+from grumo.runtime.scheduling.work import (
     RuntimeScheduler,
     ScheduledWork,
     SchedulingDecision,

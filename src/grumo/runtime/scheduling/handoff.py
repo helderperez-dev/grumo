@@ -4,12 +4,12 @@ from __future__ import annotations
 
 from typing import Any
 
-from voodoo.runtime.execution import Execution
-from voodoo.runtime.execution.engine import ComputeFn, ExecutionEngine
-from voodoo.runtime.inspection.lineage import LineageEvent, RuntimeLineage
-from voodoo.runtime.inspection.lineage import lineage as default_lineage
-from voodoo.runtime.scheduling.dispatch import DispatchPlan
-from voodoo.runtime.scheduling.work import WorkEligibility
+from grumo.runtime.execution import Execution
+from grumo.runtime.execution.engine import ComputeFn, ExecutionEngine
+from grumo.runtime.inspection.lineage import LineageEvent, RuntimeLineage
+from grumo.runtime.inspection.lineage import lineage as default_lineage
+from grumo.runtime.scheduling.dispatch import DispatchPlan
+from grumo.runtime.scheduling.work import WorkEligibility
 
 
 class RemoteExecutionRequired(RuntimeError):

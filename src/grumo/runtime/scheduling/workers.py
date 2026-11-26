@@ -1,6 +1,6 @@
 """Durable async queue & worker runtime.
 
-Workers poll a ``VoodooQueue`` provider for claimable tasks. Each claimed task
+Workers poll a ``GrumoQueue`` provider for claimable tasks. Each claimed task
 performs exactly one canonical Runtime execution attempt. The queue owns durable
 delivery, leasing, retry scheduling, and crash recovery; it never executes
 application code itself.
@@ -22,19 +22,19 @@ from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from voodoo.storage.queue import VoodooQueue
+    from grumo.storage.queue import GrumoQueue
 
 _workers: dict[str, Callable[..., Any]] = {}
 _worker_backoff: dict[str, float] = {}
 _worker_tasks: list[asyncio.Task] = []
-_queue: VoodooQueue | None = None
+_queue: GrumoQueue | None = None
 
-logger = logging.getLogger("voodoo.runtime.scheduling.workers")
+logger = logging.getLogger("grumo.runtime.scheduling.workers")
 
 
 def _safe_failure_reason(error: BaseException) -> str:
     """Return a bounded, redacted reason safe for durable queue history."""
-    from voodoo.security.redaction import redact_string
+    from grumo.security.redaction import redact_string
 
     return redact_string(f"{type(error).__name__}: {error}")[:512]
 
@@ -45,36 +45,36 @@ def registered_workers() -> tuple[tuple[str, Callable[..., Any]], ...]:
 
 
 def _get_provider() -> str:
-    from voodoo.config import get_config
+    from grumo.config import get_config
 
     return get_config().queue.provider.lower()
 
 
-async def _get_queue() -> VoodooQueue:
+async def _get_queue() -> GrumoQueue:
     """Resolve the active queue backend from central runtime configuration."""
     global _queue
     if _queue is not None:
         return _queue
 
-    from voodoo.adapters.registry import registry
-    from voodoo.config import get_config
+    from grumo.adapters.registry import registry
+    from grumo.config import get_config
 
     cfg = get_config().queue
     provider = cfg.provider.lower()
 
-    if provider == "voodoo":
-        from voodoo.storage.queue.store import VoodooStoreQueue
+    if provider == "grumo":
+        from grumo.storage.queue.store import GrumoStoreQueue
 
-        _queue = VoodooStoreQueue()
+        _queue = GrumoStoreQueue()
     elif provider in {"memory", "redis"}:
         _queue = registry.get_queue(cfg)
     else:
-        from voodoo.data.base import _database, get_db
+        from grumo.data.base import _database, get_db
 
         db = _database
         if db is None:
             await get_db()
-            from voodoo.data.base import _database as active_db
+            from grumo.data.base import _database as active_db
 
             db = active_db
         if db is None:
@@ -102,7 +102,7 @@ async def enqueue(
     idempotency_key: str | None = None,
 ) -> None:
     """Enqueue *payload* as a durable task of type *name*."""
-    from voodoo.observability import trace_id_var
+    from grumo.observability import trace_id_var
 
     q = await _get_queue()
     await q.enqueue(
@@ -129,7 +129,7 @@ async def enqueue_compensation(
     name = getattr(effect, "compensation_name", None)
     if not name:
         raise ValueError("effect has no declared compensation")
-    from voodoo.observability import trace_id_var
+    from grumo.observability import trace_id_var
 
     q = await _get_queue()
     key = getattr(effect, "compensation_idempotency_key", None) or (
@@ -153,9 +153,9 @@ async def enqueue_compensation(
 
 async def _run_worker(name: str, worker_id: str) -> None:
     """Poll the durable queue for tasks of type *name* and execute one attempt."""
-    from voodoo.observability import telemetry_store, trace_id_var
-    from voodoo.primitives.intent import Intent
-    from voodoo.runtime.execution.engine import engine as runtime_engine
+    from grumo.observability import telemetry_store, trace_id_var
+    from grumo.primitives.intent import Intent
+    from grumo.runtime.execution.engine import engine as runtime_engine
 
     func = _workers[name]
     is_async = inspect.iscoroutinefunction(func)
@@ -178,7 +178,7 @@ async def _run_worker(name: str, worker_id: str) -> None:
             resolved_trace = task.trace_id or str(uuid.uuid4())
             token = trace_id_var.set(resolved_trace)
             try:
-                from voodoo.runtime.context import ExecutionContext, use_context
+                from grumo.runtime.context import ExecutionContext, use_context
 
                 intent = Intent(name=f"worker:{name}", params={"payload": task.payload})
                 ctx = ExecutionContext(trace_id=resolved_trace, actor=f"worker:{name}")

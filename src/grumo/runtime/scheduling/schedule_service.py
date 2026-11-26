@@ -12,7 +12,7 @@ import asyncio
 import logging
 from typing import Any
 
-logger = logging.getLogger("voodoo.scheduler")
+logger = logging.getLogger("grumo.scheduler")
 
 
 class ScheduleService:
@@ -67,7 +67,7 @@ class ScheduleService:
         """Enqueue one legacy-provider schedule occurrence."""
         import json
 
-        from voodoo.runtime.scheduling.workers import enqueue
+        from grumo.runtime.scheduling.workers import enqueue
 
         payload = json.loads(schedule["payload"]) if schedule["payload"] else {}
         await enqueue(schedule["task_type"], payload)

@@ -25,19 +25,19 @@ from enum import StrEnum
 from typing import Any
 from uuid import uuid4
 
-from voodoo.primitives.constraint import Constraint
-from voodoo.primitives.intent import Intent
-from voodoo.primitives.resource import Resource
-from voodoo.runtime.context import ExecutionContext
-from voodoo.runtime.errors import ExecutionError, ExecutionTimeout
-from voodoo.runtime.execution import Execution
-from voodoo.runtime.execution.engine import ComputeFn, ComputeResult, ExecutionEngine
-from voodoo.runtime.execution.engine import engine as default_engine
-from voodoo.security.redaction import redact_string
+from grumo.primitives.constraint import Constraint
+from grumo.primitives.intent import Intent
+from grumo.primitives.resource import Resource
+from grumo.runtime.context import ExecutionContext
+from grumo.runtime.errors import ExecutionError, ExecutionTimeout
+from grumo.runtime.execution import Execution
+from grumo.runtime.execution.engine import ComputeFn, ComputeResult, ExecutionEngine
+from grumo.runtime.execution.engine import engine as default_engine
+from grumo.security.redaction import redact_string
 
 __all__ = ["TaskStatus", "Task"]
 
-_logger = logging.getLogger("voodoo.runtime.task")
+_logger = logging.getLogger("grumo.runtime.task")
 
 
 class TaskStatus(StrEnum):
@@ -58,7 +58,7 @@ class Task:
     name / description:
         Identity and human-readable purpose.
     agent:
-        Optional :class:`~voodoo.ai.agent.Agent` (or any object with an
+        Optional :class:`~grumo.ai.agent.Agent` (or any object with an
         ``async run(prompt, context)`` method). When provided, the task's
         compute is the agent.
     compute:
@@ -152,7 +152,7 @@ class Task:
                 last_error = e
                 intent = self._build_intent(params)
             except ExecutionError as e:
-                from voodoo.runtime.errors import ApprovalRequired
+                from grumo.runtime.errors import ApprovalRequired
 
                 if isinstance(e, ApprovalRequired):
                     if e.execution_id is not None:
@@ -195,7 +195,7 @@ class Task:
         if self.compute is not None:
             return self.compute
         if self.human:
-            from voodoo.runtime.human import ask_human
+            from grumo.runtime.human import ask_human
 
             return ask_human(
                 self.description or f"Approve task '{self.name}'?",

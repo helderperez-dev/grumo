@@ -1,8 +1,8 @@
-"""Task scheduling surface for the canonical Voodoo Runtime.
+"""Task scheduling surface for the canonical Grumo Runtime.
 
 ``@task`` turns a function into a retried, timeout-bounded unit of work with a
 telemetry span for every attempt. Tasks can be awaited directly or enqueued on
-the configured :class:`~voodoo.storage.queue.VoodooQueue` provider.
+the configured :class:`~grumo.storage.queue.GrumoQueue` provider.
 
 Inline and durable retry semantics
 ----------------------------------
@@ -13,7 +13,7 @@ runs exactly one function attempt; a failed attempt is returned to the durable
 queue, so the remaining retry budget survives process failure and restart.
 
 SQLite is the zero-infrastructure default. PostgreSQL and Redis providers can
-be selected through Voodoo configuration; the in-memory provider is explicitly
+be selected through Grumo configuration; the in-memory provider is explicitly
 ephemeral.
 
 ``@mesh.on`` → ``@task`` chain
@@ -34,14 +34,14 @@ import time
 from collections.abc import Callable
 from typing import Any, cast
 
-logger = logging.getLogger("voodoo.runtime.scheduling.tasks")
+logger = logging.getLogger("grumo.runtime.scheduling.tasks")
 
 __all__ = ["task", "TaskError"]
 
 
 def _safe_failure_reason(error: BaseException) -> str:
     """Return a bounded reason safe for logs and task error messages."""
-    from voodoo.security.redaction import redact_string
+    from grumo.security.redaction import redact_string
 
     return redact_string(f"{type(error).__name__}: {error}")[:512]
 
@@ -73,7 +73,7 @@ async def _run_task(
     kwargs: dict,
 ) -> Any:
     """Execute *func* with in-process retries, timeout, and attempt telemetry."""
-    from voodoo.observability import telemetry_store
+    from grumo.observability import telemetry_store
 
     is_async = inspect.iscoroutinefunction(func)
     attempt = 0
@@ -111,7 +111,7 @@ async def _run_task(
                     attempts=attempt,
                     timeout=timeout,
                 ) from last_exc
-            from voodoo.storage.queue.interfaces import retry_delay
+            from grumo.storage.queue.interfaces import retry_delay
 
             delay = retry_delay(backoff_base, attempt)
             await asyncio.sleep(delay)
@@ -129,10 +129,10 @@ def _register_task_worker(
     backoff_base: float,
 ) -> None:
     """Register a one-attempt background worker for a durable task type."""
-    from voodoo.runtime.scheduling.workers import _worker_backoff, _workers
+    from grumo.runtime.scheduling.workers import _worker_backoff, _workers
 
     async def worker(payload: Any) -> None:
-        # Durable retries belong to VoodooQueue. A claim represents one attempt.
+        # Durable retries belong to GrumoQueue. A claim represents one attempt.
         await _run_task(func, task_name, 0, timeout, backoff_base, (payload,), {})
 
     _workers[task_name] = worker
@@ -141,7 +141,7 @@ def _register_task_worker(
 
 async def _enqueue_task(task_name: str, payload: Any, max_attempts: int) -> None:
     """Enqueue *payload* with a durable attempt budget."""
-    from voodoo.runtime.scheduling.workers import enqueue
+    from grumo.runtime.scheduling.workers import enqueue
 
     await enqueue(task_name, payload, max_attempts=max_attempts)
 

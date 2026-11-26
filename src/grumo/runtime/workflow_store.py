@@ -1,4 +1,4 @@
-"""Durable orchestration checkpoints for Voodoo Workflows.
+"""Durable orchestration checkpoints for Grumo Workflows.
 
 Workflow persistence records orchestration progress only. Canonical Executions
 remain owned by :class:`ExecutionEngine`; this module never executes work and
@@ -12,9 +12,9 @@ from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any, Protocol, cast
 
 if TYPE_CHECKING:
-    from voodoo.runtime.store import RuntimeStore
+    from grumo.runtime.store import RuntimeStore
 
-__all__ = ["WorkflowStore", "VoodooStoreWorkflowStore"]
+__all__ = ["WorkflowStore", "GrumoStoreWorkflowStore"]
 
 _PREFIX = b"runtime:workflows:checkpoint:"
 _NATIVE_INDEX_PREFIX = b"runtime:workflows:native-id:"
@@ -35,10 +35,10 @@ class WorkflowStore(Protocol):
     def load_unfinished(self) -> list[dict[str, Any]]: ...
 
 
-class VoodooStoreWorkflowStore:
-    """Workflow checkpoints backed by the Runtime-owned Voodoo Store."""
+class GrumoStoreWorkflowStore:
+    """Workflow checkpoints backed by the Runtime-owned Grumo Store."""
 
-    provider = "voodoo"
+    provider = "grumo"
 
     def __init__(self, runtime_store: RuntimeStore | None = None) -> None:
         self._runtime_store = runtime_store
@@ -46,7 +46,7 @@ class VoodooStoreWorkflowStore:
     def _runtime(self) -> RuntimeStore:
         if self._runtime_store is not None:
             return self._runtime_store
-        from voodoo.runtime.store import acquire_runtime_store
+        from grumo.runtime.store import acquire_runtime_store
 
         return acquire_runtime_store()
 
@@ -54,18 +54,18 @@ class VoodooStoreWorkflowStore:
         runtime = self._runtime()
         provider = runtime.provider or runtime.start()
         if provider is None:
-            from voodoo.core.errors import ConfigurationError
+            from grumo.core.errors import ConfigurationError
 
             raise ConfigurationError(
-                "Voodoo Store is disabled; durable Workflow checkpoints require "
+                "Grumo Store is disabled; durable Workflow checkpoints require "
                 "an explicit WorkflowStore adapter or an enabled Runtime Store."
             )
         native = getattr(provider, "native", None)
         if native is None:
-            from voodoo.core.errors import ConfigurationError
+            from grumo.core.errors import ConfigurationError
 
             raise ConfigurationError(
-                "The active Voodoo Store provider does not expose durable KV storage."
+                "The active Grumo Store provider does not expose durable KV storage."
             )
         return native
 
@@ -88,7 +88,7 @@ class VoodooStoreWorkflowStore:
             if native_id is None or existing is None:
                 native_id = bytes(
                     store.create_workflow(
-                        b"voodoo.workflow", b"checkpoint", encoded, now_ms
+                        b"grumo.workflow", b"checkpoint", encoded, now_ms
                     )
                 )
                 existing = store.get_workflow(native_id)

@@ -1,4 +1,4 @@
-"""Canonical composition root for Voodoo runtime subsystems.
+"""Canonical composition root for Grumo runtime subsystems.
 
 Runtime owns the semantic control-plane objects that previously had to be wired
 by application code.  It does not create a second execution path:
@@ -11,8 +11,8 @@ from dataclasses import dataclass
 from enum import StrEnum
 from typing import Any
 
-from voodoo.primitives.intent import Intent
-from voodoo.runtime.agency import (
+from grumo.primitives.intent import Intent
+from grumo.runtime.agency import (
     AdaptiveSupervisor,
     Goal,
     GoalDecomposer,
@@ -21,7 +21,7 @@ from voodoo.runtime.agency import (
     GoalStore,
     SupervisorConfig,
 )
-from voodoo.runtime.application_graph import (
+from grumo.runtime.application_graph import (
     ApplicationGraph,
     ApplicationNodeKind,
     ChangeReason,
@@ -29,14 +29,14 @@ from voodoo.runtime.application_graph import (
     InvalidationEngine,
     contribute_goal,
 )
-from voodoo.runtime.dependency_graph import DependencyGraph
-from voodoo.runtime.distributed import RuntimeFabric
-from voodoo.runtime.execution import Execution
-from voodoo.runtime.execution.engine import ComputeFn, ExecutionEngine
-from voodoo.runtime.extension import RuntimeExtensionRegistry
-from voodoo.runtime.inspection import RuntimeLineage
-from voodoo.runtime.planner import ComputeParticipant, Planner
-from voodoo.runtime.reconciliation import (
+from grumo.runtime.dependency_graph import DependencyGraph
+from grumo.runtime.distributed import RuntimeFabric
+from grumo.runtime.execution import Execution
+from grumo.runtime.execution.engine import ComputeFn, ExecutionEngine
+from grumo.runtime.extension import RuntimeExtensionRegistry
+from grumo.runtime.inspection import RuntimeLineage
+from grumo.runtime.planner import ComputeParticipant, Planner
+from grumo.runtime.reconciliation import (
     GoalIntentFactory,
     GoalPredicate,
     GoalReconciliation,
@@ -45,10 +45,10 @@ from voodoo.runtime.reconciliation import (
     ReconcileHandler,
     Reconciler,
 )
-from voodoo.runtime.scheduling.dispatch import DispatchPlan, RuntimeDispatcher
-from voodoo.runtime.scheduling.handoff import ExecutionHandoff
-from voodoo.runtime.scheduling.work import RuntimeScheduler, WorkEligibility
-from voodoo.runtime.store import RuntimeStore, StoreConfig
+from grumo.runtime.scheduling.dispatch import DispatchPlan, RuntimeDispatcher
+from grumo.runtime.scheduling.handoff import ExecutionHandoff
+from grumo.runtime.scheduling.work import RuntimeScheduler, WorkEligibility
+from grumo.runtime.store import RuntimeStore, StoreConfig
 
 
 @dataclass(frozen=True, slots=True)
@@ -83,7 +83,7 @@ class RuntimeConvergence:
 
 
 class Runtime:
-    """Own and connect one Voodoo runtime control plane.
+    """Own and connect one Grumo runtime control plane.
 
     The class intentionally composes existing subsystems instead of replacing
     them.  Reconciliation proposes work, dispatch schedules/places it, and

@@ -1,6 +1,6 @@
 """Runtime-owned durable Store provider boundary for Sprint 28.
 
-The Runtime owns the semantic contract. Native ``voodoo_store`` classes stay
+The Runtime owns the semantic contract. Native ``grumo_store`` classes stay
 behind this module so application code and higher Runtime layers do not depend
 on the binding directly.
 """
@@ -15,7 +15,7 @@ from importlib import import_module
 from pathlib import Path
 from typing import Any, Protocol, runtime_checkable
 
-from voodoo.core.errors import ConfigurationError, VoodooError
+from grumo.core.errors import ConfigurationError, GrumoError
 
 __all__ = [
     "DEFAULT_STORE_PATH",
@@ -25,7 +25,7 @@ __all__ = [
     "StoreProviderError",
     "StoreProviderRegistry",
     "RuntimeStore",
-    "VoodooStoreProvider",
+    "GrumoStoreProvider",
     "acquire_runtime_store",
     "activate_runtime_store",
     "bind_active_runtime_store",
@@ -34,7 +34,7 @@ __all__ = [
     "store_registry",
 ]
 
-DEFAULT_STORE_PATH = Path(".voodoo/application.vstore")
+DEFAULT_STORE_PATH = Path(".grumo/application.grumo")
 
 
 def _parse_bool(value: Any, *, default: bool) -> bool:
@@ -51,7 +51,7 @@ def _parse_bool(value: Any, *, default: bool) -> bool:
     return bool(value)
 
 
-class StoreProviderError(VoodooError):
+class StoreProviderError(GrumoError):
     """Runtime Store provider lifecycle or verification failure."""
 
 
@@ -59,13 +59,13 @@ class StoreProviderError(VoodooError):
 class StoreConfig:
     """Provider-neutral Store configuration owned by the Runtime.
 
-    Voodoo Store is the default durable application infrastructure. Applications
+    Grumo Store is the default durable application infrastructure. Applications
     may explicitly disable it or replace individual higher-level domains with
     external adapters, but a fresh Runtime starts with one local
-    ``.voodoo/application.vstore``.
+    ``.grumo/application.grumo``.
     """
 
-    provider: str = "voodoo"
+    provider: str = "grumo"
     path: Path = DEFAULT_STORE_PATH
     enabled: bool = True
     durability: str = "data"
@@ -86,21 +86,21 @@ class StoreConfig:
             "max_bytes",
         }
         provider = (
-            data.get("provider") or os.getenv("VOODOO_STORE_PROVIDER") or "voodoo"
+            data.get("provider") or os.getenv("GRUMO_STORE_PROVIDER") or "grumo"
         )
-        path = data.get("path") or os.getenv("VOODOO_STORE_PATH") or DEFAULT_STORE_PATH
+        path = data.get("path") or os.getenv("GRUMO_STORE_PATH") or DEFAULT_STORE_PATH
         enabled_value = (
-            data["enabled"] if "enabled" in data else os.getenv("VOODOO_STORE_ENABLED")
+            data["enabled"] if "enabled" in data else os.getenv("GRUMO_STORE_ENABLED")
         )
         durability = (
-            data.get("durability") or os.getenv("VOODOO_STORE_DURABILITY") or "data"
+            data.get("durability") or os.getenv("GRUMO_STORE_DURABILITY") or "data"
         )
         repair_value = (
             data["repair_torn_tail"]
             if "repair_torn_tail" in data
-            else os.getenv("VOODOO_STORE_REPAIR_TORN_TAIL")
+            else os.getenv("GRUMO_STORE_REPAIR_TORN_TAIL")
         )
-        max_bytes_value = data.get("max_bytes") or os.getenv("VOODOO_STORE_MAX_BYTES")
+        max_bytes_value = data.get("max_bytes") or os.getenv("GRUMO_STORE_MAX_BYTES")
         max_bytes = int(max_bytes_value) if max_bytes_value is not None else None
         if max_bytes is not None and max_bytes < 1:
             raise ValueError("Store max_bytes must be positive")
@@ -182,10 +182,10 @@ class StoreProviderRegistry:
         return tuple(sorted(self._providers))
 
 
-class VoodooStoreProvider:
-    """Lazy adapter around the standalone ``voodoo-store`` Python binding."""
+class GrumoStoreProvider:
+    """Lazy adapter around the standalone ``grumo-store`` Python binding."""
 
-    name = "voodoo"
+    name = "grumo"
 
     def __init__(
         self,
@@ -217,7 +217,7 @@ class VoodooStoreProvider:
         Higher-level application APIs must not expose this object directly.
         """
         if self._store is None:
-            raise StoreProviderError("Voodoo Store provider is not open")
+            raise StoreProviderError("Grumo Store provider is not open")
         return self._store
 
     def open(self) -> None:
@@ -237,7 +237,7 @@ class VoodooStoreProvider:
         started = time.perf_counter()
         try:
             try:
-                from voodoo.observability import store_span
+                from grumo.observability import store_span
 
                 with store_span(
                     "store.open",
@@ -255,7 +255,7 @@ class VoodooStoreProvider:
                 # still apply, while new bindings enforce the limit per append.
                 if "max_bytes" not in str(exc):
                     raise
-                from voodoo.observability import store_span
+                from grumo.observability import store_span
 
                 with store_span(
                     "store.open",
@@ -268,7 +268,7 @@ class VoodooStoreProvider:
                     )
         except Exception as exc:
             raise StoreProviderError(
-                f"Unable to open Voodoo Store at {self._path}: {exc}"
+                f"Unable to open Grumo Store at {self._path}: {exc}"
             ) from exc
         finally:
             self._record_metric(
@@ -285,14 +285,14 @@ class VoodooStoreProvider:
         started = time.perf_counter()
         failed = False
         try:
-            from voodoo.observability import store_span
+            from grumo.observability import store_span
 
             with store_span("store.close", attributes={"provider": self.name}):
                 store.close()
         except Exception as exc:
             failed = True
             raise StoreProviderError(
-                f"Unable to close Voodoo Store at {self._path}: {exc}"
+                f"Unable to close Grumo Store at {self._path}: {exc}"
             ) from exc
         finally:
             self._store = None
@@ -314,7 +314,7 @@ class VoodooStoreProvider:
 
         started = time.perf_counter()
         try:
-            from voodoo.observability import store_span
+            from grumo.observability import store_span
 
             with store_span("store.health", attributes={"provider": self.name}):
                 report = store_type.verify(self._path)
@@ -415,7 +415,7 @@ class VoodooStoreProvider:
             self._record_metric("health_report", 0.0, error=True)
             import logging
 
-            from voodoo.security.redaction import redact_string
+            from grumo.security.redaction import redact_string
 
             logging.getLogger(__name__).debug(
                 "native Store health report unavailable error=%s",
@@ -478,11 +478,11 @@ class VoodooStoreProvider:
     ) -> None:
         """Report metrics and a correlated metric span without requiring telemetry."""
         try:
-            from voodoo.observability import store_span, telemetry_store
+            from grumo.observability import store_span, telemetry_store
 
             with store_span(
                 f"store.metric.{operation}",
-                attributes={"provider": "voodoo", "operation": operation},
+                attributes={"provider": "grumo", "operation": operation},
             ):
                 telemetry_store.record_store_operation(
                     operation,
@@ -494,7 +494,7 @@ class VoodooStoreProvider:
             # Observability must not become a Store availability dependency.
             import logging
 
-            from voodoo.security.redaction import redact_string
+            from grumo.security.redaction import redact_string
 
             logging.getLogger(__name__).debug(
                 "Store operation telemetry unavailable error=%s",
@@ -506,19 +506,19 @@ class VoodooStoreProvider:
         if self._store_type is not None:
             return self._store_type
         try:
-            module = import_module("voodoo_store")
+            module = import_module("grumo_store")
         except ImportError as exc:
             raise ConfigurationError(
-                "Voodoo Store is the default durable provider but the 'voodoo-store' "
-                "package is not installed. Reinstall voodoo-framework or run "
-                "`pip install voodoo-store`."
+                "Grumo Store is the default durable provider but the 'grumo-store' "
+                "package is not installed. Reinstall grumo-framework or run "
+                "`pip install grumo-store`."
             ) from exc
         self._store_type = module.Store
         return self._store_type
 
 
-def _create_voodoo_provider(config: StoreConfig) -> StoreProvider:
-    return VoodooStoreProvider(
+def _create_grumo_provider(config: StoreConfig) -> StoreProvider:
+    return GrumoStoreProvider(
         config.path,
         durability=config.durability,
         repair_torn_tail=config.repair_torn_tail,
@@ -527,7 +527,7 @@ def _create_voodoo_provider(config: StoreConfig) -> StoreProvider:
 
 
 store_registry = StoreProviderRegistry()
-store_registry.register("voodoo", _create_voodoo_provider)
+store_registry.register("grumo", _create_grumo_provider)
 
 
 def create_store_provider(
@@ -649,7 +649,7 @@ def activate_runtime_store(config: StoreConfig) -> RuntimeStore:
             return _active_runtime_store
         if _active_runtime_store.started:
             raise StoreProviderError(
-                "A Voodoo RuntimeStore is already active with a different configuration"
+                "A Grumo RuntimeStore is already active with a different configuration"
             )
         _active_runtime_store.stop()
         _active_runtime_store = None

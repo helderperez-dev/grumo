@@ -1,15 +1,15 @@
 """Scheduling implementation domain for the canonical Runtime."""
 
-from voodoo.runtime.scheduling.schedule_service import ScheduleService
-from voodoo.runtime.scheduling.tasks import TaskError, task
-from voodoo.runtime.scheduling.work import (
+from grumo.runtime.scheduling.schedule_service import ScheduleService
+from grumo.runtime.scheduling.tasks import TaskError, task
+from grumo.runtime.scheduling.work import (
     RuntimeScheduler,
     ScheduledWork,
     SchedulingDecision,
     WorkEligibility,
     scheduled_work_from_intent,
 )
-from voodoo.runtime.scheduling.workers import (
+from grumo.runtime.scheduling.workers import (
     enqueue,
     queue,
     registered_workers,

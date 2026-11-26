@@ -1,9 +1,9 @@
 """Workflow — composable multi-step orchestration.
 
 A :class:`Workflow` coordinates Tasks (and other compute participants)
-under the Voodoo runtime. It is *not* a separate execution engine: every
+under the Grumo runtime. It is *not* a separate execution engine: every
 strategy compiles into the same Intent → Capability → Execution → Effect →
-State pipeline via :class:`~voodoo.runtime.task.Task`.
+State pipeline via :class:`~grumo.runtime.task.Task`.
 
 Workflow durability checkpoints orchestration progress only. Canonical
 Executions remain owned by :class:`ExecutionEngine`.
@@ -20,19 +20,19 @@ from enum import StrEnum
 from typing import Any, Literal
 from uuid import uuid4
 
-from voodoo.primitives.intent import Intent
-from voodoo.runtime.context import ExecutionContext
-from voodoo.runtime.errors import WorkflowFailure
-from voodoo.runtime.execution import Execution
-from voodoo.runtime.execution.engine import ExecutionEngine
-from voodoo.runtime.execution.engine import engine as default_engine
-from voodoo.runtime.task import Task, TaskStatus
-from voodoo.runtime.workflow_store import WorkflowStore
-from voodoo.security.redaction import redact_string
+from grumo.primitives.intent import Intent
+from grumo.runtime.context import ExecutionContext
+from grumo.runtime.errors import WorkflowFailure
+from grumo.runtime.execution import Execution
+from grumo.runtime.execution.engine import ExecutionEngine
+from grumo.runtime.execution.engine import engine as default_engine
+from grumo.runtime.task import Task, TaskStatus
+from grumo.runtime.workflow_store import WorkflowStore
+from grumo.security.redaction import redact_string
 
 __all__ = ["WorkflowStrategy", "Workflow", "WorkflowRun"]
 
-_logger = logging.getLogger("voodoo.runtime.workflow")
+_logger = logging.getLogger("grumo.runtime.workflow")
 
 # Mesh publication is an optional observability side effect. Only expected
 # transport/configuration failures are downgraded to a warning; invariant
@@ -488,8 +488,8 @@ class Workflow:
         await self._emit(
             "workflow.started", {"workflow_id": self.id, "strategy": "adaptive"}
         )
-        from voodoo.runtime.agency.adaptive import AdaptiveSupervisor
-        from voodoo.runtime.planner import ComputeParticipant, Planner
+        from grumo.runtime.agency.adaptive import AdaptiveSupervisor
+        from grumo.runtime.planner import ComputeParticipant, Planner
 
         planner = Planner(engine=engine)
         for task in self._topological_order():
@@ -552,7 +552,7 @@ class Workflow:
 
     async def _emit(self, event: str, payload: dict[str, Any]) -> None:
         try:
-            from voodoo.mesh import mesh
+            from grumo.mesh import mesh
 
             await mesh.broadcast(event, payload)
         except _WORKFLOW_EVENT_ERRORS as error:
