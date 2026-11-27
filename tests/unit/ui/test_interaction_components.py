@@ -3,10 +3,10 @@ from pathlib import Path
 
 import pytest
 
-import voodoo
-from voodoo.adapters import TailwindAdapter, VoodooCSSAdapter
-from voodoo.adapters.voodoo_css import generate_component_css
-from voodoo.ui import (
+import grumo
+from grumo.adapters import TailwindAdapter, GrumoCSSAdapter
+from grumo.adapters.grumo_css import generate_component_css
+from grumo.ui import (
     AppShell,
     BottomNav,
     BottomNavItem,
@@ -40,12 +40,12 @@ from voodoo.ui import (
     ToastRegion,
     set_style_adapter,
 )
-from voodoo.ui.controls import Choice
-from voodoo.ui.styles import current_adapter
-from voodoo.ui.styles.theme import Theme
+from grumo.ui.controls import Choice
+from grumo.ui.styles import current_adapter
+from grumo.ui.styles.theme import Theme
 
 
-@pytest.fixture(params=[VoodooCSSAdapter, TailwindAdapter])
+@pytest.fixture(params=[GrumoCSSAdapter, TailwindAdapter])
 def adapter(request):
     original = current_adapter()
     set_style_adapter(request.param())
@@ -213,10 +213,10 @@ def test_app_shell_supports_sidebar_and_mobile_bottom_navigation(adapter):
     assert html.count('data-vd-sidebar-toggle="primary-sidebar"') == 2
     assert html.index('data-vd-sidebar-placement="inside"') < html.index("</aside>")
     assert "data-vd-app-shell-content" in html
-    assert 'aria-label="Voodoo"' in html
+    assert 'aria-label="Grumo"' in html
     assert "data-vd-sidebar-brand" in html
     assert ">V.<" in html
-    assert ">Voodoo<" in html
+    assert ">Grumo<" in html
     assert 'data-vd-sidebar-modes="expanded,rail"' in html
 
 
@@ -274,7 +274,7 @@ def test_app_shell_content_padding_is_configurable(adapter):
 
     assert "data-vd-app-shell-content" in html
     expected_class = (
-        "vd-app-shell-content--pad-none" if adapter is VoodooCSSAdapter else "p-0"
+        "vd-app-shell-content--pad-none" if adapter is GrumoCSSAdapter else "p-0"
     )
     assert expected_class in html
 
@@ -651,7 +651,7 @@ def test_calendar_propagates_shared_control_state_to_day_buttons(adapter):
 
 
 def test_interaction_runtime_contains_shared_behaviors():
-    client = Path(voodoo.__file__).parent / "static" / "client.js"
+    client = Path(grumo.__file__).parent / "static" / "client.js"
     source = client.read_text(encoding="utf-8")
     assert "setupAdaptiveNavigation" in source
     assert "setSidebarMode" in source

@@ -2,9 +2,9 @@
 
 import pytest
 
-from voodoo.adapters import TailwindAdapter, VoodooCSSAdapter
-from voodoo.ui import set_style_adapter
-from voodoo.ui.interaction_kernel import (
+from grumo.adapters import TailwindAdapter, GrumoCSSAdapter
+from grumo.ui import set_style_adapter
+from grumo.ui.interaction_kernel import (
     AlertDialog,
     AlertDialogTrigger,
     Command,
@@ -23,11 +23,11 @@ from voodoo.ui.interaction_kernel import (
     ToggleGroup,
     ToggleItem,
 )
-from voodoo.ui.interactions import MenuItem
-from voodoo.ui.styles import current_adapter
+from grumo.ui.interactions import MenuItem
+from grumo.ui.styles import current_adapter
 
 
-@pytest.fixture(params=[VoodooCSSAdapter, TailwindAdapter])
+@pytest.fixture(params=[GrumoCSSAdapter, TailwindAdapter])
 def adapter(request):
     original = current_adapter()
     set_style_adapter(request.param())
@@ -288,7 +288,7 @@ def test_segmented_control_rejects_empty():
 
 
 def test_context_menu_renders(adapter):
-    from voodoo.ui import Text
+    from grumo.ui import Text
 
     target = Text("Right-click me")
     html = ContextMenu(
@@ -307,7 +307,7 @@ def test_context_menu_renders(adapter):
 
 
 def test_context_menu_with_submenu(adapter):
-    from voodoo.ui import Text
+    from grumo.ui import Text
 
     html = ContextMenu(
         Text("Target"),
@@ -334,7 +334,7 @@ def test_submenu_state_contract_blocks_unavailable_nested_actions(adapter):
 
 
 def test_context_menu_checkbox_item(adapter):
-    from voodoo.ui import Text
+    from grumo.ui import Text
 
     html = ContextMenu(
         Text("T"),
@@ -345,7 +345,7 @@ def test_context_menu_checkbox_item(adapter):
 
 
 def test_context_menu_radio_item(adapter):
-    from voodoo.ui import Text
+    from grumo.ui import Text
 
     html = ContextMenu(
         Text("T"),
@@ -381,7 +381,7 @@ def test_menu_choice_items_state_contract_suppresses_selection(adapter):
 
 
 def test_context_menu_state_contract_blocks_unavailable_actions(adapter):
-    from voodoo.ui import Text
+    from grumo.ui import Text
 
     html = ContextMenu(
         Text("Target"),
@@ -399,7 +399,7 @@ def test_context_menu_state_contract_blocks_unavailable_actions(adapter):
 
 
 def test_context_menu_rejects_empty():
-    from voodoo.ui import Text
+    from grumo.ui import Text
 
     with pytest.raises(ValueError, match="at least one"):
         ContextMenu(Text("T"))

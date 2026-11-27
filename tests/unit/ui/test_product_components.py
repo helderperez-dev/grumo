@@ -1,5 +1,5 @@
-from voodoo.adapters.voodoo_css import VoodooCSSAdapter
-from voodoo.ui import (
+from grumo.adapters.grumo_css import GrumoCSSAdapter
+from grumo.ui import (
     Button,
     Column,
     CommandBar,
@@ -12,13 +12,13 @@ from voodoo.ui import (
     StatusBadge,
     Timeline,
 )
-from voodoo.ui.rendering import render_page
-from voodoo.ui.styles import current_adapter, set_style_adapter
+from grumo.ui.rendering import render_page
+from grumo.ui.styles import current_adapter, set_style_adapter
 
 
 def _native():
     original = current_adapter()
-    set_style_adapter(VoodooCSSAdapter())
+    set_style_adapter(GrumoCSSAdapter())
     return original
 
 
@@ -261,7 +261,7 @@ def test_product_css_is_included_in_native_rendering():
     original = _native()
     try:
         html = render_page(Metric("Executions", 12))
-        assert "Voodoo Product Components" in html
+        assert "Grumo Product Components" in html
         assert ".vd-data-table" in html
         assert ".vd-inspector-panel" in html
     finally:

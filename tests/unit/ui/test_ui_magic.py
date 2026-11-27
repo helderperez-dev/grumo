@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from voodoo.ui import Button, Checkbox, Composer, Form, Input, Text, ThemeToggle
-from voodoo.ui.events import UIEvent, bind_event, dispatch_ui_event
-from voodoo.ui.state import StateRenderer, state
+from grumo.ui import Button, Checkbox, Composer, Form, Input, Text, ThemeToggle
+from grumo.ui.events import UIEvent, bind_event, dispatch_ui_event
+from grumo.ui.state import StateRenderer, state
 
 
 def test_callable_button_uses_opaque_binding_without_inline_js():
@@ -113,9 +113,9 @@ async def test_value_argument_callable_event_handler():
         values.append(value)
 
     binding = bind_event(search)
-    await dispatch_ui_event(binding, event_type="input", value="voodoo")
+    await dispatch_ui_event(binding, event_type="input", value="grumo")
 
-    assert values == ["voodoo"]
+    assert values == ["grumo"]
 
 
 async def test_ui_event_annotation_opts_into_full_context():

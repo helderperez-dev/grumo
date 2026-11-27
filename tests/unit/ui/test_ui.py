@@ -7,8 +7,8 @@ tone prop, and high-level components.
 
 import pytest
 
-from voodoo.adapters import TailwindAdapter, VoodooCSSAdapter
-from voodoo.ui import (
+from grumo.adapters import TailwindAdapter, GrumoCSSAdapter
+from grumo.ui import (
     Box,
     Button,
     Card,
@@ -28,8 +28,8 @@ from voodoo.ui import (
     Textarea,
     set_style_adapter,
 )
-from voodoo.ui.component import Html, SafeHtml, UnsafeHtml, tone_to_color_var
-from voodoo.ui.styles import current_adapter
+from grumo.ui.component import Html, SafeHtml, UnsafeHtml, tone_to_color_var
+from grumo.ui.styles import current_adapter
 
 
 @pytest.fixture
@@ -41,9 +41,9 @@ def tailwind_adapter():
 
 
 @pytest.fixture
-def voodoo_css_adapter():
+def grumo_css_adapter():
     original = current_adapter()
-    set_style_adapter(VoodooCSSAdapter())
+    set_style_adapter(GrumoCSSAdapter())
     yield
     set_style_adapter(original)
 
@@ -90,7 +90,7 @@ def test_heading_default_matches_legacy(tailwind_adapter):
 
 
 def test_chatbox_default_matches_legacy(tailwind_adapter):
-    from voodoo.ui import ChatBox
+    from grumo.ui import ChatBox
 
     box = ChatBox("Messages", id="chat-1")
     assert box.render() == (
@@ -100,7 +100,7 @@ def test_chatbox_default_matches_legacy(tailwind_adapter):
 
 
 def test_table_default_matches_legacy(tailwind_adapter):
-    from voodoo.ui import Table
+    from grumo.ui import Table
 
     table = Table(
         headers=["Name", "Age"],
@@ -272,46 +272,46 @@ def test_link_component(tailwind_adapter):
     assert "var(--vd-color-primary)" in rendered
 
 
-def test_voodoo_css_button_default(voodoo_css_adapter):
+def test_grumo_css_button_default(grumo_css_adapter):
     btn = Button("Save", id="b1")
     rendered = btn.render()
     assert 'class="vd-button"' in rendered
     assert "Save" in rendered
 
 
-def test_voodoo_css_button_variant(voodoo_css_adapter):
+def test_grumo_css_button_variant(grumo_css_adapter):
     btn = Button("Save", variant="primary", id="b1")
     rendered = btn.render()
     assert "vd-button" in rendered
     assert "vd-button--primary" in rendered
 
 
-def test_voodoo_css_button_size(voodoo_css_adapter):
+def test_grumo_css_button_size(grumo_css_adapter):
     btn = Button("Save", variant="primary", size="sm", id="b1")
     rendered = btn.render()
     assert "vd-button--sm" in rendered
 
 
-def test_voodoo_css_card(voodoo_css_adapter):
+def test_grumo_css_card(grumo_css_adapter):
     card = Card("Body", id="c1")
     rendered = card.render()
     assert 'class="vd-card"' in rendered
 
 
-def test_voodoo_css_heading(voodoo_css_adapter):
+def test_grumo_css_heading(grumo_css_adapter):
     h = Heading("Title", level=2, id="h1")
     rendered = h.render()
     assert "vd-heading" in rendered
     assert "vd-heading--h2" in rendered
 
 
-def test_voodoo_css_input(voodoo_css_adapter):
+def test_grumo_css_input(grumo_css_adapter):
     inp = Input(id="i1", type="text")
     rendered = inp.render()
     assert "vd-input" in rendered
 
 
-def test_voodoo_css_link(voodoo_css_adapter):
+def test_grumo_css_link(grumo_css_adapter):
     link = Link("Go", href="/page", id="l1")
     rendered = link.render()
     assert "vd-link" in rendered
@@ -360,7 +360,7 @@ def test_event_binding_is_data_not_inline_code():
     rendered = btn.render()
     assert 'data-vd-event-click="my_action"' in rendered
     assert "onclick=" not in rendered
-    assert "voodoo.sendEvent" not in rendered
+    assert "grumo.sendEvent" not in rendered
 
 
 def test_html_escape_hatch():
@@ -435,12 +435,12 @@ def test_component_merges_css_tokens_and_raw_style_into_one_attribute():
         ("interactive", "vd-card--interactive"),
     ],
 )
-def test_voodoo_css_card_variants(voodoo_css_adapter, variant, expected):
+def test_grumo_css_card_variants(grumo_css_adapter, variant, expected):
     rendered = Card("Body", variant=variant, id="c1").render()
     assert expected in rendered
 
 
-def test_voodoo_css_card_padding(voodoo_css_adapter):
+def test_grumo_css_card_padding(grumo_css_adapter):
     assert "vd-card--pad-none" in Card("Body", padding="none").render()
     assert "vd-card--pad-sm" in Card("Body", padding="sm").render()
     assert "vd-card--pad-xl" in Card("Body", padding="xl").render()
@@ -454,7 +454,7 @@ def test_card_rejects_unknown_variant_and_padding():
 
 
 def test_card_on_click_is_keyboard_accessible_and_visually_interactive(
-    voodoo_css_adapter,
+    grumo_css_adapter,
 ):
     rendered = Card("Open", on_click=lambda: None).render()
     assert 'role="button"' in rendered
@@ -575,7 +575,7 @@ def test_link_renders(tailwind_adapter):
 
 
 def test_theme_has_semantic_tokens():
-    from voodoo.ui.styles.theme import ThemeColors
+    from grumo.ui.styles.theme import ThemeColors
 
     colors = ThemeColors()
     assert colors.primary_hover == "#E4E4E7"
@@ -585,7 +585,7 @@ def test_theme_has_semantic_tokens():
 
 
 def test_theme_css_variables_include_vd_prefix():
-    from voodoo.ui.styles.theme import default_theme
+    from grumo.ui.styles.theme import default_theme
 
     css = default_theme.to_css_variables()
     assert "--vd-color-primary:" in css
@@ -600,7 +600,7 @@ def test_theme_css_variables_include_vd_prefix():
 
 
 def test_theme_tailwind_config_has_semantic_names():
-    from voodoo.ui.styles.theme import default_theme
+    from grumo.ui.styles.theme import default_theme
 
     config = default_theme.to_tailwind_config()
     assert '"primary-hover"' in config
@@ -609,7 +609,7 @@ def test_theme_tailwind_config_has_semantic_names():
 
 
 def test_create_theme_factory():
-    from voodoo.ui.styles.theme import create_theme
+    from grumo.ui.styles.theme import create_theme
 
     theme = create_theme(primary="#635BFF", font="Inter")
     assert theme.colors.primary == "#635BFF"
@@ -617,7 +617,7 @@ def test_create_theme_factory():
 
 
 def test_theme_spacing_tokens():
-    from voodoo.ui.styles.theme import ThemeSpacing
+    from grumo.ui.styles.theme import ThemeSpacing
 
     spacing = ThemeSpacing()
     assert spacing.xs == "0.25rem"
@@ -626,14 +626,14 @@ def test_theme_spacing_tokens():
 
 
 def test_theme_shadows_tokens():
-    from voodoo.ui.styles.theme import ThemeShadows
+    from grumo.ui.styles.theme import ThemeShadows
 
     shadows = ThemeShadows()
     assert "0 1px 2px" in shadows.sm
 
 
 def test_login_form_composed():
-    from voodoo.ui import LoginForm
+    from grumo.ui import LoginForm
 
     form = LoginForm(action="/login", csrf_token="csrf_123")
     rendered = form.render()
@@ -645,7 +645,7 @@ def test_login_form_composed():
 
 
 def test_login_form_state_contract_propagates():
-    from voodoo.ui import LoginForm
+    from grumo.ui import LoginForm
 
     rendered = LoginForm(
         read_only=True,
@@ -661,7 +661,7 @@ def test_login_form_state_contract_propagates():
 
 
 def test_register_form_composed():
-    from voodoo.ui import RegisterForm
+    from grumo.ui import RegisterForm
 
     form = RegisterForm(action="/register", title="Join Us")
     rendered = form.render()
@@ -671,7 +671,7 @@ def test_register_form_composed():
 
 
 def test_register_form_state_contract_propagates():
-    from voodoo.ui import RegisterForm
+    from grumo.ui import RegisterForm
 
     rendered = RegisterForm(
         disabled=True,
@@ -685,14 +685,14 @@ def test_register_form_state_contract_propagates():
 
 
 def test_user_badge_anonymous():
-    from voodoo.ui import UserBadge
+    from grumo.ui import UserBadge
 
     badge = UserBadge(user=None)
     assert "Sign In" in badge.render()
 
 
 def test_user_badge_state_contract_blocks_navigation():
-    from voodoo.ui import UserBadge
+    from grumo.ui import UserBadge
 
     rendered = UserBadge(
         disabled=True,
@@ -707,7 +707,7 @@ def test_user_badge_state_contract_blocks_navigation():
 
 
 def test_option_state_contract_exposes_native_disabled_state():
-    from voodoo.ui import Option
+    from grumo.ui import Option
 
     rendered = Option(
         "Unavailable",
@@ -723,12 +723,12 @@ def test_option_state_contract_exposes_native_disabled_state():
 
 
 def test_user_badge_authenticated():
-    from voodoo.auth import AuthUser
-    from voodoo.ui import UserBadge
+    from grumo.auth import AuthUser
+    from grumo.ui import UserBadge
 
     user = AuthUser(
         id=1,
-        email="admin@voodoo.dev",
+        email="admin@grumo.dev",
         username="admin",
         role="admin",
         is_authenticated=True,
@@ -740,15 +740,15 @@ def test_user_badge_authenticated():
 
 
 def test_auth_guard_fallback():
-    from voodoo.ui import AuthGuard
+    from grumo.ui import AuthGuard
 
     guard = AuthGuard("Secret", user=None, fallback="Please Login")
     assert guard.render() == "Please Login"
 
 
 def test_auth_guard_role_match():
-    from voodoo.auth import AuthUser
-    from voodoo.ui import AuthGuard
+    from grumo.auth import AuthUser
+    from grumo.ui import AuthGuard
 
     user = AuthUser(id=1, email="a@b.c", role="admin", is_authenticated=True)
     guard = AuthGuard("Secret", user=user, required_roles=["admin"])
@@ -756,8 +756,8 @@ def test_auth_guard_role_match():
 
 
 def test_auth_guard_role_mismatch():
-    from voodoo.auth import AuthUser
-    from voodoo.ui import AuthGuard
+    from grumo.auth import AuthUser
+    from grumo.ui import AuthGuard
 
     user = AuthUser(id=2, email="v@b.c", role="viewer", is_authenticated=True)
     guard = AuthGuard("Secret", user=user, required_roles=["admin"])

@@ -2,10 +2,10 @@
 
 import pytest
 
-from voodoo.adapters import TailwindAdapter, VoodooCSSAdapter
-from voodoo.ui import set_style_adapter
-from voodoo.ui.styles import current_adapter
-from voodoo.ui.workspace import (
+from grumo.adapters import TailwindAdapter, GrumoCSSAdapter
+from grumo.ui import set_style_adapter
+from grumo.ui.styles import current_adapter
+from grumo.ui.workspace import (
     DetailPane,
     Dock,
     DockItem,
@@ -30,7 +30,7 @@ from voodoo.ui.workspace import (
 )
 
 
-@pytest.fixture(params=[VoodooCSSAdapter, TailwindAdapter])
+@pytest.fixture(params=[GrumoCSSAdapter, TailwindAdapter])
 def adapter(request):
     original = current_adapter()
     set_style_adapter(request.param())

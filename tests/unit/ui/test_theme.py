@@ -1,7 +1,7 @@
 import pytest
 
-from voodoo.ui.styles.palette import color
-from voodoo.ui.styles.theme import (
+from grumo.ui.styles.palette import color
+from grumo.ui.styles.theme import (
     Theme,
     ThemeColors,
     ThemePalette,
@@ -81,7 +81,7 @@ def test_set_theme():
         new_theme = Theme(mode="light")
         set_theme(new_theme)
 
-        from voodoo.ui.styles import theme as theme_module
+        from grumo.ui.styles import theme as theme_module
 
         assert theme_module.default_theme.mode == "light"
     finally:

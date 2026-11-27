@@ -1,7 +1,7 @@
 from types import SimpleNamespace
 
-from voodoo.adapters.voodoo_css import VoodooCSSAdapter
-from voodoo.ui import (
+from grumo.adapters.grumo_css import GrumoCSSAdapter
+from grumo.ui import (
     AgentStatus,
     ApprovalCard,
     CapabilityList,
@@ -15,13 +15,13 @@ from voodoo.ui import (
     TelemetryPanel,
     WorldEntityInspector,
 )
-from voodoo.ui.rendering import render_page
-from voodoo.ui.styles import current_adapter, set_style_adapter
+from grumo.ui.rendering import render_page
+from grumo.ui.styles import current_adapter, set_style_adapter
 
 
 def _native():
     original = current_adapter()
-    set_style_adapter(VoodooCSSAdapter())
+    set_style_adapter(GrumoCSSAdapter())
     return original
 
 
@@ -214,11 +214,11 @@ def test_observation_capability_policy_and_telemetry_components():
         set_style_adapter(original)
 
 
-def test_native_page_includes_voodoo_system_styles():
+def test_native_page_includes_grumo_system_styles():
     original = _native()
     try:
         html = render_page(RuntimeStatus({"summary": {}}))
-        assert "Voodoo System Components" in html
+        assert "Grumo System Components" in html
         assert ".vd-runtime-status" in html
         assert ".vd-approval-card" in html
     finally:

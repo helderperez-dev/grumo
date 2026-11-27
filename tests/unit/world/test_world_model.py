@@ -4,7 +4,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from voodoo.world import Entity, Observation, WorldModel
+from grumo.world import Entity, Observation, WorldModel
 
 
 def test_entity_projection_supports_dotted_paths() -> None:
