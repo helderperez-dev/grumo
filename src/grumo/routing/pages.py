@@ -57,7 +57,7 @@ def page(path: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         route = Route(path, _page_endpoint(func), methods=["GET"])
         page_registry.add(route)
-        func.voodoo_path = path  # type: ignore[attr-defined]
+        func.grumo_path = path  # type: ignore[attr-defined]
         return func
 
     return decorator
@@ -74,14 +74,14 @@ async def call_page(func: Callable[..., Any], request: Request) -> Response:
     """Invoke a page handler and render its result into an HTTP response."""
     kwargs = _page_kwargs(func, request)
 
-    from voodoo.ui.events import (
+    from grumo.ui.events import (
         UI_SESSION_COOKIE,
         activate_ui_session,
         start_event_binding_tracking,
         stop_event_binding_tracking,
         ws_manager,
     )
-    from voodoo.ui.state import state_renderer
+    from grumo.ui.state import state_renderer
 
     session, created = ws_manager.session_for_request(request)
     with activate_ui_session(session.session_id):
@@ -112,7 +112,7 @@ def _page_kwargs(func: Callable[..., Any], request: Request) -> dict[str, Any]:
 
     # Inject user if requested
     if "user" in sig.parameters:
-        from voodoo.auth import get_current_user
+        from grumo.auth import get_current_user
 
         kwargs["user"] = get_current_user(request)
 
@@ -132,7 +132,7 @@ def _page_kwargs(func: Callable[..., Any], request: Request) -> dict[str, Any]:
 async def _render_tracked(
     func: Callable[..., Any], kwargs: dict[str, Any]
 ) -> tuple[Any, list[Any]]:
-    from voodoo.ui.state import (
+    from grumo.ui.state import (
         start_render_tracking,
         stop_render_tracking,
     )
@@ -151,11 +151,11 @@ async def _render_tracked(
 def _set_ui_session_cookie(
     response: Response, request: Request, session_id: str
 ) -> None:
-    from voodoo.ui.events import UI_SESSION_COOKIE
+    from grumo.ui.events import UI_SESSION_COOKIE
 
-    configured = getattr(request.app.state, "voodoo_config", None)
+    configured = getattr(request.app.state, "grumo_config", None)
     if configured is None:
-        from voodoo.config import get_config
+        from grumo.config import get_config
 
         configured = get_config()
     response.set_cookie(
@@ -174,8 +174,8 @@ def render_page_result(result: Any) -> Response:
     if isinstance(result, Response):
         return result
 
-    from voodoo.seo import SEO
-    from voodoo.ui.rendering import render_page
+    from grumo.seo import SEO
+    from grumo.ui.rendering import render_page
 
     # Detect (SEO, Component) or (Component, SEO) tuple vs plain Component
     seo = None

@@ -1,9 +1,9 @@
-"""The Voodoo component model.
+"""The Grumo component model.
 
 Every UI element — built-in or user-defined — renders through ONE code path:
 :class:`Component.render`. Styling never lives in component definitions; a
 component declares a semantic style key (e.g. ``"button"``) plus props, and
-the active :class:`~voodoo.ui.styles.StyleAdapter` resolves the class string.
+the active :class:`~grumo.ui.styles.StyleAdapter` resolves the class string.
 
 Guarantees provided by the base:
 
@@ -32,7 +32,7 @@ from collections.abc import Iterable, Mapping
 from typing import Any, ClassVar
 from uuid import uuid4
 
-from voodoo.ui.styles.palette import color_reference
+from grumo.ui.styles.palette import color_reference
 
 SELF_CLOSING_TAGS = frozenset({"input", "img", "br", "hr"})
 
@@ -182,8 +182,8 @@ class Component:
         """Classes contributed by the active style adapter for this style key."""
         if self.style is None:
             return ""
-        from voodoo.ui.styles import current_adapter
-        from voodoo.ui.styles.theme import default_theme
+        from grumo.ui.styles import current_adapter
+        from grumo.ui.styles.theme import default_theme
 
         props = {**self.props, "class_": user_class}
         return current_adapter().component_classes(self.style, props, default_theme)

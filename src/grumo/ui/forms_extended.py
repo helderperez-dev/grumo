@@ -9,10 +9,10 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from typing import Any
 
-from voodoo.ui.component import Component
-from voodoo.ui.controls import _control_id
-from voodoo.ui.events import bind_event
-from voodoo.ui.interactive import Input
+from grumo.ui.component import Component
+from grumo.ui.controls import _control_id
+from grumo.ui.events import bind_event
+from grumo.ui.interactive import Input
 
 EventHandler = Callable[..., Any] | str
 

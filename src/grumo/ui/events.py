@@ -45,7 +45,7 @@ __all__ = [
 
 logger = logging.getLogger(__name__)
 
-UI_SESSION_COOKIE = "voodoo_ui_session"
+UI_SESSION_COOKIE = "grumo_ui_session"
 DEFAULT_SESSION_IDLE_TIMEOUT = 300.0
 DEFAULT_MAX_SESSIONS = 10_000
 DEFAULT_MAX_BINDINGS_PER_SESSION = 5_000
@@ -54,10 +54,10 @@ DEFAULT_MAX_MESSAGES_PER_MINUTE = 600
 DEFAULT_SEND_TIMEOUT = 5.0
 
 _current_ui_session: contextvars.ContextVar[str | None] = contextvars.ContextVar(
-    "voodoo_ui_session", default=None
+    "grumo_ui_session", default=None
 )
 _rendered_event_bindings: contextvars.ContextVar[set[str] | None] = (
-    contextvars.ContextVar("voodoo_rendered_event_bindings", default=None)
+    contextvars.ContextVar("grumo_rendered_event_bindings", default=None)
 )
 
 
@@ -312,7 +312,7 @@ class WebSocketManager:
             if connection in self.active_connections:
                 self.active_connections.remove(connection)
             self._connection_sessions.pop(id(connection), None)
-        from voodoo.ui.state import state_renderer
+        from grumo.ui.state import state_renderer
 
         state_renderer.unbind_session(session_id)
         for cell in session.state_cells:
@@ -528,10 +528,10 @@ def _handler_args(handler: Callable[..., Any], event_value: UIEvent) -> tuple[An
 
 def _websocket_config(websocket: WebSocket) -> Any:
     app_state = getattr(websocket.app, "state", None)
-    configured = getattr(app_state, "voodoo_config", None)
+    configured = getattr(app_state, "grumo_config", None)
     if configured is not None:
         return configured
-    from voodoo.config import get_config
+    from grumo.config import get_config
 
     return get_config()
 
@@ -551,7 +551,7 @@ def _websocket_principal(websocket: WebSocket, resolved_config: Any) -> str | No
     token = websocket.cookies.get(resolved_config.auth.cookie_name)
     if not token:
         return None
-    from voodoo.auth import AuthError, decode_access_token
+    from grumo.auth import AuthError, decode_access_token
 
     try:
         payload = decode_access_token(

@@ -9,8 +9,8 @@ from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse, Response
 from starlette.routing import Route
 
-from voodoo.core.errors import ConfigurationError
-from voodoo.security.redaction import redact_string
+from grumo.core.errors import ConfigurationError
+from grumo.security.redaction import redact_string
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ def _default_run_through_runtime() -> bool:
     back to ``True`` when config cannot be loaded (e.g. before app bootstrap).
     """
     try:
-        from voodoo.config import config
+        from grumo.config import config
 
         return bool(config.runtime.run_api_through_runtime)
     except (
@@ -41,11 +41,11 @@ class API:
     def __init__(self) -> None:
         self.routes: list[Route] = []
         self.paths: dict[str, dict[str, Any]] = {}
-        # When True (default), every API handler executes through the Voodoo
+        # When True (default), every API handler executes through the Grumo
         # runtime engine, producing an Execution record (intent ``http:...``)
         # with actor, effects, cost and telemetry. Configurable via the
         # ``runtime.run_api_through_runtime`` config flag (or the
-        # ``VOODOO_RUN_API_THROUGH_RUNTIME`` env var); the attribute remains
+        # ``GRUMO_RUN_API_THROUGH_RUNTIME`` env var); the attribute remains
         # mutable for per-app overrides.
         self.run_through_runtime: bool = _default_run_through_runtime()
 
@@ -70,8 +70,8 @@ class API:
                 return await func(**kwargs)
             return func(**kwargs)
 
-        from voodoo.primitives.intent import Intent
-        from voodoo.runtime.execution.engine import engine as runtime_engine
+        from grumo.primitives.intent import Intent
+        from grumo.runtime.execution.engine import engine as runtime_engine
 
         actor = "anonymous"
         user = kwargs.get("user")
@@ -96,7 +96,7 @@ class API:
     def _openapi_schema(self, request: Request) -> JSONResponse:
         schema = {
             "openapi": "3.0.2",
-            "info": {"title": "Voodoo API", "version": "1.0.0"},
+            "info": {"title": "Grumo API", "version": "1.0.0"},
             "paths": self.paths,
             "components": {
                 "schemas": {},
@@ -116,7 +116,7 @@ class API:
                     "cookieAuth": {
                         "type": "apiKey",
                         "in": "cookie",
-                        "name": "voodoo_auth",
+                        "name": "grumo_auth",
                         "description": "Session cookie authentication",
                     },
                 },
@@ -194,7 +194,7 @@ class API:
             param.annotation is not inspect._empty
             and getattr(param.annotation, "__name__", "") in ("AuthUser", "User")
         ):
-            from voodoo.auth import get_current_user
+            from grumo.auth import get_current_user
 
             return get_current_user(request)
         if inspect.isclass(param.annotation) and issubclass(

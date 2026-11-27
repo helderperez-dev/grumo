@@ -1,10 +1,10 @@
-"""The Voodoo UI system: component model, library, interaction runtime, and styles.
+"""The Grumo UI system: component model, library, interaction runtime, and styles.
 
 New application code should import components from this module. Interactive
 components accept Python callables directly and keep browser mechanics inside
-Voodoo::
+Grumo::
 
-    from voodoo.ui import Button
+    from grumo.ui import Button
 
     async def save():
         ...
@@ -12,8 +12,8 @@ Voodoo::
     Button("Save", on_click=save)
 """
 
-from voodoo.ui.brand import Brand
-from voodoo.ui.component import (
+from grumo.ui.brand import Brand
+from grumo.ui.component import (
     Component,
     Html,
     SafeHtml,
@@ -21,7 +21,7 @@ from voodoo.ui.component import (
     escape,
     tone_to_color_var,
 )
-from voodoo.ui.controls import (
+from grumo.ui.controls import (
     Calendar,
     CheckboxGroup,
     Combobox,
@@ -37,7 +37,7 @@ from voodoo.ui.controls import (
     Slider,
     TimePicker,
 )
-from voodoo.ui.data_extended import (
+from grumo.ui.data_extended import (
     ColumnDef,
     DataList,
     DataRow,
@@ -49,11 +49,11 @@ from voodoo.ui.data_extended import (
     ListOption,
     StatGroup,
 )
-from voodoo.ui.data_extended import (
+from grumo.ui.data_extended import (
     Stat as DataStat,
 )
-from voodoo.ui.events import UIEvent
-from voodoo.ui.forms_extended import (
+from grumo.ui.events import UIEvent
+from grumo.ui.forms_extended import (
     Autocomplete,
     CheckboxInput,
     FormError,
@@ -62,7 +62,7 @@ from voodoo.ui.forms_extended import (
     RadioInput,
     RangeSlider,
 )
-from voodoo.ui.foundation import (
+from grumo.ui.foundation import (
     Accordion,
     AccordionItem,
     Alert,
@@ -74,7 +74,7 @@ from voodoo.ui.foundation import (
     Progress,
     Spinner,
 )
-from voodoo.ui.interaction_kernel import (
+from grumo.ui.interaction_kernel import (
     AlertDialog,
     AlertDialogTrigger,
     Command,
@@ -93,7 +93,7 @@ from voodoo.ui.interaction_kernel import (
     ToggleGroup,
     ToggleItem,
 )
-from voodoo.ui.interactions import (
+from grumo.ui.interactions import (
     Drawer,
     DropdownMenu,
     MenuItem,
@@ -106,7 +106,7 @@ from voodoo.ui.interactions import (
     Toast,
     ToastRegion,
 )
-from voodoo.ui.interactive import (
+from grumo.ui.interactive import (
     Button,
     Checkbox,
     Composer,
@@ -117,8 +117,8 @@ from voodoo.ui.interactive import (
     Textarea,
     ThemeToggle,
 )
-from voodoo.ui.layout import Page
-from voodoo.ui.library import (
+from grumo.ui.layout import Page
+from grumo.ui.library import (
     A,
     Address,
     Article,
@@ -178,14 +178,14 @@ from voodoo.ui.library import (
     Time,
     UserBadge,
 )
-from voodoo.ui.navigation import (
+from grumo.ui.navigation import (
     AppShell,
     BottomNav,
     BottomNavItem,
     SidebarItem,
     SidebarToggle,
 )
-from voodoo.ui.navigation_extended import (
+from grumo.ui.navigation_extended import (
     Action,
     ActionSheet,
     AnchorLink,
@@ -201,8 +201,8 @@ from voodoo.ui.navigation_extended import (
     Stepper,
     TopBar,
 )
-from voodoo.ui.primitives import Field, Popover, Skeleton, Switch, Tooltip
-from voodoo.ui.product import (
+from grumo.ui.primitives import Field, Popover, Skeleton, Switch, Tooltip
+from grumo.ui.product import (
     Column,
     CommandBar,
     DataTable,
@@ -214,7 +214,7 @@ from voodoo.ui.product import (
     StatusBadge,
     Timeline,
 )
-from voodoo.ui.styles import (
+from grumo.ui.styles import (
     NoopAdapter,
     StyleAdapter,
     ThemePalette,
@@ -222,7 +222,7 @@ from voodoo.ui.styles import (
     current_adapter,
     set_style_adapter,
 )
-from voodoo.ui.voodoo_system import (
+from grumo.ui.grumo_system import (
     AgentStatus,
     ApprovalCard,
     CapabilityList,
@@ -236,7 +236,7 @@ from voodoo.ui.voodoo_system import (
     TelemetryPanel,
     WorldEntityInspector,
 )
-from voodoo.ui.workspace import (
+from grumo.ui.workspace import (
     DetailPane,
     Dock,
     DockItem,
@@ -441,7 +441,7 @@ __all__ = [
     "InspectorPanel",
     "LogViewer",
     "CommandBar",
-    # Voodoo system components
+    # Grumo system components
     "RuntimeStatus",
     "AgentStatus",
     "DeviceCard",

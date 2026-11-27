@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from voodoo.ui.component import Component
+from grumo.ui.component import Component
 
 BRAND_CSS = """
 /* Brand image contract */

@@ -10,8 +10,8 @@ from collections.abc import Callable, Sequence
 from typing import Any
 from uuid import uuid4
 
-from voodoo.ui.component import Component
-from voodoo.ui.events import bind_event
+from grumo.ui.component import Component
+from grumo.ui.events import bind_event
 
 EventHandler = Callable[..., Any] | str
 

@@ -28,7 +28,7 @@ from uuid import uuid4
 
 from pydantic import BaseModel, Field
 
-from voodoo.primitives.constraint import Constraint
+from grumo.primitives.constraint import Constraint
 
 
 class IntentStatus(StrEnum):

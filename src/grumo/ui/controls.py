@@ -9,9 +9,9 @@ from datetime import date
 from typing import Any
 from uuid import uuid4
 
-from voodoo.ui.component import Component
-from voodoo.ui.events import bind_event
-from voodoo.ui.interactive import Button, Input
+from grumo.ui.component import Component
+from grumo.ui.events import bind_event
+from grumo.ui.interactive import Button, Input
 
 EventHandler = Callable[..., Any] | str
 
