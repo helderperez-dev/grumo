@@ -111,7 +111,7 @@ The middleware is auto-installed. It:
 - `start_span(name, attributes=None)` — async context manager creating child spans with automatic parent tracking.
 - `TelemetryStore.record_request(latency_ms, error=False, ...)` — record an HTTP request and optional structured correlation metadata.
 - `TelemetryStore.record_trace(name, latency_ms, error=False)` — record a custom trace.
-- `TelemetryStore.record_span(span)` — store a Span in the ring buffer (max 1000) and forward to OTLP exporter if configured.
+- `TelemetryStore.record_span(span)` — store a Span in the native ring buffer (max 1000).
 - `TelemetryStore.record_agent_run(run_record)` — record an agent run.
 - `TelemetryStore.record_tool_call(tool_name, latency_ms, error=False)` — record a tool call.
 - `TelemetryStore.get_summary() -> dict` — summary of all metrics including `spans_total`.
@@ -135,23 +135,6 @@ async with start_span("outer") as outer:
 ```
 
 Spans are stored in an in-memory ring buffer (max 1000). The `trace()` decorator now automatically creates spans alongside trace records.
-
-## OTLP export (Sprint 20)
-
-Optional OpenTelemetry export is available behind the `[otel]` extra:
-
-```bash
-pip install grumo[otel]
-```
-
-Enable by setting the `GRUMO_OTEL_EXPORTER` environment variable:
-
-```bash
-export GRUMO_OTEL_EXPORTER=otlp
-export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317  # default
-```
-
-When enabled, every `record_span()` call forwards the span to the OTLP endpoint via a lazy-initialized `TracerProvider` with `BatchSpanProcessor`. If the SDK is not installed or the env var is unset, export is silently skipped.
 
 ## Telemetry persistence (Sprint 20)
 
@@ -178,7 +161,7 @@ Displays a runtime health overview:
 grumo status
 ```
 
-Shows: requests total, errors, error rate, avg latency, DB queries, agent runs, tokens in/out, cost, tool calls/errors, spans recorded, OTLP export status.
+Shows: requests total, errors, error rate, avg latency, DB queries, agent runs, tokens in/out, cost, tool calls/errors, spans recorded.
 
 ### `grumo workers`
 
@@ -192,4 +175,4 @@ Displays: registered worker names, queue depth, running worker task count.
 
 ### `grumo doctor` (upgraded)
 
-Now includes queue depth, registered workers, scheduler DB health, and OTLP exporter availability checks.
+Now includes queue depth, registered workers, scheduler DB health.
