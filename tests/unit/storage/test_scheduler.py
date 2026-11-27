@@ -35,7 +35,16 @@ class TestScheduleStore:
         assert json.loads(raw)["_schema_version"] == 1
         store._conn.execute(
             "INSERT INTO schedules (id,name,kind,spec,next_run_at,task_type,payload,created_at) VALUES (?,?,?,?,?,?,?,?)",
-            ("legacy", "legacy", "at", now.isoformat(), now.isoformat(), "task", json.dumps({"legacy": True}), now.isoformat()),
+            (
+                "legacy",
+                "legacy",
+                "at",
+                now.isoformat(),
+                now.isoformat(),
+                "task",
+                json.dumps({"legacy": True}),
+                now.isoformat(),
+            ),
         )
         store._conn.commit()
         assert json.loads(store.get("legacy")["payload"]) == {"legacy": True}
