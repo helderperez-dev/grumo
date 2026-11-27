@@ -102,11 +102,10 @@ grumo dev
 
 The Homebrew tap is being validated in
 [homebrew-grumo](https://github.com/helderperez-dev/homebrew-grumo).
-Do not install the old Grumo formula for a new Grumo project.
+Until the tap has been validated against the published release, use pip or uv.
 
 Open `http://localhost:8000`. A fresh application requires no external
-database, Redis, queue or object server. Existing Grumo applications and
-their durable data remain supported through the compatibility layer.
+database, Redis, queue or object server. The 2.0 source uses the canonical Grumo namespace without legacy import aliases.
 
 ### Small application
 
@@ -265,7 +264,7 @@ The package root stays intentionally small:
 from grumo import Agent, App, Model, page, state, task, tool
 ```
 
-The canonical distribution and root imports are `grumo`. In 1.0, advanced APIs still live under `grumo.*`; the implementation remains in `src/grumo/`. Configuration keys, `grumo.toml`, and `.grumo/application.grumo` retain their existing names for compatibility. Do not rename persisted data manually.
+The canonical distribution and root imports are `grumo`. Advanced APIs live under `grumo.*`, with implementation in `src/grumo/`. Use `grumo.toml` and `.grumo/application.grumo` for new projects. Do not rename persisted data manually.
 
 Advanced APIs come from the namespace that owns them:
 
@@ -399,7 +398,7 @@ same application semantics
       /    |    \
    node-a node-b node-c
       |      |      |
-   a.vstore b.vstore c.vstore
+   a.grumo b.grumo c.grumo
 ```
 
 Each node owns its local Store. Remote work re-enters canonical
@@ -530,10 +529,10 @@ marketing promise for future capabilities.
 
 Grumo's architecture is broad, but its guarantees are intentionally explicit.
 
-Grumo 1.0 does **not** claim:
+Grumo does **not** claim:
 
 - automatic Store replication or synchronization between nodes;
-- shared multi-writer `.vstore` files;
+- shared multi-writer `.grumo` files;
 - distributed consensus;
 - globally serializable cross-node transactions;
 - global exactly-once execution;
@@ -565,8 +564,7 @@ As the project grows, these properties are architectural constraints:
 Grumo is **beta software**.
 
 **v1.0.0** is the first published Grumo release, with Grumo Store 1.x.
-The architecture builds on the former Grumo runtime. The `main` branch may contain post-release documentation or implementation
-work, so a merge to `main` is not itself a package release.
+The `main` branch now contains the 2.0 source targeting Grumo Store 2.x. A merge to `main` is not itself a package release; check PyPI for the latest published version.
 
 The next numbered development sprint is intentionally selected from real
 product/architecture pressure rather than by accumulating unrelated framework
@@ -576,7 +574,7 @@ features.
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) and [AGENTS.md](AGENTS.md) before
 structural changes. Repository architecture is enforced by tests, including
-rules that prevent removed 2.x compatibility namespaces from returning.
+rules that prevent removed legacy compatibility namespaces from returning.
 
 Security issues should follow [SECURITY.md](SECURITY.md). Community behavior is
 covered by [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
