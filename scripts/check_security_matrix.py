@@ -49,7 +49,7 @@ REQUIREMENTS = {
         "test_local_object_get_rejects_checksum_corruption",
         "test_local_object_stat_rejects_corrupt_metadata",
     ),
-    "tests/integration/test_voodoo_store_objects.py": (
+    "tests/integration/test_grumo_store_objects.py": (
         "test_native_store_object_metadata_rejects_malformed_json",
         "test_native_store_object_metadata_rejects_integrity_mismatch",
         "test_native_store_object_get_rejects_payload_checksum_mismatch",

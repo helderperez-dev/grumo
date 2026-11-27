@@ -1,7 +1,7 @@
 """Small cross-platform import/render contract used by CI."""
 
-from voodoo.ui import Button
-from voodoo.ui.styles.theme import default_theme
+from grumo.ui import Button
+from grumo.ui.styles.theme import default_theme
 
 html = Button("Platform", render_key="platform-contract").render()
 assert 'type="button"' in html

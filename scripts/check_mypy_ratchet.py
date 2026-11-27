@@ -19,7 +19,7 @@ ERROR_RE = re.compile(r"^.*: error: ")
 def main() -> int:
     expected = int(BASELINE.read_text().strip())
     result = subprocess.run(
-        [sys.executable, "-m", "mypy", "src/voodoo", "--follow-imports=silent"],
+        [sys.executable, "-m", "mypy", "src/grumo", "--follow-imports=silent"],
         text=True,
         capture_output=True,
         check=False,

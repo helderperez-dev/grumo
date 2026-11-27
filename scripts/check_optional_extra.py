@@ -18,10 +18,10 @@ EXTRA_MODULES = {
 
 
 def main() -> int:
-    extra = os.environ.get("VOODOO_OPTIONAL_EXTRA")
+    extra = os.environ.get("GRUMO_OPTIONAL_EXTRA")
     if extra not in EXTRA_MODULES:
         print(
-            f"VOODOO_OPTIONAL_EXTRA must be one of {sorted(EXTRA_MODULES)}",
+            f"GRUMO_OPTIONAL_EXTRA must be one of {sorted(EXTRA_MODULES)}",
             file=sys.stderr,
         )
         return 2

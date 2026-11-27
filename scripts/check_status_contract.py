@@ -6,7 +6,7 @@ import ast
 from pathlib import Path
 
 ROOT = Path(__file__).parents[1]
-STATUS = ROOT / "src/voodoo/status.py"
+STATUS = ROOT / "src/grumo/status.py"
 TESTS = ROOT / "tests/unit/test_status.py"
 HTTP_TESTS = ROOT / "tests/integration/test_http_runtime.py"
 REQUIRED_REMEDIATION_KEYS = {"database", "queue", "storage", "agent", "store"}
