@@ -1,7 +1,7 @@
 """Model provider contract tests (ROADMAP §64, §47).
 
 ``ModelProviderContractTests`` is the portability suite every
-``VoodooModelProvider`` implementation must pass unchanged. The default suite
+``GrumoModelProvider`` implementation must pass unchanged. The default suite
 runs against the deterministic ``MockProvider``; live providers
 (OpenAI/Anthropic/Gemini/Ollama) are integration-gated behind their optional
 SDK.
@@ -11,13 +11,13 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo.ai.providers import (
+from grumo.ai.providers import (
     EmbeddingResponse,
     ModelDescriptor,
     ProviderEvent,
     ProviderResponse,
 )
-from voodoo.ai.providers.mock import MockProvider
+from grumo.ai.providers.mock import MockProvider
 
 
 class ModelProviderContractTests:
@@ -92,7 +92,7 @@ class TestEmbeddingDefault:
     """Providers that do not implement embeddings raise NotImplementedError."""
 
     async def test_base_embed_raises_not_implemented(self):
-        from voodoo.ai.providers import LLMProvider
+        from grumo.ai.providers import LLMProvider
 
         class _NoEmbed(MockProvider):
             async def embed(self, texts: list[str], **kwargs: object):  # noqa: ARG002

@@ -8,7 +8,7 @@ from pathlib import Path
 
 from starlette.testclient import TestClient
 
-import voodoo.ui as public_ui
+import grumo.ui as public_ui
 
 FRAMEWORK_ROOT = Path(__file__).parents[2]
 COMPONENT_LAB = FRAMEWORK_ROOT / "examples" / "web" / "component_lab" / "main.py"

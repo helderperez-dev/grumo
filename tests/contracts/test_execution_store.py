@@ -10,9 +10,9 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo.primitives.effect import Effect
-from voodoo.primitives.intent import Intent
-from voodoo.runtime.execution import Execution, ExecutionStatus
+from grumo.primitives.effect import Effect
+from grumo.primitives.intent import Intent
+from grumo.runtime.execution import Execution, ExecutionStatus
 
 
 def _execution(**overrides) -> Execution:
@@ -124,7 +124,7 @@ class ExecutionStoreContractTests:
     # -- approvals ---------------------------------------------------------
 
     def test_save_and_load_approval(self, store):
-        from voodoo.runtime.human import Approval
+        from grumo.runtime.human import Approval
 
         approval = Approval(
             id="ap1",
@@ -173,6 +173,6 @@ class TestSQLiteExecutionStoreContract(ExecutionStoreContractTests):
         from pathlib import Path
 
         self._tmp_dir = tempfile.mkdtemp()
-        from voodoo.storage.execution import SQLiteExecutionStore
+        from grumo.storage.execution import SQLiteExecutionStore
 
         return SQLiteExecutionStore(Path(self._tmp_dir) / "executions.db")

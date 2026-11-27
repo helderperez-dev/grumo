@@ -13,11 +13,11 @@ import pytest
 from starlette.applications import Starlette
 from starlette.testclient import TestClient
 
-from voodoo.edge.gateway import DeviceGateway
-from voodoo.edge.http import build_edge_routes
-from voodoo.edge.simulator import DeviceSimulator, HTTPSimulatorTransport
-from voodoo.edge.store import InMemoryDeviceStore
-from voodoo.runtime.execution.engine import ExecutionEngine
+from grumo.edge.gateway import DeviceGateway
+from grumo.edge.http import build_edge_routes
+from grumo.edge.simulator import DeviceSimulator, HTTPSimulatorTransport
+from grumo.edge.store import InMemoryDeviceStore
+from grumo.runtime.execution.engine import ExecutionEngine
 
 # ---------------------------------------------------------------------------
 # Fixtures

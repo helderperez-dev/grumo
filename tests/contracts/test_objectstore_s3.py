@@ -2,7 +2,7 @@
 
 The same ``ObjectStoreContractTests`` suite used for ``LocalObjectStore``
 runs against a real S3-compatible server (AWS S3, MinIO, R2, …) when
-``VOODOO_TEST_S3_ENDPOINT`` is set — CI provides one via a service
+``GRUMO_TEST_S3_ENDPOINT`` is set — CI provides one via a service
 container (``.github/workflows/ci.yml``, ``minio/minio``). Locally the
 module is skipped when no server is available, so the default ``pytest``
 run stays green without boto3 or a running object store.
@@ -20,14 +20,14 @@ from tests.contracts.test_objectstore import ObjectStoreContractTests
 boto3 = pytest.importorskip("boto3")
 
 pytestmark = pytest.mark.skipif(
-    not os.environ.get("VOODOO_TEST_S3_ENDPOINT"),
-    reason="VOODOO_TEST_S3_ENDPOINT not set (no S3-compatible server available)",
+    not os.environ.get("GRUMO_TEST_S3_ENDPOINT"),
+    reason="GRUMO_TEST_S3_ENDPOINT not set (no S3-compatible server available)",
 )
 
-ENDPOINT = os.environ.get("VOODOO_TEST_S3_ENDPOINT")
-BUCKET = os.environ.get("VOODOO_TEST_S3_BUCKET", "voodoo-test")
-ACCESS_KEY = os.environ.get("VOODOO_TEST_S3_KEY", "minioadmin")
-SECRET_KEY = os.environ.get("VOODOO_TEST_S3_SECRET", "minioadmin")
+ENDPOINT = os.environ.get("GRUMO_TEST_S3_ENDPOINT")
+BUCKET = os.environ.get("GRUMO_TEST_S3_BUCKET", "grumo-test")
+ACCESS_KEY = os.environ.get("GRUMO_TEST_S3_KEY", "minioadmin")
+SECRET_KEY = os.environ.get("GRUMO_TEST_S3_SECRET", "minioadmin")
 
 
 def _s3_client():
@@ -59,7 +59,7 @@ class TestS3ObjectStore(ObjectStoreContractTests):
     """Contract suite against a live S3-compatible server."""
 
     def make_store(self, tmp_path):
-        from voodoo.storage.objects.s3 import S3ObjectStore
+        from grumo.storage.objects.s3 import S3ObjectStore
 
         # tmp_path is unique per test but stable across the two make_store
         # calls inside test_data_survives_reopen, so the prefix isolates
