@@ -10,15 +10,15 @@ INVENTORY = ROOT / "docs/architecture/encoding-inventory.md"
 # Keep this list intentionally explicit. Adding a durable domain must update the
 # inventory and its ownership/migration rule in the same change.
 REQUIRED_DOMAINS: dict[str, tuple[str, ...]] = {
-    "Application `Model` records": ("voodoo.data.store_backend", "schema_version=1"),
-    "Runtime identity and registry records": ("voodoo.runtime", "explicit timestamps"),
+    "Application `Model` records": ("grumo.data.store_backend", "schema_version=1"),
+    "Runtime identity and registry records": ("grumo.runtime", "explicit timestamps"),
     "Edge device, replay, and response records": (
-        "voodoo.edge.store_voodoo",
+        "grumo.edge.store_grumo",
         "legacy prefixed KV keys remain read-through",
     ),
-    "Runtime workflow/execution records": ("voodoo.runtime", "codec version"),
-    "Durable events/outbox": ("voodoo.storage.events", "replay"),
-    "Scheduler and task payloads": ("voodoo.storage.scheduler", "idempotency"),
+    "Runtime workflow/execution records": ("grumo.runtime", "codec version"),
+    "Durable events/outbox": ("grumo.storage.events", "replay"),
+    "Scheduler and task payloads": ("grumo.storage.scheduler", "idempotency"),
     "Execution artifacts and observations": ("execution/observability", "redact"),
     "Object bytes": ("object storage owner", "metadata and lifecycle"),
     "Session/UI state": ("Ephemeral by default", "browser patch"),

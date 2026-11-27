@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import re
 
-from voodoo.ui.styles.system import generate_design_system_css
-from voodoo.ui.styles.theme import default_theme
+from grumo.ui.styles.system import generate_design_system_css
+from grumo.ui.styles.theme import default_theme
 
 REQUIRED_FAMILIES = (
     "color-",
@@ -29,14 +29,14 @@ def main() -> int:
     declarations = set(re.findall(r"(--vd-[a-z0-9-]+)\s*:", css))
     undefined = sorted(references - declarations)
     if undefined:
-        raise SystemExit(f"undefined Voodoo design tokens: {', '.join(undefined)}")
+        raise SystemExit(f"undefined Grumo design tokens: {', '.join(undefined)}")
     missing = [
         family
         for family in REQUIRED_FAMILIES
         if not any(token.startswith(f"--vd-{family}") for token in declarations)
     ]
     if missing:
-        raise SystemExit(f"missing Voodoo design-token families: {', '.join(missing)}")
+        raise SystemExit(f"missing Grumo design-token families: {', '.join(missing)}")
     print(
         f"design tokens passed ({len(declarations)} declarations, "
         f"{len(references)} references)"

@@ -6,7 +6,7 @@ import ast
 from pathlib import Path
 
 ROOT = Path(__file__).parents[1]
-SOURCE = ROOT / "src" / "voodoo"
+SOURCE = ROOT / "src" / "grumo"
 BROAD = {"Exception", "BaseException"}
 
 

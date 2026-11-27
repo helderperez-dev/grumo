@@ -16,19 +16,19 @@ def main() -> int:
     errors: list[str] = []
     for path in CANONICAL_DOCS:
         for line_number, line in enumerate(path.read_text().splitlines(), 1):
-            if "voodoo create" not in line:
+            if "grumo create" not in line:
                 continue
             lowered = line.lower()
             if not any(
                 marker in lowered
                 for marker in ("deprecated", "compatibility alias", "deprecation")
             ):
-                errors.append(f"{path}:{line_number}: use canonical 'voodoo new'")
+                errors.append(f"{path}:{line_number}: use canonical 'grumo new'")
     if errors:
         print("command contract failed:")
         print("\n".join(errors))
         return 1
-    print("command contract passed (voodoo new is canonical)")
+    print("command contract passed (grumo new is canonical)")
     return 0
 
 

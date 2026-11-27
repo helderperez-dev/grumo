@@ -7,8 +7,8 @@ import json
 import re
 from pathlib import Path
 
-import voodoo.ui as ui
-from voodoo.ui import Component
+import grumo.ui as ui
+from grumo.ui import Component
 
 EXAMPLES: dict[str, tuple[object, ...]] = {
     "A": ("Link",),

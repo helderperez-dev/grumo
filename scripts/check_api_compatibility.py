@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).parents[1]
 REGISTRY = ROOT / "docs" / "public_api_compatibility.json"
-SOURCE = ROOT / "src" / "voodoo"
+SOURCE = ROOT / "src" / "grumo"
 
 
 def _major(version: str) -> int:
@@ -57,7 +57,7 @@ def _validate_legacy_import_boundaries() -> list[str]:
         tree = ast.parse(path.read_text(), filename=str(path))
         for node in ast.walk(tree):
             module = node.module if isinstance(node, ast.ImportFrom) else None
-            if module == "voodoo.ai.agent_legacy" and path not in allowed:
+            if module == "grumo.ai.agent_legacy" and path not in allowed:
                 errors.append(
                     f"{path.relative_to(ROOT)} imports retained legacy agent directly"
                 )

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import inspect
 
-import voodoo.ui as ui
+import grumo.ui as ui
 
 CONTROL_STATES: dict[str, frozenset[str]] = {
     "Button": frozenset({"disabled", "read_only", "loading", "error"}),
