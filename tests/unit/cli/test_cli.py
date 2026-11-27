@@ -354,7 +354,7 @@ def test_cli_new_generated_project_compiles_and_matches_runtime_contract(
     )
     assert compile_result.returncode == 0, compile_result.stderr
     pyproject = (project_dir / "pyproject.toml").read_text()
-    assert '"grumo>=1.0.0,<2.0.0"' in pyproject
+    assert '"grumo>=2.0.0,<3.0.0"' in pyproject
     assert (
         "Runtime creates application.grumo"
         in (project_dir / "grumo.toml").read_text()
