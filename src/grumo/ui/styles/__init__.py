@@ -2,14 +2,14 @@
 
 Components never embed CSS framework classes. They declare a semantic style
 key (``"button"``, ``"card"``, ``"table.cell"``) plus props; the active
-adapter resolves that to a concrete class string. Swapping Voodoo CSS for
+adapter resolves that to a concrete class string. Swapping Grumo CSS for
 Tailwind (or anything else) means implementing this protocol once —
 components and apps do not change.
 
-The default adapter (:class:`~voodoo.adapters.voodoo_css.VoodooCSSAdapter`) is
+The default adapter (:class:`~grumo.adapters.grumo_css.GrumoCSSAdapter`) is
 installed at import time. To use Tailwind instead::
 
-    from voodoo import TailwindAdapter, set_style_adapter
+    from grumo import TailwindAdapter, set_style_adapter
     set_style_adapter(TailwindAdapter())
 """
 
@@ -17,8 +17,8 @@ from __future__ import annotations
 
 from typing import Any, Protocol, runtime_checkable
 
-from voodoo.ui.styles.palette import ThemePalette, color
-from voodoo.ui.styles.theme import Theme
+from grumo.ui.styles.palette import ThemePalette, color
+from grumo.ui.styles.theme import Theme
 
 
 @runtime_checkable
@@ -60,9 +60,9 @@ def current_adapter() -> StyleAdapter:
 
 
 def _install_default() -> None:
-    from voodoo.adapters.voodoo_css import VoodooCSSAdapter
+    from grumo.adapters.grumo_css import GrumoCSSAdapter
 
-    set_style_adapter(VoodooCSSAdapter())
+    set_style_adapter(GrumoCSSAdapter())
 
 
 _install_default()

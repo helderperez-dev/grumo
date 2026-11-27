@@ -2,7 +2,7 @@
 adapter config. Components reference semantic names only (``primary``,
 ``danger``, ``radius``); the concrete values live here.
 
-All CSS variables use the ``--vd-*`` prefix to namespace Voodoo tokens and
+All CSS variables use the ``--vd-*`` prefix to namespace Grumo tokens and
 avoid collisions with project-level CSS.
 """
 
@@ -13,7 +13,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from voodoo.ui.styles.palette import ThemePalette
+from grumo.ui.styles.palette import ThemePalette
 
 # ---------------------------------------------------------------------------
 # Token groups
@@ -242,7 +242,7 @@ class ComponentOverrides(BaseModel):
 
 
 class Theme(BaseModel):
-    """Core theme configuration for Voodoo.
+    """Core theme configuration for Grumo.
 
     The default theme is minimalist, modern, and follows an
     Apple × Linear × Vercel × Raycast aesthetic: generous whitespace,

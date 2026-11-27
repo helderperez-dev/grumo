@@ -1,4 +1,4 @@
-"""Primitive color scales and token helpers for the Voodoo design system.
+"""Primitive color scales and token helpers for the Grumo design system.
 
 The palette is the low-level color layer. Components should prefer semantic
 roles such as ``primary`` and ``danger`` for meaning, while application UI can

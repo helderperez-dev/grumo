@@ -1,13 +1,13 @@
-"""Native styles for Voodoo product-level components."""
+"""Native styles for Grumo product-level components."""
 
-from voodoo.ui.styles.theme import Theme
+from grumo.ui.styles.theme import Theme
 
 
 def generate_product_css(theme: Theme) -> str:
     """Return semantic CSS for reusable product patterns."""
 
     return """
-/* ── Voodoo Product Components ────────────────────────────────────── */
+/* ── Grumo Product Components ────────────────────────────────────── */
 
 .vd-status-badge {
     display: inline-flex;

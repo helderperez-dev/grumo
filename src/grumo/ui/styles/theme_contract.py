@@ -1,6 +1,6 @@
 """Resolve Design System 4 visual tokens from the public Theme contract.
 
-Design System 4 introduced a stronger Voodoo visual identity with its own
+Design System 4 introduced a stronger Grumo visual identity with its own
 premium surface palette. The public ``Theme`` API predates those visual tokens,
 so this bridge keeps the approved DS4 defaults while making explicit Theme
 customizations authoritative again.
@@ -8,7 +8,7 @@ customizations authoritative again.
 
 from __future__ import annotations
 
-from voodoo.ui.styles.theme import Theme, ThemeColors
+from grumo.ui.styles.theme import Theme, ThemeColors
 
 _DEFAULTS = ThemeColors()
 
@@ -147,7 +147,7 @@ def generate_design_system_theme_css(theme: Theme) -> str:
     """Return the Theme-authoritative DS4 token bridge for light and dark."""
     light = _render_scope(":root", _mode_tokens(theme, light=True))
     dark = _render_scope(".dark", _mode_tokens(theme, light=False))
-    return f"""/* Voodoo Design System 4 — Theme contract */
+    return f"""/* Grumo Design System 4 — Theme contract */
 {light}
 
 {dark}"""

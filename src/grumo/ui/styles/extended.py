@@ -1,10 +1,10 @@
-"""Native styles for Voodoo extended UI components.
+"""Native styles for Grumo extended UI components.
 
 Covers all Priority 1–5 additions: interaction kernel, forms, navigation,
 workspace, and data-heavy interfaces.
 """
 
-from voodoo.ui.styles.theme import Theme
+from grumo.ui.styles.theme import Theme
 
 
 def generate_extended_css(theme: Theme) -> str:
@@ -12,7 +12,7 @@ def generate_extended_css(theme: Theme) -> str:
 
     return """
 /* ══════════════════════════════════════════════════════════════════════
-   Voodoo Extended UI — All Priorities
+   Grumo Extended UI — All Priorities
    ══════════════════════════════════════════════════════════════════════ */
 
 /* ── Priority 1: Interaction Kernel ───────────────────────────────── */

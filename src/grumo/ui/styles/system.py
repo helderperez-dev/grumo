@@ -1,23 +1,23 @@
-"""Voodoo native design-system convergence layer.
+"""Grumo native design-system convergence layer.
 
 The native component stylesheet provides the structural baseline. This module
-owns the opinionated visual language that makes a zero-custom-CSS Voodoo app
+owns the opinionated visual language that makes a zero-custom-CSS Grumo app
 look intentional in both light and dark themes.
 """
 
-from voodoo.ui.styles.theme import Theme
+from grumo.ui.styles.theme import Theme
 
 
 def generate_design_system_css(theme: Theme) -> str:
-    """Return the premium Voodoo design-system convergence layer.
+    """Return the premium Grumo design-system convergence layer.
 
     The layer is deliberately token-driven. Applications can still replace
-    colors and typography through Theme while keeping Voodoo's spacing,
+    colors and typography through Theme while keeping Grumo's spacing,
     hierarchy, focus, motion and component ergonomics coherent.
     """
 
     return """
-/* ── Voodoo Design System 4 — Experience Convergence ─────────────── */
+/* ── Grumo Design System 4 — Experience Convergence ─────────────── */
 
 :root {
     --vd-brand: #7c3aed;

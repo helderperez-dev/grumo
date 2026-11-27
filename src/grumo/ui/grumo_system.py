@@ -1,4 +1,4 @@
-"""Voodoo-specific operational UI components.
+"""Grumo-specific operational UI components.
 
 This layer visualizes canonical runtime concepts. It never creates a parallel
 source of truth: callers pass Execution/Goal/Approval/Entity/Device-like
@@ -10,10 +10,10 @@ from __future__ import annotations
 from collections.abc import Callable, Iterable, Mapping
 from typing import Any
 
-from voodoo.ui.component import Component
-from voodoo.ui.interactive import Button
-from voodoo.ui.library import Heading, Text
-from voodoo.ui.product import (
+from grumo.ui.component import Component
+from grumo.ui.interactive import Button
+from grumo.ui.library import Heading, Text
+from grumo.ui.product import (
     EmptyState,
     EventRow,
     Metric,

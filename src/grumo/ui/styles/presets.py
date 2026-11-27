@@ -7,10 +7,10 @@ portable, installable, and swappable without touching application code.
 Resolution order (first match wins):
 
 1. An explicit path or URL.
-2. The project preset at ``.voodoo/theme/theme.json``.
+2. The project preset at ``.grumo/theme/theme.json``.
 3. A named built-in preset (``default``, ``ember-paper``).
-4. A user-installed preset at ``~/.voodoo/themes/<name>/theme.json``.
-5. A PyPI package named ``voodoo-theme-<name>`` exposing ``theme.json``.
+4. A user-installed preset at ``~/.grumo/themes/<name>/theme.json``.
+5. A PyPI package named ``grumo-theme-<name>`` exposing ``theme.json``.
 
 Theme-specific CSS lives in a **sibling** ``custom.css`` file (never embedded
 in JSON) so editors and linters treat it as first-class CSS.
@@ -27,8 +27,8 @@ from typing import Any
 
 from pydantic import BaseModel, ValidationError
 
-from voodoo.core.errors import ConfigurationError
-from voodoo.ui.styles.theme import Theme, set_theme
+from grumo.core.errors import ConfigurationError
+from grumo.ui.styles.theme import Theme, set_theme
 
 # ---------------------------------------------------------------------------
 # Models
@@ -190,7 +190,7 @@ def _load_from_url(url: str) -> ThemeSource:
 
 
 def _load_from_pypi(name: str) -> ThemeSource:
-    module_name = f"voodoo_theme_{name.replace('-', '_')}"
+    module_name = f"grumo_theme_{name.replace('-', '_')}"
     try:
         spec = importlib.util.find_spec(module_name)
     except (ImportError, ValueError):
@@ -198,14 +198,14 @@ def _load_from_pypi(name: str) -> ThemeSource:
     if spec is None or spec.origin is None:
         raise ConfigurationError(
             f"Theme preset '{name}' is not installed. "
-            f"Install it with 'voodoo theme install {name}'."
+            f"Install it with 'grumo theme install {name}'."
         )
     directory = Path(spec.origin).parent
     return _load_from_dir(directory)
 
 
 def _user_themes_dir() -> Path:
-    return Path.home() / ".voodoo" / "themes"
+    return Path.home() / ".grumo" / "themes"
 
 
 # ---------------------------------------------------------------------------
@@ -220,7 +220,7 @@ def resolve_theme(
 
     Args:
         preset: Optional preset name, path, or URL. When ``None``, the project
-            preset (``.voodoo/theme/theme.json``) is used, falling back to the
+            preset (``.grumo/theme/theme.json``) is used, falling back to the
             built-in ``default``.
         project_root: Root directory for project-scoped discovery. Defaults to
             the current working directory.
@@ -242,7 +242,7 @@ def resolve_theme(
             return _load_from_dir(user_dir)
         return _load_from_pypi(preset)
 
-    project_theme = root / ".voodoo" / "theme"
+    project_theme = root / ".grumo" / "theme"
     if (project_theme / "theme.json").is_file():
         return _load_from_dir(project_theme)
     return _load_builtin_source("default")
@@ -295,7 +295,7 @@ def get_active_custom_css() -> str:
 register_builtin(
     "default",
     lambda: ThemePreset(
-        name="default", description="Voodoo default theme", theme=Theme()
+        name="default", description="Grumo default theme", theme=Theme()
     ),
 )
 
@@ -305,9 +305,9 @@ def _ember_paper_theme() -> Theme:
 
     Font families reference the faces by name with graceful system fallbacks;
     the actual webfonts are the theme author's responsibility (self-host or
-    load via ``.voodoo/theme/custom.css``) so the built-in stays zero-network.
+    load via ``.grumo/theme/custom.css``) so the built-in stays zero-network.
     """
-    from voodoo.ui.styles.theme import ThemeColors, ThemeTypography
+    from grumo.ui.styles.theme import ThemeColors, ThemeTypography
 
     colors = ThemeColors(
         # Ember accent (amber in dark mode, burnt ember in light mode).

@@ -1,11 +1,11 @@
-const voodoo = {
+const grumo = {
     ws: null,
     _reconnectAttempts: 0,
     _maxBackoff: 5000,
 
     init: function() {
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        this.ws = new WebSocket(`${protocol}//${window.location.host}/_voodoo_ws`);
+        this.ws = new WebSocket(`${protocol}//${window.location.host}/_grumo_ws`);
         this.ws.onopen = () => { this._reconnectAttempts = 0; };
         this.ws.onmessage = this.handleMessage.bind(this);
         this.ws.onclose = () => { this._scheduleReconnect(); };
@@ -52,7 +52,7 @@ const voodoo = {
                 ? 'dark' : 'light';
         }
         document.documentElement.classList.toggle('dark', resolved === 'dark');
-        document.cookie = 'voodoo_theme=' + encodeURIComponent(mode) + '; path=/; max-age=31536000';
+        document.cookie = 'grumo_theme=' + encodeURIComponent(mode) + '; path=/; max-age=31536000';
     },
 
     toggleTheme: function() {
@@ -139,7 +139,7 @@ const voodoo = {
         }
 
         const response = await fetch(url.pathname + url.search, {
-            headers: {'X-Voodoo-Navigation': '1'},
+            headers: {'X-Grumo-Navigation': '1'},
             credentials: 'same-origin'
         });
         if (!response.ok) {
@@ -158,7 +158,7 @@ const voodoo = {
 
         root.innerHTML = nextRoot.innerHTML;
         if (doc.title) document.title = doc.title;
-        if (!opts.popstate) history.pushState({voodoo: true}, '', url.href);
+        if (!opts.popstate) history.pushState({grumo: true}, '', url.href);
         window.scrollTo(0, 0);
         this.setupBehaviors();
     },
@@ -176,7 +176,7 @@ const voodoo = {
             el.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    voodoo.sendEvent(binding, el.id || null, el.value, 'submit');
+                    grumo.sendEvent(binding, el.id || null, el.value, 'submit');
                     el.value = '';
                     el.style.height = 'auto';
                 }
@@ -194,7 +194,7 @@ const voodoo = {
             btn.addEventListener('click', function() {
                 const area = btn.parentElement && btn.parentElement.querySelector('[data-vd-enter-send]');
                 const value = area ? area.value : '';
-                voodoo.sendEvent(binding, area ? area.id || null : null, value, 'submit');
+                grumo.sendEvent(binding, area ? area.id || null : null, value, 'submit');
                 if (area) {
                     area.value = '';
                     area.style.height = 'auto';
@@ -203,7 +203,7 @@ const voodoo = {
         });
 
         document.querySelectorAll('[data-vd-auto-scroll]').forEach(function(el) {
-            voodoo.scrollToBottom(el.id);
+            grumo.scrollToBottom(el.id);
         });
     },
 
@@ -216,7 +216,7 @@ const voodoo = {
             const binding = bar.dataset.vdCommandBinding;
             const submit = function() {
                 if (!binding || !input) return;
-                voodoo.sendEvent(binding, input.id || null, input.value, 'submit');
+                grumo.sendEvent(binding, input.id || null, input.value, 'submit');
             };
             if (input) {
                 input.addEventListener('keydown', function(e) {
@@ -392,7 +392,7 @@ const voodoo = {
         if (focus) trigger.focus({preventScroll: true});
         const binding = eventBinding(root, 'change');
         if (changed && binding) {
-            voodoo.sendEvent(binding, root.id || null, value, 'change');
+            grumo.sendEvent(binding, root.id || null, value, 'change');
         }
     },
 
@@ -539,12 +539,12 @@ const voodoo = {
             sidebar.dataset.vdResponsiveWired = '1';
             const mobile = window.matchMedia('(max-width: 767px)').matches;
             const viewport = mobile ? 'mobile' : 'desktop';
-            const stored = voodoo._storageGet('vd-sidebar:' + sidebar.id + ':' + viewport);
+            const stored = grumo._storageGet('vd-sidebar:' + sidebar.id + ':' + viewport);
             const fallback = mobile && sidebar.dataset.vdSidebarCollapsible !== undefined
                 ? sidebar.dataset.vdSidebarMobileMode || 'hidden'
                 : sidebar.dataset.vdSidebarDefault || 'expanded';
             const mode = stored || fallback;
-            voodoo.setSidebarMode(sidebar, mode, false);
+            grumo.setSidebarMode(sidebar, mode, false);
         });
         if (!this._sidebarMediaWired) {
             this._sidebarMediaWired = true;
@@ -552,14 +552,14 @@ const voodoo = {
             const update = function(event) {
                 document.querySelectorAll('[data-vd-sidebar]').forEach(function(sidebar) {
                     const viewport = event.matches ? 'mobile' : 'desktop';
-                    const stored = voodoo._storageGet(
+                    const stored = grumo._storageGet(
                         'vd-sidebar:' + sidebar.id + ':' + viewport
                     );
                     const fallback = event.matches &&
                         sidebar.dataset.vdSidebarCollapsible !== undefined
                         ? sidebar.dataset.vdSidebarMobileMode || 'hidden'
                         : sidebar.dataset.vdSidebarDefault || 'expanded';
-                    voodoo.setSidebarMode(sidebar, stored || fallback, false);
+                    grumo.setSidebarMode(sidebar, stored || fallback, false);
                 });
             };
             media.addEventListener('change', update);
@@ -581,8 +581,8 @@ const voodoo = {
                 const open = menu.matches(':popover-open');
                 if (trigger) trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
                 if (open) {
-                    voodoo.positionAnchored(menu);
-                    const first = voodoo._menuItems(menu)[0];
+                    grumo.positionAnchored(menu);
+                    const first = grumo._menuItems(menu)[0];
                     if (first) first.focus({preventScroll: true});
                 }
             });
@@ -595,7 +595,7 @@ const voodoo = {
                 frame = window.requestAnimationFrame(function() {
                     frame = null;
                     document.querySelectorAll('[data-vd-menu]:popover-open').forEach(
-                        function(menu) { voodoo.positionAnchored(menu); }
+                        function(menu) { grumo.positionAnchored(menu); }
                     );
                 });
             };
@@ -630,13 +630,13 @@ const voodoo = {
                 const outside = event.clientX < rect.left || event.clientX > rect.right ||
                     event.clientY < rect.top || event.clientY > rect.bottom;
                 if (outside) {
-                    voodoo.closeDialog(dialog);
+                    grumo.closeDialog(dialog);
                 }
             });
             dialog.addEventListener('cancel', function(event) {
                 if (dialog.dataset.vdDrawer === undefined) return;
                 event.preventDefault();
-                if (dialog.dataset.vdDismissible !== undefined) voodoo.closeDialog(dialog);
+                if (dialog.dataset.vdDismissible !== undefined) grumo.closeDialog(dialog);
             });
         });
     },
@@ -651,7 +651,7 @@ const voodoo = {
                 const schedule = function() {
                     toast._vdDeadline = Date.now() + toast._vdRemaining;
                     toast._vdTimer = window.setTimeout(
-                        () => voodoo.dismissToast(toast),
+                        () => grumo.dismissToast(toast),
                         toast._vdRemaining
                     );
                 };
@@ -690,10 +690,10 @@ function eventBinding(el, type) {
 
 function dispatchClickBinding(bound) {
     if (!bound) return;
-    voodoo.sendEvent(
+    grumo.sendEvent(
         eventBinding(bound, 'click'),
         bound.id || null,
-        voodoo.valueOf(bound),
+        grumo.valueOf(bound),
         'click'
     );
 }
@@ -714,8 +714,8 @@ document.addEventListener('click', function(e) {
             fallbackMenu.toggleAttribute('data-vd-fallback-open', opening);
             fallbackMenuTrigger.setAttribute('aria-expanded', opening ? 'true' : 'false');
             if (opening) {
-                voodoo.positionAnchored(fallbackMenu);
-                const first = voodoo._menuItems(fallbackMenu)[0];
+                grumo.positionAnchored(fallbackMenu);
+                const first = grumo._menuItems(fallbackMenu)[0];
                 if (first) first.focus({preventScroll: true});
             }
             return;
@@ -736,25 +736,25 @@ document.addEventListener('click', function(e) {
     const listOption = e.target.closest &&
         e.target.closest('[data-vd-list-box] [role="option"]');
     if (listOption) {
-        voodoo.selectListBoxOption(listOption);
+        grumo.selectListBoxOption(listOption);
     }
 
     const treeToggle = e.target.closest && e.target.closest('[data-vd-tree-toggle]');
     if (treeToggle) {
         e.preventDefault();
-        voodoo.toggleTreeNode(treeToggle);
+        grumo.toggleTreeNode(treeToggle);
     }
 
     const treeItem = e.target.closest &&
         e.target.closest('[data-vd-tree-view] [role="treeitem"]');
     if (treeItem && !treeToggle) {
-        voodoo.selectTreeItem(treeItem);
+        grumo.selectTreeItem(treeItem);
     }
 
     const sidebarDismiss = e.target.closest && e.target.closest('[data-vd-sidebar-dismiss]');
     if (sidebarDismiss) {
         e.preventDefault();
-        voodoo.setSidebarMode(
+        grumo.setSidebarMode(
             document.getElementById(sidebarDismiss.dataset.vdSidebarDismiss),
             sidebarDismiss.dataset.vdSidebarDismissMode || 'hidden',
             true
@@ -770,10 +770,10 @@ document.addEventListener('click', function(e) {
             const modes = (sidebarToggle.dataset.vdSidebarModes || 'expanded,rail,hidden').split(',');
             const current = sidebar.dataset.vdSidebarMode || modes[0];
             const next = modes[(modes.indexOf(current) + 1) % modes.length];
-            voodoo.setSidebarMode(sidebar, next, true);
+            grumo.setSidebarMode(sidebar, next, true);
             const binding = eventBinding(sidebarToggle, 'change');
             if (binding) {
-                voodoo.sendEvent(binding, sidebarToggle.id || null, next, 'change');
+                grumo.sendEvent(binding, sidebarToggle.id || null, next, 'change');
             }
         }
         return;
@@ -782,28 +782,28 @@ document.addEventListener('click', function(e) {
     const dialogTrigger = e.target.closest && e.target.closest('[data-vd-dialog-open]');
     if (dialogTrigger) {
         e.preventDefault();
-        voodoo.openDialog(dialogTrigger.dataset.vdDialogOpen, dialogTrigger);
+        grumo.openDialog(dialogTrigger.dataset.vdDialogOpen, dialogTrigger);
         return;
     }
 
     const dialogClose = e.target.closest && e.target.closest('[data-vd-dialog-close]');
     if (dialogClose) {
         e.preventDefault();
-        voodoo.closeDialog(dialogClose.closest('dialog'));
+        grumo.closeDialog(dialogClose.closest('dialog'));
         return;
     }
 
     const dismiss = e.target.closest && e.target.closest('[data-vd-dismiss]');
     if (dismiss) {
         e.preventDefault();
-        voodoo.dismissToast(dismiss.closest('[data-vd-toast]'));
+        grumo.dismissToast(dismiss.closest('[data-vd-toast]'));
         return;
     }
 
     const tab = e.target.closest && e.target.closest('[data-vd-tab]');
     if (tab) {
         e.preventDefault();
-        voodoo.activateTab(tab, true);
+        grumo.activateTab(tab, true);
         return;
     }
 
@@ -829,7 +829,7 @@ document.addEventListener('click', function(e) {
     const actionEl = e.target.closest && e.target.closest('[data-vd-action]');
     if (actionEl && actionEl.dataset.vdAction === 'toggle-theme') {
         e.preventDefault();
-        voodoo.toggleTheme();
+        grumo.toggleTheme();
         return;
     }
 
@@ -842,7 +842,7 @@ document.addEventListener('click', function(e) {
     const url = new URL(link.href, window.location.href);
     if (url.origin !== window.location.origin || url.hash && url.pathname === window.location.pathname) return;
     e.preventDefault();
-    voodoo.navigate(url.href);
+    grumo.navigate(url.href);
 });
 
 // Non-native interactive surfaces (for example selectable DataTable rows)
@@ -865,7 +865,7 @@ document.addEventListener('keydown', function(e) {
             }
             return;
         }
-        const items = voodoo._menuItems(menu);
+        const items = grumo._menuItems(menu);
         if (!items.length) return;
         const current = items.indexOf(document.activeElement);
         let next = null;
@@ -900,7 +900,7 @@ document.addEventListener('keydown', function(e) {
         e.target.closest('[data-vd-list-box] [role="option"]');
     if (listOption) {
         const root = listOption.closest('[data-vd-list-box]');
-        const options = voodoo._listBoxOptions(root);
+        const options = grumo._listBoxOptions(root);
         const current = options.indexOf(listOption);
         let next = null;
         if (e.key === 'ArrowDown') next = options[(current + 1) % options.length];
@@ -909,7 +909,7 @@ document.addEventListener('keydown', function(e) {
         if (e.key === 'End') next = options[options.length - 1];
         if (next) {
             e.preventDefault();
-            voodoo.focusListBoxOption(next);
+            grumo.focusListBoxOption(next);
             return;
         }
         if (e.key === 'Enter' || e.key === ' ') {
@@ -923,7 +923,7 @@ document.addEventListener('keydown', function(e) {
         e.target.closest('[data-vd-tree-view] [role="treeitem"]');
     if (treeItem && e.target === treeItem) {
         const tree = treeItem.closest('[data-vd-tree-view]');
-        const items = voodoo._visibleTreeItems(tree);
+        const items = grumo._visibleTreeItems(tree);
         const current = items.indexOf(treeItem);
         const toggle = treeItem.querySelector(':scope > [data-vd-tree-toggle]');
         let next = null;
@@ -941,9 +941,9 @@ document.addEventListener('keydown', function(e) {
         if (e.key === 'ArrowRight' && toggle) {
             e.preventDefault();
             if (toggle.getAttribute('aria-expanded') !== 'true') {
-                voodoo.toggleTreeNode(toggle, true);
+                grumo.toggleTreeNode(toggle, true);
             } else {
-                const refreshed = voodoo._visibleTreeItems(tree);
+                const refreshed = grumo._visibleTreeItems(tree);
                 const index = refreshed.indexOf(treeItem);
                 const child = refreshed[index + 1];
                 if (child && Number(child.getAttribute('aria-level')) >
@@ -958,7 +958,7 @@ document.addEventListener('keydown', function(e) {
         if (e.key === 'ArrowLeft') {
             if (toggle && toggle.getAttribute('aria-expanded') === 'true') {
                 e.preventDefault();
-                voodoo.toggleTreeNode(toggle, false);
+                grumo.toggleTreeNode(toggle, false);
                 return;
             }
             const group = treeItem.closest('[role="group"]');
@@ -981,7 +981,7 @@ document.addEventListener('keydown', function(e) {
 
     const openDialog = e.target.closest && e.target.closest('dialog[data-vd-layer][open]');
     if (openDialog && e.key === 'Tab') {
-        const focusable = voodoo._focusable(openDialog);
+        const focusable = grumo._focusable(openDialog);
         if (focusable.length) {
             const first = focusable[0];
             const last = focusable[focusable.length - 1];
@@ -1012,13 +1012,13 @@ document.addEventListener('keydown', function(e) {
         if (e.key === 'End') next = tabs[tabs.length - 1];
         if (next) {
             e.preventDefault();
-            if (automatic) voodoo.activateTab(next, true);
+            if (automatic) grumo.activateTab(next, true);
             else next.focus({preventScroll: true});
             return;
         }
         if (!automatic && (e.key === 'Enter' || e.key === ' ')) {
             e.preventDefault();
-            voodoo.activateTab(tab, true);
+            grumo.activateTab(tab, true);
             return;
         }
     }
@@ -1034,37 +1034,37 @@ document.addEventListener('keydown', function(e) {
 
 document.addEventListener('change', function(e) {
     const binding = eventBinding(e.target, 'change');
-    if (binding) voodoo.sendEvent(binding, e.target.id || null, voodoo.valueOf(e.target), 'change');
+    if (binding) grumo.sendEvent(binding, e.target.id || null, grumo.valueOf(e.target), 'change');
 });
 
 document.addEventListener('input', function(e) {
     const binding = eventBinding(e.target, 'input');
-    if (binding) voodoo.sendEvent(binding, e.target.id || null, voodoo.valueOf(e.target), 'input');
+    if (binding) grumo.sendEvent(binding, e.target.id || null, grumo.valueOf(e.target), 'input');
 });
 
 document.addEventListener('submit', function(e) {
     const binding = eventBinding(e.target, 'submit');
     if (!binding) return;
     e.preventDefault();
-    voodoo.sendEvent(binding, e.target.id || null, voodoo.valueOf(e.target), 'submit');
+    grumo.sendEvent(binding, e.target.id || null, grumo.valueOf(e.target), 'submit');
 });
 
 window.addEventListener('popstate', function() {
-    voodoo.navigate(window.location.href, {popstate: true});
+    grumo.navigate(window.location.href, {popstate: true});
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    voodoo.init();
-    voodoo.setupBehaviors();
+    grumo.init();
+    grumo.setupBehaviors();
 });
 
-window.voodoo = voodoo;
+window.grumo = grumo;
 
-// Legacy facade retained during migration. New Voodoo code passes Python
+// Legacy facade retained during migration. New Grumo code passes Python
 // callables directly to component props and never needs to use this object.
 window.vd = {
     event: function(name, elementId, value) {
         if (arguments.length > 3) value = Array.prototype.slice.call(arguments, 3);
-        voodoo.sendEvent(name, elementId, value, 'event');
+        grumo.sendEvent(name, elementId, value, 'event');
     }
 };

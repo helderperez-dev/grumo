@@ -1,13 +1,13 @@
-"""Native styles for Voodoo operational system components."""
+"""Native styles for Grumo operational system components."""
 
-from voodoo.ui.styles.theme import Theme
+from grumo.ui.styles.theme import Theme
 
 
-def generate_voodoo_system_css(theme: Theme) -> str:
+def generate_grumo_system_css(theme: Theme) -> str:
     """Return the visual language for canonical runtime concepts."""
 
     return """
-/* ── Voodoo System Components ─────────────────────────────────────── */
+/* ── Grumo System Components ─────────────────────────────────────── */
 
 .vd-runtime-status,
 .vd-agent-status,
