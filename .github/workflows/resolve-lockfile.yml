@@ -31,6 +31,15 @@ jobs:
           assert stores and all(p["version"].split(".")[0] == "2" for p in stores)
           assert all(p["source"].get("registry") == "https://pypi.org/simple" for p in stores)
           PY
+      - name: Emit verified lockfile for repository update
+        run: |
+          python - <<'PY'
+          import base64
+          from pathlib import Path
+          data = base64.b64encode(Path("uv.lock").read_bytes()).decode("ascii")
+          for offset in range(0, len(data), 4096):
+              print("LOCKFILE_CHUNK:" + data[offset:offset + 4096])
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: grumo-resolved-lockfile
