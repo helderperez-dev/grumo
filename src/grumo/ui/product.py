@@ -1,4 +1,4 @@
-"""Product-level Voodoo UI components.
+"""Product-level Grumo UI components.
 
 These components encode recurring software patterns so applications can stay
 small without sacrificing hierarchy, accessibility or operational clarity.
@@ -12,10 +12,10 @@ from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
-from voodoo.ui.component import Component, escape
-from voodoo.ui.events import bind_event
-from voodoo.ui.interactive import Button, Input
-from voodoo.ui.library import Heading, Icon, Text
+from grumo.ui.component import Component, escape
+from grumo.ui.events import bind_event
+from grumo.ui.interactive import Button, Input
+from grumo.ui.library import Heading, Icon, Text
 
 EventHandler = Callable[..., Any] | str
 

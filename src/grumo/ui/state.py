@@ -2,7 +2,7 @@
 
 ``state(initial)`` creates an observable cell. Reads performed while a page or
 reactive region renders are tracked automatically. When one of those cells
-changes Voodoo schedules a rerender, discovers the dependency set again and
+changes Grumo schedules a rerender, discovers the dependency set again and
 patches the browser over the existing WebSocket connection.
 
 Application code does not call a rerender function and does not need browser
@@ -18,7 +18,7 @@ import inspect
 from collections.abc import Callable
 from typing import Any
 
-from voodoo.core.errors import StateError
+from grumo.core.errors import StateError
 
 __all__ = [
     "State",
@@ -36,20 +36,20 @@ BindingKey = str | tuple[str, str]
 
 
 def _current_session_id() -> str | None:
-    from voodoo.ui.events import current_ui_session_id
+    from grumo.ui.events import current_ui_session_id
 
     return current_ui_session_id()
 
 
 _state_context: contextvars.ContextVar[dict[str, Any] | None] = contextvars.ContextVar(
-    "voodoo_state_context", default=None
+    "grumo_state_context", default=None
 )
 _rendered_cells: contextvars.ContextVar[list[State] | None] = contextvars.ContextVar(
-    "voodoo_rendered_cells", default=None
+    "grumo_rendered_cells", default=None
 )
 _runtime_dependency_context: contextvars.ContextVar[
     tuple[Any, str, set[str]] | None
-] = contextvars.ContextVar("voodoo_runtime_dependency_context", default=None)
+] = contextvars.ContextVar("grumo_runtime_dependency_context", default=None)
 
 
 def start_render_tracking() -> list[State]:
@@ -117,7 +117,7 @@ class State:
         self._subscribers: list[tuple[str | None, Callable[[Any], None]]] = []
 
     def _session_value(self, session_id: str) -> Any:
-        from voodoo.ui.events import ws_manager
+        from grumo.ui.events import ws_manager
 
         session = ws_manager.get_session(session_id)
         if session is not None:
@@ -360,11 +360,11 @@ class StateRenderer:
 
         session_id, element_id = self._binding_parts(key)
         page_func, _old_cells = binding
-        from voodoo.ui.events import activate_ui_session
+        from grumo.ui.events import activate_ui_session
 
         with activate_ui_session(session_id):
             if session_id is not None:
-                from voodoo.ui.events import start_event_binding_tracking
+                from grumo.ui.events import start_event_binding_tracking
 
                 start_event_binding_tracking()
             start_render_tracking()
@@ -376,13 +376,13 @@ class StateRenderer:
             except (Exception, asyncio.CancelledError):
                 stop_render_tracking()
                 if session_id is not None:
-                    from voodoo.ui.events import stop_event_binding_tracking
+                    from grumo.ui.events import stop_event_binding_tracking
 
                     stop_event_binding_tracking()
                 raise
 
             if session_id is not None:
-                from voodoo.ui.events import (
+                from grumo.ui.events import (
                     stop_event_binding_tracking,
                     ws_manager,
                 )
@@ -409,8 +409,8 @@ class StateRenderer:
 
     @staticmethod
     def _render_component(result: Any) -> str:
-        from voodoo.seo import SEO
-        from voodoo.ui.component import Component
+        from grumo.seo import SEO
+        from grumo.ui.component import Component
 
         # A page may return ``(SEO, Component)`` (or the reverse) — the same
         # contract ``render_page_result`` honours on first render. A reactive
@@ -430,7 +430,7 @@ class StateRenderer:
 
     @staticmethod
     async def _broadcast_patch(element_id: str, html: str) -> None:
-        from voodoo.ui.events import ws_manager
+        from grumo.ui.events import ws_manager
 
         await ws_manager.broadcast_patch(element_id, html)
 

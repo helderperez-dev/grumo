@@ -1,8 +1,8 @@
-"""Python-first interactive Voodoo components.
+"""Python-first interactive Grumo components.
 
 This module is the interaction layer for the component library. Components
 express semantic browser events through ``data-vd-*`` attributes while
-:mod:`voodoo.static.client.js` owns the transport and DOM mechanics.
+:mod:`grumo.static.client.js` owns the transport and DOM mechanics.
 
 No first-party component in this module emits inline JavaScript.
 """
@@ -12,9 +12,9 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
-from voodoo.ui.component import Component, escape
-from voodoo.ui.events import bind_event
-from voodoo.ui.library import Icon, Text
+from grumo.ui.component import Component, escape
+from grumo.ui.events import bind_event
+from grumo.ui.library import Icon, Text
 
 EventHandler = Callable[..., Any] | str
 
@@ -108,7 +108,7 @@ class Button(Component):
 class Form(Component):
     """Semantic form surface with optional generated submit action.
 
-    ``submit="Save"`` is the happy path for the common case. Voodoo creates a
+    ``submit="Save"`` is the happy path for the common case. Grumo creates a
     correctly typed submit button so application code does not need to know the
     browser's ``type="submit"`` mechanic. Custom submit controls remain possible
     by composing an explicit :class:`Button` in ``children``.
@@ -365,7 +365,7 @@ class Composer(Component):
 
 
 class ThemeToggle(Component):
-    """Theme control using a Voodoo client action rather than inline JS."""
+    """Theme control using a Grumo client action rather than inline JS."""
 
     tag = "button"
     style = "theme-toggle"

@@ -5,9 +5,9 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
-from voodoo.ui.component import Component
-from voodoo.ui.events import bind_event
-from voodoo.ui.library import Sidebar
+from grumo.ui.component import Component
+from grumo.ui.events import bind_event
+from grumo.ui.library import Sidebar
 
 EventHandler = Callable[..., Any] | str
 

@@ -11,7 +11,7 @@ import math
 import re
 from typing import Any
 
-from voodoo.ui.component import Component
+from grumo.ui.component import Component
 
 _TONES = frozenset({"primary", "info", "success", "warning", "danger"})
 _SIZES = frozenset({"sm", "md", "lg"})

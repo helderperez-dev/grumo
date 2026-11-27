@@ -1,7 +1,7 @@
-"""The Voodoo component library.
+"""The Grumo component library.
 
 Components declare structure and semantics only — every class string comes
-from the active StyleAdapter (see :mod:`voodoo.adapters.tailwind`). All
+from the active StyleAdapter (see :mod:`grumo.adapters.tailwind`). All
 components render through the single :meth:`Component.render` path.
 """
 
@@ -11,8 +11,8 @@ import sys
 from collections.abc import Callable
 from typing import Any, TypedDict
 
-from voodoo.ui.component import Component, escape, tone_to_color_var
-from voodoo.ui.events import bind_event
+from grumo.ui.component import Component, escape, tone_to_color_var
+from grumo.ui.events import bind_event
 
 EventHandler = Callable[..., Any] | str
 
@@ -638,7 +638,7 @@ class Markdown(Component):
         self.source = source
 
     def render(self) -> str:
-        from voodoo.ui.markdown import render_markdown
+        from grumo.ui.markdown import render_markdown
 
         return render_markdown(self.source)
 
@@ -756,7 +756,7 @@ class Sidebar(Component):
         collapsible: bool = True,
         mobile_mode: str = "hidden",
         dismiss_mode: str = "hidden",
-        brand: Any | None = "Voodoo",
+        brand: Any | None = "Grumo",
         logo: Any | None = "V.",
         brand_href: str | None = None,
         brand_label: str | None = None,
@@ -828,7 +828,7 @@ class Form(Component):
         unavailable = disabled or read_only or loading or bool(error)
         if on_submit and not unavailable:
             self.attrs["onsubmit"] = (
-                f"event.preventDefault(); voodoo.sendEvent('{on_submit}', "
+                f"event.preventDefault(); grumo.sendEvent('{on_submit}', "
                 "this.id, new FormData(this))"
             )
         self.props = _library_state(
@@ -864,7 +864,7 @@ class Input(Component):
         unavailable = disabled or read_only or loading or bool(error)
         if on_change and not unavailable:
             self.attrs["onchange"] = (
-                f"voodoo.sendEvent('{on_change}', this.id, this.value)"
+                f"grumo.sendEvent('{on_change}', this.id, this.value)"
             )
         if "type" not in self.attrs:
             self.attrs["type"] = "text"
@@ -900,7 +900,7 @@ class Textarea(Component):
         unavailable = disabled or read_only or loading or bool(error)
         if on_change and not unavailable:
             self.attrs["onchange"] = (
-                f"voodoo.sendEvent('{on_change}', this.id, this.value)"
+                f"grumo.sendEvent('{on_change}', this.id, this.value)"
             )
         self.props = _library_state(
             self,
@@ -929,7 +929,7 @@ class Select(Component):
         unavailable = disabled or read_only or loading or bool(error)
         if on_change and not unavailable:
             self.attrs["onchange"] = (
-                f"voodoo.sendEvent('{on_change}', this.id, this.value)"
+                f"grumo.sendEvent('{on_change}', this.id, this.value)"
             )
         self.props = _library_state(
             self,
@@ -977,7 +977,7 @@ class Checkbox(Input):
         unavailable = disabled or read_only or loading or bool(error)
         if on_change and not unavailable:
             kwargs["onchange"] = (
-                f"voodoo.sendEvent('{on_change}', this.id, this.checked)"
+                f"grumo.sendEvent('{on_change}', this.id, this.checked)"
             )
         super().__init__(
             *children,
@@ -1005,7 +1005,7 @@ class Radio(Input):
         unavailable = disabled or read_only or loading or bool(error)
         if on_change and not unavailable:
             kwargs["onchange"] = (
-                f"voodoo.sendEvent('{on_change}', this.id, this.checked)"
+                f"grumo.sendEvent('{on_change}', this.id, this.checked)"
             )
         super().__init__(
             *children,
@@ -1198,7 +1198,7 @@ class Img(Component):
         self.attrs["src"] = src
         if alt is None:
             print(
-                "[Voodoo SEO Warning] <Img> is missing an 'alt' attribute. "
+                "[Grumo SEO Warning] <Img> is missing an 'alt' attribute. "
                 "This hurts accessibility and SEO.",
                 file=sys.stderr,
             )

@@ -1,8 +1,8 @@
 """Server-side rendering: full HTML documents from component trees.
 
-Sitemap/robots generation lives in ``voodoo.core.sitemap`` (SEO concern, not
+Sitemap/robots generation lives in ``grumo.core.sitemap`` (SEO concern, not
 rendering). This module owns the HTML document shell, the client runtime
-(``voodoo/static/client.js``), and the active theme's ``custom.css``.
+(``grumo/static/client.js``), and the active theme's ``custom.css``.
 """
 
 import os
@@ -31,18 +31,18 @@ def _get_client_js() -> str:
 
 
 def _get_project_styles() -> str:
-    from voodoo.ui.styles.presets import get_active_custom_css
+    from grumo.ui.styles.presets import get_active_custom_css
 
     return get_active_custom_css()
 
 
 def render_page(component: Any, seo: Any = None) -> str:
-    """Render a complete HTML document for a Voodoo component tree."""
-    from voodoo.config import config
-    from voodoo.seo import SEO
-    from voodoo.ui.brand import BRAND_CSS
-    from voodoo.ui.component import Component
-    from voodoo.ui.styles.theme import default_theme
+    """Render a complete HTML document for a Grumo component tree."""
+    from grumo.config import config
+    from grumo.seo import SEO
+    from grumo.ui.brand import BRAND_CSS
+    from grumo.ui.component import Component
+    from grumo.ui.styles.theme import default_theme
 
     if isinstance(component, tuple) and len(component) == 2:
         first, second = component
@@ -65,24 +65,24 @@ def render_page(component: Any, seo: Any = None) -> str:
     project_styles = _get_project_styles()
     css_vars = default_theme.to_css_variables()
 
-    from voodoo.adapters.voodoo_css import VoodooCSSAdapter, generate_component_css
-    from voodoo.ui.styles import current_adapter
-    from voodoo.ui.styles.extended import generate_extended_css
-    from voodoo.ui.styles.product import generate_product_css
-    from voodoo.ui.styles.system import generate_design_system_css
-    from voodoo.ui.styles.theme_contract import generate_design_system_theme_css
-    from voodoo.ui.styles.voodoo_system import generate_voodoo_system_css
+    from grumo.adapters.grumo_css import GrumoCSSAdapter, generate_component_css
+    from grumo.ui.styles import current_adapter
+    from grumo.ui.styles.extended import generate_extended_css
+    from grumo.ui.styles.product import generate_product_css
+    from grumo.ui.styles.system import generate_design_system_css
+    from grumo.ui.styles.theme_contract import generate_design_system_theme_css
+    from grumo.ui.styles.grumo_system import generate_grumo_system_css
 
     adapter = current_adapter()
-    is_voodoo_css = isinstance(adapter, VoodooCSSAdapter)
+    is_grumo_css = isinstance(adapter, GrumoCSSAdapter)
 
-    if is_voodoo_css:
+    if is_grumo_css:
         component_css = generate_component_css(default_theme)
         design_system_css = generate_design_system_css(default_theme)
         design_system_theme_css = generate_design_system_theme_css(default_theme)
         extended_css = generate_extended_css(default_theme)
         product_css = generate_product_css(default_theme)
-        voodoo_system_css = generate_voodoo_system_css(default_theme)
+        grumo_system_css = generate_grumo_system_css(default_theme)
         head_scripts = ""
         body_classes = "min-h-screen antialiased"
     else:
@@ -92,7 +92,7 @@ def render_page(component: Any, seo: Any = None) -> str:
         design_system_theme_css = ""
         extended_css = ""
         product_css = ""
-        voodoo_system_css = ""
+        grumo_system_css = ""
         head_scripts = f"""
         <script src="https://cdn.tailwindcss.com"></script>
         <script>
@@ -112,7 +112,7 @@ def render_page(component: Any, seo: Any = None) -> str:
     theme_init_script = f"""<script>
 (function () {{
     var mode = "{mode}";
-    var m = document.cookie.match(/(?:^|;\\s*)voodoo_theme=([^;]+)/);
+    var m = document.cookie.match(/(?:^|;\\s*)grumo_theme=([^;]+)/);
     var resolved = m ? m[1] : mode;
     if (resolved === "system") {{
         resolved = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -134,7 +134,7 @@ def render_page(component: Any, seo: Any = None) -> str:
         base_url=seo_config.base_url,
     )
     generator_tag = (
-        '<meta name="generator" content="Voodoo Framework">'
+        '<meta name="generator" content="Grumo Framework">'
         if seo_config.generator_meta
         else ""
     )
@@ -175,10 +175,10 @@ def render_page(component: Any, seo: Any = None) -> str:
             /* Extended UI components */
             {extended_css}
 
-            /* Canonical Voodoo runtime/system concepts */
-            {voodoo_system_css}
+            /* Canonical Grumo runtime/system concepts */
+            {grumo_system_css}
 
-            /* Voodoo Design System 4 — final convergence layer */
+            /* Grumo Design System 4 — final convergence layer */
             {design_system_css}
 
             /* Theme-authoritative Design System visual tokens */

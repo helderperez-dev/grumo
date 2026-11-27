@@ -1,10 +1,10 @@
-"""Semantic layout primitives layered on the stable Voodoo layout model."""
+"""Semantic layout primitives layered on the stable Grumo layout model."""
 
 from __future__ import annotations
 
 from typing import Any
 
-from voodoo.ui.library import Page as _Page
+from grumo.ui.library import Page as _Page
 
 
 class Page(_Page):

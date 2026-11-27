@@ -6,9 +6,9 @@ from collections.abc import Callable
 from typing import Any
 from uuid import uuid4
 
-from voodoo.ui.component import Component
-from voodoo.ui.events import bind_event
-from voodoo.ui.interactive import Button
+from grumo.ui.component import Component
+from grumo.ui.events import bind_event
+from grumo.ui.interactive import Button
 
 EventHandler = Callable[..., Any] | str
 
@@ -35,7 +35,7 @@ def _require_button_trigger(component: Component, owner: str) -> None:
 
 
 class ModalTrigger(Button):
-    """Button that opens a native Voodoo ``Modal`` or ``Dialog``."""
+    """Button that opens a native Grumo ``Modal`` or ``Dialog``."""
 
     def __init__(
         self,

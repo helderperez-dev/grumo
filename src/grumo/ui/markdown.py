@@ -3,7 +3,7 @@
 Renders the subset real chat/agent UIs need — headings, emphasis, inline
 code, fenced code blocks, lists, blockquotes, links, paragraphs, hard
 breaks — while escaping ALL raw HTML in the source. Used by the
-:class:`~voodoo.ui.library.Markdown` component.
+:class:`~grumo.ui.library.Markdown` component.
 
 Deliberately NOT a full CommonMark implementation: the goal is safe,
 predictable output for model-generated text, not spec completeness.

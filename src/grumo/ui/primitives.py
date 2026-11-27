@@ -1,4 +1,4 @@
-"""High-level Voodoo UI primitives with excellent defaults.
+"""High-level Grumo UI primitives with excellent defaults.
 
 These components intentionally expose semantic application concepts rather
 than browser mechanics. They compose the existing Component model and native
@@ -11,8 +11,8 @@ from collections.abc import Callable
 from typing import Any
 from uuid import uuid4
 
-from voodoo.ui.component import Component, escape
-from voodoo.ui.events import bind_event
+from grumo.ui.component import Component, escape
+from grumo.ui.events import bind_event
 
 EventHandler = Callable[..., Any] | str
 
@@ -246,7 +246,7 @@ class Tooltip(Component):
 class Popover(Component):
     """Native, progressively enhanced contextual surface.
 
-    ``trigger`` can be any Component. Voodoo wires the browser's native
+    ``trigger`` can be any Component. Grumo wires the browser's native
     popover target relationship automatically.
     """
 
