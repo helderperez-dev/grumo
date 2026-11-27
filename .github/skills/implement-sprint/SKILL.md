@@ -6,7 +6,7 @@
 
 ## Purpose
 
-Guide the structured implementation of a sprint's scope, ensuring all items are completed, tested, and released following the Voodoo development process.
+Guide the structured implementation of a sprint's scope, ensuring all items are completed, tested, and released following the Grumo development process.
 
 ---
 
@@ -77,7 +77,7 @@ All three must pass. If any fail:
 1. Fix formatting: `just format`.
 2. Fix lint errors: `just lint` (ruff).
 3. Fix test failures.
-4. Run type check: `uv run mypy src/voodoo` (not in lint gate, but required).
+4. Run type check: `uv run mypy src/grumo` (not in lint gate, but required).
 5. Re-run the full gate.
 
 ### Step 6: Update Documentation
@@ -91,16 +91,16 @@ All three must pass. If any fail:
 3. Update `ROADMAP.md` if milestones changed.
 4. Update `README.md` if user-facing features changed (features list, quick start, CLI commands).
 5. Update relevant `docs/*.md` if behavior changed. Canonical examples:
-   - `src/voodoo/runtime/scheduling/` → workers/scheduling/runtime docs
-   - `src/voodoo/runtime/agency/` → adaptive/goal/runtime docs
-   - `src/voodoo/runtime/distributed/` → protocol/deployment/runtime docs
-   - `src/voodoo/world/` → World/ontology docs
-   - `src/voodoo/edge/` → Edge/protocol/deployment docs
-   - `src/voodoo/ai/` → `docs/agents.md`, `docs/tools.md`
-   - `src/voodoo/integrations/mcp/` → `docs/mcp.md`
-   - `src/voodoo/observability/` → observability/telemetry docs
-   - `src/voodoo/data/`, `storage/`, `adapters/` → data/deployment docs
-   - `src/voodoo/ui/` → component/design-system docs
+   - `src/grumo/runtime/scheduling/` → workers/scheduling/runtime docs
+   - `src/grumo/runtime/agency/` → adaptive/goal/runtime docs
+   - `src/grumo/runtime/distributed/` → protocol/deployment/runtime docs
+   - `src/grumo/world/` → World/ontology docs
+   - `src/grumo/edge/` → Edge/protocol/deployment docs
+   - `src/grumo/ai/` → `docs/agents.md`, `docs/tools.md`
+   - `src/grumo/integrations/mcp/` → `docs/mcp.md`
+   - `src/grumo/observability/` → observability/telemetry docs
+   - `src/grumo/data/`, `storage/`, `adapters/` → data/deployment docs
+   - `src/grumo/ui/` → component/design-system docs
    - (Full table in `.github/instructions/pull-request.instructions.md`)
 6. Update `ARCHITECTURE.md` if a new architectural layer or primitive was added.
 7. Update `tests/integration/test_contract_api.py` and `docs/public-api-3.md` if the public API changed.
@@ -180,7 +180,7 @@ just release X.Y.Z
 ### Step 11: Verify Release
 
 1. Check GitHub Actions release workflow succeeded.
-2. Verify the new version is on PyPI: `pip index versions voodoo-framework`.
+2. Verify the new version is on PyPI: `pip index versions grumo-framework`.
 3. Reconcile `SPRINT_PLAN.md` and `ROADMAP.md` with the published release checkpoint.
 4. Do not describe a version as published until the release workflow succeeds.
 
@@ -192,7 +192,7 @@ Before marking a sprint `DONE`, verify:
 
 - [ ] All checked scope items implemented.
 - [ ] Quality gate passes (`just format && just lint && just test`).
-- [ ] `uv run mypy src/voodoo` passes.
+- [ ] `uv run mypy src/grumo` passes.
 - [ ] `CHANGELOG.md` updated.
 - [ ] `SPRINT_PLAN.md` updated.
 - [ ] `ROADMAP.md` updated if milestones changed.

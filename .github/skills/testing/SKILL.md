@@ -6,7 +6,7 @@
 
 ## Purpose
 
-Ensure all tests follow Voodoo's testing standards: proper structure, isolation, contract patterns, and the quality gate.
+Ensure all tests follow Grumo's testing standards: proper structure, isolation, contract patterns, and the quality gate.
 
 ---
 
@@ -72,15 +72,15 @@ from .test_database import DatabaseContractTests
 
 
 @pytest.mark.skipif(
-    not os.environ.get("VOODOO_TEST_MYSQL_URL"),
-    reason="VOODOO_TEST_MYSQL_URL not set",
+    not os.environ.get("GRUMO_TEST_MYSQL_URL"),
+    reason="GRUMO_TEST_MYSQL_URL not set",
 )
 class TestMyProviderDatabase(DatabaseContractTests):
     @pytest.fixture
     def db(self):
-        from voodoo.storage.database.myprovider import MyProviderDatabase
+        from grumo.storage.database.myprovider import MyProviderDatabase
 
-        cfg = {"url": os.environ.get("VOODOO_TEST_MYSQL_URL")}
+        cfg = {"url": os.environ.get("GRUMO_TEST_MYSQL_URL")}
         db = MyProviderDatabase(cfg)
         yield db
         # cleanup
@@ -134,7 +134,7 @@ Autouse fixtures in `tests/conftest.py` handle cleanup:
 | Fixture | What it cleans |
 |---|---|
 | `_clean_page_registry` | `@page` registry |
-| `_reset_queue_state` | `voodoo.runtime.scheduling` provider + running worker tasks |
+| `_reset_queue_state` | `grumo.runtime.scheduling` provider + running worker tasks |
 | `_close_db_after_test` | optional SQLite resources, Runtime Store and Model state |
 | `model_store` | fresh Store-native Model substrate when explicitly requested |
 | `app` / `client` | isolated application/TestClient lifecycle |
@@ -152,15 +152,15 @@ Autouse fixtures in `tests/conftest.py` handle cleanup:
 ```python
 # CORRECT — runs before skip markers
 @pytest.mark.skipif(
-    not os.environ.get("VOODOO_TEST_REDIS_URL"),
-    reason="VOODOO_TEST_REDIS_URL not set",
+    not os.environ.get("GRUMO_TEST_REDIS_URL"),
+    reason="GRUMO_TEST_REDIS_URL not set",
 )
 class TestRedisQueue(QueueContractTests):
     ...
 
 # WRONG — KeyError before skip markers can run
 @pytest.mark.skipif(
-    not os.environ["VOODOO_TEST_REDIS_URL"],  # KeyError!
+    not os.environ["GRUMO_TEST_REDIS_URL"],  # KeyError!
     reason="...",
 )
 ```
@@ -181,10 +181,10 @@ uv run pytest tests/integration/test_contract_api.py
 uv run pytest -v tests/architecture/test_repository_layout.py
 
 # With coverage
-uv run pytest --cov=voodoo --cov-report=term-missing
+uv run pytest --cov=grumo --cov-report=term-missing
 
 # Contract tests (with service running)
-VOODOO_TEST_REDIS_URL="redis://localhost:6379" uv run pytest tests/contracts/test_queue_redis.py -v
+GRUMO_TEST_REDIS_URL="redis://localhost:6379" uv run pytest tests/contracts/test_queue_redis.py -v
 ```
 
 ### Step 6: Fix Failures
