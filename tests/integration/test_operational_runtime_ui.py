@@ -5,12 +5,12 @@ from types import SimpleNamespace
 from starlette.applications import Starlette
 from starlette.testclient import TestClient
 
-from voodoo.primitives.capability import Capability
-from voodoo.primitives.intent import Intent
-from voodoo.runtime import ExecutionEngine
-from voodoo.runtime.inspection import runtime_dashboard
-from voodoo.runtime.operations import OperationalRuntime
-from voodoo.world import Entity, WorldModel
+from grumo.primitives.capability import Capability
+from grumo.primitives.intent import Intent
+from grumo.runtime import ExecutionEngine
+from grumo.runtime.inspection import runtime_dashboard
+from grumo.runtime.operations import OperationalRuntime
+from grumo.world import Entity, WorldModel
 
 
 async def test_operational_snapshot_combines_execution_and_world():
@@ -61,10 +61,10 @@ def test_dashboard_mounts_html_and_json_routes():
     runtime_dashboard(inspector)(app)
 
     client = TestClient(starlette)
-    html_response = client.get("/_voodoo/runtime")
-    json_response = client.get("/_voodoo/runtime/api")
+    html_response = client.get("/_grumo/runtime")
+    json_response = client.get("/_grumo/runtime/api")
 
     assert html_response.status_code == 200
-    assert "Voodoo Runtime" in html_response.text
+    assert "Grumo Runtime" in html_response.text
     assert json_response.status_code == 200
     assert json_response.json()["summary"]["executions"] == 0

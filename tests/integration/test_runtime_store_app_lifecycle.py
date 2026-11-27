@@ -5,16 +5,16 @@ from pathlib import Path
 import pytest
 from starlette.testclient import TestClient
 
-from voodoo.core.app import create_app
-from voodoo.core.errors import ConfigurationError
+from grumo.core.app import create_app
+from grumo.core.errors import ConfigurationError
 
 
-def test_app_opens_and_closes_voodoo_store_by_default(
+def test_app_opens_and_closes_grumo_store_by_default(
     tmp_path: Path, monkeypatch
 ) -> None:
-    store_path = tmp_path / "application.vstore"
-    monkeypatch.setenv("VOODOO_STORE_PATH", str(store_path))
-    monkeypatch.delenv("VOODOO_STORE_ENABLED", raising=False)
+    store_path = tmp_path / "application.grumo"
+    monkeypatch.setenv("GRUMO_STORE_PATH", str(store_path))
+    monkeypatch.delenv("GRUMO_STORE_ENABLED", raising=False)
 
     app = create_app(app_dir=str(tmp_path / "app"))
 
@@ -22,14 +22,14 @@ def test_app_opens_and_closes_voodoo_store_by_default(
         runtime_store = app.state.runtime_store
         assert runtime_store.started is True
         assert runtime_store.provider is not None
-        assert runtime_store.provider.name == "voodoo"
+        assert runtime_store.provider.name == "grumo"
         assert runtime_store.provider.path == store_path
         assert store_path.exists()
 
-        from voodoo.runtime.execution.engine import engine
+        from grumo.runtime.execution.engine import engine
 
         assert engine._execution_store is not None
-        assert engine._execution_store.provider == "voodoo"
+        assert engine._execution_store.provider == "grumo"
         assert engine._execution_store.path == store_path
 
     assert runtime_store.started is False
@@ -41,8 +41,8 @@ def test_app_rejects_disabling_required_default_store(
     tmp_path: Path, monkeypatch
 ) -> None:
     store_path = tmp_path / "disabled.vstore"
-    monkeypatch.setenv("VOODOO_STORE_PATH", str(store_path))
-    monkeypatch.setenv("VOODOO_STORE_ENABLED", "false")
+    monkeypatch.setenv("GRUMO_STORE_PATH", str(store_path))
+    monkeypatch.setenv("GRUMO_STORE_ENABLED", "false")
 
     app = create_app(app_dir=str(tmp_path / "app"))
 

@@ -7,10 +7,10 @@ import json
 import pytest
 from starlette.websockets import WebSocketDisconnect
 
-from voodoo.mesh import MeshNetwork
-from voodoo.runtime import ExecutionContext, ExecutionEngine
-from voodoo.runtime.distributed.remote import RemoteExecutionRequest
-from voodoo.runtime.execution import ExecutionStatus
+from grumo.mesh import MeshNetwork
+from grumo.runtime import ExecutionContext, ExecutionEngine
+from grumo.runtime.distributed.remote import RemoteExecutionRequest
+from grumo.runtime.execution import ExecutionStatus
 
 
 def test_legacy_jsonrpc_call_normalizes_to_canonical_request():
@@ -82,7 +82,7 @@ async def test_remote_call_runs_only_through_execution_engine():
 
     @net.expose(name="math.add")
     async def add(a: int, b: int):
-        from voodoo.runtime.context import current_context
+        from grumo.runtime.context import current_context
 
         ctx = current_context()
         assert ctx is not None
@@ -270,9 +270,9 @@ async def test_remote_websocket_call_keeps_legacy_result_and_adds_execution_meta
     response = json.loads(sent[0])
     assert response["id"] == "rpc-double"
     assert response["result"] == 8
-    assert response["voodoo"]["request_id"] == "rpc-double"
-    assert response["voodoo"]["status"] == "completed"
-    assert response["voodoo"]["execution_id"] in engine.executions
+    assert response["grumo"]["request_id"] == "rpc-double"
+    assert response["grumo"]["status"] == "completed"
+    assert response["grumo"]["execution_id"] in engine.executions
 
 
 def test_exposed_operation_builds_runtime_intent_without_leaking_arguments_as_kwargs():
@@ -304,7 +304,7 @@ async def test_remote_callable_sees_normal_execution_context_type():
 
     @net.expose(name="runtime.context")
     def capture_context():
-        from voodoo.runtime.context import current_context
+        from grumo.runtime.context import current_context
 
         ctx = current_context()
         assert ctx is not None

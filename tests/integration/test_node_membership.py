@@ -6,18 +6,18 @@ import json
 
 import pytest
 
-from voodoo.runtime import AuthenticationEvidence, Identity, IdentityKind, Principal
-from voodoo.runtime.distributed import (
+from grumo.runtime import AuthenticationEvidence, Identity, IdentityKind, Principal
+from grumo.runtime.distributed import (
     MemberStatus,
     NodeAdvertisement,
-    VoodooStoreMembershipStore,
+    GrumoStoreMembershipStore,
 )
-from voodoo.runtime.store import RuntimeStore, StoreConfig, bind_active_runtime_store
+from grumo.runtime.store import RuntimeStore, StoreConfig, bind_active_runtime_store
 
 
 @pytest.fixture
 def runtime_store(tmp_path):
-    runtime = RuntimeStore(StoreConfig(path=tmp_path / "application.vstore"))
+    runtime = RuntimeStore(StoreConfig(path=tmp_path / "application.grumo"))
     runtime.start()
     bind_active_runtime_store(runtime)
     try:
@@ -35,7 +35,7 @@ def _node(node_id: str = "node-a") -> Principal:
 
 
 def test_authenticated_node_join_is_durable(runtime_store) -> None:
-    store = VoodooStoreMembershipStore()
+    store = GrumoStoreMembershipStore()
     advertisement = NodeAdvertisement(
         runtime_version="3.0-dev",
         capabilities=("compute.gpu",),
@@ -59,7 +59,7 @@ def test_authenticated_node_join_is_durable(runtime_store) -> None:
 
 def test_advertised_capabilities_are_not_runtime_authority(runtime_store) -> None:
     principal = _node()
-    store = VoodooStoreMembershipStore()
+    store = GrumoStoreMembershipStore()
     membership = store.join(
         principal,
         NodeAdvertisement(capabilities=("cluster.admin", "payment.execute")),
@@ -74,7 +74,7 @@ def test_advertised_capabilities_are_not_runtime_authority(runtime_store) -> Non
 
 def test_heartbeat_updates_health_metadata_without_rejoining(runtime_store) -> None:
     principal = _node()
-    store = VoodooStoreMembershipStore()
+    store = GrumoStoreMembershipStore()
     joined = store.join(principal, NodeAdvertisement(resources={"load": 0.8}))
     refreshed = store.heartbeat(
         principal,
@@ -89,7 +89,7 @@ def test_heartbeat_updates_health_metadata_without_rejoining(runtime_store) -> N
 
 def test_membership_suspect_and_leave_lifecycle(runtime_store) -> None:
     principal = _node()
-    store = VoodooStoreMembershipStore()
+    store = GrumoStoreMembershipStore()
     store.join(principal)
 
     suspect = store.mark_suspect("node-a")
@@ -102,11 +102,11 @@ def test_membership_suspect_and_leave_lifecycle(runtime_store) -> None:
 
 
 def test_membership_survives_store_restart(tmp_path) -> None:
-    path = tmp_path / "application.vstore"
+    path = tmp_path / "application.grumo"
     runtime = RuntimeStore(StoreConfig(path=path))
     runtime.start()
     bind_active_runtime_store(runtime)
-    VoodooStoreMembershipStore().join(
+    GrumoStoreMembershipStore().join(
         _node(), NodeAdvertisement(services=("scheduler",))
     )
     bind_active_runtime_store(None)
@@ -116,7 +116,7 @@ def test_membership_survives_store_restart(tmp_path) -> None:
     reopened.start()
     bind_active_runtime_store(reopened)
     try:
-        membership = VoodooStoreMembershipStore().get("node-a")
+        membership = GrumoStoreMembershipStore().get("node-a")
         assert membership is not None
         assert membership.status is MemberStatus.ACTIVE
         assert membership.advertisement.services == ("scheduler",)
@@ -138,11 +138,11 @@ def test_membership_rejects_future_schema(runtime_store) -> None:
     }
     native.put(b"runtime:membership:node:node-future", json.dumps(base).encode())
     with pytest.raises(ValueError, match="unsupported"):
-        VoodooStoreMembershipStore().get("node-future")
+        GrumoStoreMembershipStore().get("node-future")
 
 
 def test_membership_reads_legacy_unversioned_record(runtime_store) -> None:
-    store = VoodooStoreMembershipStore()
+    store = GrumoStoreMembershipStore()
     joined = store.join(_node("node-legacy"))
     legacy = joined.describe()
     runtime_store.provider.native.upsert_record(
@@ -155,7 +155,7 @@ def test_membership_reads_legacy_unversioned_record(runtime_store) -> None:
 
 
 def test_non_node_or_unauthenticated_principal_cannot_join(runtime_store) -> None:
-    store = VoodooStoreMembershipStore()
+    store = GrumoStoreMembershipStore()
     user = Principal(
         identity=Identity(id="user:1", kind=IdentityKind.USER),
         evidence=(AuthenticationEvidence(method="test", subject="1"),),

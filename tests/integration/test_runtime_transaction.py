@@ -6,8 +6,8 @@ import json
 
 import pytest
 
-from voodoo.runtime.store import RuntimeStore, StoreConfig, bind_active_runtime_store
-from voodoo.runtime.transaction import (
+from grumo.runtime.store import RuntimeStore, StoreConfig, bind_active_runtime_store
+from grumo.runtime.transaction import (
     OutboxDispatcher,
     OutboxMessage,
     RuntimeTransaction,
@@ -19,7 +19,7 @@ from voodoo.runtime.transaction import (
 
 @pytest.fixture
 def runtime_store(tmp_path):
-    runtime = RuntimeStore(StoreConfig(path=tmp_path / "application.vstore"))
+    runtime = RuntimeStore(StoreConfig(path=tmp_path / "application.grumo"))
     runtime.start()
     bind_active_runtime_store(runtime)
     try:

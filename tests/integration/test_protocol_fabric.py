@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from voodoo.protocol import (
+from grumo.protocol import (
     FABRIC_SCHEMA_VERSION,
     PROTOCOL_ENTITIES,
     FabricWorkOutcome,
