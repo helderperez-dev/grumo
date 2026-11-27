@@ -104,7 +104,7 @@ def new_trace_id() -> str:
 
 @dataclass(frozen=True)
 class Span:
-    """OpenTelemetry-compatible span.
+    """Native hierarchical trace span.
 
     Carries trace/span identity, timing, status, and arbitrary attributes.
     Frozen so spans are safe to store and pass across boundaries.
@@ -295,7 +295,7 @@ class TelemetryStore:
         if len(self.metrics["store_operations"]) > 1000:
             self.metrics["store_operations"].pop(0)
 
-    # -- span model (OTel-compatible) ----------------------------------
+    # -- native span model ----------------------------------
 
     def record_span(self, span: Span) -> None:
         """Store a completed span in the native ring buffer."""
@@ -458,7 +458,7 @@ def trace(
 ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """Decorator to trace a specific function block.
 
-    Records both a lightweight trace record and a full OTel-compatible span.
+    Records both a lightweight trace record and a native hierarchical span.
     """
 
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
