@@ -1,11 +1,11 @@
 # Examples
 
-Voodoo examples are executable documentation. They are organized as a learning
+Grumo examples are executable documentation. They are organized as a learning
 path rather than a flat catalog.
 
 ## Basics
 
-- [Hello world](basics/hello_world/) — smallest Voodoo application.
+- [Hello world](basics/hello_world/) — smallest Grumo application.
 
 ## Web
 

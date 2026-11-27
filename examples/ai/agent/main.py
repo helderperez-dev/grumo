@@ -1,11 +1,11 @@
 """Simple AI Agent — an agent that uses the mock provider (no network needed).
 
-Run: python main.py  or  voodoo dev
+Run: python main.py  or  grumo dev
 """
 
-from voodoo import Agent, App, page, state, tool
-from voodoo.core import event
-from voodoo.ui import Button, Card, Container, Heading, Text
+from grumo import Agent, App, page, state, tool
+from grumo.core import event
+from grumo.ui import Button, Card, Container, Heading, Text
 
 app = App()
 

@@ -1,11 +1,11 @@
-"""Voodoo UI Magic — Sprint 25 acceptance application.
+"""Grumo UI Magic — Sprint 25 acceptance application.
 
 Run with::
 
     python examples/ui_magic/main.py
 
 The application intentionally contains no application JavaScript and no custom
-CSS. It demonstrates the Voodoo happy path: Python callables, reactive State,
+CSS. It demonstrates the Grumo happy path: Python callables, reactive State,
 async actions, forms, product components, system components and soft links.
 """
 
@@ -14,8 +14,8 @@ from __future__ import annotations
 import asyncio
 from datetime import UTC, datetime
 
-from voodoo import App, page, state
-from voodoo.ui import (
+from grumo import App, page, state
+from grumo.ui import (
     Brand,
     Button,
     Column,
@@ -145,7 +145,7 @@ async def run_command(command: str) -> None:
 
 def _nav(active: str) -> Navbar:
     return Navbar(
-        Brand("Voodoo", href="/"),
+        Brand("Grumo", href="/"),
         Flex(
             StatusBadge("online", "Runtime live", pulse=True),
             NavLink("Overview", href="/", active=active == "overview"),
@@ -192,7 +192,7 @@ def _device_table() -> DataTable:
         on_select=select_device,
         empty=EmptyState(
             "No devices",
-            "Enroll a node and Voodoo will begin observing it immediately.",
+            "Enroll a node and Grumo will begin observing it immediately.",
         ),
         caption="Select a device to inspect its current projected state.",
     )
@@ -239,7 +239,7 @@ def overview():
                 Eyebrow("Operations"),
                 Heading("A calm view of a changing world", size="xl"),
                 Text(
-                    "Python describes the interface. Voodoo owns reactivity, events, "
+                    "Python describes the interface. Grumo owns reactivity, events, "
                     "browser transport and visual behavior.",
                     tone="muted",
                 ),
@@ -320,7 +320,7 @@ def activity():
                 Eyebrow("Activity"),
                 Heading("Everything important stays inspectable", size="xl"),
                 Text(
-                    "This page is reached through Voodoo soft navigation and shares "
+                    "This page is reached through Grumo soft navigation and shares "
                     "the same reactive Python state.",
                     tone="muted",
                 ),

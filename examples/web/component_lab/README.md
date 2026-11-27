@@ -1,12 +1,12 @@
-# Voodoo Component Lab
+# Grumo Component Lab
 
-The Component Lab is Voodoo's visual and behavioral acceptance application. It
+The Component Lab is Grumo's visual and behavioral acceptance application. It
 uses public framework APIs only and intentionally contains no application CSS.
 
 Run it locally:
 
 ```bash
-voodoo dev examples.web.component_lab.main:app
+grumo dev examples.web.component_lab.main:app
 ```
 
 Routes cover foundations, application shell, chat/AI, auth, forms, navigation,
@@ -25,7 +25,7 @@ uv run playwright install chromium
 Then run:
 
 ```bash
-VOODOO_BROWSER_TESTS=1 uv run pytest tests/browser/test_component_lab_browser.py
+GRUMO_BROWSER_TESTS=1 uv run pytest tests/browser/test_component_lab_browser.py
 ```
 
 The browser contract checks keyboard/dialog behavior, tab activation, input

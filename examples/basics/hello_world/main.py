@@ -1,10 +1,10 @@
-"""Hello World — a minimal Voodoo app showing the default design system.
+"""Hello World — a minimal Grumo app showing the default design system.
 
-Run: python main.py  or  voodoo dev
+Run: python main.py  or  grumo dev
 """
 
-from voodoo import App, page
-from voodoo.ui import Badge, Button, Card, Grid, Heading, Link, Page, Stack, Text
+from grumo import App, page
+from grumo.ui import Badge, Button, Card, Grid, Heading, Link, Page, Stack, Text
 
 app = App()
 
@@ -13,7 +13,7 @@ app = App()
 def home():
     return Page(
         Stack(
-            Heading("Hello, Voodoo", level=1),
+            Heading("Hello, Grumo", level=1),
             Text(
                 "Zero-config design system: semantic components, theme tokens, "
                 "and polished dark mode out of the box.",
@@ -23,8 +23,8 @@ def home():
                 Button("Get started", variant="primary"),
                 Button("Learn more", variant="secondary"),
                 Link(
-                    "View Voodoo on GitHub",
-                    href="https://github.com/helderperez-dev/voodoo",
+                    "View Grumo on GitHub",
+                    href="https://github.com/helderperez-dev/grumo",
                 ),
                 gap="md",
             ),

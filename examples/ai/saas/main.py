@@ -1,4 +1,4 @@
-"""AI SaaS demo using the current Voodoo happy path.
+"""AI SaaS demo using the current Grumo happy path.
 
 Actual local chain exercised by this example:
 
@@ -8,14 +8,14 @@ Tools decorated with ``@tool`` are also available to the MCP integration, but
 MCP is a separate interoperability boundary and is not a fake step in this
 local execution path.
 
-Run: python examples/ai_saas/main.py  or  voodoo dev
+Run: python examples/ai_saas/main.py  or  grumo dev
 
 This demo uses the mock provider (no network/API keys required).
 """
 
-from voodoo import Agent, App, Model, page, state, task, tool
-from voodoo.mesh import mesh
-from voodoo.ui import Button, Card, Container, Div, Heading, Text
+from grumo import Agent, App, Model, page, state, task, tool
+from grumo.mesh import mesh
+from grumo.ui import Button, Card, Container, Div, Heading, Text
 
 app = App()
 
