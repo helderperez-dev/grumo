@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [2.0.1] — 2026-11-27
+
+- Fix readiness checks for Store-only installations without optional SQLite dependencies.
+- Validate migration health in isolated installations before publication.
+
+## [2.0.0] — 2026-11-27
+
+- Publish Grumo and Grumo Store 2.x with canonical package, CLI and application storage paths.
+- Remove legacy compatibility namespaces from the default distribution.
+
 ## [1.0.0]
 
 - First official Grumo Framework release, continuing the Voodoo runtime architecture under the new product identity.
