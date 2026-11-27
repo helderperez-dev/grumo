@@ -102,13 +102,13 @@ The middleware is auto-installed. It:
 
 ## API reference
 
-- `trace(name=None)` — decorator for tracing function blocks. Now also creates an OTel-compatible span with parent hierarchy.
+- `trace(name=None)` — decorator for tracing function blocks. Creates a native span with parent hierarchy.
 - `telemetry_store` — global `TelemetryStore` singleton.
 - `trace_id_var` — `ContextVar` holding the current trace ID.
 - `correlation_id_var` — `ContextVar` holding the current request correlation ID.
 - `new_trace_id()` — generate a new UUID4 hex trace ID.
 - `Span` — frozen dataclass: `trace_id`, `span_id`, `parent_span_id`, `name`, `start_time`, `end_time`, `status`, `attributes`. Has `duration_ms` property and `to_dict()`.
-- `start_span(name, attributes=None)` — async context manager creating child spans with automatic parent tracking.
+- `telemetry_store.start_span(name, attributes=None)` — synchronous context manager creating child spans with automatic parent tracking.
 - `TelemetryStore.record_request(latency_ms, error=False, ...)` — record an HTTP request and optional structured correlation metadata.
 - `TelemetryStore.record_trace(name, latency_ms, error=False)` — record a custom trace.
 - `TelemetryStore.record_span(span)` — store a Span in the native ring buffer (max 1000).
@@ -118,18 +118,18 @@ The middleware is auto-installed. It:
 
 ## Span model (Sprint 20)
 
-The `Span` dataclass is OTel-compatible and tracks hierarchical execution:
+The `Span` dataclass tracks hierarchical execution:
 
 ```python
-from grumo.observability import Span, start_span, telemetry_store
+from grumo.observability import Span, telemetry_store
 
 # Manual span creation
 span = Span(trace_id="abc123", name="db.query", attributes={"table": "users"})
 telemetry_store.record_span(span)
 
 # Context manager with automatic parent tracking
-async with start_span("outer") as outer:
-    async with start_span("inner") as inner:
+with telemetry_store.start_span("outer") as outer:
+    with telemetry_store.start_span("inner") as inner:
         # inner.parent_span_id == outer.span_id
         pass
 ```
