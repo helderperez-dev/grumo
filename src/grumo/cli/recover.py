@@ -1,6 +1,6 @@
-"""voodoo recover — reload unfinished executions from durable application state.
+"""grumo recover — reload unfinished executions from durable application state.
 
-The default recovery source is the canonical Voodoo Store configured for the
+The default recovery source is the canonical Grumo Store configured for the
 application. ``--store`` is retained only for explicit legacy JSONL/SQLite
 migration and compatibility workflows.
 """
@@ -13,16 +13,16 @@ from typing import Any
 
 import typer
 
-from voodoo.cli import terminal
+from grumo.cli import terminal
 
 
 def _resolve_store(store_path: str | None) -> Any:
     """Return canonical execution storage unless a legacy path is explicit."""
-    from voodoo.cli.context import acquire_execution_store
-    from voodoo.runtime.persistence import JSONFileExecutionStore
-    from voodoo.storage.execution import SQLiteExecutionStore
+    from grumo.cli.context import acquire_execution_store
+    from grumo.runtime.persistence import JSONFileExecutionStore
+    from grumo.storage.execution import SQLiteExecutionStore
 
-    explicit = store_path or os.environ.get("VOODOO_EXECUTION_STORE")
+    explicit = store_path or os.environ.get("GRUMO_EXECUTION_STORE")
     if explicit is None:
         return acquire_execution_store()
     if Path(explicit).suffix == ".jsonl":
@@ -35,14 +35,14 @@ def recover(
     store_path: str = typer.Option(
         None,
         "--store",
-        help="Legacy execution-store path; default uses application.vstore",
+        help="Legacy execution-store path; default uses application.grumo",
     ),
     json_mode: bool = typer.Option(
         False, "--json", help="Output machine-readable JSON"
     ),
 ) -> None:
     """Reload unfinished executions from the store into the engine."""
-    from voodoo.runtime.execution.engine import engine as runtime_engine
+    from grumo.runtime.execution.engine import engine as runtime_engine
 
     if app_str is not None:
         # Import the app first: it may attach its own store / register

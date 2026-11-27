@@ -1,12 +1,12 @@
 import platform
 
-from voodoo import __version__
-from voodoo.cli import terminal
+from grumo import __version__
+from grumo.cli import terminal
 
 
 def version() -> None:
     """
-    Show Voodoo Framework version and environment info.
+    Show Grumo Framework version and environment info.
     """
     terminal.wordmark(__version__)
     terminal.blank()

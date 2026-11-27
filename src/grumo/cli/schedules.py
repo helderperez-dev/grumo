@@ -1,4 +1,4 @@
-"""voodoo schedules — list/inspect/pause/resume durable schedules."""
+"""grumo schedules — list/inspect/pause/resume durable schedules."""
 
 from __future__ import annotations
 
@@ -7,8 +7,8 @@ from typing import Any
 
 import typer
 
-from voodoo.cli import terminal
-from voodoo.security.redaction import redact_string
+from grumo.cli import terminal
+from grumo.security.redaction import redact_string
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +22,7 @@ schedules_app = typer.Typer(
 
 def _get_store() -> Any:
     """Return the canonical Store-backed scheduler."""
-    from voodoo.cli.context import acquire_schedule_store
+    from grumo.cli.context import acquire_schedule_store
 
     try:
         return acquire_schedule_store()
@@ -30,7 +30,7 @@ def _get_store() -> Any:
         logger.warning(
             "schedule store acquisition failed error=%s", redact_string(str(error))
         )
-        from voodoo.config import get_config
+        from grumo.config import get_config
 
         return None, str(get_config().store.path)
 

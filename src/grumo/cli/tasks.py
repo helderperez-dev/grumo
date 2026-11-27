@@ -1,4 +1,4 @@
-"""voodoo tasks — inspect and manage durable background tasks."""
+"""grumo tasks — inspect and manage durable background tasks."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from typing import Any
 
 import typer
 
-from voodoo.cli import terminal
+from grumo.cli import terminal
 
 tasks_app = typer.Typer(
     name="tasks",
@@ -17,7 +17,7 @@ tasks_app = typer.Typer(
 
 
 def _get_queue() -> Any:
-    from voodoo.runtime.scheduling.workers import _get_queue
+    from grumo.runtime.scheduling.workers import _get_queue
 
     return _get_queue()
 
@@ -31,7 +31,7 @@ def list_tasks(
     """List recent tasks."""
     import asyncio
 
-    from voodoo.storage.queue import TaskStatus
+    from grumo.storage.queue import TaskStatus
 
     async def run() -> None:
         q = await _get_queue()

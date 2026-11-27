@@ -1,10 +1,10 @@
-"""voodoo objects — list/get artifacts from the object store."""
+"""grumo objects — list/get artifacts from the object store."""
 
 from __future__ import annotations
 
 import typer
 
-from voodoo.cli import terminal
+from grumo.cli import terminal
 
 objects_app = typer.Typer(
     name="objects",
@@ -20,7 +20,7 @@ def list_objects(
     json_mode: bool = typer.Option(False, "--json", help="Machine-readable JSON"),
 ) -> None:
     """List objects in the store."""
-    from voodoo.cli.context import acquire_object_store
+    from grumo.cli.context import acquire_object_store
 
     store, store_path = acquire_object_store()
     try:
@@ -48,7 +48,7 @@ def get_object(
     json_mode: bool = typer.Option(False, "--json", help="Machine-readable JSON"),
 ) -> None:
     """Get object metadata (and content size)."""
-    from voodoo.cli.context import acquire_object_store
+    from grumo.cli.context import acquire_object_store
 
     store, _store_path = acquire_object_store()
     try:
@@ -87,7 +87,7 @@ def list_artifacts(
     json_mode: bool = typer.Option(False, "--json", help="Machine-readable JSON"),
 ) -> None:
     """List artifacts (optionally filtered by execution)."""
-    from voodoo.cli.context import acquire_execution_store
+    from grumo.cli.context import acquire_execution_store
 
     store, _store_path = acquire_execution_store()
     try:

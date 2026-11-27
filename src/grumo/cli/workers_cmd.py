@@ -1,4 +1,4 @@
-"""``voodoo workers`` — worker state & queue depth.
+"""``grumo workers`` — worker state & queue depth.
 
 Shows registered background workers, their queue depth, and whether
 the worker loop is running.
@@ -14,16 +14,16 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
-from voodoo.security.redaction import redact_string
+from grumo.security.redaction import redact_string
 
-_logger = logging.getLogger("voodoo.cli.workers")
+_logger = logging.getLogger("grumo.cli.workers")
 
 __all__ = ["workers"]
 
 
 async def _gather_worker_info() -> dict[str, Any]:
     """Collect worker and queue state without side-effects."""
-    from voodoo.runtime.scheduling.workers import _get_queue, _worker_tasks, _workers
+    from grumo.runtime.scheduling.workers import _get_queue, _worker_tasks, _workers
 
     info: dict[str, Any] = {
         "registered": list(_workers.keys()),
@@ -50,7 +50,7 @@ def workers() -> None:
     console = Console()
     info = asyncio.run(_gather_worker_info())
 
-    console.print("[bold cyan]Voodoo Workers[/bold cyan]")
+    console.print("[bold cyan]Grumo Workers[/bold cyan]")
     console.print()
 
     tbl = Table(show_header=True, header_style="bold")

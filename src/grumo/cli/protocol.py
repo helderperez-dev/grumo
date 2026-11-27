@@ -1,4 +1,4 @@
-"""CLI: ``voodoo protocol export`` — export JSON Schema for protocol entities."""
+"""CLI: ``grumo protocol export`` — export JSON Schema for protocol entities."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from pathlib import Path
 
 import typer
 
-from voodoo.protocol import export_json_schemas, schema_for
+from grumo.protocol import export_json_schemas, schema_for
 
 __all__ = ["protocol_app"]
 
@@ -34,7 +34,7 @@ def export_schemas(
     ),
     indent: int = typer.Option(2, "--indent", help="JSON indentation."),
 ) -> None:
-    """Export JSON Schema for all Voodoo protocol entities."""
+    """Export JSON Schema for all Grumo protocol entities."""
     if entity:
         try:
             schema = schema_for(entity)
@@ -63,6 +63,6 @@ def list_entities() -> None:
 
 
 def _entity_names() -> list[str]:
-    from voodoo.protocol.schemas import PROTOCOL_ENTITIES
+    from grumo.protocol.schemas import PROTOCOL_ENTITIES
 
     return list(PROTOCOL_ENTITIES.keys())

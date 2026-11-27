@@ -6,7 +6,7 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
-from voodoo.cli import terminal
+from grumo.cli import terminal
 
 
 def routes(
@@ -24,7 +24,7 @@ def routes(
         if Path("main.py").exists():
             app_str = "main:app"
         else:
-            app_str = "voodoo.core:app"
+            app_str = "grumo.core:app"
 
     module_name, app_name = app_str.split(":") if ":" in app_str else ("main", "app")
     sys.path.insert(0, os.getcwd())

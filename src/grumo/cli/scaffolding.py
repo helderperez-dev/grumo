@@ -9,14 +9,14 @@ from textwrap import dedent
 
 from rich.progress import Progress
 
-from voodoo.security.redaction import redact_string
+from grumo.security.redaction import redact_string
 
 logger = logging.getLogger(__name__)
 
 AI_DOCS_BASE_URL = (
-    "https://raw.githubusercontent.com/helderperez-dev/voodoo/main/docs/ai"
+    "https://raw.githubusercontent.com/helderperez-dev/grumo/main/docs/ai"
 )
-AI_TRAE_SKILL_URL = "https://raw.githubusercontent.com/helderperez-dev/voodoo/main/.trae/skills/voodoo-builder/SKILL.md"
+AI_TRAE_SKILL_URL = "https://raw.githubusercontent.com/helderperez-dev/grumo/main/.trae/skills/grumo-builder/SKILL.md"
 
 
 def _write_text_file(path: Path, content: str) -> None:
@@ -46,31 +46,31 @@ def _build_workspace_rules() -> str:
     return (
         dedent(
             """
-        # Voodoo AI Workspace
+        # Grumo AI Workspace
 
-        This project uses the Voodoo Framework.
+        This project uses the Grumo Framework.
 
         Start by reading these local files in order:
-        1. `.voodoo/ai/README.md`
-        2. `.voodoo/ai/RULES.md`
-        3. `.voodoo/ai/ARCHITECTURE.md`
-        4. `.voodoo/ai/ROUTING.md`
-        5. `.voodoo/ai/COMPONENTS.md`
-        6. `.voodoo/ai/STATE.md`
-        7. `.voodoo/ai/DATABASE.md`
-        8. `.voodoo/ai/SKILLS.md`
-        9. `.voodoo/ai/MESH.md`
-        10. `.voodoo/ai/SEO.md`
+        1. `.grumo/ai/README.md`
+        2. `.grumo/ai/RULES.md`
+        3. `.grumo/ai/ARCHITECTURE.md`
+        4. `.grumo/ai/ROUTING.md`
+        5. `.grumo/ai/COMPONENTS.md`
+        6. `.grumo/ai/STATE.md`
+        7. `.grumo/ai/DATABASE.md`
+        8. `.grumo/ai/SKILLS.md`
+        9. `.grumo/ai/MESH.md`
+        10. `.grumo/ai/SEO.md`
 
         Core rules:
-        - Use public components from `voodoo.ui` instead of raw HTML templates.
+        - Use public components from `grumo.ui` instead of raw HTML templates.
         - Prefer `async def` for handlers and I/O.
-        - Use Voodoo's `A` component with a normal internal `href`; the client runtime handles navigation.
-        - Keep app code in `app/`; durable application data belongs in Voodoo Store.
-        - Use Voodoo `Model` and the application Store by default; SQL adapters are explicit.
-        - Preserve the large-cookie websocket settings in `voodoo dev`.
+        - Use Grumo's `A` component with a normal internal `href`; the client runtime handles navigation.
+        - Keep app code in `app/`; durable application data belongs in Grumo Store.
+        - Use Grumo `Model` and the application Store by default; SQL adapters are explicit.
+        - Preserve the large-cookie websocket settings in `grumo dev`.
 
-        If Trae skills are available, use `.trae/skills/voodoo-builder/SKILL.md`.
+        If Trae skills are available, use `.trae/skills/grumo-builder/SKILL.md`.
         """
         ).strip()
         + "\n"
@@ -80,7 +80,7 @@ def _build_workspace_rules() -> str:
 def _build_cursor_rules() -> str:
     return (
         "---\n"
-        "description: Voodoo framework guidance for Cursor.\n"
+        "description: Grumo framework guidance for Cursor.\n"
         "globs:\n"
         '  - "**/*.py"\n'
         '  - "**/*.md"\n'
@@ -91,11 +91,11 @@ def _build_cursor_rules() -> str:
 
 def _fallback_ai_assets() -> dict[str, str]:
     return {
-        ".voodoo/ai/README.md": dedent(
+        ".grumo/ai/README.md": dedent(
             """
-            # Voodoo AI Kit
+            # Grumo AI Kit
 
-            This folder gives AI IDEs high-context guidance for building serious Voodoo applications.
+            This folder gives AI IDEs high-context guidance for building serious Grumo applications.
 
             Read these files in order:
             1. `RULES.md`
@@ -109,48 +109,48 @@ def _fallback_ai_assets() -> dict[str, str]:
             9. `SEO.md`
 
             Recommended behavior:
-            - Treat Voodoo as a Python-first UI framework.
+            - Treat Grumo as a Python-first UI framework.
             - Prefer simple, composable route files and reusable components.
-            - Respect Voodoo navigation, websocket, and data conventions.
+            - Respect Grumo navigation, websocket, and data conventions.
             """
         ).strip()
         + "\n",
-        ".voodoo/ai/RULES.md": dedent(
+        ".grumo/ai/RULES.md": dedent(
             """
-            # Voodoo Rules
+            # Grumo Rules
 
-            - Build UI with public components from `voodoo.ui`.
+            - Build UI with public components from `grumo.ui`.
             - Prefer `async def` for handlers and I/O.
-            - Voodoo CSS is the default style adapter: components emit semantic
+            - Grumo CSS is the default style adapter: components emit semantic
               `vd-*` classes driven by theme tokens. Prefer semantic props
               (`variant`, `size`, `tone`, `level`) over utility classes. Opt into
               Tailwind only with `set_style_adapter(TailwindAdapter())`.
             - Use `A(..., href=...)` for internal links; do not add inline JavaScript.
             - Use folder-based routing: `app/<segment>/page.py` defines a `page(request)`
               function. `app/pages/` (file-per-page) is supported for backward compat.
-            - Use Voodoo Store-backed models for persistent application data.
-            - Use Voodoo `Model` and `.voodoo/application.vstore` by default.
+            - Use Grumo Store-backed models for persistent application data.
+            - Use Grumo `Model` and `.grumo/application.grumo` by default.
             - Preserve `WEBSOCKETS_MAX_LINE_LENGTH="8388608"` and `http="h11"` when working with websocket-heavy apps.
             """
         ).strip()
         + "\n",
-        ".voodoo/ai/ARCHITECTURE.md": dedent(
+        ".grumo/ai/ARCHITECTURE.md": dedent(
             """
-            # Voodoo Architecture
+            # Grumo Architecture
 
-            Voodoo is a Starlette-based framework with Python-defined UI and file-based routing.
+            Grumo is a Starlette-based framework with Python-defined UI and file-based routing.
 
             Main conventions:
             - `app/` contains routes and app-facing code.
-            - `voodoo dev` boots the app (`main.py` is optional).
-            - `voodoo.components` is the primary UI surface.
+            - `grumo dev` boots the app (`main.py` is optional).
+            - `grumo.components` is the primary UI surface.
             - Internal framework API routes remain mounted automatically.
             """
         ).strip()
         + "\n",
-        ".voodoo/ai/ROUTING.md": dedent(
+        ".grumo/ai/ROUTING.md": dedent(
             """
-            # Voodoo Routing
+            # Grumo Routing
 
             Folder-based routing (the scaffold default): each directory under `app/`
             containing a `page.py` maps to a route.
@@ -167,36 +167,36 @@ def _fallback_ai_assets() -> dict[str, str]:
 
             `app/pages/` (one file per page) is supported for backward compatibility.
 
-            Internal links must use Voodoo navigation:
+            Internal links must use Grumo navigation:
 
             ```python
-            from voodoo.components import A
+            from grumo.components import A
 
             A("Dashboard", href="/dashboard")
             ```
             """
         ).strip()
         + "\n",
-        ".voodoo/ai/COMPONENTS.md": dedent(
+        ".grumo/ai/COMPONENTS.md": dedent(
             """
-            # Voodoo Components
+            # Grumo Components
 
-            Import UI primitives from `voodoo.components` (or the `voodoo` top level).
+            Import UI primitives from `grumo.components` (or the `grumo` top level).
 
             Common components:
             - `Div`, `Text`, `Heading`, `Button`, `A`, `Input`, `Form`
             - Layout: `Page`, `Container`, `Stack`, `Flex`, `Grid`, `Box`
             - Semantic HTML: `Nav`, `Header`, `Footer`, `Main`, `Section`, `Article`, `Aside`, `Figure`, `FigCaption`, `Time`, `Address`, `Img`, `Paragraph`
 
-            Voodoo CSS (the default adapter) generates semantic `vd-*` classes from
+            Grumo CSS (the default adapter) generates semantic `vd-*` classes from
             each component's style key and props, all driven by `--vd-*` theme tokens.
             Prefer semantic props over utility classes:
 
             ```python
-            from voodoo import Button, Heading, Stack, Text, Card
+            from grumo import Button, Heading, Stack, Text, Card
 
             Stack(
-                Heading("Hello, Voodoo!", level=1, size="xl"),
+                Heading("Hello, Grumo!", level=1, size="xl"),
                 Text("Build your UI in Python.", tone="muted"),
                 Button("Get Started", variant="primary"),
                 Card(Heading("Folder-based routing", level=3), Text("app/page.py → /")),
@@ -209,11 +209,11 @@ def _fallback_ai_assets() -> dict[str, str]:
             """
         ).strip()
         + "\n",
-        ".voodoo/ai/STATE.md": dedent(
+        ".grumo/ai/STATE.md": dedent(
             """
-            # Voodoo State
+            # Grumo State
 
-            Voodoo does not use React-style client state hooks.
+            Grumo does not use React-style client state hooks.
 
             Preferred patterns:
             - Form posts for mutations
@@ -223,19 +223,19 @@ def _fallback_ai_assets() -> dict[str, str]:
             """
         ).strip()
         + "\n",
-        ".voodoo/ai/DATABASE.md": dedent(
+        ".grumo/ai/DATABASE.md": dedent(
             """
-            # Voodoo Persistence
+            # Grumo Persistence
 
             Default stack:
-            - Voodoo `Model`
-            - Voodoo Store at `.voodoo/application.vstore`
+            - Grumo `Model`
+            - Grumo Store at `.grumo/application.grumo`
             - no external database required
 
             Example:
 
             ```python
-            from voodoo import Model
+            from grumo import Model
 
             class Item(Model):
                 name: str
@@ -249,14 +249,14 @@ def _fallback_ai_assets() -> dict[str, str]:
             """
         ).strip()
         + "\n",
-        ".voodoo/ai/SKILLS.md": dedent(
+        ".grumo/ai/SKILLS.md": dedent(
             """
-            # Voodoo AI Skills
+            # Grumo AI Skills
 
             ## Scaffold a Route
             - Create the correct `app/.../page.py` file
             - Export `page(request, ...)`
-            - Return public `voodoo.ui` components
+            - Return public `grumo.ui` components
 
             ## Create a Component
             - Build a reusable Python function
@@ -264,8 +264,8 @@ def _fallback_ai_assets() -> dict[str, str]:
             - Style through `className`
 
             ## Add Data
-            - Define durable data with `voodoo.Model`
-            - Use the application Store at `.voodoo/application.vstore`
+            - Define durable data with `grumo.Model`
+            - Use the application Store at `.grumo/application.grumo`
             - Add SQL adapters only when explicitly required
 
             ## Debug Navigation
@@ -278,11 +278,11 @@ def _fallback_ai_assets() -> dict[str, str]:
             """
         ).strip()
         + "\n",
-        ".voodoo/ai/MESH.md": dedent(
+        ".grumo/ai/MESH.md": dedent(
             """
-            # Voodoo Mesh
+            # Grumo Mesh
 
-            The Voodoo Mesh (`voodoo.mesh`) enables real-time WebSocket events and automatic MCP tool registration.
+            The Grumo Mesh (`grumo.mesh`) enables real-time WebSocket events and automatic MCP tool registration.
 
             - Use `@mesh.expose()` to expose functions to RPC and MCP tools.
             - Use `@mesh.on(event)` to listen for local and remote broadcast events.
@@ -290,47 +290,47 @@ def _fallback_ai_assets() -> dict[str, str]:
             """
         ).strip()
         + "\n",
-        ".voodoo/ai/SEO.md": dedent(
+        ".grumo/ai/SEO.md": dedent(
             """
-            # Voodoo SEO & GEO
+            # Grumo SEO & GEO
 
-            Voodoo supports native SEO metadata and Generative Engine Optimization (GEO).
+            Grumo supports native SEO metadata and Generative Engine Optimization (GEO).
 
             - Return `(SEO(...), Component)` from route handlers.
-            - Configure defaults in `voodoo.yaml`.
+            - Configure defaults in `grumo.yaml`.
             - Dynamic `sitemap.xml` and `robots.txt` are served automatically.
             - Supports JSON-LD structured data and OpenGraph / Twitter cards.
             """
         ).strip()
         + "\n",
-        ".trae/skills/voodoo-builder/SKILL.md": dedent(
+        ".trae/skills/grumo-builder/SKILL.md": dedent(
             """
             ---
-            name: "voodoo-builder"
-            description: "Builds and refactors Voodoo apps. Invoke when creating routes, components, data flows, or debugging Voodoo-specific behavior."
+            name: "grumo-builder"
+            description: "Builds and refactors Grumo apps. Invoke when creating routes, components, data flows, or debugging Grumo-specific behavior."
             ---
 
-            # Voodoo Builder
+            # Grumo Builder
 
-            Use this skill when working on Voodoo Framework applications.
+            Use this skill when working on Grumo Framework applications.
 
             Read these local files before making major changes:
-            1. `.voodoo/ai/README.md`
-            2. `.voodoo/ai/RULES.md`
-            3. `.voodoo/ai/ARCHITECTURE.md`
-            4. `.voodoo/ai/ROUTING.md`
-            5. `.voodoo/ai/COMPONENTS.md`
-            6. `.voodoo/ai/STATE.md`
-            7. `.voodoo/ai/DATABASE.md`
-            8. `.voodoo/ai/SKILLS.md`
-            9. `.voodoo/ai/MESH.md`
-            10. `.voodoo/ai/SEO.md`
+            1. `.grumo/ai/README.md`
+            2. `.grumo/ai/RULES.md`
+            3. `.grumo/ai/ARCHITECTURE.md`
+            4. `.grumo/ai/ROUTING.md`
+            5. `.grumo/ai/COMPONENTS.md`
+            6. `.grumo/ai/STATE.md`
+            7. `.grumo/ai/DATABASE.md`
+            8. `.grumo/ai/SKILLS.md`
+            9. `.grumo/ai/MESH.md`
+            10. `.grumo/ai/SEO.md`
 
-            Follow these Voodoo rules:
-            - Build UI from `voodoo.ui`
+            Follow these Grumo rules:
+            - Build UI from `grumo.ui`
             - Prefer `async def` for handlers and I/O
-            - Use Voodoo navigation primitives for internal links
-            - Persist application data through `voodoo.Model` and Voodoo Store
+            - Use Grumo navigation primitives for internal links
+            - Persist application data through `grumo.Model` and Grumo Store
             - Never add SQLite unless the application explicitly selects it
             - Preserve websocket large-cookie configuration
             """
@@ -438,10 +438,10 @@ def _remote_ai_assets(ide: str) -> dict[str, str]:
         "SECURITY",
     ]
     assets = {
-        f".voodoo/ai/{name}.md": f"{AI_DOCS_BASE_URL}/{name}.md" for name in names
+        f".grumo/ai/{name}.md": f"{AI_DOCS_BASE_URL}/{name}.md" for name in names
     }
     if ide in ("trae", "all"):
-        assets[".trae/skills/voodoo-builder/SKILL.md"] = AI_TRAE_SKILL_URL
+        assets[".trae/skills/grumo-builder/SKILL.md"] = AI_TRAE_SKILL_URL
     return assets
 
 
@@ -449,7 +449,7 @@ def _ide_rule_assets(ide: str) -> dict[str, str]:
     builders = {
         "trae": (".trae/rules", _build_workspace_rules),
         "windsurf": (".windsurfrules", _build_workspace_rules),
-        "cursor": (".cursor/rules/voodoo.mdc", _build_cursor_rules),
+        "cursor": (".cursor/rules/grumo.mdc", _build_cursor_rules),
         "vscode": (".github/copilot-instructions.md", _build_workspace_rules),
     }
     selected = (

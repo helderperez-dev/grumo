@@ -1,8 +1,8 @@
-"""voodoo theme — manage shareable theme presets.
+"""grumo theme — manage shareable theme presets.
 
-Presets live in ``.voodoo/theme/theme.json`` (plus an optional sibling
-``custom.css``), are installable from PyPI as ``voodoo-theme-<name>``, and can
-be switched with ``voodoo theme use <name|path|url>``.
+Presets live in ``.grumo/theme/theme.json`` (plus an optional sibling
+``custom.css``), are installable from PyPI as ``grumo-theme-<name>``, and can
+be switched with ``grumo theme use <name|path|url>``.
 """
 
 from __future__ import annotations
@@ -15,10 +15,10 @@ from pathlib import Path
 
 import typer
 
-from voodoo.cli import terminal
-from voodoo.core.errors import ConfigurationError
-from voodoo.security.redaction import redact_string
-from voodoo.ui.styles.theme import Theme
+from grumo.cli import terminal
+from grumo.core.errors import ConfigurationError
+from grumo.security.redaction import redact_string
+from grumo.ui.styles.theme import Theme
 
 logger = logging.getLogger(__name__)
 
@@ -31,14 +31,14 @@ theme_app = typer.Typer(
 
 
 def _project_theme_dir() -> Path:
-    return Path.cwd() / ".voodoo" / "theme"
+    return Path.cwd() / ".grumo" / "theme"
 
 
 def _write_preset(
     directory: Path, *, name: str, theme: Theme, custom_css: str = ""
 ) -> None:
     """Materialize a theme into a project theme directory."""
-    from voodoo.ui.styles.presets import ThemePreset
+    from grumo.ui.styles.presets import ThemePreset
 
     preset = ThemePreset(name=name, theme=theme)
     directory.mkdir(parents=True, exist_ok=True)
@@ -55,7 +55,7 @@ def list_themes(
     json_mode: bool = typer.Option(False, "--json", help="Machine-readable JSON"),
 ) -> None:
     """List discoverable theme presets."""
-    from voodoo.ui.styles.presets import list_presets
+    from grumo.ui.styles.presets import list_presets
 
     presets = list_presets()
     if json_mode or terminal.is_json_mode():
@@ -85,13 +85,13 @@ def list_themes(
 def use_theme(
     preset: str = typer.Argument(..., help="Preset name, path, or URL"),
 ) -> None:
-    """Switch the project to a preset (writes .voodoo/theme/theme.json)."""
-    from voodoo.ui.styles.presets import resolve_theme
+    """Switch the project to a preset (writes .grumo/theme/theme.json)."""
+    from grumo.ui.styles.presets import resolve_theme
 
     try:
         source = resolve_theme(preset)
     except ConfigurationError as exc:
-        terminal.error(str(exc), hint="try 'voodoo theme list'")
+        terminal.error(str(exc), hint="try 'grumo theme list'")
         raise typer.Exit(1) from exc
 
     directory = _project_theme_dir()
@@ -116,13 +116,13 @@ def init_theme(
         "default", help="Preset to snapshot as a starting point"
     ),
 ) -> None:
-    """Generate .voodoo/theme/theme.json from a preset (start customizing)."""
-    from voodoo.ui.styles.presets import resolve_theme
+    """Generate .grumo/theme/theme.json from a preset (start customizing)."""
+    from grumo.ui.styles.presets import resolve_theme
 
     try:
         source = resolve_theme(name)
     except ConfigurationError as exc:
-        terminal.error(str(exc), hint="try 'voodoo theme list'")
+        terminal.error(str(exc), hint="try 'grumo theme list'")
         raise typer.Exit(1) from exc
 
     directory = _project_theme_dir()
@@ -139,9 +139,9 @@ def init_theme(
     terminal.status_block([("written", str(directory))])
     terminal.next_steps(
         [
-            "edit .voodoo/theme/theme.json to tune tokens",
-            "add theme-specific CSS to .voodoo/theme/custom.css",
-            'reference it in voodoo.toml: [theme] preset = "default"',
+            "edit .grumo/theme/theme.json to tune tokens",
+            "add theme-specific CSS to .grumo/theme/custom.css",
+            'reference it in grumo.toml: [theme] preset = "default"',
         ]
     )
     terminal.success("theme initialized")
@@ -150,13 +150,13 @@ def init_theme(
 @theme_app.command("install")
 def install_theme(
     name: str = typer.Argument(
-        ..., help="Preset name (PyPI package voodoo-theme-<name>)"
+        ..., help="Preset name (PyPI package grumo-theme-<name>)"
     ),
 ) -> None:
-    """Install a theme preset from PyPI (pip install voodoo-theme-<name>)."""
-    from voodoo.ui.styles.presets import _load_from_pypi
+    """Install a theme preset from PyPI (pip install grumo-theme-<name>)."""
+    from grumo.ui.styles.presets import _load_from_pypi
 
-    pkg = f"voodoo-theme-{name}"
+    pkg = f"grumo-theme-{name}"
     try:
         source = _load_from_pypi(name)
         terminal.wordmark()
@@ -191,7 +191,7 @@ def install_theme(
     try:
         source = _load_from_pypi(name)
     except ConfigurationError as exc:
-        terminal.error(str(exc), hint="try 'voodoo theme list' or verify the theme name")
+        terminal.error(str(exc), hint="try 'grumo theme list' or verify the theme name")
         raise typer.Exit(1) from exc
     terminal.status_block([("theme", name), ("status", "installed")])
     terminal.console.print(f"  [dim]{source.origin}[/]")

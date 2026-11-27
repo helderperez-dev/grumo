@@ -1,4 +1,4 @@
-"""Production server command for Voodoo applications."""
+"""Production server command for Grumo applications."""
 
 from __future__ import annotations
 
@@ -31,27 +31,27 @@ def _forwarded_allow_ips() -> str:
 def start(
     app_str: str | None = typer.Argument(
         None,
-        help="App instance to run. Defaults to main:app or voodoo.core:app.",
+        help="App instance to run. Defaults to main:app or grumo.core:app.",
     ),
     host: str | None = typer.Option(
         None,
-        help="Host to bind to. Defaults to VOODOO_HOST or 0.0.0.0.",
+        help="Host to bind to. Defaults to GRUMO_HOST or 0.0.0.0.",
     ),
     port: int | None = typer.Option(
         None,
-        help="Port to bind to. Defaults to PORT, VOODOO_PORT, or 8000.",
+        help="Port to bind to. Defaults to PORT, GRUMO_PORT, or 8000.",
     ),
 ) -> None:
-    """Start a Voodoo application in production mode."""
+    """Start a Grumo application in production mode."""
     if app_str is None:
-        app_str = "main:app" if Path("main.py").exists() else "voodoo.core:app"
+        app_str = "main:app" if Path("main.py").exists() else "grumo.core:app"
 
-    resolved_host = host or os.getenv("VOODOO_HOST") or "0.0.0.0"
-    configured_port = os.getenv("PORT") or os.getenv("VOODOO_PORT") or "8000"
+    resolved_host = host or os.getenv("GRUMO_HOST") or "0.0.0.0"
+    configured_port = os.getenv("PORT") or os.getenv("GRUMO_PORT") or "8000"
     resolved_port = port if port is not None else int(configured_port)
 
     defaults = {
-        "VOODOO_ENV": "production",
+        "GRUMO_ENV": "production",
         "WEBSOCKETS_MAX_LINE_LENGTH": "8388608",
         "WEBSOCKETS_MAX_NUM_HEADERS": "256",
     }
@@ -60,8 +60,8 @@ def start(
         os.environ.setdefault(name, value)
 
     try:
-        from voodoo.config import get_config, validate_production_config
-        from voodoo.core.errors import ConfigurationError
+        from grumo.config import get_config, validate_production_config
+        from grumo.core.errors import ConfigurationError
 
         try:
             validate_production_config(get_config())
@@ -82,7 +82,7 @@ def start(
             host=resolved_host,
             port=resolved_port,
             # One process owns one live local Store writer. Horizontal scaling uses
-            # separate Voodoo Nodes with node-local Stores.
+            # separate Grumo Nodes with node-local Stores.
             workers=1,
             proxy_headers=True,
             forwarded_allow_ips=forwarded_allow_ips,

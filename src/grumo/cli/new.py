@@ -8,12 +8,12 @@ from pathlib import Path
 import typer
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
-from voodoo.cli import terminal
+from grumo.cli import terminal
 
 
 def _scaffold_offline(project_dir: Path, name: str) -> None:
-    """Write the package-owned default scaffold (Voodoo CSS + folder routing)."""
-    resource = files("voodoo").joinpath("scaffold", "default")
+    """Write the package-owned default scaffold (Grumo CSS + folder routing)."""
+    resource = files("grumo").joinpath("scaffold", "default")
     with as_file(resource) as scaffold_dir:
         shutil.copytree(scaffold_dir, project_dir, dirs_exist_ok=True)
     for path in project_dir.rglob("*"):
@@ -114,7 +114,7 @@ def new(
         help="Create a local environment and install project dependencies.",
     ),
 ) -> None:
-    """Scaffold a new Voodoo project or clone a community template."""
+    """Scaffold a new Grumo project or clone a community template."""
     project_dir = Path(project_name)
     if project_dir.exists():
         terminal.error(
@@ -145,11 +145,11 @@ def new(
                     description="template unavailable, using canonical scaffold...",
                 )
         if not cloned:
-            progress.add_task(description="scaffolding Voodoo app...", total=None)
+            progress.add_task(description="scaffolding Grumo app...", total=None)
             _scaffold_offline(project_dir, project_dir.name)
         if install:
             _install_project(project_dir, progress)
 
     terminal.blank()
     terminal.success("ready")
-    terminal.next_steps([f"cd {project_name}", "voodoo dev"])
+    terminal.next_steps([f"cd {project_name}", "grumo dev"])

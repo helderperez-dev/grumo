@@ -1,6 +1,6 @@
-"""Centralized terminal presentation layer for the Voodoo CLI.
+"""Centralized terminal presentation layer for the Grumo CLI.
 
-Implements the Voodoo visual identity: monochromatic with #C8FF3D accent,
+Implements the Grumo visual identity: monochromatic with #C8FF3D accent,
 structured label/value output, no emoji/ASCII art/banners, concise status words.
 """
 
@@ -50,11 +50,11 @@ _STATUS_COLORS = {
 
 
 def wordmark(version: str | None = None) -> None:
-    """Print the voodoo wordmark, optionally with version."""
+    """Print the grumo wordmark, optionally with version."""
     if version:
-        console.print(f"[bold]voodoo[/] [dim]{version}[/]")
+        console.print(f"[bold]grumo[/] [dim]{version}[/]")
     else:
-        console.print("[bold]voodoo[/]")
+        console.print("[bold]grumo[/]")
 
 
 def heading(text: str) -> None:
@@ -84,7 +84,7 @@ def muted(message: str) -> None:
 
 
 def accent_text(text: str) -> None:
-    """Print text with the voodoo accent color."""
+    """Print text with the grumo accent color."""
     console.print(f"  [{ACCENT}]{text}[/]")
 
 

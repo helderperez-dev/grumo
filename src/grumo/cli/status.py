@@ -1,4 +1,4 @@
-"""voodoo status — coherent application and Runtime overview."""
+"""grumo status — coherent application and Runtime overview."""
 
 from __future__ import annotations
 
@@ -7,17 +7,17 @@ from typing import Any
 
 import typer
 
-from voodoo.cli import terminal
+from grumo.cli import terminal
 
 __all__ = ["status"]
 
 
 def _application_snapshot() -> dict[str, Any]:
     """Return the stable machine-readable application/Runtime status contract."""
-    from voodoo import __version__
-    from voodoo.config import get_config
-    from voodoo.integrations.otel import is_available as otlp_available
-    from voodoo.observability import telemetry_store
+    from grumo import __version__
+    from grumo.config import get_config
+    from grumo.integrations.otel import is_available as otlp_available
+    from grumo.observability import telemetry_store
 
     cfg = get_config()
     summary = telemetry_store.get_summary()

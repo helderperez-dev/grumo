@@ -1,4 +1,4 @@
-"""voodoo inspect — inspect runtime state: runs, agents, tools, workflows, state, capabilities, mesh.
+"""grumo inspect — inspect runtime state: runs, agents, tools, workflows, state, capabilities, mesh.
 
 Subcommands
 -----------
@@ -14,7 +14,7 @@ mesh           Mesh surface: exposed functions, event handlers, active nodes.
 Two modes:
 * default — inspect an app in-process (imports ``app_str``, e.g. ``main:app``),
   reading the runtime engine + telemetry store + mesh network.
-* ``--url`` — fetch metrics from a live server (``GET {url}/voodoo/metrics``).
+* ``--url`` — fetch metrics from a live server (``GET {url}/grumo/metrics``).
 """
 
 from __future__ import annotations
@@ -29,14 +29,14 @@ from urllib.request import urlopen
 import typer
 from rich.table import Table
 
-from voodoo.cli import terminal
+from grumo.cli import terminal
 
 inspect_app = typer.Typer(help="inspect runtime state", no_args_is_help=True)
 
 
 def _fetch_live(url: str) -> dict[str, Any]:
     """Fetch metrics summary from a live server."""
-    endpoint = url.rstrip("/") + "/voodoo/metrics"
+    endpoint = url.rstrip("/") + "/grumo/metrics"
     with urlopen(endpoint, timeout=5) as resp:
         return cast(dict[str, Any], json.loads(resp.read().decode()))
 
@@ -44,7 +44,7 @@ def _fetch_live(url: str) -> dict[str, Any]:
 def _load_app(app_str: str | None) -> Any:
     """Import the app in-process so runtime/telemetry/mesh state is readable."""
     if app_str is None:
-        app_str = "main:app" if os.path.exists("main.py") else "voodoo.core:app"
+        app_str = "main:app" if os.path.exists("main.py") else "grumo.core:app"
     module_name, _, attr = app_str.partition(":")
     attr = attr or "app"
     sys.path.insert(0, os.getcwd())
@@ -77,7 +77,7 @@ def _emit(data: Any, json_mode: bool = False) -> None:
 
 def _load_from_store(limit: int = 20) -> list[Any]:
     """Read durable executions from canonical application persistence."""
-    from voodoo.cli.context import acquire_execution_store
+    from grumo.cli.context import acquire_execution_store
 
     store, _store_path = acquire_execution_store()
     try:
@@ -102,7 +102,7 @@ def inspect_why(
     ),
 ) -> None:
     """Explain the causal Runtime lineage for a subject."""
-    from voodoo.runtime.inspection import lineage
+    from grumo.runtime.inspection import lineage
 
     data = lineage.describe(subject_id)
     _emit(None, json_mode)
@@ -191,7 +191,7 @@ def inspect_run(
     ),
 ) -> None:
     """Show an execution — status, intent, capabilities, effects, cost."""
-    from voodoo.runtime import engine
+    from grumo.runtime import engine
 
     if execution_id is None:
         _render_execution_list(_recent_executions(engine), json_mode)
@@ -201,7 +201,7 @@ def inspect_run(
     if execution is None:
         terminal.error(
             f"execution '{execution_id}' not found",
-            hint="run 'voodoo inspect executions' to choose a persisted execution",
+            hint="run 'grumo inspect executions' to choose a persisted execution",
         )
         raise typer.Exit(1)
     _render_execution(execution, json_mode)
@@ -241,7 +241,7 @@ def inspect_agent(
         return
 
     _load_app(app_str)  # import side effects populate telemetry
-    from voodoo.observability import telemetry_store
+    from grumo.observability import telemetry_store
 
     runs = telemetry_store.metrics["agent_runs"][-limit:]
     _emit(None, json_mode)
@@ -278,8 +278,8 @@ def inspect_plan(
     ),
 ) -> None:
     """Plan an intent — show the planner's strategy + participant assignment."""
-    from voodoo.primitives.intent import Intent
-    from voodoo.runtime.planner import Planner
+    from grumo.primitives.intent import Intent
+    from grumo.runtime.planner import Planner
 
     _load_app(app_str)
 
@@ -327,7 +327,7 @@ def inspect_tool(
 ) -> None:
     """Recent tool calls: name, latency, error."""
     _load_app(app_str)
-    from voodoo.observability import telemetry_store
+    from grumo.observability import telemetry_store
 
     calls = telemetry_store.metrics["tool_calls"][-limit:]
     _emit(None, json_mode)
@@ -357,7 +357,7 @@ def inspect_task(
     limit: int = typer.Option(20, "--limit"),
 ) -> None:
     """Executions whose actor is task/agent-driven (Task units)."""
-    from voodoo.runtime import engine
+    from grumo.runtime import engine
 
     _load_app(app_str)
     task_execs = [e for e in engine.recent(100) if e.actor not in ("system",)][:limit]
@@ -389,7 +389,7 @@ def inspect_workflow(
     ),
 ) -> None:
     """Executions grouped by trace — the observable workflow structure."""
-    from voodoo.runtime import ExecutionGraph, engine
+    from grumo.runtime import ExecutionGraph, engine
 
     _load_app(app_str)
     executions = engine.recent(200)
@@ -426,7 +426,7 @@ def inspect_state(
     ),
 ) -> None:
     """Observable state changes recorded on executions."""
-    from voodoo.runtime import engine
+    from grumo.runtime import engine
 
     _load_app(app_str)
     changes = []
@@ -469,13 +469,13 @@ def inspect_capabilities(
     ),
 ) -> None:
     """Registered capability templates and tool permission requirements."""
-    from voodoo.runtime import engine
+    from grumo.runtime import engine
 
     _load_app(app_str)
     cap_data = engine.capabilities.describe()
     # tool permission requirements
     try:
-        from voodoo.ai.tools.registry import default_registry
+        from grumo.ai.tools.registry import default_registry
 
         tool_perms = {
             spec.name: spec.permissions
@@ -485,7 +485,7 @@ def inspect_capabilities(
     except Exception as error:
         import logging
 
-        from voodoo.security.redaction import redact_string
+        from grumo.security.redaction import redact_string
 
         logging.getLogger(__name__).warning(
             "tool permission inspection failed error=%s", redact_string(str(error))
@@ -520,7 +520,7 @@ def inspect_mesh(
     ),
 ) -> None:
     """Mesh surface: exposed functions, event handlers, active nodes."""
-    from voodoo.mesh import mesh
+    from grumo.mesh import mesh
 
     _load_app(app_str)
     data: dict[str, Any] = {
@@ -559,7 +559,7 @@ def inspect_approvals(
     ),
 ) -> None:
     """Human approvals — pending and decided, with capability + requester."""
-    from voodoo.runtime import engine
+    from grumo.runtime import engine
 
     _load_app(app_str)
     approvals = list(engine.approvals.records.values())
