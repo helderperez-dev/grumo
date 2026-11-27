@@ -19,7 +19,7 @@ ERROR_RE = re.compile(r"^.*: error: ")
 def main() -> int:
     expected = int(BASELINE.read_text().strip())
     result = subprocess.run(
-        [sys.executable, "-m", "mypy", "src/voodoo", "--follow-imports=silent"],
+        [sys.executable, "-m", "mypy", "src/grumo", "--follow-imports=silent"],
         text=True,
         capture_output=True,
         check=False,
@@ -27,7 +27,9 @@ def main() -> int:
     output = result.stdout + result.stderr
     actual = sum(bool(ERROR_RE.match(line)) for line in output.splitlines())
     if actual > expected:
-        print(f"mypy regression: {actual} errors (baseline {expected})", file=sys.stderr)
+        print(
+            f"mypy regression: {actual} errors (baseline {expected})", file=sys.stderr
+        )
         print(output, file=sys.stderr)
         return 1
     print(f"mypy ratchet passed: {actual} errors (baseline {expected})")

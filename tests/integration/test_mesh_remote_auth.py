@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo.mesh import MeshNetwork, RemoteExecutionRequest
-from voodoo.primitives.capability import Capability
-from voodoo.runtime import ExecutionEngine, IdentityKind, PolicyDecision
-from voodoo.runtime.distributed.auth import (
+from grumo.mesh import MeshNetwork, RemoteExecutionRequest
+from grumo.primitives.capability import Capability
+from grumo.runtime import ExecutionEngine, IdentityKind, PolicyDecision
+from grumo.runtime.distributed.auth import (
     InMemoryParticipantResolver,
     ParticipantAuthenticationError,
 )
@@ -208,7 +208,7 @@ async def test_revoke_credential_immediately_prevents_identity_resolution():
 
 
 def test_mesh_client_carries_credential_as_transport_evidence():
-    from voodoo.mesh.client import MeshClient
+    from grumo.mesh.client import MeshClient
 
     client = MeshClient("ws://example.test", credential="mesh-secret")
 

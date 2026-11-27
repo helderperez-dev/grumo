@@ -8,8 +8,8 @@ from types import ModuleType
 
 import pytest
 
-import voodoo.ui.events as ui_events
-from voodoo.routing.pages import page_registry
+import grumo.ui.events as ui_events
+from grumo.routing.pages import page_registry
 
 
 @pytest.fixture
@@ -20,7 +20,7 @@ def ui_magic_module() -> Generator[ModuleType, None, None]:
     bindings_before = dict(ui_events.event_bindings)
     callable_bindings_before = dict(ui_events._callable_bindings)
 
-    module_name = "voodoo_ui_magic_acceptance"
+    module_name = "grumo_ui_magic_acceptance"
     path = Path(__file__).parents[2] / "examples" / "web" / "ui_magic" / "main.py"
     spec = importlib.util.spec_from_file_location(module_name, path)
     assert spec is not None and spec.loader is not None

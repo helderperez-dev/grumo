@@ -1,4 +1,4 @@
-"""Release gates for the stable ``voodoo create`` scaffold."""
+"""Release gates for the stable ``grumo create`` scaffold."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 
-from voodoo.cli import app
+from grumo.cli import app
 
 __all__: list[str] = []
 
@@ -31,7 +31,7 @@ class TestCreateScaffold:
         assert (project / "app" / "page.py").exists()
         assert (project / "app" / "about" / "page.py").exists()
         assert (project / "app" / "users" / "[id]" / "page.py").exists()
-        assert (project / "voodoo.toml").exists()
+        assert (project / "grumo.toml").exists()
         assert (project / "pyproject.toml").exists()
         assert (project / "README.md").exists()
         assert "deprecated" in result.output.lower()
@@ -39,13 +39,13 @@ class TestCreateScaffold:
     def test_template_tracks_latest_grumo_release(self, tmp_cwd: Path) -> None:
         runner.invoke(app, ["create", "myapp"])
         content = (tmp_cwd / "myapp" / "pyproject.toml").read_text()
-        assert '"grumo>=1.0.0,<2.0.0"' in content
+        assert '"grumo>=2.0.0,<3.0.0"' in content
 
     def test_store_first_runtime_guidance(self, tmp_cwd: Path) -> None:
         runner.invoke(app, ["create", "myapp"])
-        content = (tmp_cwd / "myapp" / "voodoo.toml").read_text()
-        assert ".voodoo/application.vstore" in content
-        assert "Runtime creates application.vstore" in content
+        content = (tmp_cwd / "myapp" / "grumo.toml").read_text()
+        assert ".grumo/application.grumo" in content
+        assert "Runtime creates application.grumo" in content
 
     def test_rejects_existing_directory(self, tmp_cwd: Path) -> None:
         (tmp_cwd / "existing").mkdir()
@@ -55,6 +55,6 @@ class TestCreateScaffold:
 
 class TestRuntimeBanner:
     def test_banner_imports(self) -> None:
-        from voodoo.cli.dev import _print_runtime_banner
+        from grumo.cli.dev import _print_runtime_banner
 
         assert callable(_print_runtime_banner)

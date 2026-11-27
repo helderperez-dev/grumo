@@ -1,5 +1,5 @@
-from voodoo.runtime.application_graph import ChangeReason
-from voodoo.runtime.dependency_graph import DependencyGraph
+from grumo.runtime.application_graph import ChangeReason
+from grumo.runtime.dependency_graph import DependencyGraph
 
 
 def test_dependency_graph_tracks_runtime_dependencies_and_transitive_dependents():

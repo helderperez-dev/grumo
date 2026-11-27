@@ -1,7 +1,7 @@
 # WCAG 2.2 AA evidence register
 
-This register is the release-candidate checklist for Voodoo Framework UI and
-the Voodoo Site. It distinguishes executable evidence from review evidence;
+This register is the release-candidate checklist for Grumo Framework UI and
+the Grumo Site. It distinguishes executable evidence from review evidence;
 passing local automation does not claim that a manual criterion has been
 certified.
 

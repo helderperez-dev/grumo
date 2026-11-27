@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo.adapters.capabilities import (
+from grumo.adapters.capabilities import (
     AdapterCapabilities,
     CapabilityError,
     DatabaseCapabilities,

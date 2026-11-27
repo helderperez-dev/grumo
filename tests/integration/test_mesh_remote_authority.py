@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo.mesh import MeshNetwork, RemoteExecutionRequest
-from voodoo.primitives.capability import Capability
-from voodoo.runtime import ExecutionEngine
-from voodoo.runtime.execution import ExecutionStatus
-from voodoo.runtime.policy import PolicyDecision, PolicyResult
+from grumo.mesh import MeshNetwork, RemoteExecutionRequest
+from grumo.primitives.capability import Capability
+from grumo.runtime import ExecutionEngine
+from grumo.runtime.execution import ExecutionStatus
+from grumo.runtime.policy import PolicyDecision, PolicyResult
 
 
 def _request(operation: str, *, actor: str = "device-a", **kwargs):

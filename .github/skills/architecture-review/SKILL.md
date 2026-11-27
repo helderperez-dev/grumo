@@ -6,7 +6,7 @@
 
 ## Purpose
 
-Ensure changes respect Voodoo's architectural invariants, layering rules, and compatibility patterns before they land in `main`.
+Ensure changes respect Grumo's architectural invariants, layering rules, and compatibility patterns before they land in `main`.
 
 ---
 
@@ -50,7 +50,7 @@ Ensure changes respect Voodoo's architectural invariants, layering rules, and co
 
 ### 4. Error Handling
 
-- [ ] Uses `VoodooError` hierarchy (`voodoo.core.errors`).
+- [ ] Uses `GrumoError` hierarchy (`grumo.core.errors`).
 - [ ] Broad excepts use `# noqa: BLE001` and log context.
 - [ ] No silent exception swallowing.
 
@@ -66,7 +66,7 @@ Ensure changes respect Voodoo's architectural invariants, layering rules, and co
 - [ ] `just format` passes.
 - [ ] `just lint` passes (ruff).
 - [ ] `just test` passes.
-- [ ] `uv run mypy src/voodoo` passes (not in lint gate, but required for type safety).
+- [ ] `uv run mypy src/grumo` passes (not in lint gate, but required for type safety).
 
 ### 7. PR & Repo Rules
 

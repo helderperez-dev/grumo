@@ -7,16 +7,16 @@ added here in the same change.
 
 | Surface | Disposition | Owner | Review / removal condition |
 | --- | --- | --- | --- |
-| `voodoo.components` | Keep as a thin facade | `voodoo.ui` | Reconsider at the next major version after migration telemetry is available |
-| `voodoo.core.state` and `voodoo.core.render` | Keep as import facades | `voodoo.ui` | Remove only in a declared major-version migration |
-| `voodoo.telemetry` | Keep as compatibility aliases | `voodoo.observability` | Remove after a major version and documented import migration |
-| `voodoo.mcp` | Keep as public compatibility imports | `voodoo.integrations.mcp` | Remove only with a major-version migration |
-| `voodoo.mesh` | Keep application-facing transport surface | `voodoo.runtime.distributed` for authority | Split/remove only after a separately specified distributed profile |
-| `voodoo.workers` | Keep application-facing compatibility surface | `voodoo.runtime.scheduling` | Remove after a major migration and scheduler API replacement |
-| `voodoo.tools` | Keep import compatibility | `voodoo.ai.tools` | Remove after a major migration |
-| `voodoo.agents` | Keep semantic participant registry | `voodoo.agents` | Not a compatibility shim; change requires architecture review |
-| `voodoo.data.BaseModel` / SQL adapters | Keep explicit legacy adapter | `voodoo.data` and `voodoo.storage` | No new framework features; remove only after Store-first migration evidence |
-| `voodoo.yaml` configuration | Keep parser compatibility | `voodoo.config` | Prefer `voodoo.toml`; remove only in a major version |
+| `grumo.components` | Keep as a thin facade | `grumo.ui` | Reconsider at the next major version after migration telemetry is available |
+| `grumo.core.state` and `grumo.core.render` | Keep as import facades | `grumo.ui` | Remove only in a declared major-version migration |
+| `grumo.telemetry` | Keep as compatibility aliases | `grumo.observability` | Remove after a major version and documented import migration |
+| `grumo.mcp` | Keep as public compatibility imports | `grumo.integrations.mcp` | Remove only with a major-version migration |
+| `grumo.mesh` | Keep application-facing transport surface | `grumo.runtime.distributed` for authority | Split/remove only after a separately specified distributed profile |
+| `grumo.workers` | Keep application-facing compatibility surface | `grumo.runtime.scheduling` | Remove after a major migration and scheduler API replacement |
+| `grumo.tools` | Keep import compatibility | `grumo.ai.tools` | Remove after a major migration |
+| `grumo.agents` | Keep semantic participant registry | `grumo.agents` | Not a compatibility shim; change requires architecture review |
+| `grumo.data.BaseModel` / SQL adapters | Keep explicit legacy adapter | `grumo.data` and `grumo.storage` | No new framework features; remove only after Store-first migration evidence |
+| `grumo.yaml` configuration | Keep parser compatibility | `grumo.config` | Prefer `grumo.toml`; remove only in a major version |
 | package-root facades | Freeze existing documented imports | Owning canonical domain | No new exports without public API manifest review |
 
 ## Rules

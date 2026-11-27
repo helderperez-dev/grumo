@@ -46,7 +46,7 @@ dependencies = [
     "starlette",
     "uvicorn",
     "pydantic",
-    "grumo-store>=1.0.0,<2.0.0",
+    "grumo-store>=2.0.0,<3.0.0",
     "websockets",
     "httpx",
     "python-dotenv",
@@ -66,9 +66,7 @@ Issues = "https://github.com/helderperez-dev/grumo/issues"
 Discussions = "https://github.com/helderperez-dev/grumo/discussions"
 
 [project.scripts]
-# Both CLI entrypoints share the same runtime during the transition.
 grumo = "grumo.cli:app"
-voodoo = "voodoo.cli:app"
 
 [project.optional-dependencies]
 ai = [
@@ -108,28 +106,22 @@ redis = [
 edge = [
     "paho-mqtt>=2.0",
 ]
-otel = [
-    "opentelemetry-api>=1.20",
-    "opentelemetry-sdk>=1.20",
-    "opentelemetry-exporter-otlp-proto-grpc>=1.20",
-]
 secrets = [
     "cryptography>=42",
 ]
 
 [tool.setuptools.dynamic]
-version = { attr = "voodoo.__version__" }
+version = { attr = "grumo.__version__" }
 
 [tool.setuptools]
 include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["voodoo*", "grumo*"]
+include = ["grumo*"]
 
 [tool.setuptools.package-data]
-grumo = ["py.typed"]
-voodoo = [
+grumo = [
     "py.typed",
     "static/*.js",
     "*.html",
@@ -200,7 +192,6 @@ module = [
     "boto3.*",
     "botocore.*",
     "redis.*",
-    "opentelemetry.*",
     "ollama.*",
     "anthropic.*",
     "google.*",

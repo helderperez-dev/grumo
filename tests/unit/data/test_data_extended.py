@@ -2,9 +2,9 @@
 
 import pytest
 
-from voodoo.adapters import TailwindAdapter, VoodooCSSAdapter
-from voodoo.ui import EmptyState, set_style_adapter
-from voodoo.ui.data_extended import (
+from grumo.adapters import GrumoCSSAdapter, TailwindAdapter
+from grumo.ui import EmptyState, set_style_adapter
+from grumo.ui.data_extended import (
     ColumnDef,
     DataList,
     DataRow,
@@ -17,10 +17,10 @@ from voodoo.ui.data_extended import (
     Stat,
     StatGroup,
 )
-from voodoo.ui.styles import current_adapter
+from grumo.ui.styles import current_adapter
 
 
-@pytest.fixture(params=[VoodooCSSAdapter, TailwindAdapter])
+@pytest.fixture(params=[GrumoCSSAdapter, TailwindAdapter])
 def adapter(request):
     original = current_adapter()
     set_style_adapter(request.param())
@@ -54,12 +54,12 @@ def test_description_item_with_link(adapter):
     html = DescriptionList(
         DescriptionItem(
             "Website",
-            "voodoo.dev",
-            href="https://voodoo.dev",
+            "grumo.dev",
+            href="https://grumo.dev",
         ),
     ).render()
-    assert "voodoo.dev" in html
-    assert "https://voodoo.dev" in html
+    assert "grumo.dev" in html
+    assert "https://grumo.dev" in html
 
 
 def test_description_section(adapter):
@@ -87,7 +87,9 @@ def test_description_list_loading_and_error_states_are_explicit(adapter):
     assert "stale" not in loading
     assert 'aria-busy="true"' in loading
 
-    error = DescriptionList(DescriptionItem("stale", "value"), error="Unavailable").render()
+    error = DescriptionList(
+        DescriptionItem("stale", "value"), error="Unavailable"
+    ).render()
     assert "Unavailable" in error
     assert "data-vd-error-state" in error
     assert "stale" not in error
@@ -236,7 +238,7 @@ def test_list_box_shared_control_states_disable_options(adapter):
     assert 'aria-invalid="true"' in html
     assert "Options unavailable" in html
     assert 'data-vd-state="error"' in html
-    assert 'data-vd-event-click' not in html
+    assert "data-vd-event-click" not in html
 
 
 def test_list_box_state_rows_replace_stale_options(adapter):
@@ -377,7 +379,7 @@ def test_enhanced_data_table_state_contract_suppresses_activation(adapter):
     assert "data-vd-error-state" in html
     assert "Table unavailable" in html
     assert 'aria-live="polite"' in html
-    assert '>1<' not in html
+    assert ">1<" not in html
 
 
 def test_enhanced_data_table_empty(adapter):

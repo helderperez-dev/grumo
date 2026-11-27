@@ -1,4 +1,4 @@
-# Voodoo Architecture Review — v2.5.2
+# Grumo Architecture Review — v2.5.2
 
 > **Date:** 2026-08-29 (original v2.5.0), updated 2026-03-15 (v2.5.2 stabilization)
 > **Scope:** Sprints 1–22, version 2.5.0 → v2.5.2 architecture stabilization
@@ -35,7 +35,7 @@
 
 ## Executive Summary
 
-Voodoo v2.5.2 is a **programmable runtime for adaptive applications and operational systems** built on Starlette, Uvicorn, Pydantic, aiosqlite, and Python asyncio. It is zero-config by default (SQLite + local filesystem) and production-ready by configuration (PostgreSQL, Redis, S3, OpenAI/Anthropic).
+Grumo v2.5.2 is a **programmable runtime for adaptive applications and operational systems** built on Starlette, Uvicorn, Pydantic, aiosqlite, and Python asyncio. It is zero-config by default (SQLite + local filesystem) and production-ready by configuration (PostgreSQL, Redis, S3, OpenAI/Anthropic).
 
 **What it actually is today:** A well-structured Python framework with a durable execution engine, capability-based security, human-in-the-loop approvals, an agent system, a mesh event bus, MCP integration, a reactive UI layer, and a protocol schema boundary. The runtime has 22 sprints of incremental development behind it, with strong local-first defaults and honest provider adapters.
 
@@ -57,7 +57,7 @@ Voodoo v2.5.2 is a **programmable runtime for adaptive applications and operatio
 
 4. **The storage adapter layer is honest.** SQLite, PostgreSQL, Redis, S3, and memory adapters implement the same Protocols with explicit capability flags. Contract tests enforce semantic parity. The adapter layer does not pretend that SQLite has the same concurrency as PostgreSQL.
 
-5. **The DX ramp is well-designed.** Progressive complexity from 10-line hello world to 120-line production app. Zero config at levels 1–5. `voodoo create` scaffolds a working app with durable tasks, agent, and crash/restart demo.
+5. **The DX ramp is well-designed.** Progressive complexity from 10-line hello world to 120-line production app. Zero config at levels 1–5. `grumo create` scaffolds a working app with durable tasks, agent, and crash/restart demo.
 
 6. **Security is capability-based, not role-based.** Sensitive capabilities (`filesystem.write`, `network.request`, `shell.execute`, `secrets.read`, `payment.execute`, `email.send`) are denied by default. No ambient authority for sensitive operations.
 
@@ -399,7 +399,7 @@ principal → capability → authorization → execution → effect
 
 ### Assessment
 
-The agent system is now **fully converged** with the ExecutionEngine. Agent runs are visible in `voodoo inspect executions`, tool calls go through capability enforcement, agent runs have checkpoints and recovery, and tool calls create parent/child relationships.
+The agent system is now **fully converged** with the ExecutionEngine. Agent runs are visible in `grumo inspect executions`, tool calls go through capability enforcement, agent runs have checkpoints and recovery, and tool calls create parent/child relationships.
 
 ---
 
@@ -437,7 +437,7 @@ Approval is correctly modeled as an Execution transition. The `WAITING` state, p
 
 ### Schema/domain boundaries
 
-The protocol layer (`voodoo.protocol`) defines 18 Pydantic models as the stable semantic boundary for cross-language interop. Each model carries `schema_version: int = Field(default=SCHEMA_VERSION, ge=1)`.
+The protocol layer (`grumo.protocol`) defines 18 Pydantic models as the stable semantic boundary for cross-language interop. Each model carries `schema_version: int = Field(default=SCHEMA_VERSION, ge=1)`.
 
 ### Issues
 
@@ -553,8 +553,8 @@ These add negligible overhead but violate the "minimal by default" principle.
 | 8 | ~~`planned → rejected` transition~~ | `docs/execution-model.md` | ✅ **FIXED** | Removed from implemented transitions |
 | 9 | ~~`running → recovering` transition~~ | `docs/execution-model.md` | ✅ **FIXED** | Removed from implemented transitions |
 | 10 | ~~`failed → compensating` transition~~ | `docs/execution-model.md` | ✅ **FIXED** | Removed from implemented transitions |
-| 11 | Protocol schemas use `datetime.utcnow()` | `src/voodoo/protocol/schemas.py` | 🟡 Minor | Deprecated since Python 3.12 |
-| 12 | `voodoo new` in quick start | `README.md` | 🟢 Correct | `voodoo create` is now primary (Sprint 22) |
+| 11 | Protocol schemas use `datetime.utcnow()` | `src/grumo/protocol/schemas.py` | 🟡 Minor | Deprecated since Python 3.12 |
+| 12 | `grumo new` in quick start | `README.md` | 🟢 Correct | `grumo create` is now primary (Sprint 22) |
 | 13 | Auth claims (PBKDF2, JWT, API keys, guards) | `docs/auth.md` | 🟢 Correct | All verified |
 | 14 | Telemetry claims (trace_id, ring buffers, OTLP) | `docs/telemetry.md` | 🟢 Correct | All verified |
 | 15 | Mesh claims (namespaced events, correlation_id) | `docs/mesh.md` | 🟢 Correct | All verified |
@@ -577,14 +577,14 @@ These add negligible overhead but violate the "minimal by default" principle.
 | 4 | AI agent + tools | ~50 | 3 | None (mock) | ✅ Good progressive complexity |
 | 5 | Mesh + workers | ~60 | 3 | None | ✅ Clean |
 | 6 | Auth + guards | ~80 | 4 | None | ✅ |
-| 7 | Durable execution | ~100 | 5 | `voodoo.yaml` | ✅ |
+| 7 | Durable execution | ~100 | 5 | `grumo.yaml` | ✅ |
 | 8 | PostgreSQL + Redis | ~120 | 5 | Env vars | ✅ |
 
 ### DX concerns
 
-1. **Import confusion:** `from voodoo import state` (UI reactive) vs `from voodoo.primitives import State` (runtime primitive) — same word, different concepts.
+1. **Import confusion:** `from grumo import state` (UI reactive) vs `from grumo.primitives import State` (runtime primitive) — same word, different concepts.
 2. **Magic auto-registration:** `@tool`, `@event`, `@page` all register at import time. Convenient but side effects at import.
-3. **Config surface:** `voodoo.toml`, `voodoo.yaml`, `VOODOO_*` env vars, and in-code config all work. Multiplicity can confuse newcomers.
+3. **Config surface:** `grumo.toml`, `grumo.yaml`, `GRUMO_*` env vars, and in-code config all work. Multiplicity can confuse newcomers.
 
 ### Assessment
 
@@ -705,7 +705,7 @@ The following should NOT be changed:
 
 ## Post-Review Architecture
 
-The architecture Voodoo should freeze around:
+The architecture Grumo should freeze around:
 
 ```text
                     ENTITY (conceptual)

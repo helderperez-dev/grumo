@@ -6,7 +6,7 @@ import json
 
 import pytest
 
-from voodoo.mesh import MeshNetwork, _make_envelope, _validate_namespace, mesh
+from grumo.mesh import MeshNetwork, _make_envelope, _validate_namespace, mesh
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -140,7 +140,7 @@ def test_make_envelope_with_explicit_correlation_id():
 
 
 def test_make_envelope_correlation_id_from_trace_var():
-    from voodoo.observability import trace_id_var
+    from grumo.observability import trace_id_var
 
     trace_id_var.set("my-trace-id")
     try:
@@ -185,7 +185,7 @@ def test_expose_bridges_to_mcp():
         """A tool via mesh."""
         return "result"
 
-    from voodoo.integrations.mcp import mcp as mcp_instance
+    from grumo.integrations.mcp import mcp as mcp_instance
 
     assert "exposed_tool" in mcp_instance.tools
 
@@ -233,8 +233,8 @@ async def test_isolated_mesh_does_not_leak_to_global():
 @pytest.mark.asyncio
 async def test_mesh_handler_produces_execution_record():
     """Every local handler runs through the engine (intent ``mesh:<event>``)."""
-    from voodoo.runtime.execution import ExecutionStatus
-    from voodoo.runtime.execution.engine import engine as runtime_engine
+    from grumo.runtime.execution import ExecutionStatus
+    from grumo.runtime.execution.engine import engine as runtime_engine
 
     received = []
 
@@ -258,9 +258,9 @@ async def test_mesh_handler_produces_execution_record():
 @pytest.mark.asyncio
 async def test_mesh_handler_is_child_of_broadcasting_execution():
     """A handler fired inside another execution links parent_execution_id."""
-    from voodoo.primitives.intent import Intent
-    from voodoo.runtime import ExecutionContext, ExecutionEngine
-    from voodoo.runtime.execution import ExecutionStatus
+    from grumo.primitives.intent import Intent
+    from grumo.runtime import ExecutionContext, ExecutionEngine
+    from grumo.runtime.execution import ExecutionStatus
 
     engine = ExecutionEngine()
     received = []

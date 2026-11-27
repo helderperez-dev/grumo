@@ -1,4 +1,4 @@
-# Voodoo Production Profile 1 threat model
+# Grumo Production Profile 1 threat model
 
 This document defines the security boundary for the supported single-process,
 single-Store-writer production profile. It is intentionally narrower than a

@@ -6,7 +6,7 @@ from types import SimpleNamespace
 
 import pytest
 
-import voodoo.status as status_module
+import grumo.status as status_module
 
 
 @pytest.mark.asyncio
@@ -55,10 +55,8 @@ async def test_agent_health_reports_resolved_model_without_network_call(monkeypa
         calls.append(model)
         return ("mock", "test")
 
-    monkeypatch.setattr(
-        "voodoo.ai.providers.default_model", fake_default_model
-    )
-    monkeypatch.setattr("voodoo.ai.providers.resolve_model", fake_resolve_model)
+    monkeypatch.setattr("grumo.ai.providers.default_model", fake_default_model)
+    monkeypatch.setattr("grumo.ai.providers.resolve_model", fake_resolve_model)
 
     result = await status_module.check_agent()
 
@@ -75,7 +73,7 @@ async def test_agent_health_reports_resolved_model_without_network_call(monkeypa
 @pytest.mark.asyncio
 async def test_agent_health_rejects_invalid_model_configuration(monkeypatch):
     monkeypatch.setattr(
-        "voodoo.ai.providers.default_model", lambda: "missing-provider:model"
+        "grumo.ai.providers.default_model", lambda: "missing-provider:model"
     )
 
     result = await status_module.check_agent()
@@ -89,9 +87,7 @@ async def test_agent_health_does_not_hide_provider_implementation_failures(monke
     def broken_default_model() -> str:
         raise RuntimeError("provider implementation failed")
 
-    monkeypatch.setattr(
-        "voodoo.ai.providers.default_model", broken_default_model
-    )
+    monkeypatch.setattr("grumo.ai.providers.default_model", broken_default_model)
     with pytest.raises(RuntimeError, match="implementation failed"):
         await status_module.check_agent()
 
@@ -130,8 +126,13 @@ async def test_database_health_failure_emits_redacted_structured_diagnostic(
     with caplog.at_level("WARNING", logger=status_module.logger.name):
         result = await status_module.check_database()
 
-    assert result == {"status": "Down", "error": "token=[REDACTED] database unavailable"}
-    record = next(record for record in caplog.records if record.message == "health check failed")
+    assert result == {
+        "status": "Down",
+        "error": "token=[REDACTED] database unavailable",
+    }
+    record = next(
+        record for record in caplog.records if record.message == "health check failed"
+    )
     assert record.health_check == "database"
     assert record.error == result["error"]
     assert "super-secret" not in caplog.text
@@ -154,7 +155,7 @@ async def test_database_health_does_not_hide_unexpected_implementation_failures(
 async def test_store_health_projects_capacity_and_redacts_details(monkeypatch):
     fake_runtime = SimpleNamespace(
         health=lambda: SimpleNamespace(
-            provider="voodoo",
+            provider="grumo",
             path=Path("/private/store.vstore"),
             opened=True,
             verified=True,
@@ -187,10 +188,12 @@ async def test_store_health_does_not_hide_unexpected_implementation_failures(
 
 
 @pytest.mark.asyncio
-async def test_store_health_details_are_bounded_json_safe_and_identifier_free(monkeypatch):
+async def test_store_health_details_are_bounded_json_safe_and_identifier_free(
+    monkeypatch,
+):
     fake_runtime = SimpleNamespace(
         health=lambda: SimpleNamespace(
-            provider="voodoo",
+            provider="grumo",
             opened=True,
             verified=True,
             details={

@@ -2,12 +2,12 @@
 
 **Status:** DONE · closed 2026-09-30  
 **Started:** 2026-09-28  
-**Release target:** Voodoo 3.2.0  
+**Release target:** Grumo 3.2.0  
 **Primary implementation:** PR #79
 
 ## Why this sprint existed
 
-Voodoo 3.1 established a coherent Runtime + Store architecture, but real
+Grumo 3.1 established a coherent Runtime + Store architecture, but real
 application development exposed a product gap: some CLI surfaces still carried
 legacy SQLite assumptions, project creation had competing paths, and the UI
 library had more breadth than consistent browser-level polish.
@@ -18,14 +18,14 @@ new major Runtime capability; it hardened the product developers actually touch.
 ## Product laws
 
 1. **Store-first means Store-first everywhere.** A default application may
-   create `.voodoo/application.vstore`; it must not silently create SQLite DBs.
-2. **`voodoo new` is the canonical beginning.** The default scaffold is built
+   create `.grumo/application.grumo`; it must not silently create SQLite DBs.
+2. **`grumo new` is the canonical beginning.** The default scaffold is built
    into the package, works without a template network dependency and represents
    the current public API.
 3. **Variety stays; quality rises.** Public components are not removed merely
    to simplify polish. Every visual family converges on one design language.
 4. **Semantic components, not adapter leakage.** First-party components declare
-   intent; VoodooCSS and optional adapters translate that intent.
+   intent; GrumoCSS and optional adapters translate that intent.
 5. **Rendered HTML is not enough.** Important interactions require real-browser
    focus, keyboard, responsive and state acceptance.
 6. **Real applications drive corrections.** Acceptance apps do not hide
@@ -42,15 +42,15 @@ CLI inspection. SQLite/PostgreSQL/local filesystem/S3 remain explicit adapters.
 The clean-install gate validates the canonical journey:
 
 ```text
-voodoo new my-app --no-install
+grumo new my-app --no-install
 cd my-app
 
-.voodoo/
-└── application.vstore
+.grumo/
+└── application.grumo
 ```
 
 The generated folder-based application boots through `App()`, public routes
-render, `application.vstore` is durable, and the gate fails if any accidental
+render, `application.grumo` is durable, and the gate fails if any accidental
 `*.db` file appears.
 
 ## 29.2 — CLI convergence
@@ -60,33 +60,33 @@ render, `application.vstore` is durable, and the gate fails if any accidental
 Canonical direction:
 
 ```text
-CLI → application context → Runtime services → RuntimeStore → Voodoo Store
+CLI → application context → Runtime services → RuntimeStore → Grumo Store
 ```
 
 Delivered:
 
-- `voodoo new` as the visible canonical scaffold;
+- `grumo new` as the visible canonical scaffold;
 - remote templates only through explicit `--template`;
 - deterministic `--no-install`;
 - a Store-first application context shared by operational commands;
 - executions, schedules, objects, agents, approvals, recovery and inspection
   migrated away from implicit SQLite;
-- generated AI guidance aligned with the Voodoo 3.x `Model` + Store API;
-- `voodoo status --json` with a stable application/Runtime/provider summary;
-- `voodoo doctor --json` with side-effect-free Store-first diagnostics.
+- generated AI guidance aligned with the Grumo 3.x `Model` + Store API;
+- `grumo status --json` with a stable application/Runtime/provider summary;
+- `grumo doctor --json` with side-effect-free Store-first diagnostics.
 
 ## 29.3 — Component Lab
 
 **Status: DONE**
 
 `examples/web/component_lab` is the visual and behavioral source of truth and
-uses public Voodoo APIs with no application CSS.
+uses public Grumo APIs with no application CSS.
 
 The Lab covers foundations, semantic HTML primitives, application shell,
 chat/AI, auth, forms, navigation, advanced interactions, data-heavy UI,
 desktop workspace, Runtime/World/Edge and feedback surfaces.
 
-A regression test now compares the public `voodoo.ui` surface with the Lab and
+A regression test now compares the public `grumo.ui` surface with the Lab and
 requires every renderable public visual component to be exercised. Non-rendering
 infrastructure types are explicitly excluded rather than pretending they are UI
 widgets.
@@ -169,14 +169,14 @@ The 3.2 release candidate is gated by:
 - Python 3.13 full test suite;
 - CodeQL;
 - clean Store-first installation;
-- canonical `voodoo new --no-install` scaffold lifecycle;
+- canonical `grumo new --no-install` scaffold lifecycle;
 - zero accidental SQLite files;
 - complete Component Lab public visual coverage;
 - Chromium browser acceptance;
 - mobile overflow acceptance;
 - light/dark visual artifacts.
 
-The protected CI and release workflows both use the canonical `voodoo new`
+The protected CI and release workflows both use the canonical `grumo new`
 path. No workflow exception remains.
 
 ## Definition of done
@@ -184,14 +184,14 @@ path. No workflow exception remains.
 Sprint 29 is complete when:
 
 ```bash
-pip install voodoo-framework
-voodoo new my-app
+pip install grumo-framework
+grumo new my-app
 cd my-app
-voodoo dev
+grumo dev
 ```
 
 leads to one coherent product: beautiful UI, predictable interaction, simple
 Python, one Runtime, one default Store and an excellent operational CLI.
 
 **Result: achieved.** Sprint 29 is implementation-complete and release-ready;
-cutting/publishing Voodoo 3.2.0 remains an explicit release operation.
+cutting/publishing Grumo 3.2.0 remains an explicit release operation.

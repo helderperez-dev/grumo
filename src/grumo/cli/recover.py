@@ -1,0 +1,89 @@
+"""grumo recover — reload unfinished executions from durable application state.
+
+The default recovery source is the canonical Grumo Store configured for the
+application. ``--store`` is retained only for explicit legacy JSONL/SQLite
+migration and compatibility workflows.
+"""
+
+from __future__ import annotations
+
+import os
+from pathlib import Path
+from typing import Any
+
+import typer
+
+from grumo.cli import terminal
+
+
+def _resolve_store(store_path: str | None) -> Any:
+    """Return canonical execution storage unless a legacy path is explicit."""
+    from grumo.cli.context import acquire_execution_store
+    from grumo.runtime.persistence import JSONFileExecutionStore
+    from grumo.storage.execution import SQLiteExecutionStore
+
+    explicit = store_path or os.environ.get("GRUMO_EXECUTION_STORE")
+    if explicit is None:
+        return acquire_execution_store()
+    if Path(explicit).suffix == ".jsonl":
+        return JSONFileExecutionStore(explicit), explicit
+    return SQLiteExecutionStore(explicit), explicit
+
+
+def recover(
+    app_str: str = typer.Option(None, "--app", help="App instance (e.g. main:app)"),
+    store_path: str = typer.Option(
+        None,
+        "--store",
+        help="Legacy execution-store path; default uses application.grumo",
+    ),
+    json_mode: bool = typer.Option(
+        False, "--json", help="Output machine-readable JSON"
+    ),
+) -> None:
+    """Reload unfinished executions from the store into the engine."""
+    from grumo.runtime.execution.engine import engine as runtime_engine
+
+    if app_str is not None:
+        # Import the app first: it may attach its own store / register
+        # capabilities needed by resumable approvals.
+        import importlib
+        import sys
+
+        module_name, _, attr = app_str.partition(":")
+        attr = attr or "app"
+        sys.path.insert(0, os.getcwd())
+        mod = importlib.import_module(module_name)
+        getattr(mod, attr, None)
+
+    store, store_path = _resolve_store(store_path)
+    runtime_engine.use_store(store)
+    recovered = runtime_engine.recover()
+
+    data = [ex.describe() for ex in recovered]
+    if json_mode or terminal.is_json_mode():
+        terminal.json_output({"store": store_path, "recovered": data})
+        return
+
+    terminal.wordmark()
+    terminal.blank()
+    if not recovered:
+        terminal.muted(f"no unfinished executions in {store_path}")
+        return
+    terminal.status_block([("store", store_path), ("recovered", str(len(recovered)))])
+    from rich.table import Table
+
+    table = Table(
+        show_header=True, header_style="dim", border_style="#262626", pad_edge=False
+    )
+    for c in ("id", "intent", "status", "actor"):
+        table.add_column(c)
+    for ex in recovered:
+        table.add_row(
+            ex.id[:8],
+            ex.intent.name if ex.intent else "-",
+            ex.status.value,
+            ex.actor,
+        )
+    terminal.console.print(table)
+    terminal.blank()

@@ -1,6 +1,6 @@
 # Architecture governance
 
-This document is the maintenance contract for Voodoo's repository architecture.
+This document is the maintenance contract for Grumo's repository architecture.
 It applies to every new feature, refactor, integration, public API, and release.
 
 ## Architectural center
@@ -59,7 +59,7 @@ Before adding or moving a module, answer in order:
    identity, or observability authority? If yes, redesign it around the
    canonical owner instead.
 
-Creating a new top-level `src/voodoo/<domain>/` requires an explicit architecture
+Creating a new top-level `src/grumo/<domain>/` requires an explicit architecture
 decision and documentation update in the same PR.
 
 ## Hard invariants

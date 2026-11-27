@@ -2,10 +2,10 @@
 
 > **Status:** Store-first Runtime infrastructure convergence is complete on this branch.
 
-The Voodoo Runtime Engine is the unified execution model that makes the
+The Grumo Runtime Engine is the unified execution model that makes the
 computational model operational. Meaningful work converges on one canonical
 `ExecutionEngine`; persistence and infrastructure converge on one Runtime-owned
-Voodoo Store by default.
+Grumo Store by default.
 
 ## Execution lifecycle
 
@@ -39,7 +39,7 @@ A fresh application uses:
 Application
     |
     v
-Voodoo Runtime
+Grumo Runtime
     |
     +-- Model / Data
     +-- Jobs / Queue
@@ -54,12 +54,12 @@ Voodoo Runtime
 RuntimeStore
     |
     v
-.voodoo/application.vstore
+.grumo/application.grumo
 ```
 
-The framework depends on `voodoo-store>=0.3.0,<0.4`. Application
-code should not import native `voodoo_store` objects for normal Runtime use;
-Store implementation details remain behind Voodoo-owned contracts.
+The framework depends on `grumo-store>=0.3.0,<0.4`. Application
+code should not import native `grumo_store` objects for normal Runtime use;
+Store implementation details remain behind Grumo-owned contracts.
 
 ## Runtime Store ownership
 
@@ -72,25 +72,25 @@ Process / Runtime
  RuntimeStore
        |
        v
-application.vstore
+application.grumo
 ```
 
 Infrastructure touched before `App` startup acquires the process-shared
 RuntimeStore. App startup adopts that compatible handle rather than opening a
 second writer. A live Store with a conflicting configuration is rejected.
 
-This is a single-writer law, not a limitation Voodoo tries to hide. Multiple
+This is a single-writer law, not a limitation Grumo tries to hide. Multiple
 processes must not write the same `.vstore` file.
 
 ## Execution
 
 An `Execution` is meaningful work worth observing, authorizing, recovering,
 accounting for, waiting on, or reasoning about. Internal helper calls do not
-become executions merely because they occur inside Voodoo.
+become executions merely because they occur inside Grumo.
 
 ```python
-from voodoo.primitives import Intent
-from voodoo.runtime import ExecutionEngine
+from grumo.primitives import Intent
+from grumo.runtime import ExecutionEngine
 
 engine = ExecutionEngine()
 
@@ -147,7 +147,7 @@ idempotency and domain-appropriate recovery semantics.
 The supported local atomic boundary is explicit:
 
 ```python
-from voodoo.runtime import OutboxMessage, transaction
+from grumo.runtime import OutboxMessage, transaction
 
 with transaction() as tx:
     tx.upsert_record(
@@ -173,7 +173,7 @@ claimed to be part of this local transaction.
 
 ## Transparent node scaling
 
-> **Scaling a Voodoo application changes deployment topology, not application architecture.**
+> **Scaling a Grumo application changes deployment topology, not application architecture.**
 
 ```text
 same application semantics
@@ -218,20 +218,20 @@ A fresh Runtime is equivalent to:
 
 ```toml
 [store]
-provider = "voodoo"
-path = ".voodoo/application.vstore"
+provider = "grumo"
+path = ".grumo/application.grumo"
 
 [database]
-provider = "voodoo"
+provider = "grumo"
 
 [queue]
-provider = "voodoo"
+provider = "grumo"
 
 [events]
-provider = "voodoo"
+provider = "grumo"
 
 [objects]
-provider = "voodoo"
+provider = "grumo"
 ```
 
 Those blocks normally do not need to be written. PostgreSQL, SQLite, Redis and
@@ -239,7 +239,7 @@ S3 are explicit domain overrides.
 
 ## Current honest boundaries
 
-Voodoo does not currently claim:
+Grumo does not currently claim:
 
 - shared-file multi-writer Store semantics;
 - Store replication/sync between node-local Stores;

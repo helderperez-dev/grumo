@@ -52,7 +52,11 @@ def _png_pixels(data: bytes) -> tuple[int, int, bytes]:  # noqa: C901
                 scan[index] = (scan[index] + ((left + above) // 2)) & 255
             elif filter_type == 4:
                 estimate = left + above - upper_left
-                distances = (abs(estimate - left), abs(estimate - above), abs(estimate - upper_left))
+                distances = (
+                    abs(estimate - left),
+                    abs(estimate - above),
+                    abs(estimate - upper_left),
+                )
                 predictor = (left, above, upper_left)[distances.index(min(distances))]
                 scan[index] = (scan[index] + predictor) & 255
             elif filter_type != 0:
@@ -93,7 +97,10 @@ def distance(left: dict[str, object], right: dict[str, object]) -> float:
     """Return the fraction of thumbnail channels differing by more than one bin."""
     left_width = int(left["width"])
     right_width = int(right["width"])
-    if left["size"] != right["size"] or abs(left_width - right_width) / max(right_width, 1) > 0.1:
+    if (
+        left["size"] != right["size"]
+        or abs(left_width - right_width) / max(right_width, 1) > 0.1
+    ):
         return 1.0
     left_height = int(left["height"])
     right_height = int(right["height"])

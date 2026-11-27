@@ -2,25 +2,25 @@
 
 ## What it is
 
-Voodoo is a standard ASGI application, but its default durable substrate is an
-embedded Voodoo Store. That changes one important deployment rule:
+Grumo is a standard ASGI application, but its default durable substrate is an
+embedded Grumo Store. That changes one important deployment rule:
 
-> **One Voodoo Runtime process owns one local `.vstore` writer.**
+> **One Grumo Runtime process owns one local `.vstore` writer.**
 
-Do not run multiple OS workers against the same `application.vstore` file.
-Horizontal scale is modeled as multiple Voodoo Nodes, each with its own local
+Do not run multiple OS workers against the same `application.grumo` file.
+Horizontal scale is modeled as multiple Grumo Nodes, each with its own local
 Store, rather than multiple processes sharing one Store file.
 
 ## Development
 
 ```bash
-voodoo dev
+grumo dev
 ```
 
 The default Store is created at:
 
 ```text
-.voodoo/application.vstore
+.grumo/application.grumo
 ```
 
 ## Production: one Store-backed node
@@ -28,13 +28,13 @@ The default Store is created at:
 Run one ASGI worker for one local Store:
 
 ```bash
-export VOODOO_ENV=production
-export VOODOO_SECRET_KEY="replace-with-a-real-secret"
-export VOODOO_STORE_PATH="/data/application.vstore"
+export GRUMO_ENV=production
+export GRUMO_SECRET_KEY="replace-with-a-real-secret"
+export GRUMO_STORE_PATH="/data/application.grumo"
 # Optional startup/health guardrail; native Store quotas are not implied.
-export VOODOO_STORE_MAX_BYTES="10737418240"
+export GRUMO_STORE_MAX_BYTES="10737418240"
 # Object request-body guardrail (50 MiB default)
-export VOODOO_MAX_UPLOAD_BYTES="52428800"
+export GRUMO_MAX_UPLOAD_BYTES="52428800"
 
 uvicorn main:app --host 0.0.0.0 --port 8000 --workers 1
 ```
@@ -44,21 +44,21 @@ than pretending a shared-file multi-writer topology is safe.
 
 ## Horizontal scale
 
-Scale by adding Voodoo Nodes with node-local Stores:
+Scale by adding Grumo Nodes with node-local Stores:
 
 ```text
 load balancer / ingress
           |
-          +-- Voodoo Node A -> /data/a/application.vstore
-          +-- Voodoo Node B -> /data/b/application.vstore
-          `-- Voodoo Node C -> /data/c/application.vstore
+          +-- Grumo Node A -> /data/a/application.grumo
+          +-- Grumo Node B -> /data/b/application.grumo
+          `-- Grumo Node C -> /data/c/application.grumo
 ```
 
 Runtime Fabric membership, discovery, capability/policy-aware placement,
 ownership, leases, health and bounded failover determine where governed work
 runs. Application semantics should remain topology-agnostic.
 
-Voodoo does **not** currently replicate Store data automatically between those
+Grumo does **not** currently replicate Store data automatically between those
 node-local files. Distributed ownership comes before distributed storage.
 
 ## Docker
@@ -67,9 +67,9 @@ node-local files. Distributed ownership comes before distributed storage.
 FROM python:3.12-slim
 WORKDIR /app
 COPY . .
-RUN pip install voodoo-framework
-ENV VOODOO_ENV=production
-ENV VOODOO_STORE_PATH=/data/application.vstore
+RUN pip install grumo-framework
+ENV GRUMO_ENV=production
+ENV GRUMO_STORE_PATH=/data/application.grumo
 EXPOSE 8000
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
 ```
@@ -83,9 +83,9 @@ services:
     ports:
       - "8000:8000"
     environment:
-      VOODOO_ENV: production
-      VOODOO_SECRET_KEY: ${SECRET_KEY}
-      VOODOO_STORE_PATH: /data/application.vstore
+      GRUMO_ENV: production
+      GRUMO_SECRET_KEY: ${SECRET_KEY}
+      GRUMO_STORE_PATH: /data/application.grumo
     volumes:
       - app-data:/data
 
@@ -94,17 +94,17 @@ volumes:
 ```
 
 A second replica must use a different Store path/volume and join as a separate
-Voodoo Node. Do not mount one `.vstore` file read-write into multiple replicas.
+Grumo Node. Do not mount one `.vstore` file read-write into multiple replicas.
 
 ## Store operations
 
 The Runtime exposes Store/fabric inspection commands:
 
 ```bash
-voodoo fabric status
-voodoo fabric health
-voodoo fabric verify
-voodoo fabric backup
+grumo fabric status
+grumo fabric health
+grumo fabric verify
+grumo fabric backup
 ```
 
 Use `verify` before/after operational maintenance and create backups according
@@ -115,20 +115,20 @@ to your recovery policy.
 A workload may explicitly move the database domain to PostgreSQL:
 
 ```bash
-pip install "voodoo-framework[postgres]"
+pip install "grumo-framework[postgres]"
 ```
 
 ```toml
 [database]
 provider = "postgres"
-url = "postgresql://voodoo:secret@db:5432/voodoo"
+url = "postgresql://grumo:secret@db:5432/grumo"
 ```
 
 Or with environment variables:
 
 ```bash
-export VOODOO_DATABASE_PROVIDER=postgres
-export VOODOO_DATABASE_URL="postgresql://voodoo:secret@db:5432/voodoo"
+export GRUMO_DATABASE_PROVIDER=postgres
+export GRUMO_DATABASE_URL="postgresql://grumo:secret@db:5432/grumo"
 ```
 
 This replaces the selected database domain. It does not automatically turn all
@@ -137,7 +137,7 @@ other Runtime domains into PostgreSQL-backed services.
 ## Explicit Redis queue/cache adapter
 
 ```bash
-pip install "voodoo-framework[redis]"
+pip install "grumo-framework[redis]"
 ```
 
 ```toml
@@ -150,13 +150,13 @@ provider = "redis"
 url = "redis://redis:6379/1"
 ```
 
-Redis durability depends on the Redis deployment configuration. Voodoo does
+Redis durability depends on the Redis deployment configuration. Grumo does
 not upgrade Redis semantics into exactly-once delivery.
 
 ## Explicit S3-compatible object adapter
 
 ```bash
-pip install "voodoo-framework[s3]"
+pip install "grumo-framework[s3]"
 ```
 
 ```toml
@@ -168,8 +168,8 @@ endpoint = "https://object.example.com"
 max_upload_bytes = 52428800
 ```
 
-`objects.max_upload_bytes` (or `VOODOO_MAX_UPLOAD_BYTES`) bounds each upload
-before it reaches local filesystem, Voodoo Store, or S3-compatible storage. Set
+`objects.max_upload_bytes` (or `GRUMO_MAX_UPLOAD_BYTES`) bounds each upload
+before it reaches local filesystem, Grumo Store, or S3-compatible storage. Set
 it deliberately when accepting larger files; the value must be a positive
 integer number of bytes.
 
@@ -190,20 +190,20 @@ SQLite remains available for compatibility or a deliberately selected SQL
 workload:
 
 ```bash
-pip install "voodoo-framework[sqlite]"
+pip install "grumo-framework[sqlite]"
 ```
 
 ```toml
 [database]
 provider = "sqlite"
-path = ".voodoo/state/data.db"
+path = ".grumo/state/data.db"
 ```
 
 It is not the default fresh-application backend.
 
 ## Reverse proxy
 
-Voodoo works behind nginx, Caddy, or another HTTP reverse proxy. Preserve both
+Grumo works behind nginx, Caddy, or another HTTP reverse proxy. Preserve both
 HTTP and WebSocket upgrades:
 
 ```nginx
@@ -213,14 +213,14 @@ location / {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 }
 
-location /_voodoo_ws {
+location /_grumo_ws {
     proxy_pass http://127.0.0.1:8000;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "upgrade";
 }
 
-location /voodoo/mesh/ws {
+location /grumo/mesh/ws {
     proxy_pass http://127.0.0.1:8000;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
@@ -233,14 +233,14 @@ location /voodoo/mesh/ws {
 Set at least:
 
 ```bash
-export VOODOO_ENV=production
-export VOODOO_SECRET_KEY="$(voodoo auth secret-key --raw)"
+export GRUMO_ENV=production
+export GRUMO_SECRET_KEY="$(grumo auth secret-key --raw)"
 # Comma-separated; omit for same-origin-only browser access.
-export VOODOO_CORS_ORIGINS="https://app.example.com"
+export GRUMO_CORS_ORIGINS="https://app.example.com"
 ```
 
 Production mode defaults to CSRF protection, Secure cookies, HSTS, no
-cross-origin allowlist and no credentialed wildcard CORS. `voodoo start` and
+cross-origin allowlist and no credentialed wildcard CORS. `grumo start` and
 application creation fail before serving when debug mode, the development
 signing key, insecure cookies, disabled HSTS/CSRF or credentialed wildcard CORS
 would weaken this profile. TLS should normally terminate at a trusted reverse
@@ -266,7 +266,7 @@ The ASGI application exposes two deployment-safe probes:
 
 - `GET /healthz` is a process liveness check. It does not touch durable state.
 - `GET /readyz` checks that the Runtime-owned Store is open, within its
-  configured `VOODOO_STORE_MAX_BYTES` limit, and available for traffic. It
+  configured `GRUMO_STORE_MAX_BYTES` limit, and available for traffic. It
   returns `200` with `{"status":"ready"}` when ready and `503` with
   `{"status":"not_ready"}` while startup, recovery, or quota checks fail.
   The response also includes a `mode` (`ready`, `not_ready`, `recovery`,
@@ -288,7 +288,7 @@ as a substitute for Store or dependency health.
 ## Deployment laws
 
 1. one process owns one live local Store writer;
-2. never coordinate Voodoo Nodes by sharing a `.vstore` over a network filesystem;
+2. never coordinate Grumo Nodes by sharing a `.vstore` over a network filesystem;
 3. use separate node-local Stores for horizontal Runtime Fabric topology;
 4. external providers are explicit domain overrides, not hidden defaults;
 5. no claim of Store replication, distributed consensus, global transactions,
@@ -299,5 +299,5 @@ as a substitute for Store or dependency health.
 
 - `App.run(...)` — single-process application server helper.
 - `create_app(app_dir="app")` — Starlette/ASGI application factory.
-- `voodoo dev` — development server with reload support.
-- `voodoo fabric status|health|verify|join|backup` — local fabric/Store operations.
+- `grumo dev` — development server with reload support.
+- `grumo fabric status|health|verify|join|backup` — local fabric/Store operations.

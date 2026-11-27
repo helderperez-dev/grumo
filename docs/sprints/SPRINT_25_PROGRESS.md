@@ -11,14 +11,14 @@
 - 25.3 Context-preserving DOM patching — complete in PR #33.
 - 25.4 Soft navigation — complete in PR #33.
 - 25.5 Component API normalization — complete in PR #37 (`89836657`).
-- 25.6 Voodoo Design System 2 — complete in PR #37 (`89836657`).
+- 25.6 Grumo Design System 2 — complete in PR #37 (`89836657`).
 - 25.7 Product components — complete in PR #38 (`b1c8b7b7`).
-- 25.8 Voodoo system components — complete in PR #39 (`31dacaec`).
+- 25.8 Grumo system components — complete in PR #39 (`31dacaec`).
 - 25.9 Delight, docs and acceptance app — complete in PR #40 (`7f5cb7ea`).
 
 ## Acceptance proof
 
-`examples/ui_magic/main.py` is the Sprint 25 acceptance application. It demonstrates the complete happy path using Python application code only: callable events, reactive state, async handlers, semantic forms, soft navigation, product components, Voodoo runtime/system components, theme behavior and density.
+`examples/ui_magic/main.py` is the Sprint 25 acceptance application. It demonstrates the complete happy path using Python application code only: callable events, reactive state, async handlers, semantic forms, soft navigation, product components, Grumo runtime/system components, theme behavior and density.
 
 `tests/test_ui_magic_acceptance.py` executes the real application handlers, rerenders the interface and verifies that state changes become visible without inline application JavaScript or custom CSS.
 
@@ -36,6 +36,6 @@ A milestone is only marked complete after CI and CodeQL pass and the correspondi
 
 ## Developer-experience rule
 
-Python expresses intent. Voodoo owns browser mechanics.
+Python expresses intent. Grumo owns browser mechanics.
 
 The common path does not require event-name strings, inline JavaScript, DOM IDs, manual rerenders, custom CSS or full-page reloads.

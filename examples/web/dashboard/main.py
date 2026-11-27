@@ -1,10 +1,10 @@
 """Data Dashboard — a minimal dashboard with a data table.
 
-Run: python main.py  or  voodoo dev
+Run: python main.py  or  grumo dev
 """
 
-from voodoo import App, Model, page, state
-from voodoo.ui import Card, Container, Grid, Heading, Text
+from grumo import App, Model, page, state
+from grumo.ui import Card, Container, Grid, Heading, Text
 
 app = App()
 

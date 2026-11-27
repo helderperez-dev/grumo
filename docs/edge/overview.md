@@ -1,20 +1,20 @@
-# Voodoo Edge — Overview
+# Grumo Edge — Overview
 
-> **Protocol:** `voodoo-edge/v1` · **Sprint 23** · **Status:** Runtime edge-ready; ESP32 client not yet implemented.
+> **Protocol:** `grumo-edge/v1` · **Sprint 23** · **Status:** Runtime edge-ready; ESP32 client not yet implemented.
 
-## What is Voodoo Edge?
+## What is Grumo Edge?
 
-Voodoo Edge is the **external device boundary** of the Voodoo Runtime. It lets
+Grumo Edge is the **external device boundary** of the Grumo Runtime. It lets
 physical and distributed participants — ESP32s, Raspberry Pis, robots,
-industrial controllers, browser runtimes — act as **first-class Voodoo
+industrial controllers, browser runtimes — act as **first-class Grumo
 Entities** in the same durable execution model as software agents, workers,
 and humans.
 
 Edge is **not** a second runtime:
 
-- **Voodoo Runtime** = the authoritative execution system (ExecutionEngine, Intent, Capability, Effect).
-- **Voodoo Edge** = the versioned protocol + gateway through which devices participate.
-- **Voodoo Edge ≠ ExecutionEngine.** Device-triggered work enters the standard
+- **Grumo Runtime** = the authoritative execution system (ExecutionEngine, Intent, Capability, Effect).
+- **Grumo Edge** = the versioned protocol + gateway through which devices participate.
+- **Grumo Edge ≠ ExecutionEngine.** Device-triggered work enters the standard
   engine; there is no `DeviceExecutionEngine`.
 
 ## Why does it exist?
@@ -22,7 +22,7 @@ Edge is **not** a second runtime:
 Software, humans, and physical devices converge on one model:
 
 ```
-Device → Event → Voodoo Runtime → Execution → Effect → Device
+Device → Event → Grumo Runtime → Execution → Effect → Device
 ```
 
 A temperature sensor's `temperature.changed` event can trigger an Intent, run
@@ -33,7 +33,7 @@ durable records, traceability, and idempotency at every step.
 ## Architecture
 
 ```
-                    VOODOO RUNTIME
+                    GRUMO RUNTIME
                           │
          ┌────────────────┼────────────────┐
          │                │                │
@@ -53,7 +53,7 @@ durable records, traceability, and idempotency at every step.
                  │                 │
                  └────────┬────────┘
                           │
-                     Voodoo Edge
+                     Grumo Edge
                           │
                        Device
 ```
@@ -73,7 +73,7 @@ durable records, traceability, and idempotency at every step.
 ## Transports
 
 - **HTTP** — REST endpoints under `/v1/edge/*`. Easy to test with curl.
-- **MQTT** — versioned topic namespace `voodoo/v1/devices/{device_id}/...`. Requires the optional `voodoo[edge]` extra (paho-mqtt).
+- **MQTT** — versioned topic namespace `grumo/v1/devices/{device_id}/...`. Requires the optional `grumo[edge]` extra (paho-mqtt).
 
 Both carry the **same message envelopes** and produce **identical runtime
 behavior** — proven by shared contract tests (`tests/contracts/test_edge_protocol.py`).
@@ -84,7 +84,7 @@ Edge is **disabled by default** — applications that don't enable it pay zero
 overhead (no broker, no gateway, no device tables).
 
 ```toml
-# voodoo.toml
+# grumo.toml
 [edge]
 enabled = true
 http_enabled = true
@@ -93,7 +93,7 @@ mqtt_enabled = false
 
 ```bash
 # MQTT support (optional)
-pip install "voodoo-framework[edge]"
+pip install "grumo-framework[edge]"
 
 # Local broker for development
 just mqtt-up
@@ -114,6 +114,6 @@ just mqtt-up
 
 ## Next phase
 
-Sprint 24 will implement `voodoo-edge-esp32` — the C++ reference client
+Sprint 24 will implement `grumo-edge-esp32` — the C++ reference client
 consuming this protocol. Sprint 23 delivers the protocol, gateway,
 simulator, and documentation that client will target.

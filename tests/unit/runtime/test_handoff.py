@@ -1,10 +1,10 @@
 import pytest
 
-from voodoo.primitives.intent import Intent
-from voodoo.runtime.execution.engine import ComputeResult, ExecutionEngine
-from voodoo.runtime.scheduling.dispatch import DispatchPlan
-from voodoo.runtime.scheduling.handoff import ExecutionHandoff, RemoteExecutionRequired
-from voodoo.runtime.scheduling.work import (
+from grumo.primitives.intent import Intent
+from grumo.runtime.execution.engine import ComputeResult, ExecutionEngine
+from grumo.runtime.scheduling.dispatch import DispatchPlan
+from grumo.runtime.scheduling.handoff import ExecutionHandoff, RemoteExecutionRequired
+from grumo.runtime.scheduling.work import (
     ScheduledWork,
     SchedulingDecision,
     WorkEligibility,

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 
-from voodoo.storage.objects import LocalObjectStore
+from grumo.storage.objects import LocalObjectStore
 
 
 class TestLocalObjectStore:
@@ -78,8 +78,8 @@ class TestLocalObjectStore:
 
 class TestExecutionArtifact:
     def test_artifact_metadata(self):
-        from voodoo.primitives.intent import Intent
-        from voodoo.runtime.execution import Execution
+        from grumo.primitives.intent import Intent
+        from grumo.runtime.execution import Execution
 
         ex = Execution(
             id="ex1", trace_id="t1", intent=Intent(name="art"), actor="alice"

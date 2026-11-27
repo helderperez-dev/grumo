@@ -1,7 +1,7 @@
 """Sprint 27 operational closed-loop canary.
 
 A zero-infrastructure executable proof that physical-style evidence and action
-share the same Voodoo runtime semantics:
+share the same Grumo runtime semantics:
 
 Device state → Edge → Observation → World → Goal/Intent → Planner →
 Capability → Execution → Effect delivery → ACK/evidence → Observation → World
@@ -16,12 +16,12 @@ from __future__ import annotations
 import asyncio
 from typing import Any
 
-from voodoo.edge import WorldAwareDeviceGateway
-from voodoo.edge.models import AuthenticatedDeviceContext, Device, TransportKind
-from voodoo.edge.protocol import EdgeMessage, EdgeMessageType
-from voodoo.edge.store import InMemoryDeviceStore
-from voodoo.primitives.capability import Capability
-from voodoo.runtime import (
+from grumo.edge import WorldAwareDeviceGateway
+from grumo.edge.models import AuthenticatedDeviceContext, Device, TransportKind
+from grumo.edge.protocol import EdgeMessage, EdgeMessageType
+from grumo.edge.store import InMemoryDeviceStore
+from grumo.primitives.capability import Capability
+from grumo.runtime import (
     AdaptiveSupervisor,
     ComputeParticipant,
     ExecutionEngine,
@@ -29,7 +29,7 @@ from voodoo.runtime import (
     GoalRuntime,
     Planner,
 )
-from voodoo.world import WorldModel
+from grumo.world import WorldModel
 
 
 async def run_canary() -> dict[str, Any]:
@@ -135,7 +135,7 @@ async def run_canary() -> dict[str, Any]:
 
 async def main() -> None:
     result = await run_canary()
-    print("Voodoo operational closed loop: OK")
+    print("Grumo operational closed loop: OK")
     print(f"execution: {result['execution_id']}")
     print(f"effect: {result['effect_id']}")
     print(

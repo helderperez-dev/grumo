@@ -23,7 +23,7 @@ Guide the structured addition of runtime engine features, ensuring they respect 
 ### ExecutionEngine singleton
 
 ```python
-from voodoo.runtime import engine
+from grumo.runtime import engine
 
 # The engine is a singleton — never instantiate ExecutionEngine() directly
 # (except in tests with fresh instances)
@@ -88,7 +88,7 @@ Follow these rules:
 6. **Correlation IDs** — If the feature processes executions, propagate `trace_id`.
 7. **Events namespaced** — If emitting events, use dotted namespaces.
 8. **Lazy imports** — Provider SDKs at function level.
-9. **Error handling** — Use `VoodooError` hierarchy. Broad excepts with `# noqa: BLE001`.
+9. **Error handling** — Use `GrumoError` hierarchy. Broad excepts with `# noqa: BLE001`.
 
 ### Step 4: Extend the ExecutionStore (if needed)
 
@@ -127,7 +127,7 @@ class TestMyFeature:
 
 ### Step 6: Update CLI (if observable)
 
-If users need to observe the new feature, add a `voodoo` subcommand in `src/voodoo/cli/`:
+If users need to observe the new feature, add a `grumo` subcommand in `src/grumo/cli/`:
 
 ```python
 @app.command()
@@ -140,7 +140,7 @@ def my_feature():
 
 ```bash
 just format && just lint && just test
-uv run mypy src/voodoo
+uv run mypy src/grumo
 ```
 
 ### Step 8: Update Documentation
@@ -196,5 +196,5 @@ uv run mypy src/voodoo
 - [ ] Fresh engine instances in tests (not singleton).
 - [ ] CLI updated (if observable).
 - [ ] Quality gate passes.
-- [ ] `uv run mypy src/voodoo` passes.
+- [ ] `uv run mypy src/grumo` passes.
 - [ ] Documentation updated.

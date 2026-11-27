@@ -7,7 +7,7 @@
 Sprint 27 closed the architectural/product gaps found in the post-Sprint-26
 review. It was a convergence sprint, not feature accumulation.
 
-> **Voodoo is the programmable runtime for adaptive applications and operational systems.**
+> **Grumo is the programmable runtime for adaptive applications and operational systems.**
 
 ```text
 World → Observation → Goal → Intent → Plan → Capability + Policy
@@ -21,7 +21,7 @@ Primary implementation: PR #52, squash-merged into `main` as `e73a718`.
 
 ## Architectural invariants preserved
 
-1. Exactly one Voodoo Runtime and one canonical `Execution` lifecycle.
+1. Exactly one Grumo Runtime and one canonical `Execution` lifecycle.
 2. AI is Compute, never a privileged authority boundary.
 3. Edge/device code is an external participant, not a second runtime.
 4. Effects are attempted actions; Observations are evidence.
@@ -95,9 +95,9 @@ Delivered:
 
 - `docs/public-api-3.md` defines the 3.0 import law;
 - 2.x compatibility remains intact instead of silently shrinking
-  `voodoo.__all__`;
-- subsystem namespaces are canonical for larger catalogs (`voodoo.ui`,
-  `voodoo.runtime`, `voodoo.world`, `voodoo.edge`, `voodoo.protocol`);
+  `grumo.__all__`;
+- subsystem namespaces are canonical for larger catalogs (`grumo.ui`,
+  `grumo.runtime`, `grumo.world`, `grumo.edge`, `grumo.protocol`);
 - README/examples teach the canonical direction;
 - actual package-root contraction is reserved for a deliberate 3.0 migration.
 
@@ -206,7 +206,7 @@ correctness gaps:
 - cognitive Memory consolidation/reflection/belief strategies;
 - generated full TypeScript/Go/Rust SDK families;
 - fleet scheduler and large multi-device mission orchestration;
-- production Voodoo Cloud/control plane;
+- production Grumo Cloud/control plane;
 - large physical robot reference implementation;
 - distributed consensus/global exactly-once claims.
 
@@ -217,7 +217,7 @@ architecture/product review to select the next phase deliberately.
 
 The acceptance statement is now demonstrably true:
 
-> A Voodoo system can observe a changing operational world, pursue a durable
+> A Grumo system can observe a changing operational world, pursue a durable
 > goal, choose already-authorized compute using current World context, execute
 > software/device Effects through the canonical Runtime, ingest resulting
 > evidence back into World state, preserve lineage across protocol boundaries,

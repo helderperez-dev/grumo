@@ -1,7 +1,7 @@
 # Edge MQTT Transport
 
-> MQTT binding for `voodoo-edge/v1`. Requires the optional extra
-> `pip install "voodoo-framework[edge]"` (paho-mqtt ≥ 2.0 — mature,
+> MQTT binding for `grumo-edge/v1`. Requires the optional extra
+> `pip install "grumo-framework[edge]"` (paho-mqtt ≥ 2.0 — mature,
 > actively maintained, integrates with asyncio without a second event-loop
 > model, EDGE §69).
 
@@ -11,12 +11,12 @@ Versioned and per-device (EDGE §35):
 
 | Topic | Direction | Carries |
 |---|---|---|
-| `voodoo/v1/devices/{device_id}/events` | device → runtime | EVENT messages |
-| `voodoo/v1/devices/{device_id}/state` | device → runtime | STATE_SYNC messages |
-| `voodoo/v1/devices/{device_id}/ack` | device → runtime | EFFECT_ACK messages |
-| `voodoo/v1/devices/{device_id}/heartbeat` | device → runtime | HEARTBEAT messages |
-| `voodoo/v1/devices/{device_id}/auth` | device → runtime | AUTH messages |
-| `voodoo/v1/devices/{device_id}/effects` | runtime → device | EFFECT messages |
+| `grumo/v1/devices/{device_id}/events` | device → runtime | EVENT messages |
+| `grumo/v1/devices/{device_id}/state` | device → runtime | STATE_SYNC messages |
+| `grumo/v1/devices/{device_id}/ack` | device → runtime | EFFECT_ACK messages |
+| `grumo/v1/devices/{device_id}/heartbeat` | device → runtime | HEARTBEAT messages |
+| `grumo/v1/devices/{device_id}/auth` | device → runtime | AUTH messages |
+| `grumo/v1/devices/{device_id}/effects` | runtime → device | EFFECT messages |
 
 Payloads are the **same JSON envelopes** as HTTP — semantic equivalence is
 guaranteed by shared gateway handling and proven by contract tests
@@ -24,7 +24,7 @@ guaranteed by shared gateway handling and proven by contract tests
 
 ## Flow
 
-1. The runtime subscribes to `voodoo/v1/devices/+/+` (all device inboxes).
+1. The runtime subscribes to `grumo/v1/devices/+/+` (all device inboxes).
 2. A device enrolls over HTTP (identity bootstrap), then connects to MQTT.
 3. The device publishes AUTH to its `auth` topic once — the response
    establishes a `session_id`.
@@ -41,7 +41,7 @@ Rationale: QoS 1 + application-level idempotency (`message_id` for events,
 `effect_id` for effects) gives safe redelivery with simple client logic.
 MQTT QoS 2 (exactly-once) is deliberately **not** used — it adds overhead
 and still doesn't remove the need for application idempotency (duplicates
-can occur across reconnects regardless). **Voodoo never claims exactly-once
+can occur across reconnects regardless). **Grumo never claims exactly-once
 delivery on any transport.**
 
 ## Retained messages
@@ -53,7 +53,7 @@ delivery on any transport.**
 
 ## Session behavior
 
-- MQTT `clean_session=True` recommended for devices. Voodoo device sessions
+- MQTT `clean_session=True` recommended for devices. Grumo device sessions
   live **in the runtime** (versioned, observable), not in broker session
   state (EDGE §31).
 - Offline devices: effects queue in the durable store; reconnection (HTTP
@@ -61,7 +61,7 @@ delivery on any transport.**
 
 ## Broker configuration
 
-Never hard-coded — configured via `voodoo.toml` or environment (EDGE §39):
+Never hard-coded — configured via `grumo.toml` or environment (EDGE §39):
 
 ```toml
 [edge]
@@ -74,7 +74,7 @@ port = 1883                  # MQTT_PORT (8883 for TLS)
 tls = false                  # MQTT_TLS — REQUIRED in production
 username = ""                # MQTT_USERNAME (broker auth)
 password = ""                # MQTT_PASSWORD
-client_id = "voodoo-runtime" # MQTT_CLIENT_ID
+client_id = "grumo-runtime" # MQTT_CLIENT_ID
 keepalive = 60
 qos = 1
 ```
@@ -94,9 +94,9 @@ just mqtt-up   # Mosquitto, no auth, localhost only
 ## Python API
 
 ```python
-from voodoo.edge import DeviceGateway, SQLiteDeviceStore, EdgeMQTTTransport
-from voodoo.runtime import engine
-from voodoo.edge.mqtt import topic_for
+from grumo.edge import DeviceGateway, SQLiteDeviceStore
+from grumo.runtime import engine
+from grumo.edge.mqtt import EdgeMQTTTransport, topic_for
 
 gateway = DeviceGateway(SQLiteDeviceStore("data/devices.db"), engine)
 transport = EdgeMQTTTransport(
@@ -106,7 +106,7 @@ transport = EdgeMQTTTransport(
     username=None,  # broker credentials, not device credentials
     password=None,
 )
-await transport.start()  # subscribes to voodoo/v1/devices/+/+
+await transport.start()  # subscribes to grumo/v1/devices/+/+
 
 await transport.publish_effect(  # runtime → device
     "device_01j...",

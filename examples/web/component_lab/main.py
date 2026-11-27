@@ -1,9 +1,9 @@
-"""Voodoo Component Lab — visual and behavioral acceptance application.
+"""Grumo Component Lab — visual and behavioral acceptance application.
 
 Run:
-    voodoo dev examples.web.component_lab.main:app
+    grumo dev examples.web.component_lab.main:app
 
-The lab intentionally uses only public Voodoo APIs and no application CSS.
+The lab intentionally uses only public Grumo APIs and no application CSS.
 It is the canonical surface for visual review, interaction checks and future
 browser screenshot regression tests.
 """
@@ -12,8 +12,8 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-from voodoo import App, page
-from voodoo.ui import (
+from grumo import App, page
+from grumo.ui import (
     A,
     Accordion,
     AccordionItem,
@@ -244,7 +244,7 @@ def _header(active: str) -> Card:
     return Card(
         Flex(
             Stack(
-                Badge("Voodoo", variant="secondary"),
+                Badge("Grumo", variant="secondary"),
                 Heading("Component Lab", level=1, size="lg"),
                 gap="xs",
             ),
@@ -293,7 +293,7 @@ def overview():
                 Badge("Design System 4 acceptance surface", variant="outline"),
                 Heading("Every component should feel product-ready.", size="display"),
                 Text(
-                    "This page is the visual contract for Voodoo's native component "
+                    "This page is the visual contract for Grumo's native component "
                     "library: no Tailwind, no custom application CSS, no hidden fixes.",
                     tone="muted",
                 ),
@@ -415,7 +415,7 @@ def foundations():
             _header("/foundations"),
             Hero(
                 Stack(
-                    Eyebrow("Native Voodoo UI"),
+                    Eyebrow("Native Grumo UI"),
                     Heading("Quiet, precise, product-grade.", size="display"),
                     Text(
                         "Typography, surfaces and primitives establish the visual rhythm "
@@ -474,7 +474,7 @@ def foundations():
                         )
                     ),
                     CodeBlock(
-                        "from voodoo import App, page\nfrom voodoo.ui import Button\n\napp = App()",
+                        "from grumo import App, page\nfrom grumo.ui import Button\n\napp = App()",
                         language="python",
                     ),
                     cols="2",
@@ -483,7 +483,7 @@ def foundations():
             ),
             _section(
                 "Semantic foundations",
-                "Public HTML primitives should inherit Voodoo typography, spacing and focus without custom CSS.",
+                "Public HTML primitives should inherit Grumo typography, spacing and focus without custom CSS.",
                 Header(
                     Stack(
                         Heading("Semantic document", level=3),
@@ -508,7 +508,7 @@ def foundations():
                             Article(
                                 Heading("Article surface", level=3, size="sm"),
                                 Paragraph(
-                                    "Semantic content composes directly with Voodoo primitives."
+                                    "Semantic content composes directly with Grumo primitives."
                                 ),
                                 Time("September 2026", datetime="2026-09"),
                                 List(
@@ -557,12 +557,12 @@ def foundations():
                             "viewBox='0 0 16 2'%3E%3Crect width='16' height='2' "
                             "fill='%23242a31'/%3E%3C/svg%3E"
                         ),
-                        alt="Voodoo media placeholder",
+                        alt="Grumo media placeholder",
                         loading="lazy",
                     )
                 ),
                 Footer(
-                    Address("Voodoo · Runtime + Store + UI"),
+                    Address("Grumo · Runtime + Store + UI"),
                     Paragraph("Semantic primitives remain intentionally composable."),
                 ),
                 Dialog(
@@ -604,12 +604,12 @@ def foundations():
                         Stack(
                             Heading("Build the real thing.", level=3),
                             Text(
-                                "Start with the canonical Voodoo scaffold.",
+                                "Start with the canonical Grumo scaffold.",
                                 tone="muted",
                             ),
                             gap="xs",
                         ),
-                        Button("voodoo new", variant="primary"),
+                        Button("grumo new", variant="primary"),
                         justify="between",
                         items="center",
                         gap="lg",
@@ -684,14 +684,14 @@ def chat():
             _header("/chat"),
             _section(
                 "Conversation",
-                "AI surfaces are ordinary Voodoo UI: readable, streamable and consistent.",
+                "AI surfaces are ordinary Grumo UI: readable, streamable and consistent.",
                 ChatBox(
                     MessageList(
-                        ChatMessage("Can Voodoo persist this locally?", role="user"),
+                        ChatMessage("Can Grumo persist this locally?", role="user"),
                         ChatMessage(
                             Markdown(
                                 "Yes. The default Runtime persists durable application "
-                                "state in **application.vstore**."
+                                "state in **application.grumo**."
                             ),
                             role="assistant",
                         ),
@@ -701,7 +701,7 @@ def chat():
                         ),
                         ChatMessage("Tool execution completed.", role="tool"),
                     ),
-                    Composer(on_send=_noop, placeholder="Ask Voodoo…"),
+                    Composer(on_send=_noop, placeholder="Ask Grumo…"),
                 ),
             ),
             gap="xxxl",
@@ -724,7 +724,7 @@ def auth():
             _header("/auth"),
             _section(
                 "Identity",
-                "Authentication components now use semantic Voodoo styles in every adapter.",
+                "Authentication components now use semantic Grumo styles in every adapter.",
                 Flex(
                     UserBadge(user=user),
                     UserBadge(user=None),
@@ -821,7 +821,9 @@ def forms():
                         Calendar(year=2026, month=9, label="September 2026"),
                         Stack(
                             Field("Accept terms", Checkbox(name="terms", checked=True)),
-                            Field("Mode", Radio(name="mode", value="safe", checked=True)),
+                            Field(
+                                "Mode", Radio(name="mode", value="safe", checked=True)
+                            ),
                             gap="md",
                         ),
                         cols="2",
@@ -897,7 +899,7 @@ def forms():
                         ),
                         Autocomplete(
                             name="framework",
-                            suggestions=["Voodoo", "Python", "Rust"],
+                            suggestions=["Grumo", "Python", "Rust"],
                             label="Technology",
                         ),
                         Stack(
@@ -976,7 +978,7 @@ def navigation():
                 Breadcrumb(
                     BreadcrumbItem("Workspace", "/"),
                     BreadcrumbItem("Projects", "/"),
-                    BreadcrumbItem("Voodoo", current=True),
+                    BreadcrumbItem("Grumo", current=True),
                 ),
                 Pagination(total_pages=12, current_page=5, on_change=_noop),
                 Stepper(
@@ -990,7 +992,7 @@ def navigation():
                 "Application navigation",
                 "Top-level menus and in-page navigation use the same quiet active-state language.",
                 Navbar(
-                    Brand("Voodoo", href="/"),
+                    Brand("Grumo", href="/"),
                     Flex(
                         NavLink("Overview", href="/", active=True),
                         NavLink("Docs", href="#docs"),
@@ -1063,7 +1065,7 @@ def navigation():
                 "Content density should be manageable without custom scripting.",
                 Accordion(
                     AccordionItem(
-                        "What is Voodoo Store?",
+                        "What is Grumo Store?",
                         Text("The zero-config durable substrate for the Runtime."),
                         open=True,
                     ),
@@ -1261,7 +1263,7 @@ def advanced():
 @page("/data")
 def data():
     rows = [
-        {"name": "Voodoo", "status": "Healthy", "latency": "42 ms"},
+        {"name": "Grumo", "status": "Healthy", "latency": "42 ms"},
         {"name": "Store", "status": "Healthy", "latency": "8 ms"},
         {"name": "Edge", "status": "Degraded", "latency": "96 ms"},
     ]
@@ -1284,7 +1286,7 @@ def data():
                 Table(
                     headers=["Service", "Status", "Latency"],
                     rows=[
-                        ["Voodoo", "Healthy", "42 ms"],
+                        ["Grumo", "Healthy", "42 ms"],
                         ["Store", "Healthy", "8 ms"],
                     ],
                 ),
@@ -1319,8 +1321,8 @@ def data():
                         DescriptionItem("Runtime", "healthy"),
                         DescriptionSection(
                             "Store",
-                            DescriptionItem("Provider", "voodoo"),
-                            DescriptionItem("Path", ".voodoo/application.vstore"),
+                            DescriptionItem("Provider", "grumo"),
+                            DescriptionItem("Path", ".grumo/application.grumo"),
                         ),
                         label="Application details",
                     ),
@@ -1526,7 +1528,7 @@ def system():
             _header("/system"),
             _section(
                 "Runtime",
-                "Voodoo's own concepts deserve the same product-grade presentation as ordinary app UI.",
+                "Grumo's own concepts deserve the same product-grade presentation as ordinary app UI.",
                 RuntimeStatus(
                     {
                         "summary": {

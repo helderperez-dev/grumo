@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-from voodoo.ui.events import _origin_allowed, _websocket_principal
+from grumo.ui.events import _origin_allowed, _websocket_principal
 
 
 def _websocket(origin: str | None, host: str = "app.example"):
@@ -16,7 +16,7 @@ def _config(*, env: str = "production", origins: list[str] | None = None):
     return SimpleNamespace(
         env=env,
         security=SimpleNamespace(cors_origins=origins or ["https://trusted.example"]),
-        auth=SimpleNamespace(cookie_name="voodoo_auth", secret_key="x" * 32),
+        auth=SimpleNamespace(cookie_name="grumo_auth", secret_key="x" * 32),
     )
 
 
@@ -34,5 +34,5 @@ def test_websocket_origin_without_header_is_allowed_only_outside_production():
 
 def test_invalid_websocket_auth_cookie_does_not_create_a_principal():
     websocket = _websocket("https://app.example")
-    websocket.cookies["voodoo_auth"] = "not-a-token"
+    websocket.cookies["grumo_auth"] = "not-a-token"
     assert _websocket_principal(websocket, _config()) is None

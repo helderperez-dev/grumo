@@ -3,7 +3,7 @@
 ## Decision
 
 Production Profile 1 uses **host/filesystem encryption** for Store files,
-backups, object bytes, and secret material. Voodoo Store provides integrity and
+backups, object bytes, and secret material. Grumo Store provides integrity and
 recovery protections—checksummed headers/records, single-writer locking,
 verified backups, and same-major format checks—but it does not encrypt record
 contents itself.

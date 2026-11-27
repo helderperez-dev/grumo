@@ -2,9 +2,9 @@
 
 > **Root architecture reference.** Detailed subsystem guides live under `docs/`.
 
-## What Voodoo is
+## What Grumo is
 
-Voodoo is a **programmable runtime for adaptive applications and operational
+Grumo is a **programmable runtime for adaptive applications and operational
 systems**. Web applications, APIs, agents, background workers, human workflows,
 remote nodes and physical devices converge on one Runtime and one canonical
 Execution model.
@@ -39,7 +39,7 @@ Fresh applications are Store-first:
 Application
     |
     v
-Voodoo Runtime
+Grumo Runtime
     |
     +-- Model / Data
     +-- Queue / Jobs
@@ -54,27 +54,27 @@ Voodoo Runtime
 RuntimeStore
     |
     v
-.voodoo/application.vstore
+.grumo/application.grumo
 ```
 
-The Framework depends on Voodoo Store and requires no external database, queue
+The Framework depends on Grumo Store and requires no external database, queue
 server or object server for its local default path. PostgreSQL, SQLite, Redis,
 S3 and other providers remain explicit adapters.
 
 ## Architectural laws
 
-1. There is one Voodoo Runtime and one canonical `Execution` lifecycle.
-2. Voodoo Store is the default local durable infrastructure provider.
+1. There is one Grumo Runtime and one canonical `Execution` lifecycle.
+2. Grumo Store is the default local durable infrastructure provider.
 3. Store owns durable mechanics; Runtime owns semantics, authority and intelligence.
 4. Identity belongs to Runtime; persistence does not define authorization.
-5. Application APIs do not leak native `voodoo_store` implementation types.
+5. Application APIs do not leak native `grumo_store` implementation types.
 6. One Runtime process owns one local Store writer.
 7. Multiple processes never coordinate by writing one shared `.vstore` file.
 8. Scaling changes deployment topology, not application business architecture.
 9. Distributed ownership comes before distributed storage/replication.
 10. Remote work still enters Capability + Policy + canonical Execution.
 11. Discovery or advertisement never grants authority.
-12. Voodoo does not claim consensus, global transactions or global exactly-once semantics it has not implemented.
+12. Grumo does not claim consensus, global transactions or global exactly-once semantics it has not implemented.
 
 ## One process, one Runtime Store
 
@@ -85,7 +85,7 @@ Process / Runtime
  RuntimeStore
        |
        v
-application.vstore
+application.grumo
 ```
 
 Infrastructure used before App startup acquires a process-shared Store. App
@@ -196,7 +196,7 @@ not part of that local atomic transaction.
 
 ## Runtime Fabric
 
-A Voodoo application can grow from one node to multiple node-local Runtimes:
+A Grumo application can grow from one node to multiple node-local Runtimes:
 
 ```text
 same application semantics
@@ -228,11 +228,11 @@ Execution semantics are not.
 Default Store-backed production deployment:
 
 ```text
-one process = one Voodoo Node = one local Store writer
+one process = one Grumo Node = one local Store writer
 ```
 
 Do not run multiple uvicorn/gunicorn workers against the same Store file. To
-scale horizontally, add separate Voodoo Nodes with separate local Stores.
+scale horizontally, add separate Grumo Nodes with separate local Stores.
 
 ## External adapters
 
@@ -252,7 +252,7 @@ a second execution model.
 ## Package/module responsibilities
 
 ```text
-src/voodoo/
+src/grumo/
 ├── core/          # App lifecycle/facade, state, events and errors
 ├── primitives/    # ontology and execution dimensions
 ├── runtime/       # canonical Runtime semantics
@@ -278,9 +278,9 @@ src/voodoo/
 └── cli/           # create/dev/fabric/inspection operations
 ```
 
-Voodoo 3.0 intentionally removed compatibility-only duplicate owners such as
-`voodoo.workers`, `voodoo.queue`, `voodoo.telemetry`, `voodoo.mcp`,
-`voodoo.tools`, `voodoo.agent`, `voodoo.api` and `voodoo.theme`.
+Grumo 3.0 intentionally removed compatibility-only duplicate owners such as
+`grumo.workers`, `grumo.queue`, `grumo.telemetry`, `grumo.mcp`,
+`grumo.tools`, `grumo.agent`, `grumo.api` and `grumo.theme`.
 Those paths must not be recreated as parallel semantic owners.
 
 ## Honest boundaries
@@ -297,7 +297,7 @@ Current architecture deliberately does **not** promise:
 
 Store 0.3 still lacks arbitrary schedule-cursor repositioning. Richer native
 Python bindings for Topics/Streams, Objects and index/range queries exist since
-Store 0.3 and the Framework adapters use them behind Voodoo-owned contracts.
+Store 0.3 and the Framework adapters use them behind Grumo-owned contracts.
 The Framework fails clearly or uses stable compatibility boundaries instead of
 inventing unsupported behavior.
 

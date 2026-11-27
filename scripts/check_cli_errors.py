@@ -6,7 +6,7 @@ import ast
 from pathlib import Path
 
 ROOT = Path(__file__).parents[1]
-CLI = ROOT / "src" / "voodoo" / "cli"
+CLI = ROOT / "src" / "grumo" / "cli"
 
 
 def main() -> int:

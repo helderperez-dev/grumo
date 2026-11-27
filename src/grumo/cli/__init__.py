@@ -1,5 +1,65 @@
-"""Grumo CLI entrypoint backed by the existing stable Voodoo commands."""
+import typer
 
-from voodoo.cli import app
+from grumo.cli import (
+    agents,
+    ai,
+    approvals,
+    create,
+    dev,
+    doctor,
+    executions,
+    fabric,
+    generate,
+    graph,
+    new,
+    objects,
+    protocol,
+    recover,
+    routes,
+    schedules,
+    start,
+    status,
+    tasks,
+    theme,
+    version,
+    workers_cmd,
+)
+from grumo.cli.auth import auth_app
+from grumo.cli.inspect import inspect_app
 
-__all__ = ["app"]
+app = typer.Typer(
+    name="grumo",
+    help="build systems, not glue.",
+    no_args_is_help=True,
+    add_completion=False,
+    rich_markup_mode="rich",
+)
+
+app.command()(new.new)
+app.command("create", hidden=True)(create.create)
+app.command()(dev.dev)
+app.command()(start.start)
+app.command()(generate.generate)
+app.command()(graph.graph)
+app.add_typer(auth_app, name="auth")
+app.add_typer(ai.ai_app, name="ai")
+app.add_typer(inspect_app, name="inspect")
+app.add_typer(tasks.tasks_app, name="tasks")
+app.add_typer(schedules.schedules_app, name="schedules")
+app.add_typer(executions.executions_app, name="executions")
+app.add_typer(objects.objects_app, name="objects")
+app.add_typer(agents.agents_app, name="agents")
+app.add_typer(approvals.approvals_app, name="approvals")
+app.add_typer(theme.theme_app, name="theme")
+app.add_typer(protocol.protocol_app, name="protocol")
+app.add_typer(fabric.fabric_app, name="fabric")
+# Top-level aliases per the Sprint 3 CLI surface: `grumo execution <id>`
+# (timeline from the journal) and `grumo events` (recent journal events).
+app.command("execution")(executions.show_execution)
+app.command("events")(executions.list_events)
+app.command()(status.status)
+app.command()(workers_cmd.workers)
+app.command()(version.version)
+app.command()(doctor.doctor)
+app.command()(routes.routes)
+app.command()(recover.recover)

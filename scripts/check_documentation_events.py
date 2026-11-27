@@ -7,7 +7,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).parents[1]
 GUIDE = ROOT / "docs/components.md"
-INLINE_HANDLER = re.compile(r"\bon(?:click|change|input|submit|keydown|keyup)\s*=", re.I)
+INLINE_HANDLER = re.compile(
+    r"\bon(?:click|change|input|submit|keydown|keyup)\s*=", re.I
+)
 
 
 def main() -> int:
@@ -17,7 +19,7 @@ def main() -> int:
         line = text.count("\n", 0, match.start()) + 1
         raise SystemExit(
             f"{GUIDE.relative_to(ROOT)}:{line}: canonical component guide "
-            "must use Voodoo event props, not inline handlers"
+            "must use Grumo event props, not inline handlers"
         )
     if "on_click=" not in text:
         raise SystemExit("canonical component guide is missing the on_click example")

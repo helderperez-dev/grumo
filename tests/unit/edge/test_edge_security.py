@@ -9,19 +9,19 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo.edge.auth import consume_enrollment, create_enrollment
-from voodoo.edge.errors import (
+from grumo.edge.auth import consume_enrollment, create_enrollment
+from grumo.edge.errors import (
     AuthenticationFailedError,
     AuthorizationFailedError,
     DeviceIdMismatchError,
     DeviceRevokedError,
     InvalidStateVersionError,
 )
-from voodoo.edge.gateway import DeviceGateway
-from voodoo.edge.models import DeviceStatus
-from voodoo.edge.protocol import EdgeMessageType, make_message
-from voodoo.edge.store import InMemoryDeviceStore
-from voodoo.runtime.execution.engine import ExecutionEngine
+from grumo.edge.gateway import DeviceGateway
+from grumo.edge.models import DeviceStatus
+from grumo.edge.protocol import EdgeMessageType, make_message
+from grumo.edge.store import InMemoryDeviceStore
+from grumo.runtime.execution.engine import ExecutionEngine
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -197,10 +197,10 @@ class TestEnrollmentSecurity:
         from starlette.applications import Starlette
         from starlette.testclient import TestClient
 
-        from voodoo.config import VoodooConfig
-        from voodoo.edge.http import build_edge_routes
+        from grumo.config import GrumoConfig
+        from grumo.edge.http import build_edge_routes
 
-        config = VoodooConfig()
+        config = GrumoConfig()
         config.edge.enabled = True
         config.edge.enrollment_auth_required = True
         config.edge.enrollment_admin_token = "secret-admin-token"
@@ -219,10 +219,10 @@ class TestEnrollmentSecurity:
         from starlette.applications import Starlette
         from starlette.testclient import TestClient
 
-        from voodoo.config import VoodooConfig
-        from voodoo.edge.http import build_edge_routes
+        from grumo.config import GrumoConfig
+        from grumo.edge.http import build_edge_routes
 
-        config = VoodooConfig()
+        config = GrumoConfig()
         config.edge.enabled = True
         config.edge.enrollment_auth_required = True
         config.edge.enrollment_admin_token = "secret-admin-token"
@@ -242,10 +242,10 @@ class TestEnrollmentSecurity:
         from starlette.applications import Starlette
         from starlette.testclient import TestClient
 
-        from voodoo.config import VoodooConfig
-        from voodoo.edge.http import build_edge_routes
+        from grumo.config import GrumoConfig
+        from grumo.edge.http import build_edge_routes
 
-        config = VoodooConfig()
+        config = GrumoConfig()
         config.edge.enabled = True
         config.edge.enrollment_auth_required = True
         config.edge.enrollment_admin_token = "secret-admin-token"
@@ -266,10 +266,10 @@ class TestEnrollmentSecurity:
         from starlette.applications import Starlette
         from starlette.testclient import TestClient
 
-        from voodoo.config import VoodooConfig
-        from voodoo.edge.http import build_edge_routes
+        from grumo.config import GrumoConfig
+        from grumo.edge.http import build_edge_routes
 
-        config = VoodooConfig()
+        config = GrumoConfig()
         config.edge.enabled = True
         config.edge.enrollment_auth_required = False
         store = InMemoryDeviceStore()
@@ -352,7 +352,7 @@ class TestSecretRedaction:
     """Credentials never appear in events, errors, or mesh payloads."""
 
     async def test_credential_not_in_mesh_event_payload(self):
-        from voodoo.mesh import mesh
+        from grumo.mesh import mesh
 
         captured: list[tuple[str, dict]] = []
         original = mesh.broadcast

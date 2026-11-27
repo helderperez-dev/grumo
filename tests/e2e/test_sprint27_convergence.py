@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 from examples.adaptive.operational_closed_loop.main import run_canary
-from voodoo.primitives.capability import Capability
-from voodoo.primitives.intent import Intent
-from voodoo.runtime import AdaptiveSupervisor, ExecutionEngine, Goal, GoalRuntime
-from voodoo.runtime.planner import ComputeParticipant, Planner, PlanningContext
-from voodoo.world import Entity, WorldModel
+from grumo.primitives.capability import Capability
+from grumo.primitives.intent import Intent
+from grumo.runtime import AdaptiveSupervisor, ExecutionEngine, Goal, GoalRuntime
+from grumo.runtime.planner import ComputeParticipant, Planner, PlanningContext
+from grumo.world import Entity, WorldModel
 
 
 def test_world_aware_planner_uses_explicit_operational_context() -> None:

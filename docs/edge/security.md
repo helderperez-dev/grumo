@@ -10,7 +10,7 @@
 
 ## Identity (EDGE §8)
 
-- Every device gets a stable, globally-unique Voodoo identity:
+- Every device gets a stable, globally-unique Grumo identity:
   `device_id = device_<24-hex>`, with the entity reference
   `device:<device_id>` participating in the normal Entity model.
 - **MAC addresses are metadata only** — never the canonical identity.
@@ -21,7 +21,7 @@ Device credentials are **separate from user/admin API keys**:
 
 | | User API key | Device credential |
 |---|---|---|
-| Prefix | `vd_live_` | `vdk_` (Voodoo Device Key) |
+| Prefix | `vd_live_` | `vdk_` (Grumo Device Key) |
 | Storage | SHA-256 hash | SHA-256 hash |
 | Presentation | `X-API-Key` / `Authorization` | `X-Device-Credential` / `Authorization: Device` / AUTH message |
 | Scope | user account | exactly one device |
@@ -88,7 +88,7 @@ credential hash **and** its binding to the claimed device:
 - **HTTP:** run behind TLS at your ingress (standard deployment concern).
 - **MQTT:** `tls = true` supported (8883). Production must not run
   plaintext MQTT; local dev may (`just mqtt-up`, localhost, no auth).
-- Credentials in transit rely on transport encryption — Voodoo does not
+- Credentials in transit rely on transport encryption — Grumo does not
   add its own payload encryption layer.
 
 ## Replay & idempotency

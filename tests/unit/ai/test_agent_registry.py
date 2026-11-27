@@ -12,9 +12,9 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo.agents.models import AgentEntity, AgentRunRecord
-from voodoo.agents.registry import InMemoryAgentRegistry, SQLiteAgentRegistry
-from voodoo.ai.agent import Agent
+from grumo.agents.models import AgentEntity, AgentRunRecord
+from grumo.agents.registry import InMemoryAgentRegistry, SQLiteAgentRegistry
+from grumo.ai.agent import Agent
 
 # ---------------------------------------------------------------------------
 # AgentEntity
@@ -333,7 +333,7 @@ class TestAgentRegistryIntegration:
 
     async def test_agent_custom_memory_store(self) -> None:
         """Agent with both memory and registry."""
-        from voodoo.memory.interfaces import InMemoryMemoryStore
+        from grumo.memory.interfaces import InMemoryMemoryStore
 
         registry = InMemoryAgentRegistry()
         memory = InMemoryMemoryStore()

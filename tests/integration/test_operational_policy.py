@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo.primitives.capability import Capability
-from voodoo.primitives.intent import Intent
-from voodoo.runtime import (
+from grumo.primitives.capability import Capability
+from grumo.primitives.intent import Intent
+from grumo.runtime import (
     ApprovalRequired,
     CapabilityDenied,
     ExecutionContext,
@@ -14,7 +14,7 @@ from voodoo.runtime import (
     PolicyResult,
     Resolution,
 )
-from voodoo.world import Entity, WorldModel
+from grumo.world import Entity, WorldModel
 
 
 def test_policy_defaults_to_allow_after_capability_is_granted():

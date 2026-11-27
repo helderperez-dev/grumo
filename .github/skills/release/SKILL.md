@@ -1,6 +1,6 @@
 # Skill: Release
 
-> **When to use:** When cutting a published Voodoo framework release.
+> **When to use:** When cutting a published Grumo framework release.
 
 ---
 
@@ -45,16 +45,16 @@ Choose the version from compatibility impact, not from sprint number:
 | Backward-compatible bug fix | Patch |
 | Intentional incompatible public contract change | Major |
 
-Voodoo 3.0.0 is the current major architecture baseline. A future major bump
+Grumo 3.0.0 is the current major architecture baseline. A future major bump
 requires an explicit breaking-contract decision; it is never tied to a hardcoded sprint.
 
 Check the current source version:
 
 ```bash
-grep __version__ src/voodoo/__init__.py
+grep __version__ src/grumo/__init__.py
 ```
 
-The release workflow can update `src/voodoo/__init__.py` to the requested version.
+The release workflow can update `src/grumo/__init__.py` to the requested version.
 Do not create a second manual bump path.
 
 ---
@@ -88,7 +88,7 @@ From up-to-date `main`:
 just format
 just lint
 just test
-uv run mypy src/voodoo
+uv run mypy src/grumo
 ```
 
 The Release workflow runs its own test suite and clean Store-first distribution
@@ -114,7 +114,7 @@ The GitHub Actions workflow then:
 2. installs dependencies and runs the full test suite;
 3. builds a clean wheel and proves a fresh Store-first application works without
    accidental optional SQLite coupling;
-4. updates `src/voodoo/__init__.py` when necessary;
+4. updates `src/grumo/__init__.py` when necessary;
 5. commits the version state and creates/pushes `vX.Y.Z`;
 6. builds wheel and source distributions;
 7. publishes to PyPI;
@@ -138,14 +138,14 @@ Then verify all applicable artifacts:
 
 ```bash
 gh release view vX.Y.Z
-pip index versions voodoo-framework
+pip index versions grumo-framework
 ```
 
 Confirm:
 
 - [ ] Release workflow concluded successfully.
 - [ ] Git tag `vX.Y.Z` points at the intended release commit.
-- [ ] PyPI exposes `voodoo-framework==X.Y.Z`.
+- [ ] PyPI exposes `grumo-framework==X.Y.Z`.
 - [ ] GitHub Release exists with wheel/source assets.
 - [ ] Homebrew formula was updated when that integration was enabled.
 - [ ] `SPRINT_PLAN.md` / `ROADMAP.md` do not claim an older release as current.

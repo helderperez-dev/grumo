@@ -1,12 +1,12 @@
-# Voodoo Edge Protocol v1
+# Grumo Edge Protocol v1
 
 > Transport-independent message contract. HTTP and MQTT carry these
 > envelopes verbatim; the runtime behavior is identical either way.
 
 ## Protocol identity
 
-- **Name:** `voodoo-edge`
-- **Version:** `1` (`voodoo-edge/v1`)
+- **Name:** `grumo-edge`
+- **Version:** `1` (`grumo-edge/v1`)
 - **Wire format:** JSON (UTF-8)
 - **Compatibility:** additive within v1; breaking changes require v2.
   V1 clients must never be silently broken.

@@ -1,7 +1,7 @@
 """PostgreSQL event bus contract tests (Sprint 7, Sprint 11).
 
 Runs the shared ``EventBusContractTests`` against a real PostgreSQL server
-when ``VOODOO_TEST_DATABASE_URL`` is set (CI provides one via a service
+when ``GRUMO_TEST_DATABASE_URL`` is set (CI provides one via a service
 container). Skipped locally when no server is configured.
 """
 
@@ -15,14 +15,14 @@ from tests.contracts.test_eventbus import EventBusContractTests
 psycopg = pytest.importorskip("psycopg")
 
 pytestmark = pytest.mark.skipif(
-    not os.environ.get("VOODOO_TEST_DATABASE_URL"),
-    reason="VOODOO_TEST_DATABASE_URL not set (no PostgreSQL server available)",
+    not os.environ.get("GRUMO_TEST_DATABASE_URL"),
+    reason="GRUMO_TEST_DATABASE_URL not set (no PostgreSQL server available)",
 )
 
 
 @pytest.fixture
 async def pg_url() -> str:
-    url = os.environ["VOODOO_TEST_DATABASE_URL"]
+    url = os.environ["GRUMO_TEST_DATABASE_URL"]
     # Fresh events table per test so the replay/durability assertions are
     # deterministic.
     import psycopg
@@ -36,7 +36,7 @@ async def pg_url() -> str:
 class TestPostgresEventBusContract(EventBusContractTests):
     @pytest.fixture(autouse=True)
     def setup_bus(self, pg_url) -> None:
-        from voodoo.storage.events.postgres import PostgresEventStore
+        from grumo.storage.events.postgres import PostgresEventStore
 
         self.bus = PostgresEventStore(pg_url)
         yield
@@ -47,7 +47,7 @@ class TestPostgresEventBusDurability:
     """Durability tests mirroring the SQLite suite, on PostgreSQL."""
 
     async def test_events_survive_close_and_reopen(self, pg_url) -> None:
-        from voodoo.storage.events.postgres import PostgresEventStore
+        from grumo.storage.events.postgres import PostgresEventStore
 
         bus1 = PostgresEventStore(pg_url)
         bus1.publish("test.durable", {"data": "hello"})
@@ -69,7 +69,7 @@ class TestPostgresEventBusDurability:
 
     async def test_correlation_ordering(self, pg_url) -> None:
         """Events replay in timestamp order with stable correlation ids."""
-        from voodoo.storage.events.postgres import PostgresEventStore
+        from grumo.storage.events.postgres import PostgresEventStore
 
         bus = PostgresEventStore(pg_url)
         bus.publish(

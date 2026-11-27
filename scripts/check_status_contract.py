@@ -6,7 +6,7 @@ import ast
 from pathlib import Path
 
 ROOT = Path(__file__).parents[1]
-STATUS = ROOT / "src/voodoo/status.py"
+STATUS = ROOT / "src/grumo/status.py"
 TESTS = ROOT / "tests/unit/test_status.py"
 HTTP_TESTS = ROOT / "tests/integration/test_http_runtime.py"
 REQUIRED_REMEDIATION_KEYS = {"database", "queue", "storage", "agent", "store"}
@@ -45,8 +45,13 @@ def _validate_policy(source: str) -> None:
         raise SystemExit(
             "status contract must expose remediation policy and fail closed on Down"
         )
-    if '"Degraded": {"http_status": 200, "traffic": "serve_with_attention"}' not in source:
-        raise SystemExit("status contract must keep degraded traffic serving with attention")
+    if (
+        '"Degraded": {"http_status": 200, "traffic": "serve_with_attention"}'
+        not in source
+    ):
+        raise SystemExit(
+            "status contract must keep degraded traffic serving with attention"
+        )
     if '"Down": {"http_status": 503, "traffic": "fail_closed"}' not in source:
         raise SystemExit("status contract must keep Down traffic fail-closed")
 
@@ -57,7 +62,9 @@ def main() -> int:
     http_tests = _symbols(HTTP_TESTS)
     missing = sorted(REQUIRED_TESTS - tests)
     if missing:
-        raise SystemExit("status contract missing regression tests: " + ", ".join(missing))
+        raise SystemExit(
+            "status contract missing regression tests: " + ", ".join(missing)
+        )
     missing_http = sorted(REQUIRED_HTTP_TESTS - http_tests)
     if missing_http:
         raise SystemExit(

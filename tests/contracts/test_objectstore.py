@@ -1,7 +1,7 @@
 """Object store adapter contract tests (Sprint 6, spec §18).
 
 ``ObjectStoreContractTests`` is the portability suite every
-``VoodooObjectStore`` implementation must pass unchanged — ``LocalObjectStore``
+``GrumoObjectStore`` implementation must pass unchanged — ``LocalObjectStore``
 today, ``S3ObjectStore`` in the same sprint. Provider-specific behavior
 (ctor validation, S3 client wiring, sharding) gets its own tests on top.
 """
@@ -96,7 +96,7 @@ class ObjectStoreContractTests:
 
 class TestLocalObjectStore(ObjectStoreContractTests):
     def make_store(self, tmp_path):
-        from voodoo.storage.objects import LocalObjectStore
+        from grumo.storage.objects import LocalObjectStore
 
         return LocalObjectStore(tmp_path / "objects")
 

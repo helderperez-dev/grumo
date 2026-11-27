@@ -7,11 +7,11 @@ import json
 
 import pytest
 
-from voodoo.mesh import MeshNetwork, RemoteExecutionOutcome, RemoteExecutionRequest
-from voodoo.mesh.client import MeshClient
-from voodoo.primitives.capability import Capability
-from voodoo.runtime import ExecutionEngine
-from voodoo.runtime.execution import ExecutionStatus
+from grumo.mesh import MeshNetwork, RemoteExecutionOutcome, RemoteExecutionRequest
+from grumo.mesh.client import MeshClient
+from grumo.primitives.capability import Capability
+from grumo.runtime import ExecutionEngine
+from grumo.runtime.execution import ExecutionStatus
 
 
 @pytest.mark.asyncio

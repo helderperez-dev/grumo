@@ -1,6 +1,6 @@
 from pathlib import Path
 
-CORE_RUNTIME = Path("src/voodoo/runtime")
+CORE_RUNTIME = Path("src/grumo/runtime")
 VENDOR_TOKENS = ("posthog", "stripe", "resend", "supabase")
 
 

@@ -1,7 +1,7 @@
 """PostgreSQL execution store tests (Sprint 11).
 
 Mirrors ``tests/test_execution_sqlite_store.py`` against a real PostgreSQL
-server when ``VOODOO_TEST_DATABASE_URL`` is set (CI service container).
+server when ``GRUMO_TEST_DATABASE_URL`` is set (CI service container).
 Skipped locally when no server is available.
 """
 
@@ -11,16 +11,16 @@ import os
 
 import pytest
 
-from voodoo.primitives.intent import Intent
-from voodoo.runtime import ExecutionEngine
-from voodoo.runtime.execution import Execution, ExecutionStatus
-from voodoo.storage.execution import PostgresExecutionStore
+from grumo.primitives.intent import Intent
+from grumo.runtime import ExecutionEngine
+from grumo.runtime.execution import Execution, ExecutionStatus
+from grumo.storage.execution import PostgresExecutionStore
 
 psycopg = pytest.importorskip("psycopg")
 
 pytestmark = pytest.mark.skipif(
-    not os.environ.get("VOODOO_TEST_DATABASE_URL"),
-    reason="VOODOO_TEST_DATABASE_URL not set (no PostgreSQL server available)",
+    not os.environ.get("GRUMO_TEST_DATABASE_URL"),
+    reason="GRUMO_TEST_DATABASE_URL not set (no PostgreSQL server available)",
 )
 
 
@@ -46,7 +46,7 @@ def _drop_tables(conn) -> None:
 def store() -> PostgresExecutionStore:
     import psycopg as _p
 
-    url = os.environ["VOODOO_TEST_DATABASE_URL"]
+    url = os.environ["GRUMO_TEST_DATABASE_URL"]
     with _p.connect(url) as conn:
         _drop_tables(conn)
     s = PostgresExecutionStore(url)

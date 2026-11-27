@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo.storage.objects.s3 import S3ObjectStore
+from grumo.storage.objects.s3 import S3ObjectStore
 
 
 class _Body:
@@ -40,7 +40,9 @@ class _Client:
 
 
 def _store(payload: bytes, checksum: str) -> tuple[S3ObjectStore, _Client]:
-    store = S3ObjectStore(bucket="bucket", endpoint="http://s3", key="key", secret="secret")
+    store = S3ObjectStore(
+        bucket="bucket", endpoint="http://s3", key="key", secret="secret"
+    )
     client = _Client(payload, checksum)
     store.s3_client = client
     store.use_s3 = True

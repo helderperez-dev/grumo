@@ -1,24 +1,24 @@
-# Voodoo 3.0 public API law
+# Grumo 3.0 public API law
 
-Voodoo 3.0 defines one canonical import model and intentionally removes
+Grumo 3.0 defines one canonical import model and intentionally removes
 compatibility-only paths from the 2.x line.
 
 ## Rule
 
 The package root is the **small application happy path**, not a catalog of every
-Voodoo type. Subsystem APIs live in the namespace that owns their semantics.
+Grumo type. Subsystem APIs live in the namespace that owns their semantics.
 
 Canonical imports for 3.0 are:
 
 ```python
 # Application surface
-from voodoo import App, page, state, Agent, tool, Model, task
+from grumo import App, page, state, Agent, tool, Model, task
 
 # UI catalog
-from voodoo.ui import Button, Card, Stack, DataTable, RuntimeStatus
+from grumo.ui import Button, Card, Stack, DataTable, RuntimeStatus
 
 # Runtime / agency
-from voodoo.runtime import (
+from grumo.runtime import (
     ExecutionEngine,
     Planner,
     AdaptiveSupervisor,
@@ -27,13 +27,13 @@ from voodoo.runtime import (
 )
 
 # Operational world
-from voodoo.world import Entity, Relationship, Observation, WorldModel
+from grumo.world import Entity, Relationship, Observation, WorldModel
 
 # Physical/external participants
-from voodoo.edge import DeviceGateway, WorldAwareDeviceGateway
+from grumo.edge import DeviceGateway, WorldAwareDeviceGateway
 
 # Language-neutral contracts
-from voodoo.protocol import Execution, WorldSnapshot, RemoteExecutionRequest
+from grumo.protocol import Execution, WorldSnapshot, RemoteExecutionRequest
 ```
 
 ## 3.0 package-root contraction
@@ -42,7 +42,7 @@ The 3.0 branch performs the major-version break deliberately. The package root
 exports exactly the common application vocabulary:
 
 ```python
-from voodoo import Agent, App, Model, page, state, task, tool
+from grumo import Agent, App, Model, page, state, task, tool
 ```
 
 Catalog-style exports and deprecation shims are removed rather than carried
@@ -54,17 +54,17 @@ is pinned by `tests/integration/test_contract_api.py`.
 1. Do not add a top-level export just because a class is useful.
 2. A primitive may be top-level only when it is part of the common application
    vocabulary used across subsystems.
-3. Component catalogs belong to `voodoo.ui`.
-4. Execution/agency internals belong to `voodoo.runtime`.
-5. World concepts belong to `voodoo.world`.
-6. Device concepts belong to `voodoo.edge`.
-7. Wire schemas belong to `voodoo.protocol`.
+3. Component catalogs belong to `grumo.ui`.
+4. Execution/agency internals belong to `grumo.runtime`.
+5. World concepts belong to `grumo.world`.
+6. Device concepts belong to `grumo.edge`.
+7. Wire schemas belong to `grumo.protocol`.
 8. Compatibility-only paths removed in 3.0 must not be reintroduced; migration
    belongs in documentation, not runtime shims.
 
 ## Why this matters
 
-Voodoo's architecture is intentionally broad; its developer surface should not
+Grumo's architecture is intentionally broad; its developer surface should not
 mirror that breadth one class at a time. The runtime may grow while the happy
 path stays small.
 
@@ -74,8 +74,8 @@ path stays small.
 The canonical `App` owns one canonical Runtime. Application code should declare observed facts, desired state, and executable capabilities through `App`; graph, reconciliation, scheduling, placement, and execution remain runtime internals unless an advanced integration explicitly needs them.
 
 ```python
-from voodoo import App
-from voodoo.primitives import Intent
+from grumo import App
+from grumo.primitives import Intent
 
 app = App()
 conversion = app.observation("business", "conversion")
@@ -99,12 +99,12 @@ async def improve(ctx):
 Public API laws for adaptive applications:
 
 1. `App` is the application facade; `Runtime` is its canonical execution and reconciliation machine, not a competing application abstraction.
-2. `app.observation(...)` returns a handle; the handle type is scoped to `voodoo.core` and is not a package-root export.
+2. `app.observation(...)` returns a handle; the handle type is scoped to `grumo.core` and is not a package-root export.
 3. `@app.goal(...)` constructs the same canonical `Goal` used by the advanced runtime API. It is syntax, not a second goal model.
 4. `@app.capability(...)` binds local compute to a capability in the same Runtime. Explicit `Capability(...)` registration remains available when constraints, delegation, or policy metadata are required.
 5. Observation handles may be passed directly to `observes`; application code does not need Application Graph resource IDs.
 6. An Observation may trigger a bounded cycle. Effects do not become Observations implicitly, and a cycle never recursively runs forever.
-7. Advanced runtime primitives remain under `voodoo.runtime`; they are not promoted to the package root merely because they are useful.
+7. Advanced runtime primitives remain under `grumo.runtime`; they are not promoted to the package root merely because they are useful.
 
 
 ## 3.0 clean-break migration status
@@ -115,11 +115,11 @@ slice is Runtime scheduling:
 
 | Removed 2.x path | 3.0 canonical path |
 | --- | --- |
-| `voodoo.workers.task` | `from voodoo import task` |
-| `voodoo.workers.TaskError` | `voodoo.runtime.scheduling.TaskError` |
-| `voodoo.queue.enqueue` | `voodoo.runtime.scheduling.enqueue` |
-| `voodoo.queue.start_workers` | `voodoo.runtime.scheduling.start_workers` |
-| `voodoo.queue.stop_workers` | `voodoo.runtime.scheduling.stop_workers` |
+| `grumo.workers.task` | `from grumo import task` |
+| `grumo.workers.TaskError` | `grumo.runtime.scheduling.TaskError` |
+| `grumo.queue.enqueue` | `grumo.runtime.scheduling.enqueue` |
+| `grumo.queue.start_workers` | `grumo.runtime.scheduling.start_workers` |
+| `grumo.queue.stop_workers` | `grumo.runtime.scheduling.stop_workers` |
 
 `task` remains in the package-root happy path intentionally. Worker orchestration
 is Runtime scheduling implementation and no longer owns a parallel top-level
@@ -128,58 +128,58 @@ namespace.
 ### Runtime scheduling module contraction
 
 The 3.0 branch also removes the flat Runtime scheduling modules. Import advanced
-scheduling types from `voodoo.runtime` when they are part of the supported
+scheduling types from `grumo.runtime` when they are part of the supported
 Runtime API, or from their canonical implementation domain when extending the
 framework:
 
 | Removed module | Canonical owner |
 | --- | --- |
-| `voodoo.runtime.dispatch` | `voodoo.runtime.scheduling.dispatch` |
-| `voodoo.runtime.handoff` | `voodoo.runtime.scheduling.handoff` |
-| `voodoo.runtime.scheduler` | `voodoo.runtime.scheduling` |
-| `voodoo.runtime.work_scheduler` | `voodoo.runtime.scheduling.work` |
+| `grumo.runtime.dispatch` | `grumo.runtime.scheduling.dispatch` |
+| `grumo.runtime.handoff` | `grumo.runtime.scheduling.handoff` |
+| `grumo.runtime.scheduler` | `grumo.runtime.scheduling` |
+| `grumo.runtime.work_scheduler` | `grumo.runtime.scheduling.work` |
 
 
 ### Mesh versus distributed Runtime ownership
 
-`voodoo.mesh` remains the event/transport-facing application surface. The 3.0
+`grumo.mesh` remains the event/transport-facing application surface. The 3.0
 branch removes semantic compatibility modules beneath it: participant identity,
 remote execution authority, and replay/idempotency are owned by
-`voodoo.runtime.distributed`.
+`grumo.runtime.distributed`.
 
 | Removed Mesh module | Canonical owner |
 | --- | --- |
-| `voodoo.mesh.auth` | `voodoo.runtime.distributed.auth` |
-| `voodoo.mesh.remote` | `voodoo.runtime.distributed.remote` |
-| `voodoo.mesh.replay` | `voodoo.runtime.distributed.replay` |
+| `grumo.mesh.auth` | `grumo.runtime.distributed.auth` |
+| `grumo.mesh.remote` | `grumo.runtime.distributed.remote` |
+| `grumo.mesh.replay` | `grumo.runtime.distributed.replay` |
 
 
 ### Runtime semantic module contraction
 
 | Removed Runtime module | Canonical owner |
 | --- | --- |
-| `voodoo.runtime.adaptive` | `voodoo.runtime.agency` |
-| `voodoo.runtime.dashboard` | `voodoo.runtime.inspection` |
-| `voodoo.runtime.engine` | `voodoo.runtime.execution.engine` |
-| `voodoo.runtime.fabric` | `voodoo.runtime.distributed` |
-| `voodoo.runtime.goal` | `voodoo.runtime.agency` |
-| `voodoo.runtime.goal_store` | `voodoo.runtime.agency` |
-| `voodoo.runtime.lineage` | `voodoo.runtime.inspection` |
-| `voodoo.runtime.membership` | `voodoo.runtime.distributed` |
-| `voodoo.runtime.reconcile` | `voodoo.runtime.reconciliation` |
-| `voodoo.runtime.world_execution` | `voodoo.runtime.execution.world` |
+| `grumo.runtime.adaptive` | `grumo.runtime.agency` |
+| `grumo.runtime.dashboard` | `grumo.runtime.inspection` |
+| `grumo.runtime.engine` | `grumo.runtime.execution.engine` |
+| `grumo.runtime.fabric` | `grumo.runtime.distributed` |
+| `grumo.runtime.goal` | `grumo.runtime.agency` |
+| `grumo.runtime.goal_store` | `grumo.runtime.agency` |
+| `grumo.runtime.lineage` | `grumo.runtime.inspection` |
+| `grumo.runtime.membership` | `grumo.runtime.distributed` |
+| `grumo.runtime.reconcile` | `grumo.runtime.reconciliation` |
+| `grumo.runtime.world_execution` | `grumo.runtime.execution.world` |
 
 ### Removed compatibility namespaces
 
 | Removed 2.x path | 3.0 canonical path |
 | --- | --- |
-| `voodoo.telemetry` | `voodoo.observability` |
-| `voodoo.telemetry.otlp` | `voodoo.integrations.otel` |
-| `voodoo.mcp` | `voodoo.integrations.mcp` |
-| `voodoo.tools` | `voodoo.ai.tools` |
-| `voodoo.agent` | `voodoo.ai.agent` |
-| `voodoo.api` | `voodoo.routing.api` |
-| `voodoo.theme` | `voodoo.ui.styles.theme` |
+| `grumo.telemetry` | `grumo.observability` |
+| `grumo.telemetry.otlp` | `grumo.integrations.otel` |
+| `grumo.mcp` | `grumo.integrations.mcp` |
+| `grumo.tools` | `grumo.ai.tools` |
+| `grumo.agent` | `grumo.ai.agent` |
+| `grumo.api` | `grumo.routing.api` |
+| `grumo.theme` | `grumo.ui.styles.theme` |
 
 These paths are removed physically in 3.0. There are no import-time compatibility
 redirects, warning shims, or duplicate semantic owners.

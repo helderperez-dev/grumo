@@ -1,6 +1,6 @@
-# Voodoo Computational Model
+# Grumo Computational Model
 
-Voodoo's power comes from a small, explicit set of concepts — not from a large
+Grumo's power comes from a small, explicit set of concepts — not from a large
 API surface. This document defines the computational model the entire runtime
 is built on.
 
@@ -40,7 +40,7 @@ have identity, state, capabilities, relationships, intents, executions, and
 telemetry.
 
 Operational systems — robotics, distributed systems, mission systems — need a
-consistent representation of what exists. Today Voodoo represents an entity
+consistent representation of what exists. Today Grumo represents an entity
 through `State` (every `State` carries an `id` and a `kind` that identify the
 entity it describes) plus the cross-cutting concept of **Identity**. A
 dedicated `Entity` type is on the roadmap; the concept already governs the
@@ -63,7 +63,7 @@ and capable of producing events when it changes. State is not "database data" �
 it is the operational truth of the system, whether or not it is persisted.
 
 ```python
-from voodoo.primitives import State
+from grumo.primitives import State
 
 # Create durable, versioned state
 user = State(kind="user", data={"name": "Ada", "balance": 500})
@@ -95,7 +95,7 @@ Intent → Resolution → Capability → Execution
 ```
 
 ```python
-from voodoo.primitives import Intent, Constraint
+from grumo.primitives import Intent, Constraint
 
 # An outcome to achieve (not a function call)
 intent = Intent(
@@ -146,7 +146,7 @@ A capability may be scoped, delegated, revocable, time-limited, constrained,
 unavailable, or authorized.
 
 ```python
-from voodoo.primitives import Capability
+from grumo.primitives import Capability
 
 # Explicit permission
 cap = Capability(name="email.send")
@@ -182,7 +182,7 @@ The model distinguishes **Computation** (pure) from **Effect** (a change in the
 world). Not every computation produces an external effect.
 
 ```python
-from voodoo.primitives import Effect
+from grumo.primitives import Effect
 
 # An explicit side effect
 effect = Effect(
@@ -232,7 +232,7 @@ An Execution conceptually carries: `id`, `parent_execution`, `entity`,
 `error`, and `recovery`. Not every field is materialized in code — the
 semantics come first.
 
-In code, `Execution` and `ExecutionEngine` live in `voodoo.runtime`. See
+In code, `Execution` and `ExecutionEngine` live in `grumo.runtime`. See
 [`docs/execution-model.md`](execution-model.md) for the full lifecycle.
 
 ## Execution Dimensions
@@ -255,7 +255,7 @@ runtime executes work through CPU, GPU, LLM, human, worker, device, robot, or
 remote service without changing the Intent model.
 
 ```python
-from voodoo.primitives import ComputeSpec, Constraint, Resource
+from grumo.primitives import ComputeSpec, Constraint, Resource
 
 # Deterministic (default)
 c = ComputeSpec.deterministic()
@@ -287,7 +287,7 @@ retry delay duration    temporal validity
 ```
 
 ```python
-from voodoo.primitives import TimeSpec
+from grumo.primitives import TimeSpec
 
 # Deadline
 t = TimeSpec.with_deadline(3600)
@@ -328,7 +328,7 @@ Robot
 ```
 
 ```python
-from voodoo.primitives import Resource
+from grumo.primitives import Resource
 
 # Resource consumption
 r = Resource(cost=0.03, latency_ms=500, energy="high", tokens=1500)
@@ -355,7 +355,7 @@ Conceptually, `Intent + Capability + Constraints` define the feasible
 execution space.
 
 ```python
-from voodoo.primitives import Constraint
+from grumo.primitives import Constraint
 
 # Cost constraint
 c = Constraint.cost(maximum=0.10)
@@ -422,10 +422,10 @@ The complexity comes from composition, not from framework magic:
 - **AI-optional** — AI is one Compute, never mandatory
 - **Physical-world capable** — the same model reaches devices and robots
 
-The sophistication is in the model, not in the API surface. Voodoo should feel
+The sophistication is in the model, not in the API surface. Grumo should feel
 almost boring at first — that is intentional.
 
-## The Voodoo Test
+## The Grumo Test
 
 Every proposed feature or abstraction must pass:
 
@@ -438,6 +438,6 @@ Every proposed feature or abstraction must pass:
 6. Does it reduce conceptual complexity or add to it?
 7. Does it belong in the core, or should it be an optional capability?
 8. Are we solving a fundamental problem or today's ecosystem problem?
-9. Are we coupling Voodoo to a vendor, protocol, or implementation?
+9. Are we coupling Grumo to a vendor, protocol, or implementation?
 10. Would a developer understand the abstraction without reading 500 pages of
     documentation?

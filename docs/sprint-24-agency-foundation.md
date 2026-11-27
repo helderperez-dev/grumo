@@ -9,7 +9,7 @@
 
 ## 1. Why this sprint exists
 
-Voodoo already has a real execution substrate: durable `Execution`, capabilities, workers, HITL, scheduling, agent runs, memory storage, Mesh, protocol schemas, and an Edge gateway. The remaining gap is no longer “build more framework features.” The gap is that the runtime can execute work reliably, but it does not yet maintain a coherent model of the world that autonomous software can observe, reason over, change, and verify.
+Grumo already has a real execution substrate: durable `Execution`, capabilities, workers, HITL, scheduling, agent runs, memory storage, Mesh, protocol schemas, and an Edge gateway. The remaining gap is no longer “build more framework features.” The gap is that the runtime can execute work reliably, but it does not yet maintain a coherent model of the world that autonomous software can observe, reason over, change, and verify.
 
 The architectural target for this sprint is:
 
@@ -127,7 +127,7 @@ Rules:
 - confidence and observation time are retained;
 - stale observations do not overwrite newer projected state unless explicitly forced;
 - relationships are stable IDs, not anonymous tuples;
-- world model must be serializable through Voodoo Protocol later in this sprint.
+- world model must be serializable through Grumo Protocol later in this sprint.
 
 **Acceptance:** create entities, relate them, apply observations, query current state and history, close the store, reopen it, and recover identical world semantics.
 
@@ -287,7 +287,7 @@ This canary becomes the acceptance reference before a physical ESP32/reference r
 ## 5. Proposed package ownership
 
 ```text
-src/voodoo/
+src/grumo/
   world/
     __init__.py
     models.py          # Entity, Relationship, Observation, snapshots
@@ -356,7 +356,7 @@ Mandatory final gate:
 just format
 just lint
 just test
-uv run mypy src/voodoo
+uv run mypy src/grumo
 ```
 
 CI must also prove the declared Python support matrix and a clean base-wheel install.
@@ -374,7 +374,7 @@ The following are valuable but are not required to call Sprint 24 complete:
 - GPU inference runtime;
 - TypeScript/Go/Rust SDK families beyond the protocol/generation contract;
 - physical ESP32/reference robot firmware;
-- cloud control plane / hosted Voodoo Runtime.
+- cloud control plane / hosted Grumo Runtime.
 
 They become much safer after the semantic/runtime loop in this sprint is proven.
 

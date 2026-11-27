@@ -2,7 +2,7 @@
 
 ## What it is
 
-Voodoo uses a React-like component system in pure Python. Components are Python classes that render to HTML. No templates, no JSX, no separate markup files.
+Grumo uses a React-like component system in pure Python. Components are Python classes that render to HTML. No templates, no JSX, no separate markup files.
 
 ## Maturity and accessibility contract
 
@@ -38,11 +38,11 @@ role; new component families require an architecture review.
 ## Minimal example
 
 ```python
-from voodoo.ui import Div, Text, Button
+from grumo.ui import Div, Text, Button
 
 card = Div(Text("Hello"), Button("Click me", on_click="doSomething"))
 print(card.render())
-# The button carries a Voodoo event descriptor; browser handlers stay framework-owned.
+# The button carries a Grumo event descriptor; browser handlers stay framework-owned.
 ```
 
 ## Common usage
@@ -50,7 +50,7 @@ print(card.render())
 ### Layout components
 
 ```python
-from voodoo.ui import Container, Flex, Stack, Grid, Heading, Text
+from grumo.ui import Container, Flex, Stack, Grid, Heading, Text
 
 layout = Container(
     Flex(Heading("Title"), Text("Body")),
@@ -69,7 +69,7 @@ Layout is expressed through semantic props, not utility classes:
 | `Stack` | `gap` (vertical `Flex`) |
 
 ```python
-from voodoo.ui import Flex, Grid, Page, Stack
+from grumo.ui import Flex, Grid, Page, Stack
 
 ui = Page(
     Stack(
@@ -86,7 +86,7 @@ reference.
 ### Cards and content
 
 ```python
-from voodoo.ui import Card, Heading, Text, Badge
+from grumo.ui import Card, Heading, Text, Badge
 
 profile = Card(
     Heading("Ada Lovelace", level=2),
@@ -108,7 +108,7 @@ Common feedback, navigation, disclosure, and content patterns are available
 without custom CSS:
 
 ```python
-from voodoo.ui import (
+from grumo.ui import (
     Accordion,
     AccordionItem,
     Alert,
@@ -129,7 +129,7 @@ page_tools = ButtonGroup(
 
 navigation = Breadcrumb(
     BreadcrumbItem("Projects", "/projects"),
-    BreadcrumbItem("Voodoo", "/projects/voodoo"),
+    BreadcrumbItem("Grumo", "/projects/grumo"),
     BreadcrumbItem("Settings"),
 )
 
@@ -163,7 +163,7 @@ state. Use `empty_text` to provide domain-specific wording. Unavailable
 interactive content never retains selection or activation bindings.
 
 ```python
-from voodoo.ui import ListBox, ListOption, Table, TreeView
+from grumo.ui import ListBox, ListOption, Table, TreeView
 
 orders = Table(
     headers=["Order", "Status"],
@@ -191,11 +191,11 @@ is required.
 
 ### Adaptive application UI
 
-Voodoo includes the interaction patterns needed by desktop, mobile, and
+Grumo includes the interaction patterns needed by desktop, mobile, and
 installable PWA interfaces:
 
 ```python
-from voodoo.ui import (
+from grumo.ui import (
     AppShell,
     BottomNav,
     BottomNavItem,
@@ -266,7 +266,7 @@ the mobile backdrop returns it. The default toggle cycle is
 it on the next click. Include `"hidden"` explicitly when full closing is part
 of the product design.
 
-`AppShell` automatically renders a compact `V.` / `Voodoo` placeholder brand,
+`AppShell` automatically renders a compact `V.` / `Grumo` placeholder brand,
 uses a directional chevron for the desktop expand/collapse action, and exposes
 a separate hamburger launcher only while the sidebar is fully hidden. In
 expanded mode the chevron sits in the sidebar header; in rail mode it moves to
@@ -292,14 +292,14 @@ Tabs implement linked ARIA states and roving keyboard focus.
 Client-side code may also show transient feedback without constructing markup:
 
 ```javascript
-voodoo.toast("Deployment complete", {title: "Ready", tone: "success"});
-voodoo.snackbar("Connection restored");
+grumo.toast("Deployment complete", {title: "Ready", tone: "success"});
+grumo.snackbar("Connection restored");
 ```
 
 ### Forms
 
 ```python
-from voodoo.ui import Form, Input, Label, Button
+from grumo.ui import Form, Input, Label, Button
 
 login = Form(
     Label("Email", Input(type="email", name="email")),
@@ -314,7 +314,7 @@ Ready-made building blocks for navigation, heroes, and landing sections — no
 custom CSS required:
 
 ```python
-from voodoo.ui import (
+from grumo.ui import (
     Navbar,
     NavLink,
     Brand,
@@ -331,13 +331,13 @@ from voodoo.ui import (
 )
 
 page = Hero(
-    Eyebrow("Voodoo 1.0"),
+    Eyebrow("Grumo 1.0"),
     Heading("Ship fast", level=1, size="display"),
     Text("A programmable runtime for adaptive applications."),
-    CodeBlock("pip install voodoo-framework", language="bash"),
+    CodeBlock("pip install grumo-framework", language="bash"),
     Stats(Stat("99.99%", "Uptime"), Stat("12ms", "Latency")),
     Navbar(
-        Brand("Voodoo"),
+        Brand("Grumo"),
         NavLink("Docs", href="/docs", active=True),
         ThemeToggle(),
     ),
@@ -360,7 +360,7 @@ page = Hero(
 ### Custom components
 
 ```python
-from voodoo.ui import Component, Div, Text
+from grumo.ui import Component, Div, Text
 
 
 class UserCard(Component):
@@ -398,14 +398,14 @@ Text("Danger!", tone="danger")
 
 ### Style adapters
 
-Voodoo supports pluggable style adapters. `VoodooCSSAdapter` is the default CSS adapter; `TailwindAdapter` ships out of the box as an alternative:
+Grumo supports pluggable style adapters. `GrumoCSSAdapter` is the default CSS adapter; `TailwindAdapter` ships out of the box as an alternative:
 
 ```python
-from voodoo.ui.styles import set_style_adapter
-from voodoo.adapters import VoodooCSSAdapter, TailwindAdapter
+from grumo.ui.styles import set_style_adapter
+from grumo.adapters import GrumoCSSAdapter, TailwindAdapter
 
 # Default
-set_style_adapter(VoodooCSSAdapter())
+set_style_adapter(GrumoCSSAdapter())
 
 # Or use Tailwind
 set_style_adapter(TailwindAdapter())
@@ -440,9 +440,9 @@ set_style_adapter(TailwindAdapter())
     bar: auto-growing textarea + send button; Enter sends, Shift+Enter
     newlines (wired by the client SDK — zero hand-written JS).
   - `Sidebar(*children)` — app sidebar shell styled by `vd-sidebar`.
-- Client JS SDK (`static/client.js`, auto-included): `voodoo.navigate(path)`,
-  `voodoo.scrollToBottom(id)`, `voodoo.toast(message, options)`,
-  `voodoo.snackbar(message, options)`, plus automatic interaction and chat
+- Client JS SDK (`static/client.js`, auto-included): `grumo.navigate(path)`,
+  `grumo.scrollToBottom(id)`, `grumo.toast(message, options)`,
+  `grumo.snackbar(message, options)`, plus automatic interaction and chat
   behaviors re-applied after every DOM patch.
 - `set_style_adapter(adapter)` — set the active style adapter.
 ## Trusted HTML escape hatches
@@ -451,7 +451,7 @@ Normal string children are escaped. For fragments, choose the name that
 matches the trust boundary:
 
 ```python
-from voodoo.ui import SafeHtml, UnsafeHtml
+from grumo.ui import SafeHtml, UnsafeHtml
 
 SafeHtml("<em>user text</em>")       # emits escaped text
 UnsafeHtml("<em>app-owned</em>")     # emits markup; sanitize first

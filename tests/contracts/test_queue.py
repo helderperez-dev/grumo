@@ -1,6 +1,6 @@
 """Queue adapter contract tests (spec §12, §29).
 
-``QueueContractTests`` is the portability suite every ``VoodooQueue``
+``QueueContractTests`` is the portability suite every ``GrumoQueue``
 implementation must pass unchanged — SQLite (default), Memory (ephemeral),
 PostgreSQL (future). Provider-specific behavior (SQL dialect, concurrency)
 gets its own tests on top.
@@ -10,7 +10,7 @@ import asyncio
 
 import pytest
 
-from voodoo.storage.queue import TaskStatus
+from grumo.storage.queue import TaskStatus
 
 
 class QueueContractTests:
@@ -126,7 +126,7 @@ class QueueContractTests:
     async def test_delayed_delivery(self, queue):
         caps = queue.capabilities()
         if caps.delayed_delivery is False:
-            from voodoo.adapters.capabilities import CapabilityError
+            from grumo.adapters.capabilities import CapabilityError
 
             with pytest.raises(CapabilityError) as exc:
                 await queue.enqueue("late", {}, delay=0.15)
@@ -217,7 +217,7 @@ class QueueContractTests:
 
 class TestMemoryQueueContract(QueueContractTests):
     def make_queue(self):
-        from voodoo.storage.queue import MemoryQueue
+        from grumo.storage.queue import MemoryQueue
 
         return MemoryQueue()
 
@@ -227,8 +227,8 @@ class TestSQLiteQueueContract(QueueContractTests):
         import os
         import tempfile
 
-        from voodoo.storage.database import SQLiteDatabase
-        from voodoo.storage.queue import SQLiteQueue
+        from grumo.storage.database import SQLiteDatabase
+        from grumo.storage.queue import SQLiteQueue
 
         db = SQLiteDatabase(os.path.join(tempfile.mkdtemp(), "q.db"))
         self._db = db

@@ -7,9 +7,9 @@ from pathlib import Path
 
 import pytest
 
-from voodoo.agents.models import AgentEntity, AgentRunRecord
-from voodoo.agents.registry import VoodooStoreAgentRegistry
-from voodoo.runtime.store import RuntimeStore, StoreConfig, bind_active_runtime_store
+from grumo.agents.models import AgentEntity, AgentRunRecord
+from grumo.agents.registry import GrumoStoreAgentRegistry
+from grumo.runtime.store import RuntimeStore, StoreConfig, bind_active_runtime_store
 
 
 def _runtime(path: Path) -> RuntimeStore:
@@ -40,7 +40,7 @@ async def test_agent_registry_uses_native_collections_and_survives_restart(
         started_at=10.0,
     )
     try:
-        registry = VoodooStoreAgentRegistry()
+        registry = GrumoStoreAgentRegistry()
         await registry.register(entity)
         await registry.record_run(run)
 
@@ -57,7 +57,7 @@ async def test_agent_registry_uses_native_collections_and_survives_restart(
 
     reopened_runtime = _runtime(path)
     try:
-        reopened = VoodooStoreAgentRegistry()
+        reopened = GrumoStoreAgentRegistry()
         assert (await reopened.get("agent:planner")).model == "test:model"
         assert [item.agent_id for item in await reopened.list_agents()] == [
             "agent:planner"
@@ -74,7 +74,7 @@ async def test_agent_registry_reads_legacy_and_rejects_future_schema(
 ) -> None:
     runtime = _runtime(tmp_path / "agent-codec.vstore")
     try:
-        registry = VoodooStoreAgentRegistry()
+        registry = GrumoStoreAgentRegistry()
         native = runtime.provider.native
         legacy = AgentEntity(agent_id="agent:legacy", name="Legacy").to_dict()
         native.put(

@@ -1,7 +1,7 @@
 """PostgreSQL queue adapter contract tests (spec §12, §29, Sprint 11).
 
 The same ``QueueContractTests`` suite used for SQLite/Memory runs against a
-real PostgreSQL server when ``VOODOO_TEST_DATABASE_URL`` is set — CI
+real PostgreSQL server when ``GRUMO_TEST_DATABASE_URL`` is set — CI
 provides one via a service container. Locally this module is skipped when no
 server is available, so the default ``pytest`` run stays green.
 
@@ -15,21 +15,21 @@ import os
 
 import pytest
 
+from grumo.storage.database import PostgresDatabase
+from grumo.storage.queue.postgres import PostgresQueue
 from tests.contracts.test_queue import QueueContractTests
-from voodoo.storage.database import PostgresDatabase
-from voodoo.storage.queue.postgres import PostgresQueue
 
 psycopg = pytest.importorskip("psycopg")
 
 pytestmark = pytest.mark.skipif(
-    not os.environ.get("VOODOO_TEST_DATABASE_URL"),
-    reason="VOODOO_TEST_DATABASE_URL not set (no PostgreSQL server available)",
+    not os.environ.get("GRUMO_TEST_DATABASE_URL"),
+    reason="GRUMO_TEST_DATABASE_URL not set (no PostgreSQL server available)",
 )
 
 
 @pytest.fixture
 async def pg_db() -> PostgresDatabase:
-    db = PostgresDatabase(os.environ["VOODOO_TEST_DATABASE_URL"])
+    db = PostgresDatabase(os.environ["GRUMO_TEST_DATABASE_URL"])
     await db.connect()
     # Fresh ledger + tasks table per test so contract tests are isolated.
     await db.execute("DROP TABLE IF EXISTS schema_migrations CASCADE")
@@ -47,7 +47,7 @@ class TestPostgresQueueContract(QueueContractTests):
         yield q
 
     def make_queue(self):
-        from voodoo.storage.queue.postgres import PostgresQueue
+        from grumo.storage.queue.postgres import PostgresQueue
 
         if not hasattr(self, "_db"):
             raise RuntimeError("expected pg_db fixture to provide the database")
@@ -66,7 +66,7 @@ class TestPostgresQueueContract(QueueContractTests):
         assert caps.provider == "postgres"
 
     async def test_data_survives_reconnect(self):
-        url = os.environ["VOODOO_TEST_DATABASE_URL"]
+        url = os.environ["GRUMO_TEST_DATABASE_URL"]
 
         db1 = PostgresDatabase(url)
         await db1.connect()
@@ -116,7 +116,7 @@ def test_postgres_claim_sql_uses_skip_locked():
     """
     import inspect
 
-    from voodoo.storage.queue import postgres as pg_queue
+    from grumo.storage.queue import postgres as pg_queue
 
     source = inspect.getsource(pg_queue.PostgresQueue.claim)
     # Present in the SQL (docstring double-mentions it, so just check the

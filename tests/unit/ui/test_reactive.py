@@ -13,12 +13,12 @@ from pathlib import Path
 import pytest
 from starlette.testclient import TestClient
 
-import voodoo.data
-from voodoo import App, page, state
-from voodoo.core.events import event, event_handlers
-from voodoo.core.state import StateRenderer, state_renderer
-from voodoo.seo import SEO
-from voodoo.ui import Button, Stack, Text
+import grumo.data
+from grumo import App, page, state
+from grumo.core.events import event, event_handlers
+from grumo.core.state import StateRenderer, state_renderer
+from grumo.seo import SEO
+from grumo.ui import Button, Stack, Text
 
 
 @pytest.fixture(autouse=True)
@@ -32,12 +32,12 @@ def _clean_event_handlers():
 
 @pytest.fixture
 def make_app(monkeypatch, tmp_path):
-    real_init_db = voodoo.data.init_db
+    real_init_db = grumo.data.init_db
 
     async def memory_db(db_path=":memory:"):
         await real_init_db(":memory:")
 
-    monkeypatch.setattr(voodoo.data, "init_db", memory_db)
+    monkeypatch.setattr(grumo.data, "init_db", memory_db)
 
     def _make() -> App:
         return App(app_dir=str(tmp_path / "no-such-app-dir"))
@@ -113,7 +113,7 @@ async def test_state_renderer_rerender_unwraps_seo_tuple(monkeypatch):
     async def mock_broadcast(element_id, html):
         broadcasted.append((element_id, html))
 
-    state_mod = importlib.import_module("voodoo.core.state")
+    state_mod = importlib.import_module("grumo.core.state")
     monkeypatch.setattr(
         state_mod.StateRenderer, "_broadcast_patch", staticmethod(mock_broadcast)
     )
@@ -143,7 +143,7 @@ async def test_state_renderer_rerender_broadcasts_patch(monkeypatch):
     async def mock_broadcast(element_id, html):
         broadcasted.append((element_id, html))
 
-    state_mod = importlib.import_module("voodoo.core.state")
+    state_mod = importlib.import_module("grumo.core.state")
     monkeypatch.setattr(
         state_mod.StateRenderer, "_broadcast_patch", staticmethod(mock_broadcast)
     )
@@ -178,7 +178,7 @@ async def test_state_renderer_rerender_async_page(monkeypatch):
     async def mock_broadcast(element_id, html):
         pass
 
-    state_mod = importlib.import_module("voodoo.core.state")
+    state_mod = importlib.import_module("grumo.core.state")
     monkeypatch.setattr(
         state_mod.StateRenderer, "_broadcast_patch", staticmethod(mock_broadcast)
     )
@@ -210,7 +210,7 @@ def test_counter_app_full_flow_via_websocket(make_app):
 
         state_renderer.bind("root", home)
 
-        with client.websocket_connect("/_voodoo_ws") as ws:
+        with client.websocket_connect("/_grumo_ws") as ws:
             ws.send_text(
                 json.dumps(
                     {
@@ -226,9 +226,9 @@ def test_counter_app_full_flow_via_websocket(make_app):
             assert msg["type"] == "patch"
             assert "Count: 1" in msg["html"]
 
-        from voodoo.ui.events import activate_ui_session
+        from grumo.ui.events import activate_ui_session
 
-        with activate_ui_session(response.cookies["voodoo_ui_session"]):
+        with activate_ui_session(response.cookies["grumo_ui_session"]):
             assert count.get() == 1
 
     state_renderer.unbind("root")
@@ -250,24 +250,24 @@ def test_two_browser_sessions_isolate_bindings_state_and_patches(make_app):
 
     with TestClient(make_app()) as client:
         response_a = client.get("/")
-        session_a = response_a.cookies["voodoo_ui_session"]
+        session_a = response_a.cookies["grumo_ui_session"]
         binding_a = re.search(r'data-vd-event-click="([^"]+)"', response_a.text)
         assert binding_a is not None
 
         client.cookies.clear()
         response_b = client.get("/")
-        session_b = response_b.cookies["voodoo_ui_session"]
+        session_b = response_b.cookies["grumo_ui_session"]
         binding_b = re.search(r'data-vd-event-click="([^"]+)"', response_b.text)
         assert binding_b is not None
         assert session_a != session_b
         assert binding_a.group(1) != binding_b.group(1)
 
         client.cookies.clear()
-        client.cookies.set("voodoo_ui_session", session_a)
-        with client.websocket_connect("/_voodoo_ws") as ws_a:
+        client.cookies.set("grumo_ui_session", session_a)
+        with client.websocket_connect("/_grumo_ws") as ws_a:
             client.cookies.clear()
-            client.cookies.set("voodoo_ui_session", session_b)
-            with client.websocket_connect("/_voodoo_ws") as ws_b:
+            client.cookies.set("grumo_ui_session", session_b)
+            with client.websocket_connect("/_grumo_ws") as ws_b:
                 ws_a.send_json(
                     {
                         "type": "event",
@@ -304,7 +304,7 @@ def test_two_browser_sessions_isolate_bindings_state_and_patches(make_app):
 
 
 def test_application_state_is_shared_only_when_explicit():
-    from voodoo.ui.events import activate_ui_session
+    from grumo.ui.events import activate_ui_session
 
     session_state = state(0)
     shared_state = state(0, scope="application")
@@ -327,13 +327,15 @@ async def test_destroyed_ui_session_discards_bindings_and_state(make_app):
         async def increment():
             count.set(count.get() + 1)
 
-        return Stack(Text(f"Count: {count.get()}"), Button("Increment", on_click=increment))
+        return Stack(
+            Text(f"Count: {count.get()}"), Button("Increment", on_click=increment)
+        )
 
-    from voodoo.ui.events import dispatch_ui_event, ws_manager
+    from grumo.ui.events import dispatch_ui_event, ws_manager
 
     with TestClient(make_app()) as client:
         response = client.get("/")
-        session_id = response.cookies["voodoo_ui_session"]
+        session_id = response.cookies["grumo_ui_session"]
         binding = re.search(r'data-vd-event-click="([^"]+)"', response.text)
         assert binding is not None
         session = ws_manager.get_session(session_id)
@@ -343,9 +345,12 @@ async def test_destroyed_ui_session_discards_bindings_and_state(make_app):
 
         ws_manager.destroy_session(session_id)
         assert ws_manager.get_session(session_id) is None
-        assert await dispatch_ui_event(
-            binding.group(1), event_type="click", session_id=session_id
-        ) is False
+        assert (
+            await dispatch_ui_event(
+                binding.group(1), event_type="click", session_id=session_id
+            )
+            is False
+        )
 
     assert count.get() == 0
 
@@ -377,7 +382,7 @@ async def test_page_render_auto_binds_state(make_app):
         response = client.get("/")
         assert "Count: 0" in response.text
 
-        with client.websocket_connect("/_voodoo_ws") as ws:
+        with client.websocket_connect("/_grumo_ws") as ws:
             ws.send_text(
                 json.dumps(
                     {
@@ -416,7 +421,7 @@ def test_websocket_event_without_id_and_value(make_app):
         response = client.get("/")
         assert "initial" in response.text
 
-        with client.websocket_connect("/_voodoo_ws") as ws:
+        with client.websocket_connect("/_grumo_ws") as ws:
             ws.send_text(json.dumps({"type": "event", "event": "reactive_no_id"}))
             msg = json.loads(ws.receive_text())
             assert msg["type"] == "patch"
@@ -427,21 +432,21 @@ def test_websocket_event_without_id_and_value(make_app):
 
 def test_client_js_exposes_vd_facade():
     """The legacy window.vd facade remains available during migration."""
-    import voodoo
+    import grumo
 
-    client_js_path = Path(voodoo.__file__).parent / "static" / "client.js"
+    client_js_path = Path(grumo.__file__).parent / "static" / "client.js"
     src = client_js_path.read_text(encoding="utf-8")
     assert "window.vd" in src
     assert "event:" in src
-    assert "window.voodoo" in src
+    assert "window.grumo" in src
     assert "sendEvent" in src
 
 
 @pytest.mark.asyncio
 async def test_state_set_triggers_bound_rerender(monkeypatch):
     """State.set schedules a patch without explicit rerender calls."""
-    from voodoo.ui.state import StateRenderer
-    from voodoo.ui.state import state as ui_state
+    from grumo.ui.state import StateRenderer
+    from grumo.ui.state import state as ui_state
 
     count = ui_state(0)
 
@@ -456,7 +461,7 @@ async def test_state_set_triggers_bound_rerender(monkeypatch):
     async def mock_broadcast(element_id, html):
         broadcasted.append((element_id, html))
 
-    state_mod = importlib.import_module("voodoo.ui.state")
+    state_mod = importlib.import_module("grumo.ui.state")
     monkeypatch.setattr(
         state_mod.StateRenderer, "_broadcast_patch", staticmethod(mock_broadcast)
     )
@@ -474,8 +479,8 @@ async def test_state_set_triggers_bound_rerender(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_state_unbind_stops_rerender(monkeypatch):
-    from voodoo.ui.state import StateRenderer
-    from voodoo.ui.state import state as ui_state
+    from grumo.ui.state import StateRenderer
+    from grumo.ui.state import state as ui_state
 
     count = ui_state(0)
 
@@ -491,7 +496,7 @@ async def test_state_unbind_stops_rerender(monkeypatch):
     async def mock_broadcast(element_id, html):
         broadcasted.append((element_id, html))
 
-    state_mod = importlib.import_module("voodoo.ui.state")
+    state_mod = importlib.import_module("grumo.ui.state")
     monkeypatch.setattr(
         state_mod.StateRenderer, "_broadcast_patch", staticmethod(mock_broadcast)
     )

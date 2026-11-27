@@ -1,6 +1,6 @@
 """Grumo package-root API contract."""
 
-import voodoo
+import grumo
 
 EXPECTED_EXPORTS = {
     "Agent",
@@ -14,17 +14,17 @@ EXPECTED_EXPORTS = {
 
 
 def test_public_api_pinned() -> None:
-    assert set(voodoo.__all__) == EXPECTED_EXPORTS
-    assert len(voodoo.__all__) == len(EXPECTED_EXPORTS)
+    assert set(grumo.__all__) == EXPECTED_EXPORTS
+    assert len(grumo.__all__) == len(EXPECTED_EXPORTS)
 
 
 def test_all_exports_resolve() -> None:
-    for name in voodoo.__all__:
-        assert getattr(voodoo, name, None) is not None, name
+    for name in grumo.__all__:
+        assert getattr(grumo, name, None) is not None, name
 
 
 def test_root_has_no_deprecation_registry() -> None:
-    assert not hasattr(voodoo, "_DEPRECATED_EXPORTS")
+    assert not hasattr(grumo, "_DEPRECATED_EXPORTS")
 
 
 def test_catalog_symbols_are_not_root_exports() -> None:
@@ -43,10 +43,10 @@ def test_catalog_symbols_are_not_root_exports() -> None:
         "mesh",
         "trace",
     }
-    assert not (set(voodoo.__all__) & catalog_symbols)
+    assert not (set(grumo.__all__) & catalog_symbols)
 
 
 def test_version_is_string() -> None:
-    assert isinstance(voodoo.__version__, str)
-    assert voodoo.__version__.count(".") == 2
-    assert voodoo.__version__.split(".")[0] == "1"
+    assert isinstance(grumo.__version__, str)
+    assert grumo.__version__.count(".") == 2
+    assert grumo.__version__.split(".")[0] == "2"

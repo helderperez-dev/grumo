@@ -10,20 +10,20 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
-from voodoo.adapters.registry import ProviderRegistry
-from voodoo.config import (
+from grumo.adapters.registry import ProviderRegistry
+from grumo.config import (
     CacheConfig,
     DatabaseConfig,
     EventsConfig,
+    GrumoConfig,
     ObjectsConfig,
     QueueConfig,
     ThemeConfig,
-    VoodooConfig,
     get_config,
     interpolate_env_vars,
     validate_production_config,
 )
-from voodoo.core.errors import ConfigurationError
+from grumo.core.errors import ConfigurationError
 
 
 class TestProductionConfiguration:
@@ -32,10 +32,10 @@ class TestProductionConfiguration:
     def test_production_defaults_are_browser_safe(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("VOODOO_ENV", "production")
-        monkeypatch.delenv("VOODOO_CORS_ORIGINS", raising=False)
-        monkeypatch.delenv("VOODOO_CORS_ALLOW_CREDENTIALS", raising=False)
-        monkeypatch.delenv("VOODOO_CSRF_ENABLED", raising=False)
+        monkeypatch.setenv("GRUMO_ENV", "production")
+        monkeypatch.delenv("GRUMO_CORS_ORIGINS", raising=False)
+        monkeypatch.delenv("GRUMO_CORS_ALLOW_CREDENTIALS", raising=False)
+        monkeypatch.delenv("GRUMO_CSRF_ENABLED", raising=False)
 
         resolved = get_config(overrides={"auth": {"secret_key": "x" * 48}})
 
@@ -66,10 +66,10 @@ class TestProductionConfiguration:
     def test_default_signing_secret_is_rejected(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("VOODOO_ENV", "production")
-        monkeypatch.delenv("VOODOO_SECRET_KEY", raising=False)
+        monkeypatch.setenv("GRUMO_ENV", "production")
+        monkeypatch.delenv("GRUMO_SECRET_KEY", raising=False)
 
-        with pytest.raises(ConfigurationError, match="VOODOO_SECRET_KEY"):
+        with pytest.raises(ConfigurationError, match="GRUMO_SECRET_KEY"):
             validate_production_config(get_config(overrides={}))
 
     @pytest.mark.parametrize(
@@ -147,14 +147,14 @@ class TestProductionConfiguration:
         overrides: dict[str, object],
         message: str,
     ) -> None:
-        monkeypatch.setenv("VOODOO_ENV", "production")
-        monkeypatch.setenv("VOODOO_SECRET_KEY", "unique-production-secret-" * 2)
+        monkeypatch.setenv("GRUMO_ENV", "production")
+        monkeypatch.setenv("GRUMO_SECRET_KEY", "unique-production-secret-" * 2)
 
         with pytest.raises(ConfigurationError, match=message):
             validate_production_config(get_config(overrides=overrides))
 
     def test_security_limits_reject_non_positive_or_unbounded_values(self) -> None:
-        from voodoo.config import AuthConfig, SecurityConfig
+        from grumo.config import AuthConfig, SecurityConfig
 
         with pytest.raises(ValidationError):
             SecurityConfig(rate_limit_requests=0)
@@ -192,7 +192,7 @@ def test_env_interpolation():
 
 def test_config_precedence():
     with tempfile.TemporaryDirectory() as tmpdir:
-        yaml_path = Path(tmpdir) / "voodoo.yaml"
+        yaml_path = Path(tmpdir) / "grumo.yaml"
         yaml_content = {
             "runtime": {"mode": "production"},
             "queue": {"provider": "memory"},
@@ -204,7 +204,7 @@ def test_config_precedence():
             yaml.dump(yaml_content, f)
 
         # 1. File config wins over env vars
-        os.environ["VOODOO_QUEUE_PROVIDER"] = "sqlite"
+        os.environ["GRUMO_QUEUE_PROVIDER"] = "sqlite"
         cfg = get_config(str(yaml_path))
         assert cfg.runtime.mode == "production"
         assert cfg.queue.provider == "memory"
@@ -217,18 +217,18 @@ def test_config_precedence():
         with open(yaml_path, "w") as f:
             yaml.dump(yaml_content_partial, f)
 
-        os.environ["VOODOO_QUEUE_PROVIDER"] = "memory"
+        os.environ["GRUMO_QUEUE_PROVIDER"] = "memory"
         cfg_env = get_config(str(yaml_path))
         assert cfg_env.runtime.mode == "staging"
         assert cfg_env.queue.provider == "memory"
 
-        # 3. Default zero-infra converges on Voodoo Store
-        os.environ.pop("VOODOO_QUEUE_PROVIDER", None)
+        # 3. Default zero-infra converges on Grumo Store
+        os.environ.pop("GRUMO_QUEUE_PROVIDER", None)
         cfg_default = get_config(str(yaml_path))
-        assert cfg_default.queue.provider == "voodoo"
-        assert cfg_default.database.provider == "voodoo"
-        assert cfg_default.events.provider == "voodoo"
-        assert cfg_default.objects.provider == "voodoo"
+        assert cfg_default.queue.provider == "grumo"
+        assert cfg_default.database.provider == "grumo"
+        assert cfg_default.events.provider == "grumo"
+        assert cfg_default.objects.provider == "grumo"
 
 
 def test_provider_registry_and_errors():
@@ -274,10 +274,10 @@ def test_provider_registry_and_errors():
 
 
 def test_theme_block_parses_and_keeps_extra_keys():
-    # Sprint 9 regression: a ``theme:`` block in voodoo.yaml referenced an
+    # Sprint 9 regression: a ``theme:`` block in grumo.yaml referenced an
     # undefined ThemeConfig and would crash get_config() with a NameError.
     with tempfile.TemporaryDirectory() as tmpdir:
-        yaml_path = Path(tmpdir) / "voodoo.yaml"
+        yaml_path = Path(tmpdir) / "grumo.yaml"
         yaml_content = {
             "theme": {"mode": "light", "colors": {"primary": "#ff0000"}},
         }
@@ -292,10 +292,10 @@ def test_theme_block_parses_and_keeps_extra_keys():
 
 
 def test_ai_block_parses_and_env_fallbacks():
-    from voodoo.config import AIConfig
+    from grumo.config import AIConfig
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        yaml_path = Path(tmpdir) / "voodoo.yaml"
+        yaml_path = Path(tmpdir) / "grumo.yaml"
         yaml_content = {
             "ai": {
                 "provider": "openai",
@@ -325,10 +325,10 @@ def test_ai_block_parses_and_env_fallbacks():
             yaml.dump({"runtime": {"mode": "development"}}, f)
 
         env_pairs = {
-            "VOODOO_AI_PROVIDER": "openai",
-            "VOODOO_AI_MODEL": "deepseek-reasoner",
-            "VOODOO_AI_BASE_URL": "https://api.deepseek.com/v1",
-            "VOODOO_AI_API_KEY": "sk-env-456",
+            "GRUMO_AI_PROVIDER": "openai",
+            "GRUMO_AI_MODEL": "deepseek-reasoner",
+            "GRUMO_AI_BASE_URL": "https://api.deepseek.com/v1",
+            "GRUMO_AI_API_KEY": "sk-env-456",
         }
         saved = {k: os.environ.get(k) for k in env_pairs}
         try:
@@ -348,7 +348,7 @@ def test_ai_block_parses_and_env_fallbacks():
 
 def test_runtime_run_api_through_runtime_flag():
     with tempfile.TemporaryDirectory() as tmpdir:
-        yaml_path = Path(tmpdir) / "voodoo.yaml"
+        yaml_path = Path(tmpdir) / "grumo.yaml"
         with open(yaml_path, "w") as f:
             yaml.dump(
                 {"runtime": {"mode": "development", "run_api_through_runtime": False}},
@@ -357,12 +357,12 @@ def test_runtime_run_api_through_runtime_flag():
         cfg = get_config(str(yaml_path))
         assert cfg.runtime.run_api_through_runtime is False
 
-    key = "VOODOO_RUN_API_THROUGH_RUNTIME"
+    key = "GRUMO_RUN_API_THROUGH_RUNTIME"
     saved = os.environ.get(key)
     try:
         os.environ[key] = "0"
         with tempfile.TemporaryDirectory() as tmpdir:
-            yaml_path = Path(tmpdir) / "voodoo.yaml"
+            yaml_path = Path(tmpdir) / "grumo.yaml"
             with open(yaml_path, "w") as f:
                 yaml.dump({}, f)
             cfg = get_config(str(yaml_path))
@@ -374,5 +374,5 @@ def test_runtime_run_api_through_runtime_flag():
             os.environ[key] = saved
 
 
-def test_voodoo_config_theme_default():
-    assert VoodooConfig().theme.mode == "dark"
+def test_grumo_config_theme_default():
+    assert GrumoConfig().theme.mode == "dark"

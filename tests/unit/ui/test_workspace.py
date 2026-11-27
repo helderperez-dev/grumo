@@ -2,10 +2,10 @@
 
 import pytest
 
-from voodoo.adapters import TailwindAdapter, VoodooCSSAdapter
-from voodoo.ui import set_style_adapter
-from voodoo.ui.styles import current_adapter
-from voodoo.ui.workspace import (
+from grumo.adapters import GrumoCSSAdapter, TailwindAdapter
+from grumo.ui import set_style_adapter
+from grumo.ui.styles import current_adapter
+from grumo.ui.workspace import (
     DetailPane,
     Dock,
     DockItem,
@@ -30,7 +30,7 @@ from voodoo.ui.workspace import (
 )
 
 
-@pytest.fixture(params=[VoodooCSSAdapter, TailwindAdapter])
+@pytest.fixture(params=[GrumoCSSAdapter, TailwindAdapter])
 def adapter(request):
     original = current_adapter()
     set_style_adapter(request.param())
@@ -283,9 +283,7 @@ def test_menubar_item_with_shortcut(adapter):
         ({"error": "menu unavailable"}, 'data-vd-error="menu unavailable"'),
     ],
 )
-def test_menubar_item_unavailable_states_suppress_selection(
-    adapter, state, expected
-):
+def test_menubar_item_unavailable_states_suppress_selection(adapter, state, expected):
     def on_select(_event):
         return None
 

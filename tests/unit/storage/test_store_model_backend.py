@@ -7,7 +7,7 @@ from uuid import UUID
 
 import pytest
 
-from voodoo.data import (
+from grumo.data import (
     Delete,
     Max,
     MaxLength,
@@ -21,8 +21,8 @@ from voodoo.data import (
     validate,
     validate_model,
 )
-from voodoo.data.store_backend import bind_runtime_store
-from voodoo.runtime.store import RuntimeStore, StoreConfig
+from grumo.data.store_backend import bind_runtime_store
+from grumo.runtime.store import RuntimeStore, StoreConfig
 
 
 class StoreLead(Model):
@@ -35,7 +35,7 @@ class StoreLead(Model):
 @pytest.fixture
 def store_runtime(tmp_path: Path):
     runtime = RuntimeStore(
-        StoreConfig(path=tmp_path / "application.vstore", enabled=True)
+        StoreConfig(path=tmp_path / "application.grumo", enabled=True)
     )
     runtime.start()
     bind_runtime_store(runtime)
@@ -51,7 +51,7 @@ async def test_model_crud_uses_application_store_without_sqlite(store_runtime):
     await close_db()
 
     lead = await StoreLead.create(
-        name="Ada", email="ada@voodoo.build", score=42, active=True
+        name="Ada", email="ada@grumo.build", score=42, active=True
     )
     assert isinstance(lead.id, UUID)
     assert lead.id.version == 7
@@ -233,7 +233,10 @@ class _FakeNativeCollections:
             (bytes(collection), bytes(index), bool(descending))
         )
         rows = []
-        for (record_collection, primary_key), (payload, indexes) in self.records.items():
+        for (record_collection, primary_key), (
+            payload,
+            indexes,
+        ) in self.records.items():
             if record_collection != collection:
                 continue
             for index_name, index_value in indexes:
@@ -299,7 +302,9 @@ def test_native_scan_and_update_use_collection_records_only(monkeypatch):
 def test_backend_maintains_declared_native_indexes(monkeypatch):
     native = _FakeNativeCollections()
     monkeypatch.setattr(store_backend, "_native", lambda: native)
-    store_backend.register_indexes("lead", {"email": False, "score": False, "active": False})
+    store_backend.register_indexes(
+        "lead", {"email": False, "score": False, "active": False}
+    )
 
     record_id = store_backend.insert_record(
         "lead",
@@ -320,15 +325,9 @@ def test_query_records_uses_exact_index_without_collection_scan(monkeypatch):
     monkeypatch.setattr(store_backend, "_native", lambda: native)
     store_backend.register_indexes("lead", {"email": False, "score": False})
 
-    store_backend.insert_record(
-        "lead", {"name": "A", "email": "a@x.io", "score": 5}
-    )
-    store_backend.insert_record(
-        "lead", {"name": "B", "email": "b@x.io", "score": 15}
-    )
-    store_backend.insert_record(
-        "lead", {"name": "C", "email": "a@x.io", "score": 10}
-    )
+    store_backend.insert_record("lead", {"name": "A", "email": "a@x.io", "score": 5})
+    store_backend.insert_record("lead", {"name": "B", "email": "b@x.io", "score": 15})
+    store_backend.insert_record("lead", {"name": "C", "email": "a@x.io", "score": 10})
     native.scan_calls = 0
 
     rows = store_backend.query_records(
@@ -389,9 +388,7 @@ def test_new_index_backfills_existing_collection_records(monkeypatch):
 
     assert [row["name"] for row in rows] == ["Ada"]
     assert native.exact_query_calls[-1][:2] == (b"backfill_lead", b"email")
-    indexes = dict(
-        native.records[(b"backfill_lead", record_id.bytes)][1]
-    )
+    indexes = dict(native.records[(b"backfill_lead", record_id.bytes)][1])
     assert indexes[b"email"].startswith(b"s:")
 
 
@@ -439,7 +436,6 @@ def test_field_unique_implies_native_unique_index(monkeypatch):
     assert native.index_uniqueness[(b"uniquelead", b"email")] is True
 
 
-
 @pytest.mark.asyncio
 async def test_model_defaults_optional_fields_and_default_factory(monkeypatch):
     native = _FakeNativeCollections()
@@ -482,7 +478,9 @@ async def test_model_rejects_missing_required_and_non_nullable_none(monkeypatch)
 
 
 @pytest.mark.asyncio
-async def test_field_and_model_validators_are_separate_from_storage_metadata(monkeypatch):
+async def test_field_and_model_validators_are_separate_from_storage_metadata(
+    monkeypatch,
+):
     native = _FakeNativeCollections()
     monkeypatch.setattr(store_backend, "_native", lambda: native)
 
@@ -583,7 +581,6 @@ async def test_relation_delete_policies_are_explicit(monkeypatch):
     assert loaded_child.parent is None
 
 
-
 @pytest.mark.asyncio
 async def test_annotated_constraints_express_domain_rules(monkeypatch):
     native = _FakeNativeCollections()
@@ -593,8 +590,8 @@ async def test_annotated_constraints_express_domain_rules(monkeypatch):
         name: Annotated[str, MinLength(2), MaxLength(10)]
         score: Annotated[int, Min(0), Max(100)]
 
-    product = await Product.create(name="Voodoo", score=100)
-    assert product.name == "Voodoo"
+    product = await Product.create(name="Grumo", score=100)
+    assert product.name == "Grumo"
 
     with pytest.raises(ValueError, match="name length must be >= 2"):
         await Product.create(name="x", score=10)
@@ -609,9 +606,10 @@ async def test_annotated_constraints_express_domain_rules(monkeypatch):
         await Product.create(name="valid", score=101)
 
 
-
 def test_uuid7_is_monotonic_within_same_millisecond(monkeypatch):
-    monkeypatch.setattr(store_backend.time, "time_ns", lambda: 1_800_000_000_000_000_000)
+    monkeypatch.setattr(
+        store_backend.time, "time_ns", lambda: 1_800_000_000_000_000_000
+    )
     monkeypatch.setattr(store_backend, "_uuid7_last_ms", -1)
     monkeypatch.setattr(store_backend, "_uuid7_last_random", -1)
 

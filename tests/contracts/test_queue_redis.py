@@ -1,7 +1,7 @@
 """Redis queue adapter contract tests (spec §12, §29, Sprint 13).
 
 The same ``QueueContractTests`` suite used for SQLite/Memory/Postgres runs
-against a real Redis server when ``VOODOO_TEST_REDIS_URL`` is set — CI
+against a real Redis server when ``GRUMO_TEST_REDIS_URL`` is set — CI
 provides one via a service container. Locally this module is skipped when
 no server is available, so the default ``pytest`` run stays green.
 
@@ -15,17 +15,17 @@ import os
 
 import pytest
 
+from grumo.storage.queue.redis import RedisQueue
 from tests.contracts.test_queue import QueueContractTests
-from voodoo.storage.queue.redis import RedisQueue
 
 redis = pytest.importorskip("redis")
 
 pytestmark = pytest.mark.skipif(
-    not os.environ.get("VOODOO_TEST_REDIS_URL"),
-    reason="VOODOO_TEST_REDIS_URL not set (no Redis server available)",
+    not os.environ.get("GRUMO_TEST_REDIS_URL"),
+    reason="GRUMO_TEST_REDIS_URL not set (no Redis server available)",
 )
 
-URL = os.environ.get("VOODOO_TEST_REDIS_URL", "redis://localhost:6379/0")
+URL = os.environ.get("GRUMO_TEST_REDIS_URL", "redis://localhost:6379/0")
 
 
 @pytest.fixture(autouse=True)

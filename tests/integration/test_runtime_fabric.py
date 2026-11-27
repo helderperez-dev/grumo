@@ -7,23 +7,23 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from voodoo.runtime.distributed import (
+from grumo.runtime.distributed import (
     FabricRoutingError,
     FabricWork,
+    GrumoStoreMembershipStore,
     NodeAdvertisement,
     NoEligibleNodeError,
     PlacementRequirement,
     RuntimeFabric,
-    VoodooStoreMembershipStore,
     WorkNotFailoverSafeError,
 )
-from voodoo.runtime.identity import (
+from grumo.runtime.identity import (
     AuthenticationEvidence,
     Identity,
     IdentityKind,
     Principal,
 )
-from voodoo.runtime.store import RuntimeStore, StoreConfig, bind_active_runtime_store
+from grumo.runtime.store import RuntimeStore, StoreConfig, bind_active_runtime_store
 
 
 @pytest.fixture
@@ -46,7 +46,7 @@ def node_principal(node_id: str) -> Principal:
 
 
 def join(
-    store: VoodooStoreMembershipStore,
+    store: GrumoStoreMembershipStore,
     node_id: str,
     *,
     capabilities=(),
@@ -68,7 +68,7 @@ def join(
 
 
 def test_placement_uses_capability_ownership_locality_and_load(runtime_store) -> None:
-    memberships = VoodooStoreMembershipStore(runtime_store)
+    memberships = GrumoStoreMembershipStore(runtime_store)
     join(
         memberships,
         "node-a",
@@ -111,7 +111,7 @@ def test_placement_uses_capability_ownership_locality_and_load(runtime_store) ->
 
 
 def test_discovery_never_treats_advertisement_as_authority(runtime_store) -> None:
-    memberships = VoodooStoreMembershipStore(runtime_store)
+    memberships = GrumoStoreMembershipStore(runtime_store)
     member = join(memberships, "node-a", capabilities=("payments.execute",))
 
     assert member.advertisement.capabilities == ("payments.execute",)
@@ -119,7 +119,7 @@ def test_discovery_never_treats_advertisement_as_authority(runtime_store) -> Non
 
 
 def test_health_sweep_excludes_stale_node_from_routing(runtime_store) -> None:
-    memberships = VoodooStoreMembershipStore(runtime_store)
+    memberships = GrumoStoreMembershipStore(runtime_store)
     member = join(memberships, "node-a", capabilities=("gpu",))
     fabric = RuntimeFabric(memberships, runtime_store=runtime_store)
 
@@ -134,7 +134,7 @@ def test_health_sweep_excludes_stale_node_from_routing(runtime_store) -> None:
 
 
 def test_fabric_lease_is_durable_and_generation_increases(runtime_store) -> None:
-    memberships = VoodooStoreMembershipStore(runtime_store)
+    memberships = GrumoStoreMembershipStore(runtime_store)
     join(memberships, "node-a")
     fabric = RuntimeFabric(memberships, runtime_store=runtime_store)
     now = datetime(2026, 9, 14, tzinfo=UTC)
@@ -146,15 +146,13 @@ def test_fabric_lease_is_durable_and_generation_increases(runtime_store) -> None
     assert second.generation == 2
     assert fabric.get_lease("work-1") == second
 
-    raw = runtime_store.provider.native.get_record(
-        b"runtime.fabric_leases", b"work-1"
-    )
+    raw = runtime_store.provider.native.get_record(b"runtime.fabric_leases", b"work-1")
     assert raw is not None
     assert json.loads(bytes(raw[1]))["_schema_version"] == 1
 
 
 def test_fabric_lease_codec_reads_legacy_and_rejects_future(runtime_store) -> None:
-    memberships = VoodooStoreMembershipStore(runtime_store)
+    memberships = GrumoStoreMembershipStore(runtime_store)
     join(memberships, "node-a")
     native = runtime_store.provider.native
     base = {
@@ -175,7 +173,7 @@ def test_fabric_lease_codec_reads_legacy_and_rejects_future(runtime_store) -> No
 
 @pytest.mark.asyncio
 async def test_retryable_work_fails_over_to_second_active_node(runtime_store) -> None:
-    memberships = VoodooStoreMembershipStore(runtime_store)
+    memberships = GrumoStoreMembershipStore(runtime_store)
     join(memberships, "node-a", capabilities=("gpu",), load=0.0)
     join(memberships, "node-b", capabilities=("gpu",), load=0.5)
     fabric = RuntimeFabric(memberships, runtime_store=runtime_store)
@@ -207,7 +205,7 @@ async def test_retryable_work_fails_over_to_second_active_node(runtime_store) ->
 
 @pytest.mark.asyncio
 async def test_non_retryable_work_never_moves_to_another_node(runtime_store) -> None:
-    memberships = VoodooStoreMembershipStore(runtime_store)
+    memberships = GrumoStoreMembershipStore(runtime_store)
     join(memberships, "node-a", capabilities=("robot.arm",), load=0.0)
     join(memberships, "node-b", capabilities=("robot.arm",), load=0.2)
     fabric = RuntimeFabric(memberships, runtime_store=runtime_store)
@@ -232,7 +230,7 @@ async def test_non_retryable_work_never_moves_to_another_node(runtime_store) -> 
 
 @pytest.mark.asyncio
 async def test_bounded_failover_stops_after_declared_attempts(runtime_store) -> None:
-    memberships = VoodooStoreMembershipStore(runtime_store)
+    memberships = GrumoStoreMembershipStore(runtime_store)
     for node_id in ("node-a", "node-b", "node-c"):
         join(memberships, node_id, capabilities=("compute",))
     fabric = RuntimeFabric(memberships, runtime_store=runtime_store)

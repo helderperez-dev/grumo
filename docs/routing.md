@@ -2,13 +2,13 @@
 
 ## What it is
 
-Voodoo provides two routing mechanisms: decorator-based (`@page`) and file-based (convention). Both produce SSR HTML routes.
+Grumo provides two routing mechanisms: decorator-based (`@page`) and file-based (convention). Both produce SSR HTML routes.
 
 ## Minimal example
 
 ```python
-from voodoo import page
-from voodoo.ui import Text
+from grumo import page
+from grumo.ui import Text
 
 
 @page("/")
@@ -64,7 +64,7 @@ async def settings(user):
 
 ### File-based routing
 
-Voodoo's default scaffold uses **folder-based routing**: each directory under `app/` that contains a `page.py` file maps to a route based on its path. `voodoo dev` auto-discovers the app without requiring a `main.py` entrypoint.
+Grumo's default scaffold uses **folder-based routing**: each directory under `app/` that contains a `page.py` file maps to a route based on its path. `grumo dev` auto-discovers the app without requiring a `main.py` entrypoint.
 
 ```
 app/
@@ -80,8 +80,8 @@ Each `page.py` defines a `page` function (the file convention), optionally accep
 
 ```python
 # app/about/page.py
-from voodoo.ui import Page, Text
-from voodoo.seo import SEO
+from grumo.ui import Page, Text
+from grumo.seo import SEO
 
 
 def page(request):
@@ -92,7 +92,7 @@ Bracket folders (`[id]`) create dynamic segments; the parameter is injected by n
 
 ```python
 # app/users/[id]/page.py
-from voodoo.ui import Text
+from grumo.ui import Text
 
 
 def page(request, id: int):
@@ -117,7 +117,7 @@ app/
 ### Returning SEO metadata
 
 ```python
-from voodoo.seo import SEO
+from grumo.seo import SEO
 
 
 @page("/")

@@ -1,12 +1,12 @@
 # Repository architecture
 
-Voodoo's repository layout is part of its architecture. Physical ownership must
+Grumo's repository layout is part of its architecture. Physical ownership must
 make the runtime model easier to understand rather than mirror the project's
 history.
 
 ## Goals
 
-1. A contributor should understand the major Voodoo domains from the directory
+1. A contributor should understand the major Grumo domains from the directory
    tree without reading implementation details.
 2. Public namespaces have semantic owners. Files are not placed at package root
    merely for convenience.
@@ -19,7 +19,7 @@ history.
 ## Canonical source domains
 
 ```text
-src/voodoo/
+src/grumo/
 ├── core/             application facade, lifecycle, state and events
 ├── primitives/       foundational semantic value objects/contracts
 ├── runtime/          canonical execution and operational semantics
@@ -40,7 +40,7 @@ src/voodoo/
 └── cli/              developer tooling
 ```
 
-This is the Voodoo 3.x ownership model. Compatibility-only 2.x namespaces were
+This is the Grumo 3.x ownership model. Compatibility-only 2.x namespaces were
 removed deliberately in 3.0 and must not be recreated as parallel semantic
 owners. New top-level source domains require an explicit architecture decision.
 
@@ -66,7 +66,7 @@ imports. Vendor SDKs must not become dependencies of the semantic core.
 ## Runtime internal ownership
 
 The runtime may evolve toward grouped implementation domains while preserving
-the public `voodoo.runtime` namespace:
+the public `grumo.runtime` namespace:
 
 ```text
 runtime/
@@ -78,7 +78,7 @@ runtime/
 └── inspection/
 ```
 
-Moves into these groups require an import/dependency audit first. Voodoo 3.x
+Moves into these groups require an import/dependency audit first. Grumo 3.x
 uses the grouped owners as canonical paths; removed 2.x compatibility re-exports
 must not be restored unless a future version adopts an explicit compatibility
 policy.
@@ -89,7 +89,7 @@ Current ownership structure:
 
 ```text
 tests/
-├── unit/             mirrors src/voodoo semantic ownership
+├── unit/             mirrors src/grumo semantic ownership
 ├── integration/      interactions across two or more domains
 ├── e2e/              developer/user journeys
 ├── contracts/        provider/protocol behavioral contracts
@@ -137,10 +137,10 @@ application concepts to operational/adaptive systems.
 
 ## Package-root law
 
-`voodoo.__init__` is the intentionally small 3.x application happy path, not a
+`grumo.__init__` is the intentionally small 3.x application happy path, not a
 catalog or compatibility facade. It exports only the common application
 vocabulary defined by `docs/public-api-3.md`. A module at
-`src/voodoo/<name>.py` must be a deliberate root-level application surface or
+`src/grumo/<name>.py` must be a deliberate root-level application surface or
 be moved under its semantic owner. Removed 2.x facades are forbidden by
 architecture tests.
 

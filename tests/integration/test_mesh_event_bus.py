@@ -6,9 +6,9 @@ import asyncio
 
 import pytest
 
-from voodoo.mesh.event_bus import EventBusAwareMesh
-from voodoo.storage.events.local import LocalEventBus
-from voodoo.storage.events.sqlite import SQLiteEventBus
+from grumo.mesh.event_bus import EventBusAwareMesh
+from grumo.storage.events.local import LocalEventBus
+from grumo.storage.events.sqlite import SQLiteEventBus
 
 
 @pytest.mark.asyncio

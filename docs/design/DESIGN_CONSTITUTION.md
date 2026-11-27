@@ -1,18 +1,18 @@
-# Voodoo Design Constitution
+# Grumo Design Constitution
 
 > **Status:** Foundational  
-> **Scope:** Voodoo Framework, Voodoo Runtime, Voodoo Edge, Voodoo Protocol, official examples, templates and first-party applications  
-> **Purpose:** Define the visual and interaction principles that make Voodoo products feel modern, timeless, precise, fast and unmistakably intentional.
+> **Scope:** Grumo Framework, Grumo Runtime, Grumo Edge, Grumo Protocol, official examples, templates and first-party applications  
+> **Purpose:** Define the visual and interaction principles that make Grumo products feel modern, timeless, precise, fast and unmistakably intentional.
 
 ---
 
-## 1. The Voodoo design thesis
+## 1. The Grumo design thesis
 
-Voodoo must make complex systems feel simple without pretending that the complexity does not exist.
+Grumo must make complex systems feel simple without pretending that the complexity does not exist.
 
 The design system should not behave like a decorative layer added after the product is built. It must be part of the architecture itself.
 
-A Voodoo application should communicate three things immediately:
+A Grumo application should communicate three things immediately:
 
 1. **This is powerful.**
 2. **This is understandable.**
@@ -22,7 +22,7 @@ The goal is not to create interfaces that look fashionable in 2026.
 
 The goal is to create interfaces that still feel correct years from now.
 
-Voodoo must therefore avoid visual trends that become the identity of the product. Effects may be used, but they must never become the product.
+Grumo must therefore avoid visual trends that become the identity of the product. Effects may be used, but they must never become the product.
 
 The desired feeling is:
 
@@ -30,9 +30,9 @@ The desired feeling is:
 
 ---
 
-## 2. What Voodoo should feel like
+## 2. What Grumo should feel like
 
-A Voodoo product should feel:
+A Grumo product should feel:
 
 - precise without being sterile;
 - minimal without being empty;
@@ -46,13 +46,13 @@ The interface should make the user think:
 
 > “Of course it works this way.”
 
-That sense of inevitability is one of the highest design goals of Voodoo.
+That sense of inevitability is one of the highest design goals of Grumo.
 
 ---
 
 ## 3. Design references
 
-Voodoo should not copy any person or company.
+Grumo should not copy any person or company.
 
 Instead, it should absorb principles from several schools of design.
 
@@ -67,7 +67,7 @@ Key ideas to absorb:
 - ornament must never replace clarity;
 - longevity is more important than novelty.
 
-Application to Voodoo:
+Application to Grumo:
 
 - never add a visual element only because the screen feels “too empty”;
 - avoid unnecessary containers;
@@ -86,7 +86,7 @@ Key ideas to absorb:
 - details matter because the user experiences the whole;
 - form should emerge from the purpose of the object.
 
-Application to Voodoo:
+Application to Grumo:
 
 - Framework, Runtime, Edge and Protocol must share one design language;
 - components should feel designed together, not assembled from unrelated libraries;
@@ -104,7 +104,7 @@ Key ideas to absorb:
 - products should match human expectation;
 - behavior should feel familiar before it needs explanation.
 
-Application to Voodoo:
+Application to Grumo:
 
 - controls should behave predictably;
 - common actions should not require tutorials;
@@ -122,12 +122,12 @@ Key ideas to absorb:
 - restraint creates focus;
 - simplicity can create room for identity and meaning.
 
-Application to Voodoo:
+Application to Grumo:
 
 - spacing is a structural tool;
 - do not fill every area with cards;
 - allow applications to inherit their own brand identity;
-- Voodoo should provide a strong foundation without visually overpowering the product built on top of it.
+- Grumo should provide a strong foundation without visually overpowering the product built on top of it.
 
 ---
 
@@ -139,7 +139,7 @@ Key ideas to absorb:
 - typography can carry hierarchy without excessive decoration;
 - consistency improves comprehension.
 
-Application to Voodoo:
+Application to Grumo:
 
 - strict spacing and grid rules;
 - consistent alignment;
@@ -151,7 +151,7 @@ Application to Voodoo:
 
 ### 3.6 Linear — software calm
 
-What Voodoo should learn:
+What Grumo should learn:
 
 - speed is part of design;
 - dense information can still feel elegant;
@@ -166,7 +166,7 @@ Absorb its discipline.
 
 ### 3.7 Stripe — clarity for complex systems
 
-What Voodoo should learn:
+What Grumo should learn:
 
 - highly technical workflows can be approachable;
 - documentation, product UI and developer experience can share one language;
@@ -176,19 +176,19 @@ What Voodoo should learn:
 
 ### 3.8 Teenage Engineering — quiet personality
 
-What Voodoo should learn:
+What Grumo should learn:
 
 - minimalism does not need to be generic;
 - small details can create strong identity;
 - technical products can feel playful without becoming childish.
 
-Voodoo should have personality, but that personality must be controlled.
+Grumo should have personality, but that personality must be controlled.
 
 ---
 
-## 4. The Five Laws of Voodoo Design
+## 4. The Five Laws of Grumo Design
 
-These laws are non-negotiable for first-party Voodoo interfaces.
+These laws are non-negotiable for first-party Grumo interfaces.
 
 ### Law 1 — Nothing without purpose
 
@@ -206,7 +206,7 @@ Questions to ask:
 
 ### Law 2 — Complexity belongs behind the interface
 
-Voodoo may operate complex systems, distributed devices, agents, events and infrastructure.
+Grumo may operate complex systems, distributed devices, agents, events and infrastructure.
 
 The user should not be forced to understand the architecture merely to perform an ordinary task.
 
@@ -224,7 +224,7 @@ Advanced detail:
 - inspectable;
 - never hidden permanently.
 
-Voodoo simplifies access to complexity. It does not destroy observability.
+Grumo simplifies access to complexity. It does not destroy observability.
 
 ---
 
@@ -277,7 +277,7 @@ Motion should be brief, physical and quiet.
 
 ### Law 5 — The default must already be excellent
 
-Voodoo should not require extensive customization before it looks professional.
+Grumo should not require extensive customization before it looks professional.
 
 A developer should be able to assemble an interface using default components and receive a result that already feels intentional.
 
@@ -287,7 +287,7 @@ Customization should refine identity, not repair the design system.
 
 ## 5. Anti-principles
 
-Voodoo explicitly rejects the following defaults.
+Grumo explicitly rejects the following defaults.
 
 ### 5.1 No “AI app” visual language
 
@@ -380,7 +380,7 @@ Prefer:
 
 ### 6.2 Radius
 
-Rounded corners should not become Voodoo's identity.
+Rounded corners should not become Grumo's identity.
 
 Use a small and consistent radius scale.
 
@@ -433,7 +433,7 @@ Primary roles:
 
 The neutral palette should do most of the structural work.
 
-Voodoo's signature purple may exist as a brand accent, but it must not flood the interface.
+Grumo's signature purple may exist as a brand accent, but it must not flood the interface.
 
 The design system must work beautifully in:
 
@@ -446,7 +446,7 @@ The design system must work beautifully in:
 
 ## 7. Typography
 
-Typography is one of the primary structural systems in Voodoo.
+Typography is one of the primary structural systems in Grumo.
 
 The type scale should be compact.
 
@@ -507,7 +507,7 @@ Critical actions should not rely on icon-only controls unless the icon is univer
 
 ## 10. Component architecture
 
-Voodoo UI should be organized in layers.
+Grumo UI should be organized in layers.
 
 ### Layer 1 — Primitives
 
@@ -552,7 +552,7 @@ These express recurring software patterns.
 
 ---
 
-### Layer 3 — Voodoo system components
+### Layer 3 — Grumo system components
 
 Examples:
 
@@ -568,7 +568,7 @@ Examples:
 - Topology View
 - Telemetry Panel
 
-These are where Voodoo becomes visibly different from a generic UI kit.
+These are where Grumo becomes visibly different from a generic UI kit.
 
 ---
 
@@ -662,9 +662,9 @@ Confirmation should be proportional to the consequence.
 
 ---
 
-## 13. Voodoo and real-time systems
+## 13. Grumo and real-time systems
 
-Voodoo interfaces often represent systems that continue changing without user input.
+Grumo interfaces often represent systems that continue changing without user input.
 
 Therefore state must be explicit.
 
@@ -694,7 +694,7 @@ Every real-time component should consider:
 
 ## 14. Data density
 
-Voodoo will be used for operational applications.
+Grumo will be used for operational applications.
 
 It must support both calm simplicity and high-density information.
 
@@ -761,7 +761,7 @@ Technical detail should be available without becoming the primary message.
 
 ## 18. AI interactions
 
-AI inside Voodoo should feel native to the product, not like a chatbot pasted onto every screen.
+AI inside Grumo should feel native to the product, not like a chatbot pasted onto every screen.
 
 Use conversational UI only when conversation is the correct interaction.
 
@@ -790,7 +790,7 @@ AI should make interfaces simpler, not replace clear interfaces.
 
 ## 19. Branding and theming
 
-Voodoo should be recognizable without dominating applications built with it.
+Grumo should be recognizable without dominating applications built with it.
 
 The design system must support:
 
@@ -802,7 +802,7 @@ The design system must support:
 - light/dark mode;
 - product-specific branding.
 
-Voodoo's identity should live primarily in:
+Grumo's identity should live primarily in:
 
 - proportion;
 - motion;
@@ -819,7 +819,7 @@ Not in forcing every application to be purple.
 
 Accessibility is not an optional layer.
 
-First-party Voodoo components must support:
+First-party Grumo components must support:
 
 - keyboard navigation;
 - visible focus;
@@ -839,7 +839,7 @@ A component that is visually beautiful but inaccessible is unfinished.
 
 A beautiful interface that feels slow is not a beautiful interface.
 
-Voodoo UI must prioritize:
+Grumo UI must prioritize:
 
 - fast initial render;
 - responsive interaction;
@@ -852,9 +852,9 @@ Performance budgets should eventually be part of component acceptance criteria.
 
 ---
 
-## 22. The Voodoo signature
+## 22. The Grumo signature
 
-Voodoo should develop a recognizable signature through behavior rather than decoration.
+Grumo should develop a recognizable signature through behavior rather than decoration.
 
 Potential signature areas:
 
@@ -870,7 +870,7 @@ The transition should be subtle but unmistakable.
 
 ### 22.2 Operational timelines
 
-Voodoo can make time a first-class interface primitive.
+Grumo can make time a first-class interface primitive.
 
 Missions, agents, devices and protocol events can share a common timeline language.
 
@@ -888,13 +888,13 @@ without losing context.
 
 When a physical device changes because of a software action, the UI should make that connection obvious.
 
-This is a core Voodoo opportunity.
+This is a core Grumo opportunity.
 
 ---
 
 ## 23. Example design language
 
-A Voodoo Runtime screen should not feel like a collection of dashboards.
+A Grumo Runtime screen should not feel like a collection of dashboards.
 
 It should feel like a control environment.
 
@@ -935,9 +935,9 @@ Before shipping any screen, ask:
 
 ---
 
-## 25. Definition of “Voodoo quality”
+## 25. Definition of “Grumo quality”
 
-A component or screen reaches Voodoo quality when:
+A component or screen reaches Grumo quality when:
 
 - it is obvious what it is for;
 - it behaves predictably;
@@ -947,14 +947,14 @@ A component or screen reaches Voodoo quality when:
 - it remains attractive in light and dark themes;
 - it performs well;
 - it can be branded without breaking;
-- it feels consistent with the rest of Voodoo;
+- it feels consistent with the rest of Grumo;
 - removing any further element would make it worse.
 
 ---
 
 ## 26. Final principle
 
-Voodoo should never attempt to look futuristic.
+Grumo should never attempt to look futuristic.
 
 It should look correct.
 

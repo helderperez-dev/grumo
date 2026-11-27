@@ -1,6 +1,6 @@
 import json
 
-from voodoo.core import register_event, ws_manager
+from grumo.core import register_event, ws_manager
 
 
 def test_websocket_event(client):
@@ -12,7 +12,7 @@ def test_websocket_event(client):
 
     register_event("test_action", async_dummy_handler)
 
-    with client.websocket_connect("/_voodoo_ws") as websocket:
+    with client.websocket_connect("/_grumo_ws") as websocket:
         websocket.send_text(
             json.dumps(
                 {
@@ -42,7 +42,7 @@ def test_websocket_append(client):
 
     register_event("append_action", append_handler)
 
-    with client.websocket_connect("/_voodoo_ws") as websocket:
+    with client.websocket_connect("/_grumo_ws") as websocket:
         websocket.send_text(
             json.dumps(
                 {

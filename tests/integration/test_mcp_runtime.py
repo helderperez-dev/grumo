@@ -9,12 +9,12 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo.ai.tools.registry import ToolRegistry
-from voodoo.integrations.mcp import MCPServer
-from voodoo.primitives.capability import Capability
-from voodoo.runtime import ExecutionEngine
-from voodoo.runtime.errors import CapabilityDenied
-from voodoo.runtime.execution import ExecutionStatus
+from grumo.ai.tools.registry import ToolRegistry
+from grumo.integrations.mcp import MCPServer
+from grumo.primitives.capability import Capability
+from grumo.runtime import ExecutionEngine
+from grumo.runtime.errors import CapabilityDenied
+from grumo.runtime.execution import ExecutionStatus
 
 
 @pytest.fixture
@@ -63,7 +63,7 @@ class TestMCPRuntime:
         assert matches[0].intent.params == {"to": "a@b.c"}
 
     async def test_tool_denied_without_capability(self, fresh_mcp):
-        from voodoo.ai.tools.registry import ToolSpec
+        from grumo.ai.tools.registry import ToolSpec
 
         called = []
 

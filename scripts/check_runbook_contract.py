@@ -13,12 +13,12 @@ REQUIRED_MARKERS = (
     "## Shutdown and incident response",
     "## Diagnosis and maintenance",
     "## Rollback decision",
-    "VOODOO_ENV=production",
+    "GRUMO_ENV=production",
     "GET /healthz",
     "GET /readyz",
     "attention",
-    "voodoo-store inspect",
-    "voodoo-store verify",
+    "grumo-store inspect",
+    "grumo-store verify",
     "compact-copy",
     "Store.restore_copy",
     "scripts/dr_game_day.py",
@@ -36,7 +36,9 @@ def main() -> int:
     if missing:
         raise SystemExit("runbook contract missing: " + ", ".join(missing))
     if "delete the source" not in haystack or "preserve the original" not in haystack:
-        raise SystemExit("runbook must preserve source files before destructive operations")
+        raise SystemExit(
+            "runbook must preserve source files before destructive operations"
+        )
     print(f"runbook contract passed ({len(REQUIRED_MARKERS)} markers)")
     return 0
 

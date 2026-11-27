@@ -1,6 +1,6 @@
 import pytest
 
-from voodoo.runtime.application_graph import (
+from grumo.runtime.application_graph import (
     ApplicationGraph,
     ApplicationNodeKind,
 )
@@ -39,8 +39,8 @@ def test_application_graph_is_idempotent_for_same_semantic_node():
 
 
 def test_application_graph_describes_tool_capability_relationship():
-    from voodoo.ai.tools.registry import ToolSpec, default_registry
-    from voodoo.runtime.application_graph import build_application_graph
+    from grumo.ai.tools.registry import ToolSpec, default_registry
+    from grumo.runtime.application_graph import build_application_graph
 
     previous = dict(default_registry._tools)
     default_registry._tools.clear()
@@ -72,7 +72,7 @@ def test_application_graph_describes_tool_capability_relationship():
 
 
 def test_application_graph_does_not_swallow_discovery_assertion(monkeypatch):
-    from voodoo.runtime import application_graph as graph_module
+    from grumo.runtime import application_graph as graph_module
 
     class BrokenCapabilities:
         def describe(self):
@@ -81,7 +81,7 @@ def test_application_graph_does_not_swallow_discovery_assertion(monkeypatch):
     class BrokenEngine:
         capabilities = BrokenCapabilities()
 
-    import voodoo.runtime.execution.engine as engine_module
+    import grumo.runtime.execution.engine as engine_module
 
     monkeypatch.setattr(engine_module, "engine", BrokenEngine())
     with pytest.raises(AssertionError, match="capability invariant broken"):
@@ -89,9 +89,9 @@ def test_application_graph_does_not_swallow_discovery_assertion(monkeypatch):
 
 
 def test_application_graph_describes_registered_models():
-    from voodoo.data.base import _models
-    from voodoo.data.model import Model
-    from voodoo.runtime.application_graph import build_application_graph
+    from grumo.data.base import _models
+    from grumo.data.model import Model
+    from grumo.runtime.application_graph import build_application_graph
 
     previous = list(_models)
     try:
@@ -122,7 +122,7 @@ def test_application_graph_fingerprint_is_deterministic():
 
 
 def test_application_graph_diff_reports_semantic_changes():
-    from voodoo.runtime.application_graph import diff_application_graph
+    from grumo.runtime.application_graph import diff_application_graph
 
     previous = ApplicationGraph()
     current = ApplicationGraph()
@@ -151,7 +151,7 @@ def test_application_graph_affected_walks_transitive_dependents():
 
 
 def test_extension_contributes_provider_without_granting_authority():
-    from voodoo.runtime.application_graph import Extension, ExtensionManifest
+    from grumo.runtime.application_graph import Extension, ExtensionManifest
 
     class Payments(Extension):
         manifest = ExtensionManifest(
@@ -171,7 +171,7 @@ def test_extension_contributes_provider_without_granting_authority():
 
 
 def test_invalidation_records_reason_revision_and_affected_nodes():
-    from voodoo.runtime.application_graph import (
+    from grumo.runtime.application_graph import (
         ChangeReason,
         InvalidationEngine,
     )
@@ -194,7 +194,7 @@ def test_invalidation_records_reason_revision_and_affected_nodes():
 
 
 def test_extension_contract_has_no_vendor_dependency():
-    from voodoo.runtime.application_graph import Extension, ExtensionManifest
+    from grumo.runtime.application_graph import Extension, ExtensionManifest
 
     class ExternalAnalytics(Extension):
         manifest = ExtensionManifest(
@@ -211,8 +211,8 @@ def test_extension_contract_has_no_vendor_dependency():
 
 
 def test_canonical_goal_contributes_requirements_to_graph():
-    from voodoo.runtime.agency.goal import Goal
-    from voodoo.runtime.application_graph import contribute_goal
+    from grumo.runtime.agency.goal import Goal
+    from grumo.runtime.application_graph import contribute_goal
 
     goal = Goal(
         id="goal_growth",
@@ -230,7 +230,7 @@ def test_canonical_goal_contributes_requirements_to_graph():
 
 
 def test_application_graph_diff_detects_same_id_metadata_change():
-    from voodoo.runtime.application_graph import diff_application_graph
+    from grumo.runtime.application_graph import diff_application_graph
 
     previous = ApplicationGraph()
     previous.node(ApplicationNodeKind.RESOURCE, "store", metadata={"version": 1})
@@ -244,7 +244,7 @@ def test_application_graph_diff_detects_same_id_metadata_change():
 
 
 def test_application_graph_diff_detects_edge_metadata_change():
-    from voodoo.runtime.application_graph import diff_application_graph
+    from grumo.runtime.application_graph import diff_application_graph
 
     previous = ApplicationGraph()
     p_resource = previous.node(ApplicationNodeKind.RESOURCE, "store")
@@ -262,7 +262,7 @@ def test_application_graph_diff_detects_edge_metadata_change():
 
 
 def test_extension_contributes_generic_runtime_surfaces():
-    from voodoo.runtime.application_graph import Extension, ExtensionManifest
+    from grumo.runtime.application_graph import Extension, ExtensionManifest
 
     class Commerce(Extension):
         manifest = ExtensionManifest(
@@ -287,7 +287,7 @@ def test_extension_contributes_generic_runtime_surfaces():
 
 
 def test_application_graph_classifies_websocket_route_as_api():
-    from voodoo.runtime.application_graph import build_application_graph
+    from grumo.runtime.application_graph import build_application_graph
 
     class WebSocketRoute:
         path = "/events"

@@ -1,7 +1,7 @@
 import pytest
 
-from voodoo.adapters import TailwindAdapter, VoodooCSSAdapter
-from voodoo.ui import (
+from grumo.adapters import GrumoCSSAdapter, TailwindAdapter
+from grumo.ui import (
     Accordion,
     AccordionItem,
     Alert,
@@ -17,10 +17,10 @@ from voodoo.ui import (
     Text,
     set_style_adapter,
 )
-from voodoo.ui.styles import current_adapter
+from grumo.ui.styles import current_adapter
 
 
-@pytest.fixture(params=[VoodooCSSAdapter, TailwindAdapter])
+@pytest.fixture(params=[GrumoCSSAdapter, TailwindAdapter])
 def adapter(request):
     original = current_adapter()
     set_style_adapter(request.param())
@@ -117,7 +117,7 @@ def test_spinner_state_contract_exposes_status_metadata():
 def test_breadcrumb_marks_last_item_as_current(adapter):
     html = Breadcrumb(
         BreadcrumbItem("Projects", "/projects"),
-        BreadcrumbItem("Voodoo", "/projects/voodoo"),
+        BreadcrumbItem("Grumo", "/projects/grumo"),
         BreadcrumbItem("Settings"),
     ).render()
 
@@ -139,7 +139,7 @@ def test_breadcrumb_item_state_contract_blocks_unavailable_navigation(adapter):
     assert 'aria-busy="true"' in html
     assert 'aria-invalid="true"' in html
     assert 'data-vd-error="Unavailable"' in html
-    assert "href=\"/settings\"" not in html
+    assert 'href="/settings"' not in html
 
 
 def test_button_group_has_group_semantics_and_layout(adapter):

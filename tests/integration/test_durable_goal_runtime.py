@@ -5,9 +5,9 @@ from pathlib import Path
 
 import pytest
 
-from voodoo.primitives.capability import Capability
-from voodoo.primitives.intent import Intent
-from voodoo.runtime import (
+from grumo.primitives.capability import Capability
+from grumo.primitives.intent import Intent
+from grumo.runtime import (
     AdaptiveSupervisor,
     ComputeParticipant,
     ExecutionEngine,
@@ -15,11 +15,11 @@ from voodoo.runtime import (
     GoalRun,
     GoalRuntime,
     GoalStatus,
+    GrumoStoreGoalStore,
     Planner,
     RuntimeStore,
     SQLiteGoalStore,
     StoreConfig,
-    VoodooStoreGoalStore,
 )
 
 
@@ -48,11 +48,11 @@ def test_sqlite_goal_store_survives_reopen(tmp_path: Path):
     reopened.close()
 
 
-def test_voodoo_store_goal_checkpoints_share_application_store(tmp_path: Path):
-    path = tmp_path / "application.vstore"
+def test_grumo_store_goal_checkpoints_share_application_store(tmp_path: Path):
+    path = tmp_path / "application.grumo"
     runtime_store = RuntimeStore(StoreConfig(path=path))
     runtime_store.start()
-    store = VoodooStoreGoalStore(runtime_store)
+    store = GrumoStoreGoalStore(runtime_store)
     running = {
         "goal": {
             "id": "goal-1",
@@ -75,10 +75,11 @@ def test_voodoo_store_goal_checkpoints_share_application_store(tmp_path: Path):
         1,
         b"json",
     )
-    assert runtime_store.provider.native.get_record(
-        b"runtime.goals", b"goal-1"
-    ) is not None
-    assert store.provider == "voodoo"
+    assert (
+        runtime_store.provider.native.get_record(b"runtime.goals", b"goal-1")
+        is not None
+    )
+    assert store.provider == "grumo"
     assert store.load("goal-1") == running
     assert store.load_unfinished() == [running]
     store.close()
@@ -87,17 +88,17 @@ def test_voodoo_store_goal_checkpoints_share_application_store(tmp_path: Path):
 
     reopened_runtime = RuntimeStore(StoreConfig(path=path))
     reopened_runtime.start()
-    reopened = VoodooStoreGoalStore(reopened_runtime)
+    reopened = GrumoStoreGoalStore(reopened_runtime)
     assert reopened.load("goal-1") == running
     assert reopened.load_unfinished() == [running]
     reopened_runtime.stop()
 
 
-def test_voodoo_goal_codec_reads_legacy_and_rejects_future_schema(tmp_path: Path):
+def test_grumo_goal_codec_reads_legacy_and_rejects_future_schema(tmp_path: Path):
     runtime_store = RuntimeStore(StoreConfig(path=tmp_path / "goal-codec.vstore"))
     runtime_store.start()
     try:
-        store = VoodooStoreGoalStore(runtime_store)
+        store = GrumoStoreGoalStore(runtime_store)
         legacy = {
             "goal": {"id": "legacy", "status": "running"},
             "value": {"nested": [1]},

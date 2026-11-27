@@ -10,18 +10,18 @@ import json
 
 import pytest
 
-from voodoo.ui.styles.presets import (
+from grumo.ui.styles.presets import (
     ThemePreset,
     list_presets,
     resolve_theme,
 )
-from voodoo.ui.styles.theme import set_theme
+from grumo.ui.styles.theme import set_theme
 
 
 @pytest.fixture(autouse=True)
 def _restore_theme():
     """Restore the global default theme after each test (no cross-test leak)."""
-    from voodoo.ui.styles.theme import default_theme
+    from grumo.ui.styles.theme import default_theme
 
     original = default_theme
     yield
@@ -46,7 +46,7 @@ def test_resolve_default_origin():
 
 
 def test_resolve_unknown_raises():
-    from voodoo.core.errors import ConfigurationError
+    from grumo.core.errors import ConfigurationError
 
     with pytest.raises(ConfigurationError):
         resolve_theme("does-not-exist-xyz")

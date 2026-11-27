@@ -10,13 +10,13 @@ import json
 
 import pytest
 
-from voodoo.primitives.effect import Effect
-from voodoo.primitives.intent import Intent
-from voodoo.runtime import ExecutionEngine
-from voodoo.runtime.errors import ApprovalRequired
-from voodoo.runtime.execution import Execution, ExecutionStatus
-from voodoo.runtime.persistence import JSONFileExecutionStore
-from voodoo.storage.execution import SQLiteExecutionStore
+from grumo.primitives.effect import Effect
+from grumo.primitives.intent import Intent
+from grumo.runtime import ExecutionEngine
+from grumo.runtime.errors import ApprovalRequired
+from grumo.runtime.execution import Execution, ExecutionStatus
+from grumo.runtime.persistence import JSONFileExecutionStore
+from grumo.storage.execution import SQLiteExecutionStore
 
 
 class TestCheckpointBoundaries:
@@ -55,14 +55,18 @@ class TestCheckpointBoundaries:
     def test_json_file_store_fails_closed_on_future_schema(self, tmp_path):
         path = tmp_path / "executions.jsonl"
         store = JSONFileExecutionStore(path)
-        execution = Execution(id="legacy", trace_id="t", intent=Intent(name="legacy"), actor="test")
+        execution = Execution(
+            id="legacy", trace_id="t", intent=Intent(name="legacy"), actor="test"
+        )
         store.save(execution)
         with path.open("a", encoding="utf-8") as handle:
             future = execution.model_dump(mode="json")
             future["id"] = "future"
             future["_schema_version"] = 99
             handle.write(json.dumps(future) + "\n")
-        with pytest.raises(ValueError, match="unsupported execution persistence schema"):
+        with pytest.raises(
+            ValueError, match="unsupported execution persistence schema"
+        ):
             store.load_all()
 
     def test_engine_recovery_propagates_future_schema_errors(self):
@@ -93,8 +97,8 @@ class TestResumeSkipsCompletedEffects:
         engine.use_store(store)
 
         # First run: one effect completes, then process "crashes"
-        from voodoo.primitives.intent import Intent as I
-        from voodoo.runtime.execution import Execution
+        from grumo.primitives.intent import Intent as I
+        from grumo.runtime.execution import Execution
 
         ex = Execution(
             id="ex1", trace_id="t1", intent=I(name="multi_step"), actor="test"
@@ -157,8 +161,8 @@ class TestIdempotencyKeyOnEffects:
         engine = ExecutionEngine()
 
         async def compute(ctx):
-            from voodoo.primitives.effect import Effect
-            from voodoo.runtime.execution.engine import ComputeResult
+            from grumo.primitives.effect import Effect
+            from grumo.runtime.execution.engine import ComputeResult
 
             return ComputeResult(effects=[Effect(name="send_email", idempotent=False)])
 

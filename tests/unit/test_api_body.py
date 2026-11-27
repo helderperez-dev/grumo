@@ -5,7 +5,7 @@ import json
 import pytest
 from pydantic import BaseModel, ValidationError
 
-from voodoo.routing.api import API
+from grumo.routing.api import API
 
 
 class Payload(BaseModel):
@@ -37,7 +37,7 @@ async def test_model_argument_does_not_hide_unexpected_parser_failures():
 def test_api_config_resolution_does_not_hide_unexpected_failures(monkeypatch):
     import importlib
 
-    config_mod = importlib.import_module("voodoo.config")
+    config_mod = importlib.import_module("grumo.config")
 
     class BrokenConfig:
         @property

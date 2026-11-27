@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo.primitives.capability import Capability
-from voodoo.primitives.intent import Intent
-from voodoo.runtime import (
+from grumo.primitives.capability import Capability
+from grumo.primitives.intent import Intent
+from grumo.runtime import (
     AuthenticationEvidence,
     ExecutionContext,
     ExecutionEngine,
@@ -17,7 +17,7 @@ from voodoo.runtime import (
     Principal,
     execute,
 )
-from voodoo.runtime.errors import CapabilityDenied
+from grumo.runtime.errors import CapabilityDenied
 
 
 def _principal(identity_id: str = "user:42") -> Principal:

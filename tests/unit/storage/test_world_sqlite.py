@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 
-from voodoo.world import Entity, SQLiteWorldStore, WorldModel
+from grumo.world import Entity, SQLiteWorldStore, WorldModel
 
 
 def test_world_survives_store_reopen(tmp_path):

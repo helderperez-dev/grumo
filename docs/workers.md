@@ -2,19 +2,19 @@
 
 ## What it is
 
-Voodoo has two related worker surfaces:
+Grumo has two related worker surfaces:
 
 - `@task` for retry/timeout/telemetry semantics around callable work;
 - the durable queue runtime for background delivery, leasing, retries and crash recovery.
 
 On a fresh application, durable queued work is stored in the same
-`.voodoo/application.vstore` used by the rest of the Runtime. The default broker
+`.grumo/application.grumo` used by the rest of the Runtime. The default broker
 is **not** an in-memory `asyncio.Queue` and is **not** SQLite.
 
 ## Minimal task
 
 ```python
-from voodoo.workers import task
+from grumo.runtime.scheduling.tasks import task
 
 
 @task(retries=3, timeout=30)
@@ -28,7 +28,7 @@ await sync_crm(42)
 ## Durable queue worker
 
 ```python
-from voodoo.workers.queue import enqueue, queue
+from grumo.runtime.scheduling.workers import enqueue, queue
 
 
 @queue("send-email")
@@ -97,7 +97,7 @@ across the background boundary.
 ## Explicit Redis adapter
 
 ```bash
-pip install "voodoo-framework[redis]"
+pip install "grumo[redis]"
 ```
 
 ```toml
@@ -121,8 +121,8 @@ select it. It is not the fresh-app queue default.
 
 ## Runtime Store ownership
 
-`VoodooStoreQueue` acquires/reuses the Runtime-owned Store. It does not open a
-second writer to the same `.vstore` file. App shutdown resets cached queue
+`GrumoStoreQueue` acquires/reuses the Runtime-owned Store. It does not open a
+second writer to the same `.grumo` file. App shutdown resets cached queue
 handles so a later Runtime lifecycle cannot retain a stale closed Store.
 
 ## Current guarantees
@@ -143,4 +143,4 @@ handles so a later Runtime lifecycle cannot retain a stale closed Store.
   enqueue a declared reversible-effect compensation with a stable idempotency
   key and failure metadata; it never executes compensation inline.
 - `start_workers()` / `stop_workers()` — worker lifecycle used by the App lifespan.
-- `VoodooStoreQueue` — Store-backed implementation of the durable queue contract.
+- `GrumoStoreQueue` — Store-backed implementation of the durable queue contract.

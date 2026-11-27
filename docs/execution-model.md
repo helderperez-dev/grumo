@@ -1,8 +1,8 @@
 # Execution Model
 
-> **The central technical specification for the Voodoo Execution Runtime.**
+> **The central technical specification for the Grumo Execution Runtime.**
 >
-> This document answers one question: **How does any Voodoo operation move
+> This document answers one question: **How does any Grumo operation move
 > from an Intent to an observable, recoverable outcome?**
 
 ---
@@ -52,7 +52,7 @@ Cancelled   Timed Out
 ```
 
 Total: **9 states**. Transitions are validated — illegal transitions raise
-`ValueError`. See `LEGAL_TRANSITIONS` in `voodoo.runtime.execution`.
+`ValueError`. See `LEGAL_TRANSITIONS` in `grumo.runtime.execution`.
 
 ### Aspirational states (not yet implemented)
 
@@ -187,8 +187,8 @@ The registry links the two:
   `execution_id` with prompt, output, tokens, cost, and `trace_id`.
 
 Because runs are executions, agent history is queryable through the normal
-execution views (`voodoo inspect executions`) **and** per-agent via the
-registry (`registry.get_runs(agent_id)` / `voodoo agents show <id>`). Two
+execution views (`grumo inspect executions`) **and** per-agent via the
+registry (`registry.get_runs(agent_id)` / `grumo agents show <id>`). Two
 agents collaborating via events produce linked, parented executions — no
 bespoke agent RPC (ROADMAP §47).
 
@@ -316,18 +316,18 @@ do.
 
 | Concept | Where it lives |
 |---|---|
-| `Execution`, `ExecutionStatus` | `voodoo.runtime.execution` |
-| `ExecutionEngine` | `voodoo.runtime.engine` |
-| `ExecutionContext` | `voodoo.runtime.context` |
-| `CapabilityResolver` | `voodoo.runtime.capability` |
-| `ConstraintEnforcer`, `ResourceAccountant` | `voodoo.runtime.constraint` |
-| `Planner`, `ComputeParticipant` | `voodoo.runtime.planner` |
-| `AdaptiveSupervisor` | `voodoo.runtime.adaptive` |
-| Durable store (`SQLiteExecutionStore`) | `voodoo.storage.execution` |
+| `Execution`, `ExecutionStatus` | `grumo.runtime.execution` |
+| `ExecutionEngine` | `grumo.runtime.engine` |
+| `ExecutionContext` | `grumo.runtime.context` |
+| `CapabilityResolver` | `grumo.runtime.capability` |
+| `ConstraintEnforcer`, `ResourceAccountant` | `grumo.runtime.constraint` |
+| `Planner`, `ComputeParticipant` | `grumo.runtime.planner` |
+| `AdaptiveSupervisor` | `grumo.runtime.adaptive` |
+| Durable store (`SQLiteExecutionStore`) | `grumo.storage.execution` |
 
 ## See also
 
-- [Voodoo Computational Model](primitives.md)
+- [Grumo Computational Model](primitives.md)
 - [Runtime Engine](runtime.md)
 - [Planner & Adaptive Runtime](adaptive.md)
 - [Human-in-the-Loop](hitl.md)

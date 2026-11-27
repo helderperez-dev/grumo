@@ -4,7 +4,7 @@ from uuid import UUID
 import pytest
 import pytest_asyncio
 
-from voodoo.data import Model, on_insert, on_update
+from grumo.data import Model, on_insert, on_update
 
 
 class Lead(Model):
@@ -68,13 +68,13 @@ async def test_all_is_alias_of_find_all(model_store):
 async def test_store_model_propagates_unexpected_current_user_failure(
     model_store, monkeypatch
 ):
-    import voodoo.auth
+    import grumo.auth
 
     class BrokenContext:
         def get(self):
             raise AssertionError("unexpected current-user implementation failure")
 
-    monkeypatch.setattr(voodoo.auth, "current_user", BrokenContext())
+    monkeypatch.setattr(grumo.auth, "current_user", BrokenContext())
 
     with pytest.raises(AssertionError, match="unexpected current-user"):
         await Lead.find_all()
@@ -131,7 +131,7 @@ async def test_on_update_hook_fires(model_store):
 
 
 def test_model_uses_application_store(model_store):
-    assert model_store.config.path.name == "application.vstore"
+    assert model_store.config.path.name == "application.grumo"
     assert model_store.config.path.exists()
 
 
@@ -188,7 +188,7 @@ async def test_query_is_lazy_and_chainable(seeded_leads):
 
 @pytest.mark.asyncio
 async def test_fk_cascade_deletes_children(model_store):
-    from voodoo.data import FK
+    from grumo.data import FK
 
     class Conv(Model):
         title: str

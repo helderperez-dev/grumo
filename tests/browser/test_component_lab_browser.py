@@ -1,7 +1,7 @@
-"""Real-browser acceptance for the Voodoo Component Lab.
+"""Real-browser acceptance for the Grumo Component Lab.
 
-Opt in with VOODOO_BROWSER_TESTS=1 after installing the browser extra and a
-Playwright browser. Set VOODOO_BROWSER_NAME to chromium, firefox, or webkit
+Opt in with GRUMO_BROWSER_TESTS=1 after installing the browser extra and a
+Playwright browser. Set GRUMO_BROWSER_NAME to chromium, firefox, or webkit
 to select the engine; Chromium is the local default.
 """
 
@@ -22,8 +22,8 @@ import pytest
 from tests.browser.visual_signature import distance, signature
 
 pytestmark = pytest.mark.skipif(
-    os.environ.get("VOODOO_BROWSER_TESTS") != "1",
-    reason="set VOODOO_BROWSER_TESTS=1 to run real-browser UI acceptance",
+    os.environ.get("GRUMO_BROWSER_TESTS") != "1",
+    reason="set GRUMO_BROWSER_TESTS=1 to run real-browser UI acceptance",
 )
 
 
@@ -43,7 +43,7 @@ def component_lab_url(tmp_path_factory: pytest.TempPathFactory) -> Iterator[str]
     if env.get("PYTHONPATH"):
         pythonpath.append(env["PYTHONPATH"])
     env["PYTHONPATH"] = os.pathsep.join(pythonpath)
-    env["VOODOO_ENV"] = "test"
+    env["GRUMO_ENV"] = "test"
 
     process = subprocess.Popen(
         [
@@ -89,10 +89,10 @@ def component_lab_url(tmp_path_factory: pytest.TempPathFactory) -> Iterator[str]
 @pytest.fixture(scope="module")
 def browser_page(component_lab_url: str):
     playwright = pytest.importorskip("playwright.sync_api")
-    browser_name = os.environ.get("VOODOO_BROWSER_NAME", "chromium")
+    browser_name = os.environ.get("GRUMO_BROWSER_NAME", "chromium")
     if browser_name not in {"chromium", "firefox", "webkit"}:
         raise ValueError(
-            "VOODOO_BROWSER_NAME must be one of chromium, firefox, or webkit"
+            "GRUMO_BROWSER_NAME must be one of chromium, firefox, or webkit"
         )
     with playwright.sync_playwright() as runtime:
         browser = getattr(runtime, browser_name).launch()

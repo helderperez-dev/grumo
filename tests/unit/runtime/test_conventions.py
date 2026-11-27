@@ -1,4 +1,4 @@
-from voodoo.runtime.conventions import discover_layout
+from grumo.runtime.conventions import discover_layout
 
 
 def test_layout_discovery_is_descriptive_not_registration(tmp_path):

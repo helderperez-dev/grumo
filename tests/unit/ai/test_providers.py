@@ -7,24 +7,24 @@ import sys
 
 import pytest
 
-from voodoo.ai import (
+from grumo.ai import (
     LLMProvider,
     describe_model,
     get_provider,
     register_provider,
     resolve_model,
 )
-from voodoo.ai.providers import (
+from grumo.ai.providers import (
     EmbeddingResponse,
     ModelDescriptor,
     ProviderEvent,
     ProviderResponse,
 )
-from voodoo.ai.providers import (
+from grumo.ai.providers import (
     LLMProvider as LLMProviderBase,
 )
-from voodoo.ai.providers.mock import MockProvider
-from voodoo.core.errors import ConfigurationError
+from grumo.ai.providers.mock import MockProvider
+from grumo.core.errors import ConfigurationError
 
 # ---------------------------------------------------------------------------
 # resolve_model / get_provider
@@ -85,7 +85,7 @@ def test_get_provider_returns_mock_instance():
 def test_get_provider_resolves_alias():
     # ``best`` maps to OpenAI by default, which requires the SDK — so use a
     # caller alias to keep this test network/SDK-free.
-    import voodoo.ai.providers as providers_mod
+    import grumo.ai.providers as providers_mod
 
     original = dict(providers_mod.DEFAULT_ALIASES)
     try:
@@ -103,18 +103,18 @@ def test_get_provider_unknown_raises_configuration_error():
 
 
 def test_default_model_and_config_driven_provider(monkeypatch):
-    # NOTE: ``voodoo/__init__.py`` re-exports the config *instance* as the
+    # NOTE: ``grumo/__init__.py`` re-exports the config *instance* as the
     # package attribute, shadowing the submodule, so plain
-    # ``import voodoo.config as m`` binds the instance. Use importlib to get
+    # ``import grumo.config as m`` binds the instance. Use importlib to get
     # the real module.
     import importlib
 
-    from voodoo.ai.providers import default_model
+    from grumo.ai.providers import default_model
 
-    config_mod = importlib.import_module("voodoo.config")
+    config_mod = importlib.import_module("grumo.config")
 
     def with_ai(ai: object, models_default: str = "mock:default") -> None:
-        cfg = config_mod.VoodooConfig(
+        cfg = config_mod.GrumoConfig(
             ai=ai, models=config_mod.ModelsConfig(default=models_default)
         )
         monkeypatch.setattr(config_mod, "config", cfg)
@@ -135,9 +135,9 @@ def test_default_model_and_config_driven_provider(monkeypatch):
 def test_model_resolution_does_not_hide_unexpected_config_failures(monkeypatch):
     import importlib
 
-    import voodoo.ai.providers as providers_mod
+    import grumo.ai.providers as providers_mod
 
-    config_mod = importlib.import_module("voodoo.config")
+    config_mod = importlib.import_module("grumo.config")
 
     class BrokenConfig:
         @property
@@ -152,9 +152,9 @@ def test_model_resolution_does_not_hide_unexpected_config_failures(monkeypatch):
 def test_default_model_does_not_hide_unexpected_config_failures(monkeypatch):
     import importlib
 
-    from voodoo.ai.providers import default_model
+    from grumo.ai.providers import default_model
 
-    config_mod = importlib.import_module("voodoo.config")
+    config_mod = importlib.import_module("grumo.config")
 
     class BrokenConfig:
         @property
@@ -169,10 +169,10 @@ def test_default_model_does_not_hide_unexpected_config_failures(monkeypatch):
 def test_agent_defaults_to_configured_model(monkeypatch):
     import importlib
 
-    from voodoo.ai.agent import Agent
+    from grumo.ai.agent import Agent
 
-    config_mod = importlib.import_module("voodoo.config")
-    cfg = config_mod.VoodooConfig(
+    config_mod = importlib.import_module("grumo.config")
+    cfg = config_mod.GrumoConfig(
         ai=config_mod.AIConfig(provider="mock", model="configured")
     )
     monkeypatch.setattr(config_mod, "config", cfg)
@@ -185,18 +185,18 @@ def test_agent_defaults_to_configured_model(monkeypatch):
 def test_agent_run_through_runtime_flag_from_config(monkeypatch):
     import importlib
 
-    from voodoo.routing.api import API
+    from grumo.routing.api import API
 
-    config_mod = importlib.import_module("voodoo.config")
+    config_mod = importlib.import_module("grumo.config")
     # Default config (no flag set) keeps runtime execution on.
-    monkeypatch.setattr(config_mod, "config", config_mod.VoodooConfig())
+    monkeypatch.setattr(config_mod, "config", config_mod.GrumoConfig())
     api_default = API()
     assert api_default.run_through_runtime is True
 
     monkeypatch.setattr(
         config_mod,
         "config",
-        config_mod.VoodooConfig(
+        config_mod.GrumoConfig(
             runtime=config_mod.RuntimeConfig(run_api_through_runtime=False)
         ),
     )
@@ -205,13 +205,13 @@ def test_agent_run_through_runtime_flag_from_config(monkeypatch):
 
 
 def test_register_provider_and_resolve():
-    register_provider("mocktest", "voodoo.ai.providers.mock.MockProvider")
+    register_provider("mocktest", "grumo.ai.providers.mock.MockProvider")
     try:
         provider = get_provider("mocktest:abc")
         assert isinstance(provider, MockProvider)
         assert provider.model == "abc"
     finally:
-        import voodoo.ai.providers as providers_mod
+        import grumo.ai.providers as providers_mod
 
         providers_mod._PROVIDER_CLASSES.pop("mocktest", None)
 
@@ -360,7 +360,7 @@ def test_mock_describe_returns_descriptor():
 def test_openai_missing_sdk_raises_configuration_error(monkeypatch):
     # Force `import openai` to fail regardless of whether it is installed.
     monkeypatch.setitem(sys.modules, "openai", None)
-    from voodoo.ai.providers.openai import OpenAIProvider
+    from grumo.ai.providers.openai import OpenAIProvider
 
     with pytest.raises(ConfigurationError, match="openai"):
         OpenAIProvider(model="gpt-4")
@@ -368,7 +368,7 @@ def test_openai_missing_sdk_raises_configuration_error(monkeypatch):
 
 def test_anthropic_missing_sdk_raises_configuration_error(monkeypatch):
     monkeypatch.setitem(sys.modules, "anthropic", None)
-    from voodoo.ai.providers.anthropic import AnthropicProvider
+    from grumo.ai.providers.anthropic import AnthropicProvider
 
     with pytest.raises(ConfigurationError, match="anthropic"):
         AnthropicProvider(model="claude-3")
@@ -377,7 +377,7 @@ def test_anthropic_missing_sdk_raises_configuration_error(monkeypatch):
 def test_gemini_missing_sdk_raises_configuration_error(monkeypatch):
     monkeypatch.setitem(sys.modules, "google", None)
     monkeypatch.setitem(sys.modules, "google.generativeai", None)
-    from voodoo.ai.providers.gemini import GeminiProvider
+    from grumo.ai.providers.gemini import GeminiProvider
 
     with pytest.raises(ConfigurationError, match="google-generativeai"):
         GeminiProvider(model="gemini-1.5-pro")
@@ -385,7 +385,7 @@ def test_gemini_missing_sdk_raises_configuration_error(monkeypatch):
 
 def test_ollama_missing_sdk_raises_configuration_error(monkeypatch):
     monkeypatch.setitem(sys.modules, "ollama", None)
-    from voodoo.ai.providers.ollama import OllamaProvider
+    from grumo.ai.providers.ollama import OllamaProvider
 
     with pytest.raises(ConfigurationError, match="ollama"):
         OllamaProvider(model="llama3")

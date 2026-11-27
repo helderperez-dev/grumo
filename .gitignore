@@ -28,11 +28,11 @@ env/
 
 # Local databases & storage (runtime output dirs, not the source package)
 .data/
-.voodoo/
+.grumo/
 storage/
-!src/voodoo/storage/
-!src/voodoo/storage/**
-src/voodoo/storage/**/__pycache__/
+!src/grumo/storage/
+!src/grumo/storage/**
+src/grumo/storage/**/__pycache__/
 
 # Build artifacts
 dist/
@@ -43,4 +43,4 @@ build/
 SPEC.md
 .scaffold_check.txt
 
-voodoo.toml
+grumo.toml

@@ -6,9 +6,9 @@ import asyncio
 
 import pytest
 
-from voodoo.mesh import MeshNetwork, RemoteExecutionRequest
-from voodoo.runtime import ExecutionEngine
-from voodoo.runtime.distributed.replay import SQLiteRemoteReplayStore
+from grumo.mesh import MeshNetwork, RemoteExecutionRequest
+from grumo.runtime import ExecutionEngine
+from grumo.runtime.distributed.replay import SQLiteRemoteReplayStore
 
 
 def _request(request_id: str, *, value: int = 1) -> RemoteExecutionRequest:

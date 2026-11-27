@@ -1,6 +1,6 @@
-# Voodoo Design Review Checklist
+# Grumo Design Review Checklist
 
-Use this checklist for every new Voodoo component, page, template or first-party application.
+Use this checklist for every new Grumo component, page, template or first-party application.
 
 A component should not be considered finished merely because its default state looks good.
 
@@ -21,7 +21,7 @@ A component should not be considered finished merely because its default state l
 - [ ] Typography and spacing create hierarchy before borders or effects.
 - [ ] Secondary information is visually quieter.
 - [ ] The layout remains understandable without brand color.
-- [ ] Alignment follows the Voodoo grid and spacing system.
+- [ ] Alignment follows the Grumo grid and spacing system.
 
 ---
 
@@ -107,7 +107,7 @@ For components that represent live systems:
 
 - [ ] Works in light mode.
 - [ ] Works in dark mode.
-- [ ] Works without Voodoo purple as the accent.
+- [ ] Works without Grumo purple as the accent.
 - [ ] Uses semantic tokens instead of hard-coded colors.
 - [ ] Supports product-level branding.
 - [ ] Customization does not require forking the component.
@@ -160,7 +160,7 @@ Each production-ready component should document:
 
 ---
 
-## 13. Voodoo-specific components
+## 13. Grumo-specific components
 
 For Device, Agent, Runtime, Mission, Edge or Protocol components:
 
@@ -170,11 +170,11 @@ For Device, Agent, Runtime, Mission, Edge or Protocol components:
 - [ ] Technical detail is available without dominating the default view.
 - [ ] Commands show execution state.
 - [ ] The relationship between software action and physical effect is clear when relevant.
-- [ ] Timeline/event semantics are consistent with the rest of Voodoo.
+- [ ] Timeline/event semantics are consistent with the rest of Grumo.
 
 ---
 
-## 14. Final “Voodoo quality” test
+## 14. Final “Grumo quality” test
 
 Before approval, answer yes to all:
 
@@ -198,4 +198,4 @@ Before approval, answer yes to all:
 
 A component is ready only when its **behavior, states, accessibility, responsiveness and developer API** are as carefully designed as its default appearance.
 
-> Voodoo quality is not a screenshot. It is the entire experience.
+> Grumo quality is not a screenshot. It is the entire experience.

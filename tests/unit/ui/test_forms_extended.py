@@ -2,9 +2,9 @@
 
 import pytest
 
-from voodoo.adapters import TailwindAdapter, VoodooCSSAdapter
-from voodoo.ui import DropZone, FileUpload, set_style_adapter
-from voodoo.ui.forms_extended import (
+from grumo.adapters import GrumoCSSAdapter, TailwindAdapter
+from grumo.ui import DropZone, FileUpload, set_style_adapter
+from grumo.ui.forms_extended import (
     Autocomplete,
     CheckboxInput,
     FormError,
@@ -13,10 +13,10 @@ from voodoo.ui.forms_extended import (
     RadioInput,
     RangeSlider,
 )
-from voodoo.ui.styles import current_adapter
+from grumo.ui.styles import current_adapter
 
 
-@pytest.fixture(params=[VoodooCSSAdapter, TailwindAdapter])
+@pytest.fixture(params=[GrumoCSSAdapter, TailwindAdapter])
 def adapter(request):
     original = current_adapter()
     set_style_adapter(request.param())

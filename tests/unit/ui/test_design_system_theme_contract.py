@@ -1,5 +1,5 @@
-from voodoo.ui.styles.theme import Theme, create_theme
-from voodoo.ui.styles.theme_contract import generate_design_system_theme_css
+from grumo.ui.styles.theme import Theme, create_theme
+from grumo.ui.styles.theme_contract import generate_design_system_theme_css
 
 
 def test_design_system_3_keeps_approved_default_palette() -> None:

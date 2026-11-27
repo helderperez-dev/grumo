@@ -1,0 +1,463 @@
+"""Async ORM base — models, hooks, RLS, FK cascades, and the db lifecycle."""
+
+from __future__ import annotations
+
+import asyncio
+import logging
+from collections.abc import Callable
+from typing import Any, cast, get_type_hints
+
+from grumo.security.redaction import redact_string
+from grumo.storage.database import GrumoDatabase, Migration, SQLiteDatabase
+
+_logger = logging.getLogger("grumo.data")
+
+# Compatibility fallbacks may handle malformed/absent optional adapter state,
+# but must not conceal an arbitrary implementation defect from the caller.
+_DATA_FALLBACK_ERRORS = (
+    AttributeError,
+    ImportError,
+    LookupError,
+    NameError,
+    RuntimeError,
+    TypeError,
+    ValueError,
+)
+
+
+def _report_data_fallback(operation: str, error: Exception) -> None:
+    """Report an intentionally non-fatal compatibility fallback safely."""
+    _logger.warning(
+        "data fallback operation=%s error=%s", operation, redact_string(str(error))
+    )
+
+
+_db_connection = None
+_database: SQLiteDatabase | None = None
+_migration_health: dict[str, Any] = {
+    "status": "unknown",
+    "current_version": None,
+    "error": None,
+}
+_triggers: dict[str, dict[str, list[Callable]]] = {}
+_rls_policies: dict[str, Callable] = {}
+
+
+def _clear_cascades() -> None:
+    """Reset the FK cascade registry (test isolation)."""
+    _cascades.clear()
+
+
+def _active_adapter() -> SQLiteDatabase | None:
+    """The active database adapter (``None`` before ``init_db``)."""
+    return _database
+
+
+def _backend_uses_identity() -> bool:
+    """True when the active backend uses native identity PKs (PostgreSQL).
+
+    SQLite's ``INTEGER PRIMARY KEY AUTOINCREMENT`` DDL and ``lastrowid``
+    row-id extraction differ from PostgreSQL's identity columns and
+    ``RETURNING`` — the data layer picks the right dialect (Sprint 10).
+    """
+    adapter = _database
+    if adapter is None:
+        return False
+    try:
+        caps = adapter.capabilities()
+    except _DATA_FALLBACK_ERRORS as error:
+        _report_data_fallback("backend_capabilities", error)
+        return False
+    return bool(caps.provider == "postgres")
+
+
+async def _ensure_user_tables(db: GrumoDatabase) -> None:
+    """Create tables for every registered user model (idempotent DDL)."""
+    for model in _models:
+        await cast(Any, model)._create_table()
+
+
+# Migration 0001: the user-model baseline. Runs once to enter the ledger,
+# then re-runs its idempotent DDL on every ``init_db`` so models imported
+# after the baseline still get their tables (preserves pre-migration
+# behavior exactly).
+USER_MODEL_BASELINE = Migration(
+    version=1,
+    name="user_model_baseline",
+    fn=_ensure_user_tables,
+    rerun=True,
+)
+
+
+async def _cascade_delete_children(parent_table: str, parent_id: Any) -> None:
+    """Delete child rows referencing ``parent_id`` (registered FK cascades)."""
+    children = _cascades.get(parent_table)
+    if not children:
+        return
+    db = await get_db()
+    for child_table, fk_col in children:
+        await db.execute(f"DELETE FROM {child_table} WHERE {fk_col} = ?", (parent_id,))
+    await db.commit()
+
+
+async def init_db(db_path: str | None = None) -> Any:
+    """Initializes the database connection using the configured provider (Sprint 9).
+
+    Uses the central :class:`~grumo.adapters.registry.ProviderRegistry` to
+    resolve the active database adapter from ``config.database``, running
+    migrations and ensuring user model tables are created.
+
+    The connection is published as ``_db_connection`` / ``get_db()`` for
+    backward compatibility with the rest of the framework (models, hooks,
+    queue, …). ``database.migrate()`` runs the USER_MODEL_BASELINE (version
+    1, rerun=True) which creates every registered user table — meaning the
+    baseline must be registered with the adapter *before* ``migrate()`` is
+    called, otherwise ``_create_table`` → ``get_db`` would re-enter
+    ``init_db`` (there is no connection yet) and recurse forever.
+    """
+    from grumo.adapters.registry import registry
+    from grumo.config import DatabaseConfig, get_config
+
+    cfg = get_config().database
+    if db_path:
+        cfg = DatabaseConfig(provider="sqlite", path=db_path, url="")
+
+    database = registry.get_database(cfg, migrations=(USER_MODEL_BASELINE,))
+    await database.connect()
+    # Publish the connection *before* migrating so the rerunnable
+    # user-model baseline (and any other migration fn) can resolve the
+    # database via ``get_db()`` without recursing.
+    global _db_connection, _database
+    _database = database
+    if hasattr(database, "connection"):
+        _db_connection = database.connection
+    _migration_health.update(status="migrating", error=None)
+    try:
+        await database.migrate()
+        await _ensure_user_tables(database)
+    except Exception as exc:
+        _migration_health.update(status="migration_required", error=str(exc))
+        raise
+    _migration_health.update(
+        status="ready", current_version=database.current_version(), error=None
+    )
+    return database
+
+
+def migration_health() -> dict[str, Any]:
+    """Return a copy of the process migration state for health consumers."""
+    return dict(_migration_health)
+
+
+async def get_db() -> Any:
+    if _db_connection is None:
+        await init_db()
+    return _db_connection
+
+
+async def close_db() -> None:
+    """Close the database connection if one is open.
+
+    aiosqlite runs each connection on a dedicated non-daemon thread; an
+    unclosed connection would keep the interpreter alive at shutdown.
+    No-op when no connection is open (keeps startup lazy).
+    """
+    global _db_connection, _database
+    if _db_connection is not None:
+        try:
+            # Close via the adapter so its internal ``_conn`` is also
+            # invalidated; the raw aiosqlite connection is the same object.
+            if _database is not None:
+                await _database.close()
+            else:
+                await _db_connection.close()
+        finally:
+            _db_connection = None
+            _database = None
+    _migration_health.update(status="unknown", current_version=None, error=None)
+
+
+def _get_table_name(cls_or_obj: Any) -> str:
+    cls = cls_or_obj if isinstance(cls_or_obj, type) else cls_or_obj.__class__
+    if hasattr(cls, "__tablename__") and cls.__tablename__:
+        return str(cls.__tablename__)
+    return cls.__name__.lower()
+
+
+def on_insert(
+    model_cls: type,
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+        table = _get_table_name(model_cls)
+        if table not in _triggers:
+            _triggers[table] = {"insert": [], "update": []}
+        _triggers[table]["insert"].append(func)
+        return func
+
+    return decorator
+
+
+def on_update(
+    model_cls: type,
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+        table = _get_table_name(model_cls)
+        if table not in _triggers:
+            _triggers[table] = {"insert": [], "update": []}
+        _triggers[table]["update"].append(func)
+        return func
+
+    return decorator
+
+
+def rls_policy(
+    model_cls: type,
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+        table = _get_table_name(model_cls)
+        _rls_policies[table] = func
+        return func
+
+    return decorator
+
+
+_models: list[type] = []
+
+
+def registered_models() -> tuple[type, ...]:
+    """Public, read-only view of models known to the data runtime."""
+    return tuple(_models)
+
+
+def model_table_name(model: type) -> str:
+    """Public semantic table name used by Runtime inspection."""
+    return _get_table_name(model)
+
+
+#: Cascade registry: parent_table → [(child_table, fk_column)] (Sprint: ORM FK).
+_cascades: dict[str, list[tuple[str, str]]] = {}
+
+
+class _FKRef:
+    """Internal marker produced by ``FK[TargetModel]`` field annotations."""
+
+    __slots__ = ("target",)
+
+    def __init__(self, target: type) -> None:
+        self.target = target
+
+    def __repr__(self) -> str:  # pragma: no cover — debugging aid
+        return f"FK[{self.target.__name__}]"
+
+
+class FK:
+    """Field annotation declaring a foreign key with cascade delete.
+
+    Annotate a column as ``FK[ParentModel]`` (stored as ``INTEGER``); when a
+    parent row is deleted via the model layer, all child rows referencing it
+    are removed first::
+
+        class Message(Model):
+            conversation_id: FK[Conversation]
+            role: str
+            content: str
+
+        await conversation.delete()  # also deletes its messages
+    """
+
+    def __class_getitem__(cls, target: type) -> _FKRef:
+        if not isinstance(target, type):
+            raise TypeError("FK[...] requires a model class")
+        return _FKRef(target)
+
+
+class ModelMeta(type):
+    def __init__(
+        cls, name: str, bases: tuple[type, ...], attrs: dict[str, Any]
+    ) -> None:
+        super().__init__(name, bases, attrs)
+        # BaseModel and the Model facade are abstract; concrete models
+        # (subclasses of either) register themselves for table creation.
+        if name not in ("BaseModel", "Model"):
+            _models.append(cls)
+            _register_foreign_keys(cls)
+
+
+def _register_foreign_keys(cls: type) -> None:
+    """Record ``FK[Parent]`` annotations in the cascade registry.
+
+    Child column ``parent_ref: FK[Parent]`` (any column name) registers
+    (parent_table, child_table, child_column) so parent deletions cascade.
+    """
+    try:
+        hints = get_type_hints(cls)
+    except _DATA_FALLBACK_ERRORS as error:
+        _report_data_fallback("foreign_key_type_hints", error)
+        return
+    for col_name, col_type in hints.items():
+        ref = getattr(col_type, "__origin__", None)
+        if isinstance(ref, _FKRef) or isinstance(col_type, _FKRef):
+            target = cast(Any, col_type if isinstance(col_type, _FKRef) else ref).target
+            parent_table = _get_table_name(target)
+            child_table = _get_table_name(cls)
+            _cascades.setdefault(parent_table, []).append((child_table, col_name))
+
+
+class BaseModel(metaclass=ModelMeta):
+    id: int
+    __tablename__: str | None = None
+
+    @classmethod
+    async def _create_table(cls) -> None:
+        db = await get_db()
+        table_name = _get_table_name(cls)
+        hints = get_type_hints(cls)
+        identity = _backend_uses_identity()
+        columns = []
+        for col_name, col_type in hints.items():
+            if col_name.startswith("__"):
+                continue
+            # ``FK[Parent]`` annotations resolve to the internal _FKRef marker
+            # (or a bare _FKRef) — stored as plain INTEGER columns (Sprint: ORM FK).
+            if isinstance(col_type, _FKRef) or isinstance(
+                getattr(col_type, "__origin__", None), _FKRef
+            ):
+                columns.append(f"{col_name} INTEGER")
+                continue
+            if col_name == "id":
+                if identity:
+                    columns.append(
+                        "id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY"
+                    )
+                else:
+                    columns.append("id INTEGER PRIMARY KEY AUTOINCREMENT")
+            elif col_type is int:
+                columns.append(f"{col_name} INTEGER")
+            elif col_type is str:
+                columns.append(f"{col_name} TEXT")
+            elif col_type is bool:
+                columns.append(f"{col_name} BOOLEAN")
+            else:
+                columns.append(f"{col_name} TEXT")
+
+        query = f"CREATE TABLE IF NOT EXISTS {table_name} ({', '.join(columns)})"
+        await db.execute(query)
+        await db.commit()
+
+    @classmethod
+    async def find_all(
+        cls, user_context: dict[str, Any] | None = None
+    ) -> list[BaseModel]:
+        from grumo.observability import telemetry_store
+
+        telemetry_store.record_db_query()
+        db = await get_db()
+        table_name = _get_table_name(cls)
+        query = f"SELECT * FROM {table_name}"
+        params: list[Any] = []
+
+        if user_context is None:
+            try:
+                from grumo.auth import current_user
+
+                u = current_user.get()
+                if u and u.is_authenticated:
+                    user_context = u.to_dict()
+            except _DATA_FALLBACK_ERRORS as error:
+                _report_data_fallback("current_user_context", error)
+
+        if table_name in _rls_policies and user_context:
+            policy = _rls_policies[table_name]
+            where_clause = policy(user_context)
+            if where_clause:
+                query += f" WHERE {where_clause}"
+
+        async with db.execute(query, params) as cursor:
+            rows = await cursor.fetchall()
+            results = []
+            hints = get_type_hints(cls)
+            for row in rows:
+                obj = cls()
+                for k in row.keys():
+                    val = row[k]
+                    if k in hints and hints[k] is bool:
+                        val = bool(val)
+                    setattr(obj, k, val)
+                results.append(obj)
+            return results
+
+    async def insert(self) -> BaseModel:
+        from grumo.observability import telemetry_store
+
+        telemetry_store.record_db_query()
+        db = await get_db()
+        table_name = _get_table_name(self)
+
+        hints = get_type_hints(self.__class__)
+        cols = []
+        vals = []
+        placeholders = []
+
+        for col_name in hints.keys():
+            if col_name.startswith("__"):
+                continue
+            if col_name == "id" and not hasattr(self, "id"):
+                continue
+            if hasattr(self, col_name):
+                cols.append(col_name)
+                vals.append(getattr(self, col_name))
+                placeholders.append("?")
+
+        query = f"INSERT INTO {table_name} ({', '.join(cols)}) VALUES ({', '.join(placeholders)})"
+
+        if _backend_uses_identity():
+            # PostgreSQL has no ``lastrowid``; ask for the generated id.
+            query += " RETURNING id"
+            cursor = await db.execute(query, vals)
+            row = await cursor.fetchone()
+            self.id = row[0] if isinstance(row, (tuple, list)) else row["id"]
+        else:
+            cursor = await db.execute(query, vals)
+            await db.commit()
+            self.id = cursor.lastrowid
+
+        # Trigger hooks
+        if table_name in _triggers and _triggers[table_name]["insert"]:
+            for hook in _triggers[table_name]["insert"]:
+                if asyncio.iscoroutinefunction(hook):
+                    asyncio.create_task(hook(self))
+                else:
+                    hook(self)
+        return self
+
+    async def update(self) -> BaseModel:
+        from grumo.observability import telemetry_store
+
+        telemetry_store.record_db_query()
+        db = await get_db()
+        table_name = _get_table_name(self)
+
+        hints = get_type_hints(self.__class__)
+        cols = []
+        vals = []
+
+        for col_name in hints.keys():
+            if col_name.startswith("__"):
+                continue
+            if col_name != "id" and hasattr(self, col_name):
+                cols.append(f"{col_name} = ?")
+                vals.append(getattr(self, col_name))
+
+        vals.append(self.id)
+        query = f"UPDATE {table_name} SET {', '.join(cols)} WHERE id = ?"
+        await db.execute(query, vals)
+        await db.commit()
+
+        # Trigger hooks
+        if table_name in _triggers and _triggers[table_name]["update"]:
+            for hook in _triggers[table_name]["update"]:
+                if asyncio.iscoroutinefunction(hook):
+                    asyncio.create_task(hook(self))
+                else:
+                    hook(self)
+        return self

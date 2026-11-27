@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo.primitives.effect import Effect
-from voodoo.runtime.scheduling import TaskError, task
-from voodoo.runtime.scheduling import workers as worker_queue
+from grumo.primitives.effect import Effect
+from grumo.runtime.scheduling import TaskError, task
+from grumo.runtime.scheduling import workers as worker_queue
 
 
 @pytest.mark.asyncio
@@ -134,11 +134,13 @@ async def test_enqueue_compensation_rejects_missing_declaration() -> None:
 
 
 @pytest.mark.asyncio
-async def test_engine_failure_policy_enqueues_successful_effect_compensation(monkeypatch):
-    from voodoo.primitives.intent import Intent
-    from voodoo.runtime.context import ExecutionContext
-    from voodoo.runtime.execution import Execution
-    from voodoo.runtime.execution.engine import ExecutionEngine
+async def test_engine_failure_policy_enqueues_successful_effect_compensation(
+    monkeypatch,
+):
+    from grumo.primitives.intent import Intent
+    from grumo.runtime.context import ExecutionContext
+    from grumo.runtime.execution import Execution
+    from grumo.runtime.execution.engine import ExecutionEngine
 
     queued: list[tuple[str, str]] = []
 
@@ -148,14 +150,16 @@ async def test_engine_failure_policy_enqueues_successful_effect_compensation(mon
 
     monkeypatch.setattr(worker_queue, "enqueue_compensation", fake_enqueue)
     engine = ExecutionEngine()
-    execution = Execution(id="failed-run", trace_id="trace", intent=Intent(name="run"), actor="test")
+    execution = Execution(
+        id="failed-run", trace_id="trace", intent=Intent(name="run"), actor="test"
+    )
     effect = Effect(name="charge", reversible=True)
     effect.configure_compensation("refund", trigger="on_failure")
     effect.mark_succeeded()
     execution.add_effect(effect)
     context = ExecutionContext(trace_id="trace", actor="test")
 
-    from voodoo.runtime.errors import ExecutionError
+    from grumo.runtime.errors import ExecutionError
 
     with pytest.raises(ExecutionError, match="boom"):
         await engine._handle_failure(execution, context, RuntimeError("boom"))

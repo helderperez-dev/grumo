@@ -3,7 +3,7 @@
 > **Status:** Fully durable (Sprint 18, v2.1.0). Waiting approvals survive
 > process death and resume on any worker via registered participants.
 
-Voodoo treats humans as **compute participants**, not afterthoughts. The
+Grumo treats humans as **compute participants**, not afterthoughts. The
 runtime provides first-class primitives for requesting human input,
 approval, and decisions — all integrated with the execution engine and
 durability model.
@@ -15,7 +15,7 @@ durability model.
 Pause an execution and request a human response:
 
 ```python
-from voodoo.runtime import ask_human
+from grumo.runtime import ask_human
 
 result = await ask_human(
     "Should we proceed with deploying to production?",
@@ -31,7 +31,7 @@ responds, the execution resumes with the answer.
 For binary approve/deny flows, use the `Approval` system:
 
 ```python
-from voodoo.runtime import Approval, ApprovalStatus
+from grumo.runtime import Approval, ApprovalStatus
 
 # Within an execution, request approval
 approval = await engine.request_approval(
@@ -49,7 +49,7 @@ approval = await engine.request_approval(
 Mark a task as requiring human execution:
 
 ```python
-from voodoo import task
+from grumo import task
 
 
 @task(human=True)
@@ -62,21 +62,21 @@ async def review_pull_request(pr_id: int):
 
 ```bash
 # List approvals (pending and decided)
-voodoo approvals list
+grumo approvals list
 
 # Only pending
-voodoo approvals list --pending
+grumo approvals list --pending
 
 # Inspect one in detail
-voodoo approvals show <execution-id>
+grumo approvals show <execution-id>
 
 # Approve or deny — resumes the execution
-voodoo approvals approve <execution-id> --by ops --note "ship it"
-voodoo approvals deny <execution-id> --by admin --reason "too risky"
+grumo approvals approve <execution-id> --by ops --note "ship it"
+grumo approvals deny <execution-id> --by admin --reason "too risky"
 
 # Import the app first so participants re-register and the
 # approved execution actually re-runs
-voodoo approvals approve <execution-id> --app main:app
+grumo approvals approve <execution-id> --app main:app
 ```
 
 ## Durability
@@ -86,7 +86,7 @@ worker process dies while waiting for a human decision:
 
 1. The execution is saved as `WAITING_FOR_HUMAN` with a journal event
    `approval.requested`
-2. On restart, `voodoo recover` restores it and rehydrates the approval
+2. On restart, `grumo recover` restores it and rehydrates the approval
 3. The human can approve/deny via CLI on any machine
 4. The execution resumes **on any worker** through its registered
    participant — the original process does not need to be alive
@@ -98,8 +98,8 @@ What makes a resume possible after a restart: the approval persists a
 the engine:
 
 ```python
-from voodoo.primitives import Intent
-from voodoo.runtime import engine
+from grumo.primitives import Intent
+from grumo.runtime import engine
 
 
 async def deploy_compute(ctx):
@@ -117,8 +117,8 @@ await engine.execute(Intent(name="deploy"), deploy_compute)
 After a crash, on any machine:
 
 ```bash
-voodoo approvals list --pending
-voodoo approvals approve <execution-id> --by ops --app main:app
+grumo approvals list --pending
+grumo approvals approve <execution-id> --by ops --app main:app
 # → imports main.py (re-registers "deploy_wf"), resumes, completes
 ```
 
@@ -130,8 +130,8 @@ Decisions are journaled: `approval.requested` on wait,
 Agents can request human input as part of their execution loop:
 
 ```python
-from voodoo import Agent, tool
-from voodoo.runtime import ask_human
+from grumo import Agent, tool
+from grumo.runtime import ask_human
 
 
 @tool

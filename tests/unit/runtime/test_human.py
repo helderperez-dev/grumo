@@ -10,11 +10,11 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo.primitives.intent import Intent
-from voodoo.runtime import ExecutionEngine
-from voodoo.runtime.errors import ApprovalRequired, WorkflowFailure
-from voodoo.runtime.execution import ExecutionStatus
-from voodoo.runtime.human import ApprovalStatus, ask_human
+from grumo.primitives.intent import Intent
+from grumo.runtime import ExecutionEngine
+from grumo.runtime.errors import ApprovalRequired, WorkflowFailure
+from grumo.runtime.execution import ExecutionStatus
+from grumo.runtime.human import ApprovalStatus, ask_human
 
 
 class TestAskHuman:
@@ -73,7 +73,7 @@ class TestAskHuman:
 
 class TestTaskHuman:
     async def test_human_task_waits_then_completes(self):
-        from voodoo.runtime import Task, TaskStatus
+        from grumo.runtime import Task, TaskStatus
 
         engine = ExecutionEngine()
         task = Task(
@@ -99,7 +99,7 @@ class TestWorkflowHuman:
         """A human task inside a sequential workflow enters waiting; the
         workflow stops there (resume orchestration is pending) and the
         waiting execution can be approved."""
-        from voodoo.runtime import Task, Workflow, WorkflowStrategy
+        from grumo.runtime import Task, Workflow, WorkflowStrategy
 
         engine = ExecutionEngine()
         recorded: list[str] = []

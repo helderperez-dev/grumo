@@ -1,0 +1,125 @@
+"""Grumo Edge — external device boundary for the Grumo Runtime (Sprint 23).
+
+Physical and distributed devices (ESP32, Raspberry Pi, robots, industrial
+controllers) participate as first-class Grumo Entities through the
+versioned ``grumo-edge/v1`` protocol over HTTP and MQTT transports.
+
+There is **no** DeviceExecutionEngine: device-triggered work enters the
+standard ExecutionEngine, device events use the standard event system,
+and device state uses standard State semantics.
+"""
+
+from __future__ import annotations
+
+from grumo.edge.auth import (
+    authenticate_device,
+    consume_enrollment,
+    create_enrollment,
+    generate_device_credential,
+    hash_device_credential,
+    rotate_device_credential,
+)
+from grumo.edge.errors import (
+    AuthenticationFailedError,
+    AuthorizationFailedError,
+    DeliveryFailedError,
+    DeviceIdMismatchError,
+    DeviceNotFoundError,
+    DeviceRevokedError,
+    DuplicateMessageError,
+    EdgeError,
+    EffectExpiredError,
+    EffectNotFoundError,
+    InvalidCapabilityError,
+    InvalidMessageError,
+    InvalidProtocolVersionError,
+    InvalidStateVersionError,
+    PayloadTooLargeError,
+    SessionInvalidError,
+    SessionRequiredError,
+    TransportError,
+    error_response,
+)
+from grumo.edge.gateway import DeviceGateway
+from grumo.edge.models import (
+    AuthenticatedDeviceContext,
+    CredentialStatus,
+    Device,
+    DeviceCredential,
+    DeviceEnrollment,
+    DeviceSession,
+    DeviceStatus,
+    EnrollmentStatus,
+    TransportKind,
+)
+from grumo.edge.protocol import (
+    PROTOCOL_NAME,
+    PROTOCOL_VERSION,
+    EdgeMessage,
+    EdgeMessageType,
+    EffectAckStatus,
+    decode_message,
+    encode_message,
+    make_message,
+)
+from grumo.edge.store import (
+    DeviceStoreProtocol,
+    EffectDelivery,
+    InMemoryDeviceStore,
+    SQLiteDeviceStore,
+)
+from grumo.edge.store_grumo import GrumoStoreDeviceStore
+from grumo.edge.world import EdgeWorldBridge, WorldAwareDeviceGateway
+
+__all__ = [
+    "PROTOCOL_NAME",
+    "PROTOCOL_VERSION",
+    "Device",
+    "DeviceStatus",
+    "DeviceCredential",
+    "CredentialStatus",
+    "DeviceEnrollment",
+    "EnrollmentStatus",
+    "DeviceSession",
+    "AuthenticatedDeviceContext",
+    "TransportKind",
+    "EdgeMessage",
+    "EdgeMessageType",
+    "EffectAckStatus",
+    "make_message",
+    "encode_message",
+    "decode_message",
+    "DeviceStoreProtocol",
+    "InMemoryDeviceStore",
+    "SQLiteDeviceStore",
+    "GrumoStoreDeviceStore",
+    "EffectDelivery",
+    "authenticate_device",
+    "consume_enrollment",
+    "create_enrollment",
+    "generate_device_credential",
+    "hash_device_credential",
+    "rotate_device_credential",
+    "DeviceGateway",
+    "WorldAwareDeviceGateway",
+    "EdgeWorldBridge",
+    "EdgeError",
+    "error_response",
+    "AuthenticationFailedError",
+    "AuthorizationFailedError",
+    "DeliveryFailedError",
+    "DeviceNotFoundError",
+    "DeviceIdMismatchError",
+    "DeviceRevokedError",
+    "DuplicateMessageError",
+    "EffectExpiredError",
+    "EffectNotFoundError",
+    "InvalidCapabilityError",
+    "InvalidMessageError",
+    "InvalidProtocolVersionError",
+    "InvalidStateVersionError",
+    "PayloadTooLargeError",
+    "SessionInvalidError",
+    "SessionRequiredError",
+    "TransportError",
+]

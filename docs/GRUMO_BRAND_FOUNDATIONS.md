@@ -6,7 +6,7 @@ passed production asset review.
 ## Brand position
 
 **Grumo** is the name of the programmable runtime and application ecosystem
-previously developed as Voodoo. It builds and orchestrates applications,
+previously developed as Grumo. It builds and orchestrates applications,
 APIs, reactive interfaces, durable jobs and workflows, AI agents, distributed
 nodes and connected devices. Its embedded Store is a first-class low-dependency
 foundation; local-first is an option, not the whole product.

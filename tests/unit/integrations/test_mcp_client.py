@@ -5,7 +5,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from voodoo.integrations.mcp.client import MCPClient
+from grumo.integrations.mcp.client import MCPClient
 
 
 def test_mcp_client_rejects_unsafe_endpoint_configuration() -> None:
@@ -28,7 +28,6 @@ async def test_mcp_client_bounds_request_and_response(monkeypatch) -> None:
 
         def raise_for_status(self) -> None:
             calls["status_checked"] = True
-
 
         async def aiter_bytes(self):
             yield self.content
@@ -58,7 +57,7 @@ async def test_mcp_client_bounds_request_and_response(monkeypatch) -> None:
 
     monkeypatch.setitem(sys.modules, "httpx", SimpleNamespace(AsyncClient=AsyncClient))
     client = MCPClient("https://example.test/mcp", timeout=4, max_response_bytes=128)
-    result = await client.call_tool("search", {"query": "voodoo"})
+    result = await client.call_tool("search", {"query": "grumo"})
 
     assert result == {"result": {"ok": True}}
     assert calls["client_kwargs"] == {"timeout": 4.0, "follow_redirects": False}

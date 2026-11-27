@@ -6,28 +6,28 @@ import json
 
 import pytest
 
-from voodoo.primitives.capability import Capability
-from voodoo.primitives.intent import Intent
-from voodoo.runtime.distributed.fabric import (
+from grumo.primitives.capability import Capability
+from grumo.primitives.intent import Intent
+from grumo.runtime.distributed.fabric import (
     FabricWork,
     PlacementRequirement,
     RuntimeFabric,
 )
-from voodoo.runtime.distributed.membership import (
+from grumo.runtime.distributed.membership import (
+    GrumoStoreMembershipStore,
     NodeAdvertisement,
-    VoodooStoreMembershipStore,
 )
-from voodoo.runtime.execution import ExecutionStatus
-from voodoo.runtime.execution.engine import ExecutionEngine
-from voodoo.runtime.identity import (
+from grumo.runtime.execution import ExecutionStatus
+from grumo.runtime.execution.engine import ExecutionEngine
+from grumo.runtime.identity import (
     AuthenticationEvidence,
     Identity,
     IdentityKind,
     Principal,
 )
-from voodoo.runtime.store import RuntimeStore, StoreConfig, bind_active_runtime_store
-from voodoo.runtime.transaction import OutboxMessage, dispatch_events, transaction
-from voodoo.storage.events.store import VoodooStoreEventBus
+from grumo.runtime.store import RuntimeStore, StoreConfig, bind_active_runtime_store
+from grumo.runtime.transaction import OutboxMessage, dispatch_events, transaction
+from grumo.storage.events.store import GrumoStoreEventBus
 
 
 def node_principal(node_id: str) -> Principal:
@@ -38,7 +38,7 @@ def node_principal(node_id: str) -> Principal:
 
 
 def test_single_node_zero_external_infrastructure_survives_restart(tmp_path) -> None:
-    path = tmp_path / "application.vstore"
+    path = tmp_path / "application.grumo"
     runtime = RuntimeStore(StoreConfig(path=path))
     runtime.start()
     bind_active_runtime_store(runtime)
@@ -56,7 +56,7 @@ def test_single_node_zero_external_infrastructure_survives_restart(tmp_path) -> 
         )
 
     received = []
-    bus = VoodooStoreEventBus()
+    bus = GrumoStoreEventBus()
     bus.subscribe("order.created", lambda event: received.append(event["payload"]))
     assert dispatch_events(event_bus=bus, runtime_store=runtime) == 1
     assert received == [{"order_id": "42"}]
@@ -82,7 +82,7 @@ async def test_same_application_operation_routes_across_nodes_without_topology_l
     runtime.start()
     bind_active_runtime_store(runtime)
     try:
-        membership = VoodooStoreMembershipStore(runtime)
+        membership = GrumoStoreMembershipStore(runtime)
         membership.join(
             node_principal("node-a"),
             NodeAdvertisement(capabilities=("vision",), resources={"load": 0.9}),
@@ -145,7 +145,7 @@ def test_external_advertisement_does_not_bypass_runtime_authority(tmp_path) -> N
     runtime.start()
     bind_active_runtime_store(runtime)
     try:
-        membership = VoodooStoreMembershipStore(runtime)
+        membership = GrumoStoreMembershipStore(runtime)
         membership.join(
             node_principal("node-payments"),
             NodeAdvertisement(capabilities=("payments.refund",)),

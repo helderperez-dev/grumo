@@ -2,8 +2,8 @@
 
 ## What it is
 
-`Model` is Store-first. In a fresh Voodoo application, persistent model records
-are stored in `.voodoo/application.vstore` through Voodoo Store Collections.
+`Model` is Store-first. In a fresh Grumo application, persistent model records
+are stored in `.grumo/application.grumo` through Grumo Store Collections.
 SQLite and PostgreSQL remain explicit SQL adapters; they are not the default
 persistence path.
 
@@ -11,19 +11,19 @@ persistence path.
 Model
   |
   v
-Voodoo Runtime
+Grumo Runtime
   |
   v
-Voodoo Store Collections
+Grumo Store Collections
   |
   v
-.voodoo/application.vstore
+.grumo/application.grumo
 ```
 
 ## Minimal example
 
 ```python
-from voodoo import Model
+from grumo import Model
 
 
 class Lead(Model):
@@ -61,7 +61,7 @@ layer while richer native indexes/query capabilities evolve.
 Lifecycle hooks remain available on the Store path:
 
 ```python
-from voodoo.data import on_insert
+from grumo.data import on_insert
 
 
 @on_insert(Lead)
@@ -75,7 +75,7 @@ Store-backed inserts/updates fire the same model hook registry.
 ## Row-Level Security caveat
 
 The legacy `rls_policy()` API returns SQL predicates. SQL predicate strings do
-not map safely onto Voodoo Store Collections, so they are **not silently
+not map safely onto Grumo Store Collections, so they are **not silently
 interpreted** on the Store backend.
 
 If a model currently depends on SQL-string RLS, select an explicit SQL adapter
@@ -84,7 +84,7 @@ until the policy-native Model authorization contract lands:
 ```toml
 [database]
 provider = "postgres"
-url = "postgresql://user:pass@localhost:5432/voodoo"
+url = "postgresql://user:pass@localhost:5432/grumo"
 ```
 
 Attempting to use a SQL-string RLS policy through the Store backend fails
@@ -103,19 +103,19 @@ the SQL compatibility path.
 SQLite is still available when explicitly requested:
 
 ```bash
-pip install "voodoo-framework[sqlite]"
+pip install "grumo-framework[sqlite]"
 ```
 
 ```toml
 [database]
 provider = "sqlite"
-path = ".voodoo/state/data.db"
+path = ".grumo/state/data.db"
 ```
 
 Or initialize the compatibility API directly:
 
 ```python
-from voodoo.data import get_db, init_db
+from grumo.data import get_db, init_db
 
 await init_db("data.db")
 db = await get_db()
@@ -128,7 +128,7 @@ This is an adapter choice, not the fresh-app default.
 Install the optional extra:
 
 ```bash
-pip install "voodoo-framework[postgres]"
+pip install "grumo-framework[postgres]"
 ```
 
 Configure only the database domain:
@@ -136,10 +136,10 @@ Configure only the database domain:
 ```toml
 [database]
 provider = "postgres"
-url = "postgresql://user:pass@localhost:5432/voodoo"
+url = "postgresql://user:pass@localhost:5432/grumo"
 ```
 
-The rest of the Runtime can continue using Voodoo Store unless separately
+The rest of the Runtime can continue using Grumo Store unless separately
 overridden.
 
 ## Store transaction boundary
@@ -149,7 +149,7 @@ message, use the Runtime transaction boundary rather than opening a second
 storage system:
 
 ```python
-from voodoo.runtime import OutboxMessage, transaction
+from grumo.runtime import OutboxMessage, transaction
 
 with transaction() as tx:
     tx.upsert_record(b"orders", b"42", b'{"status":"created"}')
@@ -162,7 +162,7 @@ with transaction() as tx:
     )
 ```
 
-The supported atomicity is local to one Runtime Store commit. Voodoo does not
+The supported atomicity is local to one Runtime Store commit. Grumo does not
 claim global transactions across external systems or nodes.
 
 ## Memory is a separate abstraction
@@ -172,7 +172,7 @@ claim global transactions across external systems or nodes.
 it does not redefine the default `Model` backend.
 
 ```python
-from voodoo.memory import MemoryEntry, MemoryLayer, SQLiteMemoryStore
+from grumo.memory import MemoryEntry, MemoryLayer, SQLiteMemoryStore
 
 memory = SQLiteMemoryStore("memory.db")
 entry = MemoryEntry(
@@ -187,7 +187,7 @@ For ephemeral tests, use `InMemoryMemoryStore`.
 
 ## Current boundaries
 
-- Voodoo Store is the default `Model` persistence backend.
+- Grumo Store is the default `Model` persistence backend.
 - SQLite/PostgreSQL are explicit adapters.
 - Store-backed CRUD, queries and lifecycle hooks are supported.
 - Legacy SQL-string RLS requires an explicit SQL adapter today.

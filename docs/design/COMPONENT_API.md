@@ -1,11 +1,11 @@
-# Voodoo Component API
+# Grumo Component API
 
 > Status: Sprint 25 foundation
-> Principle: **Python expresses intent; Voodoo owns browser mechanics.**
+> Principle: **Python expresses intent; Grumo owns browser mechanics.**
 
 ## The quality bar
 
-A Voodoo component is not a thin HTML wrapper. It is a product-level abstraction with coherent behavior, accessibility, styling, reactivity and developer ergonomics.
+A Grumo component is not a thin HTML wrapper. It is a product-level abstraction with coherent behavior, accessibility, styling, reactivity and developer ergonomics.
 
 The common path should read like application intent:
 
@@ -37,7 +37,7 @@ Button(
 6. Components compose; they do not require a parallel frontend language.
 7. Escape hatches remain available, but they are not the documented happy path.
 8. One concept should have one predictable prop name across components.
-9. The native Voodoo design system is the reference implementation.
+9. The native Grumo design system is the reference implementation.
 10. Application code should remain understandable without knowing the browser transport.
 
 ## Canonical vocabulary
@@ -96,7 +96,7 @@ Form(
 )
 ```
 
-`submit="Enroll"` is intentionally semantic. Voodoo owns the browser-specific submit button type and event transport. Applications that need a custom action layout can still compose an explicit `Button(type="submit")` as an escape hatch.
+`submit="Enroll"` is intentionally semantic. Grumo owns the browser-specific submit button type and event transport. Applications that need a custom action layout can still compose an explicit `Button(type="submit")` as an escape hatch.
 
 ### Switch
 
@@ -157,7 +157,7 @@ A screenshot is not the component.
 
 ## Catalog roadmap
 
-Voodoo should grow by interface capability, not by matching another library's
+Grumo should grow by interface capability, not by matching another library's
 component count. Each phase must be complete across native CSS, Tailwind,
 keyboard behavior, accessibility, light/dark themes, and tests.
 

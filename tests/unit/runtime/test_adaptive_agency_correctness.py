@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-from voodoo.primitives.capability import Capability
-from voodoo.primitives.constraint import Constraint
-from voodoo.primitives.intent import Intent
-from voodoo.runtime.agency import AdaptiveSupervisor, SupervisorConfig
-from voodoo.runtime.errors import ExecutionError
-from voodoo.runtime.execution.engine import ExecutionEngine
-from voodoo.runtime.planner import ComputeParticipant, Planner
+from grumo.primitives.capability import Capability
+from grumo.primitives.constraint import Constraint
+from grumo.primitives.intent import Intent
+from grumo.runtime.agency import AdaptiveSupervisor, SupervisorConfig
+from grumo.runtime.errors import ExecutionError
+from grumo.runtime.execution.engine import ExecutionEngine
+from grumo.runtime.planner import ComputeParticipant, Planner
 
 
 def _agent_run(output: str):
@@ -213,7 +213,7 @@ async def test_previous_step_outputs_reach_following_agent():
 
 
 def test_decision_records_are_structured():
-    from voodoo.runtime.agency import AdaptiveDecisionRecord, SupervisorDecision
+    from grumo.runtime.agency import AdaptiveDecisionRecord, SupervisorDecision
 
     record = AdaptiveDecisionRecord(
         decision=SupervisorDecision.RETRY,

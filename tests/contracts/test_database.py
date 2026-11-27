@@ -1,6 +1,6 @@
 """Database adapter contract tests (spec §29).
 
-``DatabaseContractTests`` is the portability suite every ``VoodooDatabase``
+``DatabaseContractTests`` is the portability suite every ``GrumoDatabase``
 implementation must pass unchanged — SQLite today, PostgreSQL in a later
 sprint. Provider-specific behavior (runner internals, constructor
 validation, pragmas) gets its own tests on top.
@@ -8,8 +8,8 @@ validation, pragmas) gets its own tests on top.
 
 import pytest
 
-from voodoo.storage.database import SQLiteDatabase
-from voodoo.storage.database.interfaces import Migration
+from grumo.storage.database import SQLiteDatabase
+from grumo.storage.database.interfaces import Migration
 
 CONTRACT_MIGRATION = Migration(
     version=1,

@@ -26,20 +26,20 @@ Choose the relevant Protocol and implement it:
 
 | Protocol | Location | Methods |
 |---|---|---|
-| `VoodooDatabase` | `storage/database/base.py` | `execute`, `fetchone`, `fetchall`, `transaction` |
-| `VoodooQueue` | `storage/queue/base.py` | `enqueue`, `claim`, `complete`, `retry`, `release` |
-| `VoodooEventBus` | `storage/events/base.py` | `publish`, `subscribe`, `replay` |
-| `VoodooObjectStore` | `storage/objects/base.py` | `upload`, `download`, `delete`, `presign` |
-| `VoodooCache` | `storage/cache/base.py` | `get`, `set`, `delete`, `exists`, `expire` |
+| `GrumoDatabase` | `storage/database/base.py` | `execute`, `fetchone`, `fetchall`, `transaction` |
+| `GrumoQueue` | `storage/queue/base.py` | `enqueue`, `claim`, `complete`, `retry`, `release` |
+| `GrumoEventBus` | `storage/events/base.py` | `publish`, `subscribe`, `replay` |
+| `GrumoObjectStore` | `storage/objects/base.py` | `upload`, `download`, `delete`, `presign` |
+| `GrumoCache` | `storage/cache/base.py` | `get`, `set`, `delete`, `exists`, `expire` |
 
-Create the implementation in `src/voodoo/storage/<category>/<provider>.py`:
+Create the implementation in `src/grumo/storage/<category>/<provider>.py`:
 
 ```python
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from voodoo.storage.database.base import VoodooDatabase, DatabaseCapabilities
+from grumo.storage.database.base import GrumoDatabase, DatabaseCapabilities
 
 __all__ = ["MyProviderDatabase", "MyProviderDatabaseCapabilities"]
 
@@ -52,7 +52,7 @@ class MyProviderDatabaseCapabilities(DatabaseCapabilities):
     # ... provider-specific flags
 
 
-class MyProviderDatabase(VoodooDatabase):
+class MyProviderDatabase(GrumoDatabase):
     """MyProvider database adapter."""
 
     def __init__(self, config: dict[str, Any]) -> None:
@@ -84,7 +84,7 @@ class MyProviderDatabaseCapabilities(DatabaseCapabilities):
 
 ### Step 3: Register the Factory
 
-In `src/voodoo/adapters/registry.py` → `_register_defaults()`:
+In `src/grumo/adapters/registry.py` → `_register_defaults()`:
 
 ```python
 def _register_defaults() -> None:
@@ -92,7 +92,7 @@ def _register_defaults() -> None:
     registry.register_database(
         "myprovider",
         lambda cfg: __import__(
-            "voodoo.storage.database.myprovider",
+            "grumo.storage.database.myprovider",
             fromlist=["MyProviderDatabase"],
         ).MyProviderDatabase(cfg),
     )
@@ -116,15 +116,15 @@ from .test_database import DatabaseContractTests
 
 
 @pytest.mark.skipif(
-    not os.environ.get("VOODOO_TEST_MYSQL_URL"),
-    reason="VOODOO_TEST_MYSQL_URL not set",
+    not os.environ.get("GRUMO_TEST_MYSQL_URL"),
+    reason="GRUMO_TEST_MYSQL_URL not set",
 )
 class TestMyProviderDatabase(DatabaseContractTests):
     @pytest.fixture
     def db(self):
-        from voodoo.storage.database.myprovider import MyProviderDatabase
+        from grumo.storage.database.myprovider import MyProviderDatabase
 
-        cfg = {"url": os.environ.get("VOODOO_TEST_MYSQL_URL")}
+        cfg = {"url": os.environ.get("GRUMO_TEST_MYSQL_URL")}
         db = MyProviderDatabase(cfg)
         yield db
         # cleanup
@@ -140,8 +140,8 @@ myprovider_sdk = pytest.importorskip("myprovider_sdk")
 
 
 @pytest.mark.skipif(
-    not os.environ.get("VOODOO_TEST_MYSQL_URL"),
-    reason="VOODOO_TEST_MYSQL_URL not set",
+    not os.environ.get("GRUMO_TEST_MYSQL_URL"),
+    reason="GRUMO_TEST_MYSQL_URL not set",
 )
 class TestMyProviderDatabase(DatabaseContractTests): ...
 ```
@@ -159,7 +159,7 @@ mysql = ["mysql-connector-python>=8.0"]
 
 ### Step 7: Update CLI Capability Matrix
 
-In `src/voodoo/cli/doctor.py`, add the new provider to the capability matrix output:
+In `src/grumo/cli/doctor.py`, add the new provider to the capability matrix output:
 
 ```python
 # In the doctor command
@@ -179,10 +179,10 @@ Run contract tests with the service running:
 
 ```bash
 # Start the service
-docker run --name voodoo-mysql ...
+docker run --name grumo-mysql ...
 
 # Run contract tests
-VOODOO_TEST_MYSQL_URL="mysql://..." uv run pytest tests/contracts/test_database_myprovider.py -v
+GRUMO_TEST_MYSQL_URL="mysql://..." uv run pytest tests/contracts/test_database_myprovider.py -v
 ```
 
 ---
@@ -191,12 +191,12 @@ VOODOO_TEST_MYSQL_URL="mysql://..." uv run pytest tests/contracts/test_database_
 
 ### Step 1: Subclass LLMProvider
 
-In `src/voodoo/ai/providers/myprovider.py`:
+In `src/grumo/ai/providers/myprovider.py`:
 
 ```python
 from __future__ import annotations
 
-from voodoo.ai.providers.base import LLMProvider, ProviderResponse, ProviderEvent
+from grumo.ai.providers.base import LLMProvider, ProviderResponse, ProviderEvent
 
 __all__ = ["MyProviderProvider"]
 
@@ -217,7 +217,7 @@ class MyProviderProvider(LLMProvider):
             except ImportError:
                 raise ConfigurationError(
                     "myprovider_sdk not installed. "
-                    "Install with: uv pip install voodoo-framework[ai]"
+                    "Install with: uv pip install grumo-framework[ai]"
                 )
             self._client = myprovider_sdk.Client()
 
@@ -232,16 +232,16 @@ class MyProviderProvider(LLMProvider):
 
 ### Step 2: Register in _PROVIDER_CLASSES
 
-In `src/voodoo/ai/providers/__init__.py`:
+In `src/grumo/ai/providers/__init__.py`:
 
 ```python
 _PROVIDER_CLASSES = {
-    "openai": "voodoo.ai.providers.openai.OpenAIProvider",
-    "anthropic": "voodoo.ai.providers.anthropic.AnthropicProvider",
-    "gemini": "voodoo.ai.providers.gemini.GeminiProvider",
-    "ollama": "voodoo.ai.providers.ollama.OllamaProvider",
-    "mock": "voodoo.ai.providers.mock.MockProvider",
-    "myprovider": "voodoo.ai.providers.myprovider.MyProviderProvider",  # NEW
+    "openai": "grumo.ai.providers.openai.OpenAIProvider",
+    "anthropic": "grumo.ai.providers.anthropic.AnthropicProvider",
+    "gemini": "grumo.ai.providers.gemini.GeminiProvider",
+    "ollama": "grumo.ai.providers.ollama.OllamaProvider",
+    "mock": "grumo.ai.providers.mock.MockProvider",
+    "myprovider": "grumo.ai.providers.myprovider.MyProviderProvider",  # NEW
 }
 ```
 

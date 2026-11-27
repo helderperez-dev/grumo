@@ -7,14 +7,14 @@ import json
 import re
 from pathlib import Path
 
-import voodoo.ui as ui
+import grumo.ui as ui
 
 ROOT = Path(__file__).parents[1]
 # Scan every Python component module, not only the initial stable-tier files.
 # CSS/theme definition modules remain the intentional token-definition layer.
 COMPONENT_SOURCES = tuple(
     path
-    for path in sorted((ROOT / "src/voodoo/ui").glob("*.py"))
+    for path in sorted((ROOT / "src/grumo/ui").glob("*.py"))
     if path.name != "__init__.py"
 )
 # These stylesheets are rule layers, not token-definition modules. Keep the
@@ -22,8 +22,8 @@ COMPONENT_SOURCES = tuple(
 # declaration block) explicit so literal values remain legal only at the
 # source-of-truth boundary.
 STYLESHEET_RULE_SOURCES = tuple(
-    ROOT / "src/voodoo/ui/styles" / name
-    for name in ("product.py", "extended.py", "voodoo_system.py")
+    ROOT / "src/grumo/ui/styles" / name
+    for name in ("product.py", "extended.py", "grumo_system.py")
 )
 RAW_COLOR = re.compile(r"(?:#[0-9a-fA-F]{3,8}|rgba?\s*\()")
 

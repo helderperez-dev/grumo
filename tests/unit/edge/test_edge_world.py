@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from voodoo.edge import WorldAwareDeviceGateway
-from voodoo.edge.models import AuthenticatedDeviceContext, Device, TransportKind
-from voodoo.edge.protocol import EdgeMessage, EdgeMessageType
-from voodoo.edge.store import InMemoryDeviceStore
-from voodoo.runtime.execution.engine import ExecutionEngine
-from voodoo.world import WorldModel
+from grumo.edge import WorldAwareDeviceGateway
+from grumo.edge.models import AuthenticatedDeviceContext, Device, TransportKind
+from grumo.edge.protocol import EdgeMessage, EdgeMessageType
+from grumo.edge.store import InMemoryDeviceStore
+from grumo.runtime.execution.engine import ExecutionEngine
+from grumo.world import WorldModel
 
 
 def _context(device: Device) -> AuthenticatedDeviceContext:

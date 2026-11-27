@@ -1,11 +1,11 @@
 """Realtime Counter — reactive state with WebSocket-driven DOM updates.
 
-Run: python main.py  or  voodoo dev
+Run: python main.py  or  grumo dev
 """
 
-from voodoo import App, page, state
-from voodoo.core import event
-from voodoo.ui import Button, Div, Heading, Text
+from grumo import App, page, state
+from grumo.core import event
+from grumo.ui import Button, Div, Heading, Text
 
 app = App()
 

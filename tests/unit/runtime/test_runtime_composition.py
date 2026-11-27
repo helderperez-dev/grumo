@@ -1,9 +1,9 @@
 import pytest
 
-from voodoo import App
-from voodoo.primitives.capability import Capability
-from voodoo.primitives.intent import Intent
-from voodoo.runtime import (
+from grumo import App
+from grumo.primitives.capability import Capability
+from grumo.primitives.intent import Intent
+from grumo.runtime import (
     ApplicationNodeKind,
     ChangeReason,
     ComputeParticipant,
@@ -18,8 +18,8 @@ from voodoo.runtime import (
     RuntimeStore,
     StoreConfig,
 )
-from voodoo.runtime.execution.engine import ComputeResult
-from voodoo.world import Entity, WorldModel
+from grumo.runtime.execution.engine import ComputeResult
+from grumo.world import Entity, WorldModel
 
 
 def test_runtime_owns_one_connected_control_plane():

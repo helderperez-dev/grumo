@@ -1,7 +1,7 @@
 """Redis cache adapter contract tests (spec §9–§10, Sprint 13).
 
 The same ``CacheContractTests`` suite used for ``MemoryCache`` runs against
-a real Redis server when ``VOODOO_TEST_REDIS_URL`` is set — CI provides one
+a real Redis server when ``GRUMO_TEST_REDIS_URL`` is set — CI provides one
 via a service container. Locally this module is skipped when no server is
 available, so the default ``pytest`` run stays green without redis-py or a
 running server.
@@ -17,11 +17,11 @@ from tests.contracts.test_cache import CacheContractTests
 redis = pytest.importorskip("redis")
 
 pytestmark = pytest.mark.skipif(
-    not os.environ.get("VOODOO_TEST_REDIS_URL"),
-    reason="VOODOO_TEST_REDIS_URL not set (no Redis server available)",
+    not os.environ.get("GRUMO_TEST_REDIS_URL"),
+    reason="GRUMO_TEST_REDIS_URL not set (no Redis server available)",
 )
 
-URL = os.environ.get("VOODOO_TEST_REDIS_URL", "redis://localhost:6379/0")
+URL = os.environ.get("GRUMO_TEST_REDIS_URL", "redis://localhost:6379/0")
 
 
 @pytest.fixture(autouse=True)
@@ -35,7 +35,7 @@ def _flush():
 
 class TestRedisCacheContract(CacheContractTests):
     def make_cache(self):
-        from voodoo.storage.cache import RedisCache
+        from grumo.storage.cache import RedisCache
 
         return RedisCache(URL)
 

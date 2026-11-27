@@ -1,6 +1,6 @@
 """Cache adapter contract tests (spec §9–§10, Sprint 13).
 
-``CacheContractTests`` is the portability suite every ``VoodooCache``
+``CacheContractTests`` is the portability suite every ``GrumoCache``
 implementation must pass unchanged — Memory (default, no TTL) and Redis
 (production, TTL + durability). Provider-specific behavior (TTL expiry,
 durability) gets its own tests on top.
@@ -8,7 +8,7 @@ durability) gets its own tests on top.
 
 import pytest
 
-from voodoo.adapters.capabilities import CapabilityError
+from grumo.adapters.capabilities import CapabilityError
 
 
 class CacheContractTests:
@@ -68,7 +68,7 @@ class CacheContractTests:
 
 class TestMemoryCacheContract(CacheContractTests):
     def make_cache(self):
-        from voodoo.storage.cache import MemoryCache
+        from grumo.storage.cache import MemoryCache
 
         return MemoryCache()
 

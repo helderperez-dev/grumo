@@ -7,7 +7,7 @@ the translation for the statements the Sprint 11 Postgres adapters rely on
 without requiring a live PostgreSQL server.
 """
 
-from voodoo.storage.database.postgres import _translate
+from grumo.storage.database.postgres import _translate
 
 CLAIM_SQL = """
 UPDATE tasks SET

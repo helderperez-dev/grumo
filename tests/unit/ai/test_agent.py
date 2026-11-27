@@ -9,12 +9,12 @@ from typing import Any
 
 import pytest
 
-from voodoo import Agent
-from voodoo.ai.agent import AgentRun, AgentState
-from voodoo.ai.providers import ProviderEvent, ProviderResponse, ToolCall
-from voodoo.ai.providers.mock import MockProvider
-from voodoo.ai.tools import registry as tools_module
-from voodoo.ai.tools.registry import ToolRegistry, build_spec
+from grumo import Agent
+from grumo.ai.agent import AgentRun, AgentState
+from grumo.ai.providers import ProviderEvent, ProviderResponse, ToolCall
+from grumo.ai.providers.mock import MockProvider
+from grumo.ai.tools import registry as tools_module
+from grumo.ai.tools.registry import ToolRegistry, build_spec
 
 
 class ToolThenTextProvider(MockProvider):
@@ -115,7 +115,7 @@ def _isolated_registry(monkeypatch):
 @pytest.fixture(autouse=True)
 def _clean_mesh_handlers():
     """Clear mesh handlers between tests so they don't leak."""
-    from voodoo.mesh import mesh
+    from grumo.mesh import mesh
 
     mesh.event_handlers.clear()
     mesh.active_nodes.clear()
@@ -127,7 +127,7 @@ def _clean_mesh_handlers():
 @pytest.fixture(autouse=True)
 def _clean_telemetry():
     """Reset telemetry agent metrics between tests."""
-    from voodoo.observability import telemetry_store
+    from grumo.observability import telemetry_store
 
     telemetry_store.metrics["agent_runs"].clear()
     telemetry_store.metrics["tool_calls"].clear()
@@ -504,7 +504,7 @@ async def test_agent_lifecycle_error_on_stream_failure():
 
 @pytest.mark.asyncio
 async def test_run_records_telemetry():
-    from voodoo.observability import telemetry_store
+    from grumo.observability import telemetry_store
 
     agent = Agent(model="mock:test")
     await agent.run("hello")
@@ -514,7 +514,7 @@ async def test_run_records_telemetry():
 
 @pytest.mark.asyncio
 async def test_tool_call_records_telemetry():
-    from voodoo.observability import telemetry_store
+    from grumo.observability import telemetry_store
 
     registry = ToolRegistry()
 
@@ -533,7 +533,7 @@ async def test_tool_call_records_telemetry():
 
 @pytest.mark.asyncio
 async def test_agent_run_correlates_with_trace_id():
-    from voodoo.observability import trace_id_var
+    from grumo.observability import trace_id_var
 
     trace_id_var.set("test-trace-123")
     try:
@@ -546,7 +546,7 @@ async def test_agent_run_correlates_with_trace_id():
 
 @pytest.mark.asyncio
 async def test_run_publishes_mesh_events():
-    from voodoo.mesh import mesh
+    from grumo.mesh import mesh
 
     received = []
 
@@ -567,7 +567,7 @@ async def test_run_publishes_mesh_events():
 
 @pytest.mark.asyncio
 async def test_run_publishes_tool_mesh_events():
-    from voodoo.mesh import mesh
+    from grumo.mesh import mesh
 
     received = []
 
@@ -597,7 +597,7 @@ async def test_run_publishes_tool_mesh_events():
 
 @pytest.mark.asyncio
 async def test_run_publishes_failed_mesh_event():
-    from voodoo.mesh import mesh
+    from grumo.mesh import mesh
 
     received = []
 
@@ -611,13 +611,13 @@ async def test_run_publishes_failed_mesh_event():
     assert any(name == "agent.failed" for name, _ in received)
 
 
-def test_agent_exported_from_voodoo():
-    from voodoo import Agent as ExportedAgent
+def test_agent_exported_from_grumo():
+    from grumo import Agent as ExportedAgent
 
     assert ExportedAgent is Agent
 
 
 def test_agent_canonical_module_matches_root_happy_path():
-    from voodoo.ai.agent import Agent as CanonicalAgent
+    from grumo.ai.agent import Agent as CanonicalAgent
 
     assert CanonicalAgent is Agent

@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from voodoo.primitives.capability import Capability
-from voodoo.primitives.effect import Effect
-from voodoo.primitives.intent import Intent
-from voodoo.runtime import ExecutionEngine, bind_world, world_aware
-from voodoo.runtime.execution.engine import ComputeResult
-from voodoo.world import Entity, WorldModel
+from grumo.primitives.capability import Capability
+from grumo.primitives.effect import Effect
+from grumo.primitives.intent import Intent
+from grumo.runtime import ExecutionEngine, bind_world, world_aware
+from grumo.runtime.execution.engine import ComputeResult
+from grumo.world import Entity, WorldModel
 
 
 async def test_bound_world_is_visible_inside_compute_context():

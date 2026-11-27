@@ -2,8 +2,8 @@
 
 import pytest
 
-from voodoo import state
-from voodoo.ui.state import State
+from grumo import state
+from grumo.ui.state import State
 
 
 def test_state_get_initial():

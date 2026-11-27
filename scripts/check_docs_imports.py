@@ -2,7 +2,7 @@
 
 The public API is intentionally small. This check prevents documentation from
 silently drifting back to removed root-level UI/runtime aliases. It validates
-both single-line and parenthesized ``from voodoo... import`` statements without
+both single-line and parenthesized ``from grumo... import`` statements without
 executing arbitrary documentation snippets.
 """
 
@@ -20,7 +20,7 @@ def _iter_imports(path: Path) -> list[tuple[int, str]]:
     index = 0
     while index < len(lines):
         line = lines[index]
-        if not line.startswith("from voodoo "):
+        if not (line.startswith("from grumo ") or line.startswith("from grumo.")):
             index += 1
             continue
         statement = line

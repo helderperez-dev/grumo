@@ -4,7 +4,7 @@ import hashlib
 
 import pytest
 
-from voodoo.storage.objects import LocalObjectStore
+from grumo.storage.objects import LocalObjectStore
 
 
 def _corrupt_payload(store: LocalObjectStore, key: str) -> None:
@@ -20,7 +20,10 @@ def test_local_object_get_rejects_checksum_corruption(tmp_path):
     store = LocalObjectStore(tmp_path / "objects")
     try:
         payload = b"durable payload"
-        assert store.put("reports/item.txt", payload) == hashlib.sha256(payload).hexdigest()
+        assert (
+            store.put("reports/item.txt", payload)
+            == hashlib.sha256(payload).hexdigest()
+        )
         _corrupt_payload(store, "reports/item.txt")
         with pytest.raises(ValueError, match="checksum mismatch"):
             store.get("reports/item.txt")

@@ -1,0 +1,17 @@
+"""Compatibility alias — reactive state lives in ``grumo.ui.state``.
+
+This shim replaces itself with the real module in ``sys.modules`` so that
+``grumo.core.state is grumo.ui.state`` and the ``state_renderer`` singleton
+is shared. The static imports below are for type checkers only (mypy cannot
+follow the runtime aliasing).
+"""
+
+import sys
+
+from grumo.ui import state
+
+State = state.State
+StateRenderer = state.StateRenderer
+state_renderer = state.state_renderer
+
+sys.modules[__name__] = state

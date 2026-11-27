@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo.primitives.intent import Intent
-from voodoo.runtime.context import ExecutionContext
-from voodoo.runtime.errors import ApprovalRequired
-from voodoo.runtime.execution.engine import ExecutionEngine
-from voodoo.storage.execution import SQLiteExecutionStore
+from grumo.primitives.intent import Intent
+from grumo.runtime.context import ExecutionContext
+from grumo.runtime.errors import ApprovalRequired
+from grumo.runtime.execution.engine import ExecutionEngine
+from grumo.storage.execution import SQLiteExecutionStore
 
 
 def _execution_by_id(store: SQLiteExecutionStore, execution_id: str):

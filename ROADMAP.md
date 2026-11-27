@@ -1,16 +1,16 @@
-# VOODOO — MASTER ROADMAP
+# GRUMO — MASTER ROADMAP
 
-## A unified architecture and engineering direction for the Voodoo Runtime
+## A unified architecture and engineering direction for the Grumo Runtime
 
 | Field | Value |
 |---|---|
 | Status | Living architectural source of truth |
-| Repository | `helderperez-dev/voodoo` |
+| Repository | `helderperez-dev/grumo` |
 | Implementation tracker | [`SPRINT_PLAN.md`](SPRINT_PLAN.md) |
 
 ## North Star
 
-> **Voodoo is the programmable runtime for adaptive applications and operational systems.**
+> **Grumo is the programmable runtime for adaptive applications and operational systems.**
 
 The objective is not to build the Python framework with the most features. It
 is to make a small set of durable primitives express software, AI, human
@@ -32,7 +32,7 @@ accounting for, waiting on or reasoning about. It is not every function call.
 
 Modern systems fragment one problem across frontend, backend, database, queues,
 workers, AI SDKs, workflow engines, messaging, observability and device stacks.
-Voodoo makes those boundaries converge when needed instead of giving each one a
+Grumo makes those boundaries converge when needed instead of giving each one a
 private lifecycle and security model.
 
 ```text
@@ -77,7 +77,7 @@ The post-Sprint-28 repository now includes:
 - reactive/server-driven Python UI and **Design System 4** with premium light/dark
   zero-custom-CSS defaults and Theme-authoritative branding;
 - routing/APIs, data, auth/security and explicit infrastructure adapters;
-- Voodoo Store as the zero-config durable application substrate;
+- Grumo Store as the zero-config durable application substrate;
 - Store-backed data/models, jobs/queues, scheduling, events, objects and Runtime state;
 - canonical `ExecutionEngine`, durable recovery and HITL;
 - capability security and contextual operational Policy;
@@ -95,7 +95,7 @@ The post-Sprint-28 repository now includes:
 
 The latest published release is **v3.2.1** (2026-10-06), and the current
 `main` architecture baseline is the 3.2 release line. The 3.2 release
-converges Runtime adapters on the published Voodoo Store 0.3 native surface
+converges Runtime adapters on the published Grumo Store 0.3 native surface
 (Topics messaging, content-addressed Objects, native index exact/range queries),
 publishes the modern Model contract with UUIDv7 identity, and ships the Design
 System 4 component surface. The 3.0 clean break
@@ -136,13 +136,13 @@ Sprint 28 then made the infrastructure model operational:
 ```text
 Application
     ↓
-Voodoo Runtime
+Grumo Runtime
     ↓
 Identity → Capability + Policy → Execution
     ↓
 Data / Jobs / Scheduler / Events / Objects / Goal / Workflow / HITL
     ↓
-application.vstore
+application.grumo
 ```
 
 and established topology-transparent multi-node execution:
@@ -150,7 +150,7 @@ and established topology-transparent multi-node execution:
 ```text
                          Application
                              ↓
-                       Voodoo Runtime
+                       Grumo Runtime
                              ↓
                        Runtime Fabric
                     /           |           \
@@ -159,7 +159,7 @@ and established topology-transparent multi-node execution:
                 A.vstore    B.vstore    C.vstore
 ```
 
-Each Store remains node-local. Voodoo does not claim Store-file multi-writer semantics,
+Each Store remains node-local. Grumo does not claim Store-file multi-writer semantics,
 distributed consensus, global exactly-once execution or globally serializable
 transactions.
 
@@ -170,28 +170,28 @@ Completion records:
 
 ## Developer-experience law
 
-Voodoo must preserve progressive complexity. `voodoo new` should produce a
+Grumo must preserve progressive complexity. `grumo new` should produce a
 useful local application without requiring World, Planner, AI or distributed
 infrastructure. Those capabilities compose in only when the problem needs them.
 
 A fresh default application should require no external database, queue, object service or
-event server. Its durable substrate is `.voodoo/application.vstore`. External
+event server. Its durable substrate is `.grumo/application.grumo`. External
 PostgreSQL/SQLite/Redis/S3 infrastructure is an explicit adapter choice, not a hidden
 fallback.
 
 The 3.0 import law lives in [`docs/public-api-3.md`](docs/public-api-3.md).
 The package root is the intentionally small application happy path; it is not a
 compatibility catalog. Subsystem APIs belong to their semantic namespaces such as
-`voodoo.ui`, `voodoo.runtime`, `voodoo.world`, `voodoo.edge` and
-`voodoo.protocol`. Compatibility-only 2.x paths removed by 3.0 must not be
+`grumo.ui`, `grumo.runtime`, `grumo.world`, `grumo.edge` and
+`grumo.protocol`. Compatibility-only 2.x paths removed by 3.0 must not be
 reintroduced as duplicate owners.
 
 ## UI and Design System
 
-Voodoo UI is part of the Runtime developer experience, not a separate frontend
+Grumo UI is part of the Runtime developer experience, not a separate frontend
 framework. The native visual layer is Design System 4:
 
-- intentional Voodoo purple identity by default;
+- intentional Grumo purple identity by default;
 - premium light/dark surfaces;
 - responsive page geometry and component defaults;
 - accessible focus and reduced-motion behavior;
@@ -207,7 +207,7 @@ not a framework dependency.
 Store owns durable mechanics; Runtime owns semantics, authority and intelligence.
 
 ```text
-Voodoo Runtime
+Grumo Runtime
     |
     +-- Model / Data
     +-- Jobs / Queue
@@ -221,7 +221,7 @@ Voodoo Runtime
     v
 RuntimeStore
     |
-application.vstore
+application.grumo
 ```
 
 The Store-first path must remain clean of accidental optional-adapter imports. Release
@@ -297,12 +297,12 @@ than inventing a transport-specific lifecycle.
 Sprint 28 adds governed node membership, health, discovery, placement, ownership,
 leases and bounded retry/failover while preserving node-local Stores.
 
-Voodoo still does not claim distributed consensus or global exactly-once execution.
+Grumo still does not claim distributed consensus or global exactly-once execution.
 
 ## Protocol and SDK strategy
 
 Python remains the primary Runtime implementation, but Python internals are not
-the interoperability boundary. `voodoo.protocol` provides JSON-friendly
+the interoperability boundary. `grumo.protocol` provides JSON-friendly
 semantic schemas for runtime, World, Goal and distributed-execution concepts.
 
 Future TypeScript, Go, Rust and embedded SDKs should primarily be protocol
@@ -313,7 +313,7 @@ clients rather than alternative Runtime implementations.
 Memory is contextual recall, not business truth and not the World Model. Current
 layers provide Working, Episodic, Durable and Semantic storage/search. Cognitive
 consolidation, reflection and advanced relevance are deliberately next-phase
-intelligence concerns; Voodoo should not become a vector-database framework.
+intelligence concerns; Grumo should not become a vector-database framework.
 
 ## Cloud and product surfaces
 
@@ -325,7 +325,7 @@ optional.
 
 ## Next-phase selection gate
 
-No Sprint 29 is declared merely because Voodoo 3.0 is published. The next numbered
+No Sprint 29 is declared merely because Grumo 3.0 is published. The next numbered
 sprint should be chosen after a product/architecture review that applies real pressure
 to the 3.0 Runtime and identifies the smallest coherent capability set that unlocks the
 next class of products.
@@ -352,7 +352,7 @@ creates a strong end-to-end acceptance target and makes later work simpler.
 
 These horizons are architecture tests, not literal predictions.
 
-- **2030:** Voodoo should read as an application/runtime platform, not merely a
+- **2030:** Grumo should read as an application/runtime platform, not merely a
   Python web framework.
 - **2050:** the primitives should still describe distributed digital and physical
   operational systems.
@@ -362,7 +362,7 @@ These horizons are architecture tests, not literal predictions.
 
 ## Architectural lineage
 
-Voodoo synthesizes enduring principles rather than copying products:
+Grumo synthesizes enduring principles rather than copying products:
 
 - Palantir — ontology and operational entities;
 - Anduril/Lattice — sensors → world state → intent → execution → feedback;
@@ -372,9 +372,9 @@ Voodoo synthesizes enduring principles rather than copying products:
 - cloud-native systems — adapters and replaceable infrastructure;
 - robotics/industrial systems — closed-loop action and observation.
 
-## What Voodoo must not become
+## What Grumo must not become
 
-Voodoo must not become a React clone, AI/prompt-only framework, MCP framework,
+Grumo must not become a React clone, AI/prompt-only framework, MCP framework,
 Kubernetes wrapper, IoT broker, robotics-middleware replacement, giant
 miscellaneous standard library, cloud lock-in product, runtime where every
 helper call is an Execution, or system where AI receives ambient unrestricted

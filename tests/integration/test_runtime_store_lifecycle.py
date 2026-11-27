@@ -4,8 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from voodoo.core.errors import ConfigurationError
-from voodoo.runtime.store import (
+from grumo.core.errors import ConfigurationError
+from grumo.runtime.store import (
     DEFAULT_STORE_PATH,
     RuntimeStore,
     StoreConfig,
@@ -56,10 +56,10 @@ def _registry() -> StoreProviderRegistry:
     return registry
 
 
-def test_store_config_defaults_to_voodoo_store_enabled() -> None:
+def test_store_config_defaults_to_grumo_store_enabled() -> None:
     config = StoreConfig()
 
-    assert config.provider == "voodoo"
+    assert config.provider == "grumo"
     assert config.path == DEFAULT_STORE_PATH
     assert config.enabled is True
     assert config.durability == "data"
@@ -71,7 +71,7 @@ def test_store_config_from_mapping_preserves_provider_specific_extra() -> None:
     config = StoreConfig.from_mapping(
         {
             "provider": "fake",
-            "path": ".voodoo/custom.vstore",
+            "path": ".grumo/custom.vstore",
             "enabled": True,
             "durability": "strict",
             "repair_torn_tail": False,
@@ -81,7 +81,7 @@ def test_store_config_from_mapping_preserves_provider_specific_extra() -> None:
     )
 
     assert config.provider == "fake"
-    assert config.path == Path(".voodoo/custom.vstore")
+    assert config.path == Path(".grumo/custom.vstore")
     assert config.enabled is True
     assert config.durability == "strict"
     assert config.repair_torn_tail is False
@@ -90,17 +90,17 @@ def test_store_config_from_mapping_preserves_provider_specific_extra() -> None:
 
 
 def test_store_config_reads_environment(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("VOODOO_STORE_PROVIDER", "fake")
-    monkeypatch.setenv("VOODOO_STORE_PATH", ".voodoo/env.vstore")
-    monkeypatch.setenv("VOODOO_STORE_ENABLED", "true")
-    monkeypatch.setenv("VOODOO_STORE_DURABILITY", "strict")
-    monkeypatch.setenv("VOODOO_STORE_REPAIR_TORN_TAIL", "false")
-    monkeypatch.setenv("VOODOO_STORE_MAX_BYTES", "8192")
+    monkeypatch.setenv("GRUMO_STORE_PROVIDER", "fake")
+    monkeypatch.setenv("GRUMO_STORE_PATH", ".grumo/env.vstore")
+    monkeypatch.setenv("GRUMO_STORE_ENABLED", "true")
+    monkeypatch.setenv("GRUMO_STORE_DURABILITY", "strict")
+    monkeypatch.setenv("GRUMO_STORE_REPAIR_TORN_TAIL", "false")
+    monkeypatch.setenv("GRUMO_STORE_MAX_BYTES", "8192")
 
     config = StoreConfig.from_mapping()
 
     assert config.provider == "fake"
-    assert config.path == Path(".voodoo/env.vstore")
+    assert config.path == Path(".grumo/env.vstore")
     assert config.enabled is True
     assert config.durability == "strict"
     assert config.repair_torn_tail is False
@@ -108,26 +108,26 @@ def test_store_config_reads_environment(monkeypatch: pytest.MonkeyPatch) -> None
 
 
 def test_store_can_be_explicitly_disabled(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("VOODOO_STORE_ENABLED", "false")
+    monkeypatch.setenv("GRUMO_STORE_ENABLED", "false")
 
     assert StoreConfig.from_mapping().enabled is False
 
 
 def test_store_mapping_wins_over_environment(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("VOODOO_STORE_PROVIDER", "env-provider")
-    monkeypatch.setenv("VOODOO_STORE_PATH", ".voodoo/env.vstore")
-    monkeypatch.setenv("VOODOO_STORE_ENABLED", "false")
+    monkeypatch.setenv("GRUMO_STORE_PROVIDER", "env-provider")
+    monkeypatch.setenv("GRUMO_STORE_PATH", ".grumo/env.vstore")
+    monkeypatch.setenv("GRUMO_STORE_ENABLED", "false")
 
     config = StoreConfig.from_mapping(
         {
             "provider": "fake",
-            "path": ".voodoo/file.vstore",
+            "path": ".grumo/file.vstore",
             "enabled": True,
         }
     )
 
     assert config.provider == "fake"
-    assert config.path == Path(".voodoo/file.vstore")
+    assert config.path == Path(".grumo/file.vstore")
     assert config.enabled is True
 
 

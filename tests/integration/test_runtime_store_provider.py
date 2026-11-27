@@ -7,11 +7,11 @@ from types import SimpleNamespace
 
 import pytest
 
-from voodoo.core.errors import ConfigurationError
-from voodoo.runtime.store import (
+from grumo.core.errors import ConfigurationError
+from grumo.runtime.store import (
+    GrumoStoreProvider,
     StoreProvider,
     StoreProviderError,
-    VoodooStoreProvider,
 )
 
 
@@ -95,28 +95,28 @@ def _reset_fake_store() -> None:
 @pytest.fixture
 def native_module(monkeypatch: pytest.MonkeyPatch) -> SimpleNamespace:
     module = SimpleNamespace(Store=FakeNativeStore)
-    monkeypatch.setattr("voodoo.runtime.store.import_module", lambda _name: module)
+    monkeypatch.setattr("grumo.runtime.store.import_module", lambda _name: module)
     return module
 
 
 class TestStoreProviderContract:
-    def test_voodoo_provider_satisfies_runtime_protocol(self) -> None:
-        provider = VoodooStoreProvider()
+    def test_grumo_provider_satisfies_runtime_protocol(self) -> None:
+        provider = GrumoStoreProvider()
         assert isinstance(provider, StoreProvider)
-        assert provider.name == "voodoo"
-        assert provider.path == Path(".voodoo/application.vstore")
+        assert provider.name == "grumo"
+        assert provider.path == Path(".grumo/application.grumo")
         assert provider.opened is False
 
     def test_native_handle_requires_open_provider(self) -> None:
-        provider = VoodooStoreProvider()
+        provider = GrumoStoreProvider()
         with pytest.raises(StoreProviderError, match="not open"):
             _ = provider.native
 
     def test_open_creates_parent_and_is_idempotent(
         self, tmp_path: Path, native_module: SimpleNamespace
     ) -> None:
-        path = tmp_path / "nested" / "application.vstore"
-        provider = VoodooStoreProvider(path, durability="strict")
+        path = tmp_path / "nested" / "application.grumo"
+        provider = GrumoStoreProvider(path, durability="strict")
 
         provider.open()
         provider.open()
@@ -129,10 +129,10 @@ class TestStoreProviderContract:
     def test_provider_lifecycle_emits_store_spans(
         self, tmp_path: Path, native_module: SimpleNamespace
     ) -> None:
-        from voodoo.observability import telemetry_store
+        from grumo.observability import telemetry_store
 
         before = len(telemetry_store.metrics["spans"])
-        provider = VoodooStoreProvider(tmp_path / "traced.vstore")
+        provider = GrumoStoreProvider(tmp_path / "traced.vstore")
         provider.open()
         provider.health()
         provider.close()
@@ -151,7 +151,7 @@ class TestStoreProviderContract:
     ) -> None:
         path = tmp_path / "limited.vstore"
         path.write_bytes(b"0123456789")
-        provider = VoodooStoreProvider(path, max_bytes=4)
+        provider = GrumoStoreProvider(path, max_bytes=4)
 
         with pytest.raises(StoreProviderError, match="max_bytes"):
             provider.open()
@@ -160,7 +160,7 @@ class TestStoreProviderContract:
     def test_close_is_idempotent(
         self, tmp_path: Path, native_module: SimpleNamespace
     ) -> None:
-        provider = VoodooStoreProvider(tmp_path / "application.vstore")
+        provider = GrumoStoreProvider(tmp_path / "application.grumo")
         provider.open()
 
         provider.close()
@@ -173,7 +173,7 @@ class TestStoreProviderContract:
         self, tmp_path: Path, native_module: SimpleNamespace
     ) -> None:
         FakeNativeStore.fail_open = True
-        provider = VoodooStoreProvider(tmp_path / "application.vstore")
+        provider = GrumoStoreProvider(tmp_path / "application.grumo")
 
         with pytest.raises(StoreProviderError, match="Unable to open"):
             provider.open()
@@ -182,7 +182,7 @@ class TestStoreProviderContract:
     def test_close_failure_is_normalized_and_handle_is_released(
         self, tmp_path: Path, native_module: SimpleNamespace
     ) -> None:
-        provider = VoodooStoreProvider(tmp_path / "application.vstore")
+        provider = GrumoStoreProvider(tmp_path / "application.grumo")
         provider.open()
         FakeNativeStore.fail_close = True
 
@@ -196,10 +196,10 @@ class TestStoreProviderContract:
         def missing(_name: str) -> object:
             raise ImportError("missing")
 
-        monkeypatch.setattr("voodoo.runtime.store.import_module", missing)
-        provider = VoodooStoreProvider()
+        monkeypatch.setattr("grumo.runtime.store.import_module", missing)
+        provider = GrumoStoreProvider()
 
-        with pytest.raises(ConfigurationError, match="voodoo-store"):
+        with pytest.raises(ConfigurationError, match="grumo-store"):
             provider.open()
 
 
@@ -207,11 +207,11 @@ class TestStoreProviderHealth:
     def test_missing_store_reports_unverified(
         self, tmp_path: Path, native_module: SimpleNamespace
     ) -> None:
-        provider = VoodooStoreProvider(tmp_path / "missing.vstore")
+        provider = GrumoStoreProvider(tmp_path / "missing.vstore")
 
         health = provider.health()
 
-        assert health.provider == "voodoo"
+        assert health.provider == "grumo"
         assert health.opened is False
         assert health.verified is False
         assert health.details == {"exists": False}
@@ -220,7 +220,7 @@ class TestStoreProviderHealth:
     def test_health_projects_native_verification_without_leaking_report(
         self, tmp_path: Path, native_module: SimpleNamespace
     ) -> None:
-        provider = VoodooStoreProvider(tmp_path / "application.vstore")
+        provider = GrumoStoreProvider(tmp_path / "application.grumo")
         provider.open()
 
         health = provider.health()
@@ -240,7 +240,7 @@ class TestStoreProviderHealth:
     def test_verification_failure_is_health_evidence_not_crash(
         self, tmp_path: Path, native_module: SimpleNamespace
     ) -> None:
-        provider = VoodooStoreProvider(tmp_path / "application.vstore")
+        provider = GrumoStoreProvider(tmp_path / "application.grumo")
         provider.open()
         FakeNativeStore.fail_verify = True
 

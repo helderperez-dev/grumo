@@ -2,7 +2,7 @@
 
 ## The separation that matters
 
-Voodoo separates three concerns that must not be collapsed:
+Grumo separates three concerns that must not be collapsed:
 
 ```text
 Identity                 who/what exists
@@ -33,7 +33,7 @@ node
 ```
 
 ```python
-from voodoo.runtime import (
+from grumo.runtime import (
     AuthenticationEvidence,
     Identity,
     IdentityKind,
@@ -46,7 +46,7 @@ principal = Principal(
         AuthenticationEvidence(
             method="session",
             subject="42",
-            issuer="voodoo",
+            issuer="grumo",
         ),
     ),
 )
@@ -59,7 +59,7 @@ principal = Principal(
 The existing web-auth compatibility surface remains available:
 
 ```python
-from voodoo.auth import User, create_access_token
+from grumo.auth import User, create_access_token
 
 user, raw_api_key = await User.create_user(
     email="ada@example.com",
@@ -72,7 +72,7 @@ token = create_access_token({"sub": user.id, "email": user.email, "role": user.r
 ```
 
 With the default Runtime configuration, built-in `User` records are persisted
-through Voodoo Store in `.voodoo/application.vstore`. SQLite/PostgreSQL user
+through Grumo Store in `.grumo/application.grumo`. SQLite/PostgreSQL user
 persistence remains available only when an explicit SQL database adapter is
 selected.
 
@@ -94,8 +94,8 @@ Capability grant.
 Route-level compatibility guards remain useful for web access control:
 
 ```python
-from voodoo import page
-from voodoo.auth import require_auth, require_roles
+from grumo import page
+from grumo.auth import require_auth, require_roles
 
 
 @page("/dashboard")
@@ -114,7 +114,7 @@ Capability + Policy checks for governed Runtime Effects.
 ## API key authentication
 
 ```python
-from voodoo.auth import require_api_key
+from grumo.auth import require_api_key
 
 
 @api.post("/api/sync")
@@ -123,7 +123,7 @@ async def sync_endpoint(request): ...
 ```
 
 On the default Store path, API-key lookup reads the built-in user records from
-Voodoo Store. Raw API keys are not persisted; their hashes are stored.
+Grumo Store. Raw API keys are not persisted; their hashes are stored.
 
 ## Cookie / bearer authentication
 
@@ -133,7 +133,7 @@ authentication produces request identity context; Runtime code should project
 that identity to a `Principal` when entering governed Execution.
 
 ```python
-from voodoo.auth import clear_auth_cookie, set_auth_cookie
+from grumo.auth import clear_auth_cookie, set_auth_cookie
 ```
 
 ## Capability authority
@@ -183,10 +183,10 @@ Treat generated raw API keys like credentials: return/display them only at the
 appropriate creation boundary and persist only their hash.
 
 JWTs use the fixed `HS256`/`JWT` header contract. Deployments may set
-`VOODOO_JWT_ISSUER` and `VOODOO_JWT_AUDIENCE` for exact claim validation,
-`VOODOO_JWT_CLOCK_SKEW` for bounded (0–300 second) clock drift, and
-`VOODOO_JWT_PREVIOUS_SECRETS` for an explicitly bounded signing-key rotation
-window, and `VOODOO_JWT_REVOCATION_MAX` to bound process-local revocation
+`GRUMO_JWT_ISSUER` and `GRUMO_JWT_AUDIENCE` for exact claim validation,
+`GRUMO_JWT_CLOCK_SKEW` for bounded (0–300 second) clock drift, and
+`GRUMO_JWT_PREVIOUS_SECRETS` for an explicitly bounded signing-key rotation
+window, and `GRUMO_JWT_REVOCATION_MAX` to bound process-local revocation
 state. Call `revoke_access_token()` during logout or
 `revoke_subject_sessions()` for administrative invalidation; revoked entries
 are retained only until the configured expiry horizon and store only a
@@ -207,7 +207,7 @@ Do not infer authorization from persisted identity attributes.
 
 ## Current boundaries
 
-The Runtime Identity foundation is not a claim that Voodoo already provides a
+The Runtime Identity foundation is not a claim that Grumo already provides a
 production PKI/OIDC/mTLS platform. Enterprise identity federation and managed
 credential infrastructure remain future work.
 
