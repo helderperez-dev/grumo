@@ -1,0 +1,38 @@
+name: Resolve migration lockfile
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  resolve:
+    if: github.event_name == 'workflow_dispatch' || github.head_ref == 'grumo/native-identity'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@v5
+      - name: Resolve dependencies from package registry
+        run: uv lock --python 3.12
+      - name: Verify resolved lockfile
+        run: |
+          uv lock --check --python 3.12
+          python - <<'PY'
+          import tomllib
+          from pathlib import Path
+          lock = tomllib.loads(Path("uv.lock").read_text())
+          stores = [p for p in lock["package"] if p["name"] == "grumo-store"]
+          assert stores and all(p["version"].split(".")[0] == "2" for p in stores)
+          assert all(p["source"].get("registry") == "https://pypi.org/simple" for p in stores)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: grumo-resolved-lockfile
+          path: uv.lock
+          if-no-files-found: error
