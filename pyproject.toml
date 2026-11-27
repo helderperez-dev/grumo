@@ -66,7 +66,6 @@ Issues = "https://github.com/helderperez-dev/grumo/issues"
 Discussions = "https://github.com/helderperez-dev/grumo/discussions"
 
 [project.scripts]
-# Both CLI entrypoints share the same runtime during the transition.
 grumo = "grumo.cli:app"
 
 [project.optional-dependencies]

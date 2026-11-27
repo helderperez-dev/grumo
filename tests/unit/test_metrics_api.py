@@ -1,37 +1,20 @@
 from __future__ import annotations
 
-import math
 from types import SimpleNamespace
 
 import pytest
 
-from grumo.observability.api import get_metrics, get_metrics_prometheus
+from grumo.observability.api import get_metrics
 from grumo.observability.store import telemetry_store
 
 
 @pytest.mark.asyncio
-async def test_prometheus_metrics_endpoint_is_bounded_and_scrapeable(monkeypatch):
+async def test_native_metrics_summary(monkeypatch):
     monkeypatch.setitem(telemetry_store.metrics, "requests_total", 7)
     monkeypatch.setitem(telemetry_store.metrics, "errors_total", 2)
-    response = await get_metrics_prometheus()
-
-    assert response.media_type.startswith("text/plain")
-    assert response.charset == "utf-8"
-    body = response.body.decode()
-    assert 'grumo_metrics_info{version="1"} 1' in body
-    assert "# TYPE grumo_requests_total counter" in body
-    assert "grumo_requests_total 7" in body
-    assert "recent_traces" not in body
-
-
-@pytest.mark.asyncio
-async def test_prometheus_metrics_skip_non_finite_samples(monkeypatch):
-    monkeypatch.setitem(telemetry_store.metrics, "bad_nan", math.nan)
-    monkeypatch.setitem(telemetry_store.metrics, "bad_inf", math.inf)
-    response = await get_metrics_prometheus()
-    body = response.body.decode()
-    assert "grumo_bad_nan" not in body
-    assert "grumo_bad_inf" not in body
+    summary = await get_metrics()
+    assert summary["requests_total"] == 7
+    assert summary["errors_total"] == 2
 
 
 @pytest.mark.asyncio
@@ -57,11 +40,8 @@ async def test_metrics_projects_sanitized_active_store_health(monkeypatch):
     assert summary["store_health"]["details"]["native_health"]["queue_ready"] == 3
     assert "store_id" not in summary["store_health"]["details"]["native_health"]
 
-    response = await get_metrics_prometheus()
-    body = response.body.decode()
-    assert "grumo_store_health_details_native_health_queue_ready 3" in body
-    assert "grumo_store_health_details_native_health_metrics_commits 7" in body
-    assert "must-not-be-exported" not in body
+    assert summary["store_health"]["details"]["native_health"]["metrics"]["commits"] == 7
+    assert "must-not-be-exported" not in repr(summary["store_health"])
 
 
 @pytest.mark.asyncio
