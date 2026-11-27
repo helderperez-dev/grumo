@@ -36,8 +36,8 @@ from typing import TYPE_CHECKING, Any
 from grumo.core.errors import ConfigurationError
 from grumo.storage.database.interfaces import (
     DatabaseCapabilities,
-    Migration,
     GrumoDatabase,
+    Migration,
 )
 
 LEDGER_TABLE = "schema_migrations"

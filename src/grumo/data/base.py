@@ -8,7 +8,7 @@ from collections.abc import Callable
 from typing import Any, cast, get_type_hints
 
 from grumo.security.redaction import redact_string
-from grumo.storage.database import Migration, SQLiteDatabase, GrumoDatabase
+from grumo.storage.database import GrumoDatabase, Migration, SQLiteDatabase
 
 _logger = logging.getLogger("grumo.data")
 

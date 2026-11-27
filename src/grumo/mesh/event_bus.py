@@ -11,7 +11,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
-from grumo.storage.events import LocalEventBus, GrumoEventBus
+from grumo.storage.events import GrumoEventBus, LocalEventBus
 
 
 class EventBusAwareMesh:

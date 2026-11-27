@@ -15,9 +15,9 @@ import os
 
 import pytest
 
-from tests.contracts.test_queue import QueueContractTests
 from grumo.storage.database import PostgresDatabase
 from grumo.storage.queue.postgres import PostgresQueue
+from tests.contracts.test_queue import QueueContractTests
 
 psycopg = pytest.importorskip("psycopg")
 

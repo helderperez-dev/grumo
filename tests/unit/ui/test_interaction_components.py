@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 import grumo
-from grumo.adapters import TailwindAdapter, GrumoCSSAdapter
+from grumo.adapters import GrumoCSSAdapter, TailwindAdapter
 from grumo.adapters.grumo_css import generate_component_css
 from grumo.ui import (
     AppShell,

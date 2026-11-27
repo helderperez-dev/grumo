@@ -15,8 +15,8 @@ import os
 
 import pytest
 
-from tests.contracts.test_queue import QueueContractTests
 from grumo.storage.queue.redis import RedisQueue
+from tests.contracts.test_queue import QueueContractTests
 
 redis = pytest.importorskip("redis")
 

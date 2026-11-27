@@ -8,12 +8,12 @@ from __future__ import annotations
 
 from grumo.ai.providers import (
     EmbeddingResponse,
+    GrumoModelProvider,
     LLMProvider,
     Message,
     ModelDescriptor,
     ProviderEvent,
     ProviderResponse,
-    GrumoModelProvider,
     describe_model,
     get_provider,
     register_provider,

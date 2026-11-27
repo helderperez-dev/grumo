@@ -15,9 +15,9 @@ import os
 
 import pytest
 
-from tests.contracts.test_database import DatabaseContractTests
 from grumo.storage.database import PostgresDatabase
 from grumo.storage.database.interfaces import Migration
+from tests.contracts.test_database import DatabaseContractTests
 
 psycopg = pytest.importorskip("psycopg")
 

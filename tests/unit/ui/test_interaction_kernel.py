@@ -2,7 +2,7 @@
 
 import pytest
 
-from grumo.adapters import TailwindAdapter, GrumoCSSAdapter
+from grumo.adapters import GrumoCSSAdapter, TailwindAdapter
 from grumo.ui import set_style_adapter
 from grumo.ui.interaction_kernel import (
     AlertDialog,

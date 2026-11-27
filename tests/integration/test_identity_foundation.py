@@ -12,6 +12,7 @@ from grumo.primitives.capability import Capability
 from grumo.runtime import (
     AuthenticationEvidence,
     ExecutionContext,
+    GrumoStoreIdentityStore,
     Identity,
     IdentityKind,
     IdentityStatus,
@@ -21,7 +22,6 @@ from grumo.runtime import (
     Principal,
     RuntimeStore,
     StoreConfig,
-    GrumoStoreIdentityStore,
 )
 
 

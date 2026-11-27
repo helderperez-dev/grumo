@@ -15,11 +15,11 @@ from grumo.runtime import (
     GoalRun,
     GoalRuntime,
     GoalStatus,
+    GrumoStoreGoalStore,
     Planner,
     RuntimeStore,
     SQLiteGoalStore,
     StoreConfig,
-    GrumoStoreGoalStore,
 )
 
 

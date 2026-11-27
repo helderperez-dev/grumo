@@ -13,12 +13,12 @@ from grumo.core.errors import (
     ConfigurationError,
     DataError,
     EventError,
+    GrumoError,
     MCPError,
     MeshError,
     RoutingError,
     StateError,
     ToolError,
-    GrumoError,
 )
 from grumo.routing.pages import PageRegistry, call_page, page, page_registry
 from grumo.ui.events import (

@@ -68,10 +68,10 @@ def render_page(component: Any, seo: Any = None) -> str:
     from grumo.adapters.grumo_css import GrumoCSSAdapter, generate_component_css
     from grumo.ui.styles import current_adapter
     from grumo.ui.styles.extended import generate_extended_css
+    from grumo.ui.styles.grumo_system import generate_grumo_system_css
     from grumo.ui.styles.product import generate_product_css
     from grumo.ui.styles.system import generate_design_system_css
     from grumo.ui.styles.theme_contract import generate_design_system_theme_css
-    from grumo.ui.styles.grumo_system import generate_grumo_system_css
 
     adapter = current_adapter()
     is_grumo_css = isinstance(adapter, GrumoCSSAdapter)

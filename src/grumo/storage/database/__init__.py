@@ -12,8 +12,8 @@ from typing import Any
 
 from grumo.storage.database.interfaces import (
     DatabaseCapabilities,
-    Migration,
     GrumoDatabase,
+    Migration,
 )
 
 __all__ = [

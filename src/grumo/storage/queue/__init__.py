@@ -7,11 +7,11 @@ from typing import Any
 
 from grumo.storage.queue.interfaces import (
     ACTIVE_STATUSES,
+    GrumoQueue,
     QueueCapabilities,
     QueueStats,
     TaskRecord,
     TaskStatus,
-    GrumoQueue,
 )
 from grumo.storage.queue.memory import MemoryQueue
 from grumo.storage.queue.store import GrumoStoreQueue

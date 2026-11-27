@@ -14,8 +14,8 @@ from grumo.runtime.distributed.fabric import (
     RuntimeFabric,
 )
 from grumo.runtime.distributed.membership import (
-    NodeAdvertisement,
     GrumoStoreMembershipStore,
+    NodeAdvertisement,
 )
 from grumo.runtime.execution import ExecutionStatus
 from grumo.runtime.execution.engine import ExecutionEngine

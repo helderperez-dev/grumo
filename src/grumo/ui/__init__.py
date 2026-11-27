@@ -74,6 +74,20 @@ from grumo.ui.foundation import (
     Progress,
     Spinner,
 )
+from grumo.ui.grumo_system import (
+    AgentStatus,
+    ApprovalCard,
+    CapabilityList,
+    DeviceCard,
+    EdgeNode,
+    ExecutionStatus,
+    ExecutionTimeline,
+    ObservationFeed,
+    PolicyDecision,
+    RuntimeStatus,
+    TelemetryPanel,
+    WorldEntityInspector,
+)
 from grumo.ui.interaction_kernel import (
     AlertDialog,
     AlertDialogTrigger,
@@ -221,20 +235,6 @@ from grumo.ui.styles import (
     color,
     current_adapter,
     set_style_adapter,
-)
-from grumo.ui.grumo_system import (
-    AgentStatus,
-    ApprovalCard,
-    CapabilityList,
-    DeviceCard,
-    EdgeNode,
-    ExecutionStatus,
-    ExecutionTimeline,
-    ObservationFeed,
-    PolicyDecision,
-    RuntimeStatus,
-    TelemetryPanel,
-    WorldEntityInspector,
 )
 from grumo.ui.workspace import (
     DetailPane,

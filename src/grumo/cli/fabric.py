@@ -8,14 +8,14 @@ from typing import Annotated
 
 import typer
 
-from grumo.runtime.distributed import NodeAdvertisement, GrumoStoreMembershipStore
+from grumo.runtime.distributed import GrumoStoreMembershipStore, NodeAdvertisement
 from grumo.runtime.identity import (
     AuthenticationEvidence,
     Identity,
     IdentityKind,
     Principal,
 )
-from grumo.runtime.store import RuntimeStore, StoreConfig, GrumoStoreProvider
+from grumo.runtime.store import GrumoStoreProvider, RuntimeStore, StoreConfig
 
 fabric_app = typer.Typer(help="Inspect and operate the local Grumo Runtime fabric.")
 

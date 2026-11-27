@@ -10,11 +10,11 @@ import pytest
 from grumo.runtime.distributed import (
     FabricRoutingError,
     FabricWork,
+    GrumoStoreMembershipStore,
     NodeAdvertisement,
     NoEligibleNodeError,
     PlacementRequirement,
     RuntimeFabric,
-    GrumoStoreMembershipStore,
     WorkNotFailoverSafeError,
 )
 from grumo.runtime.identity import (

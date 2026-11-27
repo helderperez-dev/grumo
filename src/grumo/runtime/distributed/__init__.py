@@ -12,10 +12,10 @@ from grumo.runtime.distributed.fabric import (
     WorkNotFailoverSafeError,
 )
 from grumo.runtime.distributed.membership import (
+    GrumoStoreMembershipStore,
     MemberStatus,
     NodeAdvertisement,
     NodeMembership,
-    GrumoStoreMembershipStore,
 )
 
 __all__ = [

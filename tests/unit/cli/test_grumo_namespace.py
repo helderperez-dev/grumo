@@ -3,6 +3,7 @@
 import importlib.util
 import tomllib
 from pathlib import Path
+
 from typer.testing import CliRunner
 
 import grumo

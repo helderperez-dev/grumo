@@ -21,10 +21,10 @@ from grumo.runtime.agency import (
     GoalRuntime,
     GoalStatus,
     GoalStore,
+    GrumoStoreGoalStore,
     SQLiteGoalStore,
     SupervisorConfig,
     SupervisorDecision,
-    GrumoStoreGoalStore,
 )
 from grumo.runtime.application_graph import (
     ApplicationEdge,
@@ -55,6 +55,7 @@ from grumo.runtime.distributed import (
     FabricLease,
     FabricRoutingError,
     FabricWork,
+    GrumoStoreMembershipStore,
     MemberStatus,
     NodeAdvertisement,
     NodeMembership,
@@ -62,7 +63,6 @@ from grumo.runtime.distributed import (
     PlacementDecision,
     PlacementRequirement,
     RuntimeFabric,
-    GrumoStoreMembershipStore,
     WorkNotFailoverSafeError,
 )
 from grumo.runtime.errors import (
@@ -110,7 +110,7 @@ from grumo.runtime.identity import (
     IdentityStatus,
     Principal,
 )
-from grumo.runtime.identity_store import IdentityStore, GrumoStoreIdentityStore
+from grumo.runtime.identity_store import GrumoStoreIdentityStore, IdentityStore
 from grumo.runtime.inspection import (
     LineageEvent,
     RuntimeLineage,
@@ -159,13 +159,13 @@ from grumo.runtime.scheduling.work import (
 )
 from grumo.runtime.store import (
     DEFAULT_STORE_PATH,
+    GrumoStoreProvider,
     RuntimeStore,
     StoreConfig,
     StoreHealth,
     StoreProvider,
     StoreProviderError,
     StoreProviderRegistry,
-    GrumoStoreProvider,
     bind_active_runtime_store,
     create_store_provider,
     get_active_runtime_store,

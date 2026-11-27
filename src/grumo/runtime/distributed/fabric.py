@@ -17,9 +17,9 @@ from typing import Any, Protocol
 from uuid import uuid4
 
 from grumo.runtime.distributed.membership import (
+    GrumoStoreMembershipStore,
     MemberStatus,
     NodeMembership,
-    GrumoStoreMembershipStore,
 )
 from grumo.runtime.store import (
     RuntimeStore,

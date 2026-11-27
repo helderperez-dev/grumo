@@ -18,8 +18,8 @@ import aiosqlite
 
 from grumo.storage.database.interfaces import (
     DatabaseCapabilities,
-    Migration,
     GrumoDatabase,
+    Migration,
 )
 
 LEDGER_TABLE = "schema_migrations"

@@ -17,9 +17,9 @@ from grumo.adapters.capabilities import (
     negotiate,
     require,
 )
+from grumo.adapters.grumo_css import GrumoCSSAdapter, generate_component_css
 from grumo.adapters.registry import ProviderRegistry, registry
 from grumo.adapters.tailwind import TailwindAdapter
-from grumo.adapters.grumo_css import GrumoCSSAdapter, generate_component_css
 
 __all__ = [
     "TailwindAdapter",

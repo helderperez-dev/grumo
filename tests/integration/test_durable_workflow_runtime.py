@@ -8,10 +8,10 @@ import pytest
 from grumo.runtime import (
     ComputeResult,
     ExecutionEngine,
+    GrumoStoreWorkflowStore,
     RuntimeStore,
     StoreConfig,
     Task,
-    GrumoStoreWorkflowStore,
     Workflow,
     WorkflowStrategy,
 )

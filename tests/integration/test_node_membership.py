@@ -8,9 +8,9 @@ import pytest
 
 from grumo.runtime import AuthenticationEvidence, Identity, IdentityKind, Principal
 from grumo.runtime.distributed import (
+    GrumoStoreMembershipStore,
     MemberStatus,
     NodeAdvertisement,
-    GrumoStoreMembershipStore,
 )
 from grumo.runtime.store import RuntimeStore, StoreConfig, bind_active_runtime_store
 

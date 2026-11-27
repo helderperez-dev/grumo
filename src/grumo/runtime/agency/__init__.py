@@ -17,8 +17,8 @@ from grumo.runtime.agency.goal import (
 )
 from grumo.runtime.agency.goal_store import (
     GoalStore,
-    SQLiteGoalStore,
     GrumoStoreGoalStore,
+    SQLiteGoalStore,
 )
 
 __all__ = [

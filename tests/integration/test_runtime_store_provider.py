@@ -9,9 +9,9 @@ import pytest
 
 from grumo.core.errors import ConfigurationError
 from grumo.runtime.store import (
+    GrumoStoreProvider,
     StoreProvider,
     StoreProviderError,
-    GrumoStoreProvider,
 )
 
 
