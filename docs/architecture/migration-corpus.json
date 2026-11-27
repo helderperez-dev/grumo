@@ -11,14 +11,14 @@
     {"name": "goal", "source": "src/grumo/runtime/agency/goal_store.py", "fixture": "tests/integration/test_durable_goal_runtime.py", "version": "_SCHEMA_VERSION"},
     {"name": "workflow_checkpoint", "source": "src/grumo/runtime/workflow_store.py", "fixture": "tests/integration/test_durable_workflow_runtime.py", "version": "_CHECKPOINT_SCHEMA_VERSION"},
     {"name": "jsonl_execution", "source": "src/grumo/runtime/persistence.py", "fixture": "tests/unit/storage/test_persistence.py", "version": "_SCHEMA_VERSION"},
-    {"name": "store_execution", "source": "src/grumo/storage/execution/store.py", "fixture": "tests/integration/test_voodoo_store_execution.py", "version": "_SCHEMA_VERSION"},
+    {"name": "store_execution", "source": "src/grumo/storage/execution/store.py", "fixture": "tests/integration/test_grumo_store_execution.py", "version": "_SCHEMA_VERSION"},
     {"name": "outbox", "source": "src/grumo/runtime/transaction.py", "fixture": "tests/integration/test_runtime_transaction.py", "version": "_SCHEMA_VERSION"},
     {"name": "membership", "source": "src/grumo/runtime/distributed/membership.py", "fixture": "tests/integration/test_node_membership.py", "version": "_SCHEMA_VERSION"},
     {"name": "fabric_lease", "source": "src/grumo/runtime/distributed/fabric.py", "fixture": "tests/integration/test_runtime_fabric.py", "version": "_SCHEMA_VERSION"},
-    {"name": "edge", "source": "src/grumo/edge/store_grumo.py", "fixture": "tests/integration/test_edge_voodoo_store.py", "version": "_SCHEMA_VERSION"},
-    {"name": "scheduler_metadata", "source": "src/grumo/storage/scheduler/store.py", "fixture": "tests/integration/test_voodoo_store_scheduler.py", "version": "_SCHEMA_VERSION"},
+    {"name": "edge", "source": "src/grumo/edge/store_grumo.py", "fixture": "tests/integration/test_edge_grumo_store.py", "version": "_SCHEMA_VERSION"},
+    {"name": "scheduler_metadata", "source": "src/grumo/storage/scheduler/store.py", "fixture": "tests/integration/test_grumo_store_scheduler.py", "version": "_SCHEMA_VERSION"},
     {"name": "scheduler_payload", "source": "src/grumo/storage/scheduler/sqlite.py", "fixture": "tests/unit/storage/test_scheduler.py", "version": "_PAYLOAD_SCHEMA_VERSION"},
-    {"name": "event_envelope", "source": "src/grumo/storage/events/codec.py", "fixture": "tests/integration/test_voodoo_store_events.py", "version": "EVENT_SCHEMA_VERSION"},
+    {"name": "event_envelope", "source": "src/grumo/storage/events/codec.py", "fixture": "tests/integration/test_grumo_store_events.py", "version": "EVENT_SCHEMA_VERSION"},
     {"name": "lineage_jsonl", "source": "src/grumo/runtime/inspection/lineage.py", "fixture": "tests/unit/runtime/test_lineage.py", "version": "_SCHEMA_VERSION"}
   ]
 }
