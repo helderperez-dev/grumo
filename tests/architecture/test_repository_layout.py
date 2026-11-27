@@ -9,9 +9,9 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
-SRC = Path(__file__).parents[2] / "src" / "voodoo"
+SRC = Path(__file__).parents[2] / "src" / "grumo"
 
-# The package root is intentionally curated in Voodoo 3.x. New root modules
+# The package root is intentionally curated in Grumo 3.x. New root modules
 # require an explicit public-API/ownership decision.
 ROOT_MODULES = {
     "__init__.py",

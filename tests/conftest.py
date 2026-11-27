@@ -4,19 +4,19 @@ import pytest
 import pytest_asyncio
 from starlette.testclient import TestClient
 
-import voodoo.data
-from voodoo.core import create_app
+import grumo.data
+from grumo.core import create_app
 
 # Tests default to the in-memory queue provider for speed; durable-queue
 # tests override this per-test.
-os.environ.setdefault("VOODOO_QUEUE_PROVIDER", "memory")
+os.environ.setdefault("GRUMO_QUEUE_PROVIDER", "memory")
 
 
 @pytest.fixture(autouse=True)
 def _reset_ui_sessions():
     """Keep UI sessions, bindings and reactive render tasks test-local."""
-    from voodoo.ui.events import ws_manager
-    from voodoo.ui.state import state_renderer
+    from grumo.ui.events import ws_manager
+    from grumo.ui.state import state_renderer
 
     ws_manager.reset()
     state_renderer.reset()
@@ -28,7 +28,7 @@ def _reset_ui_sessions():
 @pytest.fixture(autouse=True)
 def _clean_page_registry():
     """Isolate the global @page registry between tests."""
-    from voodoo.core.routing import page_registry
+    from grumo.core.routing import page_registry
 
     page_registry.clear()
     yield
@@ -43,7 +43,7 @@ def _reset_queue_state():
     at import time via ``@queue``/``@task`` and must persist. Only the
     provider (``_queue``) and asyncio tasks (``_worker_tasks``) are stateful.
     """
-    from voodoo.runtime.scheduling import workers as worker_mod
+    from grumo.runtime.scheduling import workers as worker_mod
 
     worker_mod._queue = None
     for task in worker_mod._worker_tasks:
@@ -60,10 +60,10 @@ def _reset_queue_state():
 async def _close_db_after_test():
     """Close optional SQLite resources before the test loop is torn down."""
     yield
-    import voodoo.data.base as _db_base
-    from voodoo.data import store_backend
-    from voodoo.runtime import store as _runtime_store_mod
-    from voodoo.storage.database.sqlite import _close_open_sqlite_databases
+    import grumo.data.base as _db_base
+    from grumo.data import store_backend
+    from grumo.runtime import store as _runtime_store_mod
+    from grumo.storage.database.sqlite import _close_open_sqlite_databases
 
     await _close_open_sqlite_databases()
     # Reset the global connection references so the next test's get_db()
@@ -71,7 +71,7 @@ async def _close_db_after_test():
     # default file-based database.
     _db_base._db_connection = None
     _db_base._database = None
-    # Reset the Voodoo Store runtime so the Store-backed Model doesn't
+    # Reset the Grumo Store runtime so the Store-backed Model doesn't
     # accumulate records across tests.
     if _runtime_store_mod._shared_runtime_store is not None:
         _runtime_store_mod._shared_runtime_store.stop()
@@ -82,19 +82,19 @@ async def _close_db_after_test():
     import shutil
     from pathlib import Path
 
-    voodoo_dir = Path.cwd() / ".voodoo"
-    if voodoo_dir.exists():
-        shutil.rmtree(voodoo_dir, ignore_errors=True)
+    grumo_dir = Path.cwd() / ".grumo"
+    if grumo_dir.exists():
+        shutil.rmtree(grumo_dir, ignore_errors=True)
 
 
 @pytest.fixture
 def model_store(tmp_path):
-    """Bind a fresh application.vstore for one Store-native Model test."""
-    from voodoo.data.store_backend import bind_runtime_store
-    from voodoo.runtime.store import RuntimeStore, StoreConfig
+    """Bind a fresh application.grumo for one Store-native Model test."""
+    from grumo.data.store_backend import bind_runtime_store
+    from grumo.runtime.store import RuntimeStore, StoreConfig
 
     runtime = RuntimeStore(
-        StoreConfig(path=tmp_path / "application.vstore", enabled=True)
+        StoreConfig(path=tmp_path / "application.grumo", enabled=True)
     )
     runtime.start()
     bind_runtime_store(runtime)
@@ -108,12 +108,12 @@ def model_store(tmp_path):
 @pytest.fixture
 def app(monkeypatch):
     """Fixture to provide the Starlette app with mocked database initialization."""
-    original_init_db = voodoo.data.init_db
+    original_init_db = grumo.data.init_db
 
     async def mock_init_db(db_path=":memory:"):
         await original_init_db(db_path)
 
-    monkeypatch.setattr(voodoo.data, "init_db", mock_init_db)
+    monkeypatch.setattr(grumo.data, "init_db", mock_init_db)
 
     return create_app()
 
@@ -128,7 +128,7 @@ def client(app):
 @pytest_asyncio.fixture
 async def test_db():
     """Initialize explicit SQLite for adapter-compatibility tests only."""
-    await voodoo.data.init_db(":memory:")
-    db = await voodoo.data.get_db()
+    await grumo.data.init_db(":memory:")
+    db = await grumo.data.get_db()
     yield db
-    await voodoo.data.close_db()
+    await grumo.data.close_db()

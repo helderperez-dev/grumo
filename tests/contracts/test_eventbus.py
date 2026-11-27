@@ -1,6 +1,6 @@
 """Event bus contract tests (Sprint 7).
 
-Run against any VoodooEventBus implementation to verify semantics.
+Run against any GrumoEventBus implementation to verify semantics.
 """
 
 from __future__ import annotations
@@ -10,14 +10,14 @@ from typing import Any
 
 import pytest
 
-from voodoo.storage.events.codec import EventCodecError
-from voodoo.storage.events.interfaces import VoodooEventBus
+from grumo.storage.events.codec import EventCodecError
+from grumo.storage.events.interfaces import GrumoEventBus
 
 
 class EventBusContractTests:
-    """Mixin for testing VoodooEventBus implementations."""
+    """Mixin for testing GrumoEventBus implementations."""
 
-    bus: VoodooEventBus
+    bus: GrumoEventBus
 
     @pytest.mark.asyncio
     async def test_publish_subscribe(self) -> None:
@@ -110,7 +110,7 @@ class EventBusContractTests:
 class TestLocalEventBusContract(EventBusContractTests):
     @pytest.fixture(autouse=True)
     def setup_bus(self) -> None:
-        from voodoo.storage.events.local import LocalEventBus
+        from grumo.storage.events.local import LocalEventBus
 
         self.bus = LocalEventBus()
         yield
@@ -124,14 +124,14 @@ class TestLocalEventBusContract(EventBusContractTests):
 class TestSQLiteEventBusContract(EventBusContractTests):
     @pytest.fixture(autouse=True)
     def setup_bus(self, tmp_path) -> None:
-        from voodoo.storage.events.sqlite import SQLiteEventBus
+        from grumo.storage.events.sqlite import SQLiteEventBus
 
         self.bus = SQLiteEventBus(tmp_path / "events.db")
         yield
         self.bus.close()
 
     def test_replay_skips_future_event_schema(self, tmp_path) -> None:
-        from voodoo.storage.events.sqlite import SQLiteEventBus
+        from grumo.storage.events.sqlite import SQLiteEventBus
 
         path = tmp_path / "future-events.db"
         bus = SQLiteEventBus(path)
@@ -157,7 +157,7 @@ class TestSQLiteEventBusDurability:
     """Additional durability tests specific to SQLiteEventBus."""
 
     async def test_events_survive_close_and_reopen(self, tmp_path) -> None:
-        from voodoo.storage.events.sqlite import SQLiteEventBus
+        from grumo.storage.events.sqlite import SQLiteEventBus
 
         path = tmp_path / "events.db"
         bus1 = SQLiteEventBus(path)
@@ -179,7 +179,7 @@ class TestSQLiteEventBusDurability:
         assert received[0]["payload"] == {"data": "hello"}
 
     async def test_publish_notifies_subscribers_after_reopen(self, tmp_path) -> None:
-        from voodoo.storage.events.sqlite import SQLiteEventBus
+        from grumo.storage.events.sqlite import SQLiteEventBus
 
         path = tmp_path / "events.db"
         bus = SQLiteEventBus(path)

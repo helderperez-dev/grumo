@@ -1,7 +1,7 @@
 """PostgreSQL adapter contract tests (spec §29, Sprint 10).
 
 The same ``DatabaseContractTests`` suite used for SQLite runs against a
-real PostgreSQL server when ``VOODOO_TEST_DATABASE_URL`` is set — CI
+real PostgreSQL server when ``GRUMO_TEST_DATABASE_URL`` is set — CI
 provides one via a service container (``.github/workflows/ci.yml``).
 Locally the module is skipped when no server is available, so the
 default ``pytest`` run stays green without PostgreSQL installed.
@@ -16,14 +16,14 @@ import os
 import pytest
 
 from tests.contracts.test_database import DatabaseContractTests
-from voodoo.storage.database import PostgresDatabase
-from voodoo.storage.database.interfaces import Migration
+from grumo.storage.database import PostgresDatabase
+from grumo.storage.database.interfaces import Migration
 
 psycopg = pytest.importorskip("psycopg")
 
 pytestmark = pytest.mark.skipif(
-    not os.environ.get("VOODOO_TEST_DATABASE_URL"),
-    reason="VOODOO_TEST_DATABASE_URL not set (no PostgreSQL server available)",
+    not os.environ.get("GRUMO_TEST_DATABASE_URL"),
+    reason="GRUMO_TEST_DATABASE_URL not set (no PostgreSQL server available)",
 )
 
 # PostgreSQL has no AUTOINCREMENT: identity columns are the native idiom.
@@ -41,7 +41,7 @@ CONTRACT_MIGRATION_PG = Migration(
 class TestPostgresDatabase(DatabaseContractTests):
     def make_database(self, tmp_path) -> PostgresDatabase:
         return PostgresDatabase(
-            os.environ["VOODOO_TEST_DATABASE_URL"],
+            os.environ["GRUMO_TEST_DATABASE_URL"],
             migrations=(CONTRACT_MIGRATION_PG,),
         )
 

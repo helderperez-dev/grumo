@@ -10,13 +10,13 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo.edge.auth import create_enrollment
-from voodoo.edge.errors import AuthorizationFailedError, InvalidStateVersionError
-from voodoo.edge.gateway import DeviceGateway
-from voodoo.edge.models import TransportKind
-from voodoo.edge.protocol import EdgeMessageType, make_message
-from voodoo.edge.store import InMemoryDeviceStore
-from voodoo.runtime.execution.engine import ExecutionEngine
+from grumo.edge.auth import create_enrollment
+from grumo.edge.errors import AuthorizationFailedError, InvalidStateVersionError
+from grumo.edge.gateway import DeviceGateway
+from grumo.edge.models import TransportKind
+from grumo.edge.protocol import EdgeMessageType, make_message
+from grumo.edge.store import InMemoryDeviceStore
+from grumo.runtime.execution.engine import ExecutionEngine
 
 
 async def _make_gateway() -> DeviceGateway:
@@ -206,7 +206,7 @@ class TestMQTTSessionFlow:
                 "event_payload": {},
             },
         ).model_dump()
-        from voodoo.edge.errors import AuthenticationFailedError
+        from grumo.edge.errors import AuthenticationFailedError
 
         with pytest.raises(AuthenticationFailedError):
             await gateway.handle_message(spoofed, transport=TransportKind.MQTT)
