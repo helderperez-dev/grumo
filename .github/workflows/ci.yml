@@ -307,7 +307,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        extra: [ai, browser, edge, otel, postgres, redis, s3]
+        extra: [ai, browser, edge, postgres, redis, s3]
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v7
