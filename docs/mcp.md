@@ -31,7 +31,7 @@ This tool is now available:
 ### Using the MCP client
 
 ```python
-from grumo.mcp import MCPClient
+from grumo.integrations.mcp import MCPClient
 
 client = MCPClient("http://localhost:8000/mcp/messages")
 result = await client.call_tool("get_user", {"id": 1})
@@ -40,7 +40,7 @@ result = await client.call_tool("get_user", {"id": 1})
 ### Registering MCP resources
 
 ```python
-from grumo.mcp import mcp
+from grumo.integrations.mcp import mcp
 
 
 @mcp.resource("grumo://config", name="app_config")
@@ -82,8 +82,8 @@ async def sync_crm(contact_id: int) -> str:
 ### Custom registry
 
 ```python
-from grumo.mcp import MCPServer
-from grumo.tools.registry import ToolRegistry
+from grumo.integrations.mcp import MCPServer
+from grumo.ai.tools.registry import ToolRegistry
 
 custom_registry = ToolRegistry()
 mcp_server = MCPServer(registry=custom_registry)
