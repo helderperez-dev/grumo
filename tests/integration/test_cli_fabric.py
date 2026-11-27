@@ -3,7 +3,7 @@
 from click.utils import strip_ansi
 from typer.testing import CliRunner
 
-from voodoo.cli import app
+from grumo.cli import app
 
 runner = CliRunner()
 

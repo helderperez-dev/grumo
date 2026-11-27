@@ -1,8 +1,8 @@
-"""Release-gate smoke test for the default Voodoo + Voodoo Store journey.
+"""Release-gate smoke test for the default Grumo + Grumo Store journey.
 
 This intentionally crosses the public/runtime seams a normal application uses:
 Model data, durable queue work, event persistence and canonical Execution all
-share one application.vstore and survive a full Store close/reopen cycle.
+share one application.grumo and survive a full Store close/reopen cycle.
 """
 
 from __future__ import annotations
@@ -12,19 +12,19 @@ from uuid import UUID
 
 import pytest
 
-from voodoo.data import Model
-from voodoo.data.store_backend import bind_runtime_store
-from voodoo.primitives.intent import Intent
-from voodoo.runtime.execution import ExecutionStatus
-from voodoo.runtime.execution.engine import ComputeResult, ExecutionEngine
-from voodoo.runtime.store import (
+from grumo.data import Model
+from grumo.data.store_backend import bind_runtime_store
+from grumo.primitives.intent import Intent
+from grumo.runtime.execution import ExecutionStatus
+from grumo.runtime.execution.engine import ComputeResult, ExecutionEngine
+from grumo.runtime.store import (
     RuntimeStore,
     StoreConfig,
     bind_active_runtime_store,
 )
-from voodoo.storage.events.store import VoodooStoreEventBus
-from voodoo.storage.execution.store import VoodooStoreExecutionStore
-from voodoo.storage.queue.store import VoodooStoreQueue
+from grumo.storage.events.store import GrumoStoreEventBus
+from grumo.storage.execution.store import GrumoStoreExecutionStore
+from grumo.storage.queue.store import GrumoStoreQueue
 
 
 class JourneyRecord(Model):
@@ -44,7 +44,7 @@ def _unbind() -> None:
 
 @pytest.mark.asyncio
 async def test_store_first_application_domains_survive_restart(tmp_path: Path) -> None:
-    path = tmp_path / ".voodoo" / "application.vstore"
+    path = tmp_path / ".grumo" / "application.grumo"
 
     runtime = RuntimeStore(StoreConfig(path=path))
     runtime.start()
@@ -57,7 +57,7 @@ async def test_store_first_application_domains_survive_restart(tmp_path: Path) -
         assert record.id.version == 7
         record_id = record.id
 
-        queue = VoodooStoreQueue()
+        queue = GrumoStoreQueue()
         await queue.setup()
         job = await queue.enqueue(
             "recalculate",
@@ -66,12 +66,12 @@ async def test_store_first_application_domains_survive_restart(tmp_path: Path) -
         )
         assert job.type == "recalculate"
 
-        bus = VoodooStoreEventBus()
+        bus = GrumoStoreEventBus()
         event = bus.publish("journey.created", {"record_id": record.id})
         assert event["event_type"] == "journey.created"
 
         engine = ExecutionEngine()
-        execution_store = VoodooStoreExecutionStore()
+        execution_store = GrumoStoreExecutionStore()
         engine.use_store(execution_store)
 
         async def compute(_ctx):
@@ -100,7 +100,7 @@ async def test_store_first_application_domains_survive_restart(tmp_path: Path) -
         assert persisted.id == record_id
         assert persisted.value == 41
 
-        queue = VoodooStoreQueue()
+        queue = GrumoStoreQueue()
         await queue.setup()
         jobs = await queue.list(task_type="recalculate")
         assert len(jobs) == 1
@@ -108,11 +108,11 @@ async def test_store_first_application_domains_survive_restart(tmp_path: Path) -
         assert jobs[0].payload == {"record_id": str(record_id)}
 
         replayed: list[dict] = []
-        bus = VoodooStoreEventBus()
+        bus = GrumoStoreEventBus()
         assert bus.replay("journey.created", replayed.append) == 1
         assert replayed[0]["payload"] == {"record_id": str(record_id)}
 
-        execution_store = VoodooStoreExecutionStore()
+        execution_store = GrumoStoreExecutionStore()
         executions = execution_store.load_all()
         restored = next(item for item in executions if item.id == execution_id)
         assert restored.status is ExecutionStatus.COMPLETED

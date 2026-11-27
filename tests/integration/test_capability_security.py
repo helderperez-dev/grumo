@@ -17,15 +17,15 @@ from typing import Any
 
 import pytest
 
-from voodoo.primitives.capability import Capability
-from voodoo.primitives.effect import Effect
-from voodoo.runtime.capability import (
+from grumo.primitives.capability import Capability
+from grumo.primitives.effect import Effect
+from grumo.runtime.capability import (
     SENSITIVE_CAPABILITIES,
     CapabilityResolver,
     Resolution,
 )
-from voodoo.runtime.context import ExecutionContext
-from voodoo.runtime.errors import CapabilityDenied
+from grumo.runtime.context import ExecutionContext
+from grumo.runtime.errors import CapabilityDenied
 
 # ---------------------------------------------------------------------------
 # Denied-by-default matrix
@@ -145,27 +145,27 @@ class TestEnvSecretStore:
     """EnvSecretStore reads from environment variables."""
 
     def test_get_existing_var(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        from voodoo.security.secrets import EnvSecretStore
+        from grumo.security.secrets import EnvSecretStore
 
         monkeypatch.setenv("TEST_SECRET_VALUE", "hunter2")
         store = EnvSecretStore()
         assert store.get("TEST_SECRET_VALUE") == "hunter2"
 
     def test_get_missing_var(self) -> None:
-        from voodoo.security.secrets import EnvSecretStore
+        from grumo.security.secrets import EnvSecretStore
 
         store = EnvSecretStore()
         assert store.get("NONEXISTENT_SECRET_XYZ_123") is None
 
     def test_has_existing_var(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        from voodoo.security.secrets import EnvSecretStore
+        from grumo.security.secrets import EnvSecretStore
 
         monkeypatch.setenv("TEST_SECRET_EXISTS", "yes")
         store = EnvSecretStore()
         assert store.has("TEST_SECRET_EXISTS") is True
 
     def test_has_missing_var(self) -> None:
-        from voodoo.security.secrets import EnvSecretStore
+        from grumo.security.secrets import EnvSecretStore
 
         store = EnvSecretStore()
         assert store.has("NONEXISTENT_SECRET_XYZ_123") is False
@@ -177,7 +177,7 @@ class TestLocalSecretStore:
     def test_plain_json_fails_closed(self, tmp_path: Path) -> None:
         from cryptography.fernet import Fernet
 
-        from voodoo.security.secrets import LocalSecretStore, SecretsError
+        from grumo.security.secrets import LocalSecretStore, SecretsError
 
         secrets_file = tmp_path / "secrets.json"
         secrets_file.write_text(json.dumps({"API_KEY": "sk-abc123"}))
@@ -190,7 +190,7 @@ class TestLocalSecretStore:
     def test_set_creates_file(self, tmp_path: Path) -> None:
         from cryptography.fernet import Fernet
 
-        from voodoo.security.secrets import LocalSecretStore
+        from grumo.security.secrets import LocalSecretStore
 
         secrets_file = tmp_path / "secrets.json"
         store = LocalSecretStore(
@@ -202,7 +202,7 @@ class TestLocalSecretStore:
         assert b"new-value" not in secrets_file.read_bytes()
 
     def test_missing_file_returns_none(self, tmp_path: Path) -> None:
-        from voodoo.security.secrets import LocalSecretStore
+        from grumo.security.secrets import LocalSecretStore
 
         store = LocalSecretStore(tmp_path / "nope.json")
         assert store.get("anything") is None
@@ -210,7 +210,7 @@ class TestLocalSecretStore:
     def test_get_missing_key(self, tmp_path: Path) -> None:
         from cryptography.fernet import Fernet
 
-        from voodoo.security.secrets import LocalSecretStore
+        from grumo.security.secrets import LocalSecretStore
 
         secrets_file = tmp_path / "secrets.json"
         store = LocalSecretStore(
@@ -221,7 +221,7 @@ class TestLocalSecretStore:
         assert store.get("OTHER") is None
 
     def test_set_without_key_fails_closed(self, tmp_path: Path) -> None:
-        from voodoo.security.secrets import LocalSecretStore, SecretsError
+        from grumo.security.secrets import LocalSecretStore, SecretsError
 
         store = LocalSecretStore(tmp_path / "secrets.json")
         with pytest.raises(SecretsError, match="No encryption key"):
@@ -231,7 +231,7 @@ class TestLocalSecretStore:
     def test_insecure_existing_file_fails_closed(self, tmp_path: Path) -> None:
         from cryptography.fernet import Fernet
 
-        from voodoo.security.secrets import LocalSecretStore, SecretsError
+        from grumo.security.secrets import LocalSecretStore, SecretsError
 
         secrets_file = tmp_path / "secrets.json"
         writer = LocalSecretStore(secrets_file, key=Fernet.generate_key().decode())
@@ -244,7 +244,7 @@ class TestLocalSecretStore:
     def test_insecure_existing_directory_fails_closed(self, tmp_path: Path) -> None:
         from cryptography.fernet import Fernet
 
-        from voodoo.security.secrets import LocalSecretStore, SecretsError
+        from grumo.security.secrets import LocalSecretStore, SecretsError
 
         secrets_dir = tmp_path / "secrets"
         secrets_dir.mkdir(mode=0o755)
@@ -262,23 +262,23 @@ class TestSecretsModuleAPI:
     def test_module_get(self, monkeypatch: pytest.MonkeyPatch) -> None:
         import sys
 
-        secrets_mod = sys.modules["voodoo.security.secrets"]
+        secrets_mod = sys.modules["grumo.security.secrets"]
 
-        monkeypatch.setenv("VOODOO_TEST_MODULE_SECRET", "found")
-        assert secrets_mod.get("VOODOO_TEST_MODULE_SECRET") == "found"
+        monkeypatch.setenv("GRUMO_TEST_MODULE_SECRET", "found")
+        assert secrets_mod.get("GRUMO_TEST_MODULE_SECRET") == "found"
 
     def test_module_has(self, monkeypatch: pytest.MonkeyPatch) -> None:
         import sys
 
-        secrets_mod = sys.modules["voodoo.security.secrets"]
+        secrets_mod = sys.modules["grumo.security.secrets"]
 
-        monkeypatch.setenv("VOODOO_TEST_MODULE_HAS", "1")
-        assert secrets_mod.has("VOODOO_TEST_MODULE_HAS") is True
+        monkeypatch.setenv("GRUMO_TEST_MODULE_HAS", "1")
+        assert secrets_mod.has("GRUMO_TEST_MODULE_HAS") is True
 
     def test_configure_rejects_invalid(self) -> None:
         import sys
 
-        secrets_mod = sys.modules["voodoo.security.secrets"]
+        secrets_mod = sys.modules["grumo.security.secrets"]
 
         with pytest.raises(TypeError, match="SecretStore"):
             secrets_mod.configure("not a store")  # type: ignore[arg-type]
@@ -286,7 +286,7 @@ class TestSecretsModuleAPI:
     def test_register_name(self) -> None:
         import sys
 
-        secrets_mod = sys.modules["voodoo.security.secrets"]
+        secrets_mod = sys.modules["grumo.security.secrets"]
 
         secrets_mod.register_name("MY_API_KEY")
         assert "MY_API_KEY" in secrets_mod.registered_names()
@@ -301,7 +301,7 @@ class TestRedactionGuard:
     """RedactionGuard scrubs secrets from data structures."""
 
     def test_redact_sensitive_key(self) -> None:
-        from voodoo.security.redaction import redact
+        from grumo.security.redaction import redact
 
         data = {"api_key": "sk-abc123", "name": "test"}
         result = redact(data)
@@ -309,7 +309,7 @@ class TestRedactionGuard:
         assert result["name"] == "test"
 
     def test_redact_nested_dict(self) -> None:
-        from voodoo.security.redaction import redact
+        from grumo.security.redaction import redact
 
         data = {
             "config": {
@@ -325,7 +325,7 @@ class TestRedactionGuard:
         assert result["items"][0]["id"] == 1
 
     def test_redact_known_value(self) -> None:
-        from voodoo.security.redaction import RedactionGuard
+        from grumo.security.redaction import RedactionGuard
 
         guard = RedactionGuard()
         guard.add_value("my-super-secret-value")
@@ -334,14 +334,14 @@ class TestRedactionGuard:
         assert "[REDACTED]" in result
 
     def test_redact_bearer_token(self) -> None:
-        from voodoo.security.redaction import redact_string
+        from grumo.security.redaction import redact_string
 
         text = "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.abc123"
         result = redact_string(text)
         assert "Bearer" not in result or "[REDACTED]" in result
 
     def test_redact_sk_key_pattern(self) -> None:
-        from voodoo.security.redaction import redact_string
+        from grumo.security.redaction import redact_string
 
         text = "Using key sk-abcdefghijklmnopqrstuvwxyz"
         result = redact_string(text)
@@ -349,7 +349,7 @@ class TestRedactionGuard:
         assert "[REDACTED]" in result
 
     def test_redact_aws_key_pattern(self) -> None:
-        from voodoo.security.redaction import redact_string
+        from grumo.security.redaction import redact_string
 
         text = "Access key: AKIAIOSFODNN7EXAMPLE"
         result = redact_string(text)
@@ -357,7 +357,7 @@ class TestRedactionGuard:
         assert "[REDACTED]" in result
 
     def test_redact_password_in_uri(self) -> None:
-        from voodoo.security.redaction import redact_string
+        from grumo.security.redaction import redact_string
 
         text = "postgresql://admin:secretpass@localhost:5432/db"
         result = redact_string(text)
@@ -366,7 +366,7 @@ class TestRedactionGuard:
         assert "localhost" in result
 
     def test_redact_jwt_token(self) -> None:
-        from voodoo.security.redaction import redact_string
+        from grumo.security.redaction import redact_string
 
         jwt = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U"
         result = redact_string(jwt)
@@ -374,7 +374,7 @@ class TestRedactionGuard:
         assert "[REDACTED]" in result
 
     def test_redact_passthrough_types(self) -> None:
-        from voodoo.security.redaction import redact
+        from grumo.security.redaction import redact
 
         assert redact(42) == 42
         assert redact(3.14) == 3.14
@@ -382,7 +382,7 @@ class TestRedactionGuard:
         assert redact(None) is None
 
     def test_redact_list(self) -> None:
-        from voodoo.security.redaction import redact
+        from grumo.security.redaction import redact
 
         data = [{"token": "abc"}, {"name": "safe"}]
         result = redact(data)
@@ -391,7 +391,7 @@ class TestRedactionGuard:
 
     def test_redact_secret_key_patterns(self) -> None:
         """Various key-name patterns are all caught."""
-        from voodoo.security.redaction import redact
+        from grumo.security.redaction import redact
 
         for key in [
             "secret",
@@ -410,7 +410,7 @@ class TestRedactionGuard:
             assert result[key] == "[REDACTED]", f"key '{key}' was not redacted"
 
     def test_load_secrets_from_env(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        from voodoo.security.redaction import RedactionGuard
+        from grumo.security.redaction import RedactionGuard
 
         monkeypatch.setenv("REDACTION_TEST_SECRET", "super-secret-value-123")
         guard = RedactionGuard()
@@ -431,15 +431,15 @@ class TestRedactionInEngine:
     @pytest.mark.asyncio
     async def test_emit_redacts_payload(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Engine._emit applies redaction before broadcasting."""
-        from voodoo.primitives.intent import Intent
-        from voodoo.runtime.execution.engine import ExecutionEngine
+        from grumo.primitives.intent import Intent
+        from grumo.runtime.execution.engine import ExecutionEngine
 
         captured: list[tuple[str, dict[str, Any]]] = []
 
         async def fake_broadcast(event: str, payload: dict[str, Any]) -> None:
             captured.append((event, payload))
 
-        from voodoo.mesh import mesh
+        from grumo.mesh import mesh
 
         monkeypatch.setattr(mesh, "broadcast", fake_broadcast)
 
@@ -456,16 +456,16 @@ class TestRedactionInEngine:
         self, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
     ) -> None:
         """Observation failures stay non-fatal but are visible and redacted."""
-        from voodoo.runtime.execution.engine import ExecutionEngine
+        from grumo.runtime.execution.engine import ExecutionEngine
 
         async def failing_broadcast(_event: str, _payload: dict[str, Any]) -> None:
             raise RuntimeError("password=super-secret")
 
-        from voodoo.mesh import mesh
+        from grumo.mesh import mesh
 
         monkeypatch.setattr(mesh, "broadcast", failing_broadcast)
 
-        with caplog.at_level("WARNING", logger="voodoo.runtime.execution"):
+        with caplog.at_level("WARNING", logger="grumo.runtime.execution"):
             await ExecutionEngine()._emit("test.event", {"ok": True})
 
         assert "execution event emission failed" in caplog.text
@@ -476,7 +476,7 @@ class TestRedactionInEngine:
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Engine._journal_approval_decision applies redaction."""
-        from voodoo.runtime.execution.engine import ExecutionEngine
+        from grumo.runtime.execution.engine import ExecutionEngine
 
         captured: list[dict[str, Any]] = []
 

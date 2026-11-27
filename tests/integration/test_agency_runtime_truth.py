@@ -4,15 +4,15 @@ from types import SimpleNamespace
 
 import pytest
 
-from voodoo.agents.registry import InMemoryAgentRegistry
-from voodoo.ai.agent import Agent
-from voodoo.ai.providers import ProviderResponse, ToolCall
-from voodoo.ai.providers.mock import MockProvider
-from voodoo.ai.tools.registry import ToolRegistry, build_spec
-from voodoo.memory.interfaces import InMemoryMemoryStore, MemoryLayer
-from voodoo.runtime.errors import AgentExecutionError
-from voodoo.runtime.execution.engine import ExecutionEngine
-from voodoo.runtime.task import Task
+from grumo.agents.registry import InMemoryAgentRegistry
+from grumo.ai.agent import Agent
+from grumo.ai.providers import ProviderResponse, ToolCall
+from grumo.ai.providers.mock import MockProvider
+from grumo.ai.tools.registry import ToolRegistry, build_spec
+from grumo.memory.interfaces import InMemoryMemoryStore, MemoryLayer
+from grumo.runtime.errors import AgentExecutionError
+from grumo.runtime.execution.engine import ExecutionEngine
+from grumo.runtime.task import Task
 
 
 class FailingProvider(MockProvider):

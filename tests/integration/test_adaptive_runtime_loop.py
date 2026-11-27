@@ -1,10 +1,10 @@
 import pytest
 
-from voodoo import App
-from voodoo.primitives.intent import Intent
-from voodoo.runtime import ReconcileAction, Runtime
-from voodoo.runtime.execution.engine import ComputeResult
-from voodoo.world import Entity, WorldModel
+from grumo import App
+from grumo.primitives.intent import Intent
+from grumo.runtime import ReconcileAction, Runtime
+from grumo.runtime.execution.engine import ComputeResult
+from grumo.world import Entity, WorldModel
 
 
 @pytest.mark.asyncio

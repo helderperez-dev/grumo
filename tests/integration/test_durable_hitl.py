@@ -8,12 +8,12 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo.primitives.intent import Intent
-from voodoo.runtime.context import ExecutionContext
-from voodoo.runtime.errors import ApprovalRequired
-from voodoo.runtime.execution.engine import ExecutionEngine
-from voodoo.runtime.human import Approval, ApprovalRegistry, ApprovalStatus
-from voodoo.storage.execution import SQLiteExecutionStore
+from grumo.primitives.intent import Intent
+from grumo.runtime.context import ExecutionContext
+from grumo.runtime.errors import ApprovalRequired
+from grumo.runtime.execution.engine import ExecutionEngine
+from grumo.runtime.human import Approval, ApprovalRegistry, ApprovalStatus
+from grumo.storage.execution import SQLiteExecutionStore
 
 # ---------------------------------------------------------------------------
 # Approval model
@@ -325,7 +325,7 @@ class TestApprovalJournalEvents:
 
 class TestApprovalRegistryBasics:
     async def test_create_and_pending(self) -> None:
-        from voodoo.runtime.execution import Execution
+        from grumo.runtime.execution import Execution
 
         registry = ApprovalRegistry()
         ex = Execution(id="ex-1", trace_id="tr-1", intent=Intent(name="t"))
@@ -334,7 +334,7 @@ class TestApprovalRegistryBasics:
         assert registry.pending() == [approval]
 
     async def test_decide_idempotent(self) -> None:
-        from voodoo.runtime.execution import Execution
+        from grumo.runtime.execution import Execution
 
         registry = ApprovalRegistry()
         ex = Execution(id="ex-1", trace_id="tr-1", intent=Intent(name="t"))
