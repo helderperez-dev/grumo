@@ -2,15 +2,15 @@
 
 from __future__ import annotations
 
-from voodoo.primitives.intent import Intent
-from voodoo.runtime import ExecutionEngine
-from voodoo.runtime.agency import (
+from grumo.primitives.intent import Intent
+from grumo.runtime import ExecutionEngine
+from grumo.runtime.agency import (
     AdaptiveSupervisor,
     SupervisorConfig,
     SupervisorDecision,
 )
-from voodoo.runtime.planner import ComputeParticipant, Planner
-from voodoo.runtime.workflow import WorkflowStrategy
+from grumo.runtime.planner import ComputeParticipant, Planner
+from grumo.runtime.workflow import WorkflowStrategy
 
 # ---------------------------------------------------------------------------
 # Planner
@@ -87,7 +87,7 @@ class TestPlanner:
 
 class TestAdaptiveSupervisor:
     async def test_successful_single_step(self):
-        from voodoo.primitives.capability import Capability
+        from grumo.primitives.capability import Capability
 
         engine = ExecutionEngine()
         engine.capabilities.register(Capability(name="math.double"))
@@ -154,8 +154,8 @@ class TestAdaptiveSupervisor:
 
     async def test_fallback_on_capability_denied(self):
         """When the primary step's compute raises, the supervisor falls back."""
-        from voodoo.primitives.capability import Capability
-        from voodoo.runtime.errors import CapabilityDenied
+        from grumo.primitives.capability import Capability
+        from grumo.runtime.errors import CapabilityDenied
 
         engine = ExecutionEngine()
         engine.capabilities.register(Capability(name="cap.x"))
@@ -196,9 +196,9 @@ class TestAdaptiveSupervisor:
     async def test_resource_budget_stops_when_exceeded(self):
         """The supervisor accumulates per-step cost and stops when the
         configured budget is exceeded."""
-        from voodoo.primitives.capability import Capability
-        from voodoo.primitives.resource import Resource
-        from voodoo.runtime.execution.engine import ComputeResult
+        from grumo.primitives.capability import Capability
+        from grumo.primitives.resource import Resource
+        from grumo.runtime.execution.engine import ComputeResult
 
         engine = ExecutionEngine()
         engine.capabilities.register(Capability(name="cap.x"))
@@ -233,8 +233,8 @@ class TestAdaptiveSupervisor:
     async def test_constraint_retry_hint_drives_supervisor_retry(self):
         """When a constraint says ``retry=True`` and the step fails, the
         supervisor retries instead of failing immediately."""
-        from voodoo.primitives.capability import Capability
-        from voodoo.primitives.constraint import Constraint
+        from grumo.primitives.capability import Capability
+        from grumo.primitives.constraint import Constraint
 
         engine = ExecutionEngine()
         engine.capabilities.register(Capability(name="cap.flaky"))
@@ -245,7 +245,7 @@ class TestAdaptiveSupervisor:
         def flaky(ctx):
             attempts[0] += 1
             if attempts[0] < 3:
-                from voodoo.runtime.errors import ExecutionError
+                from grumo.runtime.errors import ExecutionError
 
                 raise ExecutionError("transient failure")
             return "recovered"

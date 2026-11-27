@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from voodoo.primitives.capability import Capability
-from voodoo.primitives.intent import Intent
-from voodoo.runtime import (
+from grumo.primitives.capability import Capability
+from grumo.primitives.intent import Intent
+from grumo.runtime import (
     AdaptiveSupervisor,
     ComputeParticipant,
     ExecutionEngine,
@@ -11,7 +11,7 @@ from voodoo.runtime import (
     GoalStatus,
     Planner,
 )
-from voodoo.world import Entity, WorldModel
+from grumo.world import Entity, WorldModel
 
 
 def _runtime(*participants: ComputeParticipant, world=None):
@@ -110,7 +110,7 @@ async def test_goal_stops_after_failed_intent():
     calls = []
 
     def fail(ctx):
-        from voodoo.runtime.errors import ExecutionError
+        from grumo.runtime.errors import ExecutionError
 
         raise ExecutionError("supplier unavailable")
 

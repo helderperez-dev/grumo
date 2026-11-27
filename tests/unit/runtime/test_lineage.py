@@ -1,4 +1,4 @@
-from voodoo.runtime.inspection import LineageEvent, RuntimeLineage
+from grumo.runtime.inspection import LineageEvent, RuntimeLineage
 
 
 def test_lineage_explains_causal_parent_chain():
@@ -105,7 +105,7 @@ def test_lineage_skips_future_schema_with_diagnostic(tmp_path, caplog):
         "\n"
     )
 
-    with caplog.at_level("WARNING", logger="voodoo.runtime.lineage"):
+    with caplog.at_level("WARNING", logger="grumo.runtime.lineage"):
         restored = RuntimeLineage(path)
 
     assert restored.events() == ()

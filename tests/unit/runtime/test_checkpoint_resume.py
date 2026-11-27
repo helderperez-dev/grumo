@@ -10,13 +10,13 @@ import json
 
 import pytest
 
-from voodoo.primitives.effect import Effect
-from voodoo.primitives.intent import Intent
-from voodoo.runtime import ExecutionEngine
-from voodoo.runtime.errors import ApprovalRequired
-from voodoo.runtime.execution import Execution, ExecutionStatus
-from voodoo.runtime.persistence import JSONFileExecutionStore
-from voodoo.storage.execution import SQLiteExecutionStore
+from grumo.primitives.effect import Effect
+from grumo.primitives.intent import Intent
+from grumo.runtime import ExecutionEngine
+from grumo.runtime.errors import ApprovalRequired
+from grumo.runtime.execution import Execution, ExecutionStatus
+from grumo.runtime.persistence import JSONFileExecutionStore
+from grumo.storage.execution import SQLiteExecutionStore
 
 
 class TestCheckpointBoundaries:
@@ -93,8 +93,8 @@ class TestResumeSkipsCompletedEffects:
         engine.use_store(store)
 
         # First run: one effect completes, then process "crashes"
-        from voodoo.primitives.intent import Intent as I
-        from voodoo.runtime.execution import Execution
+        from grumo.primitives.intent import Intent as I
+        from grumo.runtime.execution import Execution
 
         ex = Execution(
             id="ex1", trace_id="t1", intent=I(name="multi_step"), actor="test"
@@ -157,8 +157,8 @@ class TestIdempotencyKeyOnEffects:
         engine = ExecutionEngine()
 
         async def compute(ctx):
-            from voodoo.primitives.effect import Effect
-            from voodoo.runtime.execution.engine import ComputeResult
+            from grumo.primitives.effect import Effect
+            from grumo.runtime.execution.engine import ComputeResult
 
             return ComputeResult(effects=[Effect(name="send_email", idempotent=False)])
 

@@ -1,7 +1,7 @@
-from voodoo.primitives.intent import Intent
-from voodoo.runtime.reconciliation import ReconcileAction, ReconcileDecision
-from voodoo.runtime.scheduling.dispatch import RuntimeDispatcher
-from voodoo.runtime.scheduling.work import WorkEligibility
+from grumo.primitives.intent import Intent
+from grumo.runtime.reconciliation import ReconcileAction, ReconcileDecision
+from grumo.runtime.scheduling.dispatch import RuntimeDispatcher
+from grumo.runtime.scheduling.work import WorkEligibility
 
 
 def test_dispatcher_ignores_non_proposal_decisions():
@@ -39,7 +39,7 @@ def test_dispatcher_preserves_waiting_scheduler_decision():
         intents=(intent,),
     )
 
-    from voodoo.runtime.scheduling.work import RuntimeScheduler, ScheduledWork
+    from grumo.runtime.scheduling.work import RuntimeScheduler, ScheduledWork
 
     work = ScheduledWork(intent=intent, concurrency_key="sync")
     scheduler = RuntimeScheduler()

@@ -1,11 +1,11 @@
-from voodoo.primitives.intent import Intent
-from voodoo.runtime.application_graph import (
+from grumo.primitives.intent import Intent
+from grumo.runtime.application_graph import (
     ApplicationGraph,
     ApplicationNodeKind,
     ChangeReason,
     InvalidationEngine,
 )
-from voodoo.runtime.reconciliation import (
+from grumo.runtime.reconciliation import (
     ReconcileAction,
     ReconcileDecision,
     ReconcileGuard,
@@ -79,9 +79,9 @@ def test_reconciler_bounds_decision_fanout():
 
 
 def test_goal_reconciliation_uses_observed_world_and_preserves_authority_boundary():
-    from voodoo.runtime.agency import Goal
-    from voodoo.runtime.reconciliation import GoalReconciliation
-    from voodoo.world import Entity, WorldModel
+    from grumo.runtime.agency import Goal
+    from grumo.runtime.reconciliation import GoalReconciliation
+    from grumo.world import Entity, WorldModel
 
     world = WorldModel()
     world.put_entity(Entity(id="business", type="business"))
@@ -124,9 +124,9 @@ def test_goal_reconciliation_uses_observed_world_and_preserves_authority_boundar
 
 
 def test_goal_reconciliation_is_satisfied_without_proposing_work():
-    from voodoo.runtime.agency import Goal
-    from voodoo.runtime.reconciliation import GoalReconciliation
-    from voodoo.world import Entity, WorldModel
+    from grumo.runtime.agency import Goal
+    from grumo.runtime.reconciliation import GoalReconciliation
+    from grumo.world import Entity, WorldModel
 
     world = WorldModel()
     world.put_entity(Entity(id="service", type="service"))
@@ -185,7 +185,7 @@ def test_reconciler_suppresses_duplicate_intent_proposals():
 def test_reconciler_allows_duplicate_after_cooldown_window():
     from datetime import UTC, datetime, timedelta
 
-    from voodoo.runtime.reconciliation import ReconcileGuard, ReconcileLedger
+    from grumo.runtime.reconciliation import ReconcileGuard, ReconcileLedger
 
     graph = ApplicationGraph()
     resource = graph.node(ApplicationNodeKind.RESOURCE, "metric")
@@ -216,7 +216,7 @@ def test_reconciler_allows_duplicate_after_cooldown_window():
 
 
 def test_reconciler_can_require_revision_evidence():
-    from voodoo.runtime.reconciliation import ReconcileGuard
+    from grumo.runtime.reconciliation import ReconcileGuard
 
     graph = ApplicationGraph()
     resource = graph.node(ApplicationNodeKind.RESOURCE, "metric")

@@ -1,4 +1,4 @@
-"""Tests for the Voodoo unified runtime.
+"""Tests for the Grumo unified runtime.
 
 Covers the spec's critical invariants (Section 62):
   1. unauthorized effects cannot execute
@@ -19,10 +19,10 @@ from datetime import UTC, datetime, timedelta
 import pytest
 from pydantic import BaseModel as PydBaseModel
 
-from voodoo.observability import telemetry_store
-from voodoo.primitives import Capability, Constraint, Effect, Resource, State
-from voodoo.primitives.intent import IntentStatus
-from voodoo.runtime import (
+from grumo.observability import telemetry_store
+from grumo.primitives import Capability, Constraint, Effect, Resource, State
+from grumo.primitives.intent import IntentStatus
+from grumo.runtime import (
     ComputeResult,
     ConstraintEnforcer,
     Decision,
@@ -37,11 +37,11 @@ from voodoo.runtime import (
     WorkflowStrategy,
     current_context,
 )
-from voodoo.runtime import (
+from grumo.runtime import (
     Intent as RTIntent,
 )
-from voodoo.runtime.capability import CapabilityResolver, Resolution
-from voodoo.runtime.errors import (
+from grumo.runtime.capability import CapabilityResolver, Resolution
+from grumo.runtime.errors import (
     ApprovalRequired,
     CapabilityDenied,
     ConstraintViolation,
@@ -512,8 +512,8 @@ class TestWorkflow:
 
     @pytest.mark.asyncio
     async def test_no_crew_terminology(self):
-        # The Voodoo naming rule: never use "Crew".
-        import voodoo.runtime as rt
+        # The Grumo naming rule: never use "Crew".
+        import grumo.runtime as rt
 
         assert not hasattr(rt, "Crew")
         assert "Crew" not in rt.__all__
@@ -555,8 +555,8 @@ class TestAgentRuntimeIntegration:
     def _make_agent_with_gated_tool(self, granted: list[str] | None):
         from unittest.mock import MagicMock
 
-        from voodoo.ai.agent import Agent
-        from voodoo.ai.tools.registry import ToolRegistry, ToolSpec
+        from grumo.ai.agent import Agent
+        from grumo.ai.tools.registry import ToolRegistry, ToolSpec
 
         registry = ToolRegistry()
 
@@ -600,12 +600,12 @@ class TestAgentRuntimeIntegration:
 
     @pytest.mark.asyncio
     async def test_context_capability_grants_tool(self):
-        from voodoo.primitives.capability import Capability as Cap
+        from grumo.primitives.capability import Capability as Cap
 
         agent, registry = self._make_agent_with_gated_tool(granted=None)
         ctx = ExecutionContext()
         ctx.grant(Cap(name="email.send"))
-        from voodoo.runtime.context import use_context
+        from grumo.runtime.context import use_context
 
         async with use_context(ctx):
             result = await agent._execute_tool_call("send_email", {"to": "a@b.c"})
@@ -635,9 +635,9 @@ class TestAgentRuntimeIntegration:
     @pytest.mark.asyncio
     async def test_task_with_agent_compute(self):
         """Task(agent=...) runs the agent through the common runtime."""
-        from voodoo.ai.agent import Agent as VoodooAgent
+        from grumo.ai.agent import Agent as GrumoAgent
 
-        agent = VoodooAgent(model="mock:test")
+        agent = GrumoAgent(model="mock:test")
 
         t = Task(name="ask", description="hello", agent=agent)
         ex = await t.run()

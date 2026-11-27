@@ -1,11 +1,11 @@
 import pytest
 
-from voodoo.runtime.application_graph import (
+from grumo.runtime.application_graph import (
     ApplicationGraph,
     Extension,
     ExtensionManifest,
 )
-from voodoo.runtime.extension import ExtensionState, RuntimeExtensionRegistry
+from grumo.runtime.extension import ExtensionState, RuntimeExtensionRegistry
 
 
 class AnalyticsExtension(Extension):
