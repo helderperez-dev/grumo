@@ -9,7 +9,7 @@
 
 ## Two orthogonal lifecycles
 
-**Entity validity** (is this device a valid Voodoo Entity?) is separate
+**Entity validity** (is this device a valid Grumo Entity?) is separate
 from **connection status** (is it talking to us right now?). A
 disconnected device remains a full entity with state, capabilities, and
 history.
@@ -111,7 +111,7 @@ enforcement (defense in depth, tested).
 ## Operator surface
 
 ```python
-from voodoo.edge import DeviceGateway
+from grumo.edge import DeviceGateway
 
 await gateway.revoke_device("device_01j...")  # terminal
 await gateway.disconnect("sess_...")  # graceful session end

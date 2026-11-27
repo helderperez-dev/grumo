@@ -1,11 +1,11 @@
 # Design System
 
-Voodoo ships a complete design system out of the box: design tokens, a theme
+Grumo ships a complete design system out of the box: design tokens, a theme
 engine, a default semantic CSS adapter, and a library of polished components.
 New apps look professional with **zero configuration** — no CSS files, no
 utility classes, no build step.
 
-The current native layer is **Voodoo Design System 4**. It adds the Voodoo
+The current native layer is **Grumo Design System 4**. It adds the Grumo
 purple brand language, premium light/dark surfaces, tighter typography and
 production-quality defaults while preserving `Theme` as the public source of
 truth for application customization.
@@ -13,7 +13,7 @@ truth for application customization.
 ## Architecture
 
 ```
-                    VOODOO DESIGN SYSTEM
+                    GRUMO DESIGN SYSTEM
                              │
                 ┌────────────┴────────────┐
                 │                         │
@@ -29,7 +29,7 @@ truth for application customization.
                              │
               ┌──────────────┼──────────────┐
               │              │              │
-          Voodoo CSS      Tailwind       Custom CSS
+          Grumo CSS      Tailwind       Custom CSS
 ```
 
 The key principle: **components do not know that Tailwind exists.** Components
@@ -55,12 +55,12 @@ re-styles every component instantly, at runtime, without re-rendering HTML.
 
 ### Color palette
 
-Voodoo includes focused, perceptually uniform OKLCH scales for `zinc`,
+Grumo includes focused, perceptually uniform OKLCH scales for `zinc`,
 `violet`, `blue`, `emerald`, `amber`, and `red`. Every scale uses the familiar
 Tailwind steps `50, 100, 200, ... 900, 950`:
 
 ```python
-from voodoo.ui import Card, Text, color
+from grumo.ui import Card, Text, color
 
 panel = Card(
     Text("Token-driven color", color="violet-200"),
@@ -74,7 +74,7 @@ accent = color("violet", 500)  # var(--vd-color-violet-500)
 The universal `color`, `background`, and `border_color` props are available on
 every component. They accept either a semantic role (`"primary"`, `"danger"`)
 or a palette reference in dash/dot notation (`"violet-500"`,
-`"violet.500"`). Voodoo validates names and emits CSS-variable references, so
+`"violet.500"`). Grumo validates names and emits CSS-variable references, so
 applications get precise color control without writing CSS or hard-coding
 values.
 
@@ -94,7 +94,7 @@ theme = create_theme(
 
 Custom scales extend the defaults and are exported by
 `Theme.to_tailwind_config()` as nested colors, so `brand-500` has the same
-meaning in native Voodoo CSS and Tailwind.
+meaning in native Grumo CSS and Tailwind.
 
 Derived accent tokens (`--vd-color-secondary-soft`, `-line`, `-glow`,
 `--vd-color-border-soft`) are computed with `color-mix` at use time, so they
@@ -111,8 +111,8 @@ colors rather than writing these visual tokens directly.
 Use `create_theme` for simple overrides, or build a full `Theme` model:
 
 ```python
-from voodoo import App
-from voodoo.ui.styles import create_theme
+from grumo import App
+from grumo.ui.styles import create_theme
 
 app = App(
     theme=create_theme(
@@ -125,7 +125,7 @@ app = App(
 )
 ```
 
-The stock Design System 4 look is minimalist and modern, with a distinct Voodoo
+The stock Design System 4 look is minimalist and modern, with a distinct Grumo
 purple (`#7c3aed`) brand accent, generous whitespace, clean typography, subtle
 borders, compact premium controls, discreet shadows and a first-class dark
 mode.
@@ -137,25 +137,25 @@ shared `background`, `surface`, `text`, or `border` override also applies to the
 premium light/dark surface layer unless the full `Theme` supplies a dedicated
 light-mode override.
 
-This preserves the zero-config Voodoo identity while keeping branded
+This preserves the zero-config Grumo identity while keeping branded
 applications fully themeable.
 
 ## Style adapters
 
 | Adapter | Class names | When to use |
 |---|---|---|
-| `VoodooCSSAdapter` | Semantic `vd-*` (e.g. `vd-button--primary`) | **Default.** Zero-config, no external CDN. |
+| `GrumoCSSAdapter` | Semantic `vd-*` (e.g. `vd-button--primary`) | **Default.** Zero-config, no external CDN. |
 | `TailwindAdapter` | Tailwind utility classes | Opt-in, when you already use Tailwind. |
 | `NoopAdapter` | Bare element names | Minimal output, custom CSS only. |
 
 ```python
-from voodoo.ui.styles import set_style_adapter
-from voodoo.adapters import TailwindAdapter
+from grumo.ui.styles import set_style_adapter
+from grumo.adapters import TailwindAdapter
 
 set_style_adapter(TailwindAdapter())
 ```
 
-`VoodooCSSAdapter` generates its stylesheet automatically via
+`GrumoCSSAdapter` generates its stylesheet automatically via
 `generate_component_css(theme)` and injects it into every page — you never
 write CSS for built-in components.
 
@@ -172,7 +172,7 @@ Layout is first-class. Components express structure without utility classes:
 | `Stack` | `gap` | Vertical flex (`vd-flex--col`) with semantic gap |
 
 ```python
-from voodoo.ui import Page, Stack, Grid, Card, Badge, Heading
+from grumo.ui import Page, Stack, Grid, Card, Badge, Heading
 
 ui = Page(
     Stack(
@@ -222,16 +222,16 @@ Grid(cols="2", gap="6")  # calc(0.25rem * 6) = 24px
 The resolved mode is applied to the `<html class="...">` element, and an inline
 script runs *before* the stylesheet to prevent a flash of the wrong theme:
 
-1. Read the persisted `voodoo_theme` cookie (if any).
+1. Read the persisted `grumo_theme` cookie (if any).
 2. Fall back to `Theme.mode`.
 3. Resolve `"system"` via `prefers-color-scheme`.
 4. Toggle the `.dark` class on `<html>`.
 
-The client runtime exposes `voodoo.setTheme(mode)` to switch themes at runtime
-and persist the choice in the `voodoo_theme` cookie:
+The client runtime exposes `grumo.setTheme(mode)` to switch themes at runtime
+and persist the choice in the `grumo_theme` cookie:
 
 ```javascript
-voodoo.setTheme("light");
+grumo.setTheme("light");
 ```
 
 `to_css_variables()` emits `:root` (light values) and `.dark` (dark values), so
@@ -241,7 +241,7 @@ overrides remain authoritative over the premium defaults.
 
 ## Chrome components
 
-Beyond the primitive components (`Button`, `Card`, `Input`, …), Voodoo ships a
+Beyond the primitive components (`Button`, `Card`, `Input`, …), Grumo ships a
 page-level **chrome** tier for building navigation, heroes, and marketing/landing
 sections without hand-rolled CSS:
 
@@ -267,18 +267,18 @@ All of these render semantic `vd-*` classes and require no CSS of their own;
 A **theme preset** is a portable, shareable theme package: a JSON-only
 `theme.json` (the same shape `Theme.model_dump()` produces) plus an optional
 sibling `custom.css`. The project root stays minimal — no `styles.css` in the
-root; custom CSS lives in an organized `.voodoo/theme/` folder.
+root; custom CSS lives in an organized `.grumo/theme/` folder.
 
 Resolution order (first match wins):
 
 1. An explicit path or URL (`App(theme="path/to/theme.json")`).
-2. The project preset at `.voodoo/theme/theme.json`.
+2. The project preset at `.grumo/theme/theme.json`.
 3. A built-in preset (`default`, `ember-paper`).
-4. A user-installed preset at `~/.voodoo/themes/<name>/theme.json`.
-5. A PyPI package named `voodoo-theme-<name>` exposing `theme.json`.
+4. A user-installed preset at `~/.grumo/themes/<name>/theme.json`.
+5. A PyPI package named `grumo-theme-<name>` exposing `theme.json`.
 
 ```toml
-# voodoo.toml
+# grumo.toml
 [theme]
 preset = "ember-paper"   # name | path | URL
 mode = "dark"            # dark | light | system
@@ -287,10 +287,10 @@ mode = "dark"            # dark | light | system
 Use the CLI to manage presets:
 
 ```bash
-voodoo theme list                 # discover available presets
-voodoo theme use ember-paper      # snapshot into .voodoo/theme/
-voodoo theme init                 # snapshot current + scaffold custom.css
-voodoo theme install my-theme     # pip install voodoo-theme-my-theme
+grumo theme list                 # discover available presets
+grumo theme use ember-paper      # snapshot into .grumo/theme/
+grumo theme init                 # snapshot current + scaffold custom.css
+grumo theme install my-theme     # pip install grumo-theme-my-theme
 ```
 
 A preset's `custom.css` is injected *after* the framework CSS, so it can add
@@ -300,7 +300,7 @@ built-ins stay zero-network by referencing faces by name with system fallbacks.
 
 ### Built-in presets
 
-- **`default`** — the stock Voodoo Design System 4 look with the purple brand
+- **`default`** — the stock Grumo Design System 4 look with the purple brand
   language and premium light/dark surfaces.
 - **`ember-paper`** — warm paper surfaces, an ember accent (`#E8A33D` dark /
   `#B45309` light), and editorial type (Fraunces display, Schibsted Grotesk

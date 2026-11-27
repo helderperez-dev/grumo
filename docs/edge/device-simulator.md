@@ -1,7 +1,7 @@
 # Edge Device Simulator
 
 > A protocol-faithful virtual device — the template for the future ESP32
-> client (Sprint 24). It speaks **only** `voodoo-edge/v1` through real
+> client (Sprint 24). It speaks **only** `grumo-edge/v1` through real
 > transports; it never calls internal runtime APIs (EDGE §41).
 
 ## Why it exists
@@ -16,7 +16,7 @@ Before any C++ firmware exists, the simulator:
 
 ```python
 import asyncio
-from voodoo.edge.simulator import DeviceSimulator, HTTPSimulatorTransport
+from grumo.edge.simulator import DeviceSimulator, HTTPSimulatorTransport
 
 
 async def main():
@@ -57,7 +57,7 @@ Passing `app=` routes all traffic over ASGI — no sockets, ideal for CI.
 ### MQTTSimulatorTransport
 
 ```python
-from voodoo.edge.simulator import MQTTSimulatorTransport
+from grumo.edge.simulator import MQTTSimulatorTransport
 
 transport = MQTTSimulatorTransport(device_id, broker="localhost", port=1883)
 sim = DeviceSimulator(transport)
@@ -75,7 +75,7 @@ Requires the `[edge]` extra and a local broker (`just mqtt-up`).
 The simulator's lifecycle maps 1:1 to the planned C++ surface:
 
 ```cpp
-VoodooEdge device;
+GrumoEdge device;
 device.begin(config);                     // enroll + connect
 device.state("temperature", temperature); // send_state
 device.emit("temperature.changed");       // send_event

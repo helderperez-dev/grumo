@@ -13,7 +13,7 @@ compatibility surfaces intentionally retained.
 | `protocol/` | canonical | transport-neutral protocol contracts |
 | `ui/` | canonical | reactive presentation |
 | `data/` | canonical | developer-facing model/data API |
-| `storage/` | canonical for storage contracts | provider implementations; distinct from application data and native Voodoo Store |
+| `storage/` | canonical for storage contracts | provider implementations; distinct from application data and native Grumo Store |
 | `auth/` | canonical | application authentication |
 | `security/` | canonical | HTTP/runtime security mechanics |
 | `ai/` | canonical semantic domain | model/provider contracts, routing, agents and tools |
