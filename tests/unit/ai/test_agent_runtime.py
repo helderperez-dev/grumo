@@ -6,9 +6,9 @@ Agent → Intent → capability check → Tool → Effect → Mesh.
 
 from __future__ import annotations
 
-from voodoo.primitives.capability import Capability as Cap
-from voodoo.primitives.intent import Intent
-from voodoo.runtime import (
+from grumo.primitives.capability import Capability as Cap
+from grumo.primitives.intent import Intent
+from grumo.runtime import (
     ComputeResult,
     ExecutionContext,
     ExecutionEngine,
@@ -20,8 +20,8 @@ from voodoo.runtime import (
 
 
 def _make_agent_with_gated_tool(granted: list[str] | None):
-    from voodoo.ai.agent import Agent
-    from voodoo.ai.tools.registry import ToolRegistry, ToolSpec
+    from grumo.ai.agent import Agent
+    from grumo.ai.tools.registry import ToolRegistry, ToolSpec
 
     registry = ToolRegistry()
 
@@ -88,7 +88,7 @@ class TestAgentRuntimeIntegration:
         assert [e.name for e in ex.effects] == ["tool.send_email"]
 
     async def test_task_with_agent_compute(self):
-        from voodoo.ai.agent import Agent
+        from grumo.ai.agent import Agent
 
         agent = Agent(model="mock:test")
         t = Task(name="ask", description="hello", agent=agent)
@@ -97,8 +97,8 @@ class TestAgentRuntimeIntegration:
         assert isinstance(ex.result, str)
 
     async def test_workflow_with_agent_task(self):
-        from voodoo.ai.agent import Agent
-        from voodoo.runtime import Workflow, WorkflowStrategy
+        from grumo.ai.agent import Agent
+        from grumo.runtime import Workflow, WorkflowStrategy
 
         agent = Agent(model="mock:test")
         t = Task(name="answer", description="what is 2+2", agent=agent)

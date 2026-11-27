@@ -1,4 +1,4 @@
-"""Sprint 28.4 acceptance for the Runtime-owned Voodoo Store queue."""
+"""Sprint 28.4 acceptance for the Runtime-owned Grumo Store queue."""
 
 from __future__ import annotations
 
@@ -6,9 +6,9 @@ from typing import Any
 
 import pytest
 
-from voodoo.storage.queue import TaskStatus
-from voodoo.storage.queue import store as queue_module
-from voodoo.storage.queue.store import VoodooStoreQueue, _native_id, _public_id
+from grumo.storage.queue import TaskStatus
+from grumo.storage.queue import store as queue_module
+from grumo.storage.queue.store import GrumoStoreQueue, _native_id, _public_id
 
 
 class _FakeNativeJobs:
@@ -194,7 +194,7 @@ async def test_queue_acquires_process_shared_runtime_store(monkeypatch):
     runtime = _RuntimeStore(native)
     monkeypatch.setattr(queue_module, "acquire_runtime_store", lambda: runtime)
 
-    queue = VoodooStoreQueue()
+    queue = GrumoStoreQueue()
     await queue.setup()
 
     assert queue._native is native
@@ -206,7 +206,7 @@ async def test_queue_reuses_active_store_and_preserves_public_task_api(monkeypat
     native = _FakeNativeJobs()
     runtime = _RuntimeStore(native)
     monkeypatch.setattr(queue_module, "acquire_runtime_store", lambda: runtime)
-    queue = VoodooStoreQueue()
+    queue = GrumoStoreQueue()
     await queue.setup()
 
     task = await queue.enqueue(
@@ -256,7 +256,7 @@ async def test_queue_completion_release_reaper_and_manual_retry(monkeypatch):
     native = _FakeNativeJobs()
     runtime = _RuntimeStore(native)
     monkeypatch.setattr(queue_module, "acquire_runtime_store", lambda: runtime)
-    queue = VoodooStoreQueue()
+    queue = GrumoStoreQueue()
     await queue.setup()
 
     first = await queue.enqueue("work", {"n": 1}, max_attempts=2)
@@ -287,9 +287,9 @@ async def test_queue_completion_release_reaper_and_manual_retry(monkeypatch):
 @pytest.mark.asyncio
 async def test_compensation_survives_runtime_store_queue_boundary(tmp_path, monkeypatch):
     """A failed effect's compensation is durable and deduplicated natively."""
-    from voodoo.primitives.effect import Effect
-    from voodoo.runtime.scheduling import workers as worker_queue
-    from voodoo.runtime.store import (
+    from grumo.primitives.effect import Effect
+    from grumo.runtime.scheduling import workers as worker_queue
+    from grumo.runtime.store import (
         RuntimeStore,
         StoreConfig,
         bind_active_runtime_store,
@@ -298,7 +298,7 @@ async def test_compensation_survives_runtime_store_queue_boundary(tmp_path, monk
     runtime = RuntimeStore(StoreConfig(path=tmp_path / "compensation.vstore"))
     runtime.start()
     bind_active_runtime_store(runtime)
-    queue = VoodooStoreQueue()
+    queue = GrumoStoreQueue()
     await queue.setup()
     monkeypatch.setattr(worker_queue, "_queue", queue)
 

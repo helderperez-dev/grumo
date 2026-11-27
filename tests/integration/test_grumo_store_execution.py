@@ -1,4 +1,4 @@
-"""Sprint 28.8 acceptance for Voodoo Store-backed Execution persistence."""
+"""Sprint 28.8 acceptance for Grumo Store-backed Execution persistence."""
 
 import json
 from datetime import UTC, datetime
@@ -7,13 +7,13 @@ from types import SimpleNamespace
 
 import pytest
 
-from voodoo.runtime.execution import Execution
-from voodoo.runtime.store import RuntimeStore, StoreConfig, bind_active_runtime_store
-from voodoo.storage.execution.store import VoodooStoreExecutionStore
+from grumo.runtime.execution import Execution
+from grumo.runtime.store import RuntimeStore, StoreConfig, bind_active_runtime_store
+from grumo.storage.execution.store import GrumoStoreExecutionStore
 
 
 def _runtime(tmp_path: Path) -> RuntimeStore:
-    runtime = RuntimeStore(StoreConfig(path=tmp_path / "application.vstore"))
+    runtime = RuntimeStore(StoreConfig(path=tmp_path / "application.grumo"))
     runtime.start()
     bind_active_runtime_store(runtime)
     return runtime
@@ -22,20 +22,20 @@ def _runtime(tmp_path: Path) -> RuntimeStore:
 def test_execution_store_reuses_active_runtime_store(tmp_path: Path) -> None:
     runtime = _runtime(tmp_path)
     try:
-        store = VoodooStoreExecutionStore()
+        store = GrumoStoreExecutionStore()
         assert store.path == runtime.config.path
-        assert store.provider == "voodoo"
+        assert store.provider == "grumo"
     finally:
         bind_active_runtime_store(None)
         runtime.stop()
 
 
 def test_execution_save_load_and_timeline_are_durable(tmp_path: Path) -> None:
-    from voodoo.observability import telemetry_store
+    from grumo.observability import telemetry_store
 
     runtime = _runtime(tmp_path)
     try:
-        store = VoodooStoreExecutionStore()
+        store = GrumoStoreExecutionStore()
         span_start = len(telemetry_store.metrics["spans"])
         execution = Execution(trace_id="trace-1", actor="agent:test")
         store.save(execution)
@@ -71,7 +71,7 @@ def test_execution_save_load_and_timeline_are_durable(tmp_path: Path) -> None:
             "store.execution.save",
             "store.execution.load",
         ]
-        assert all(span["attributes"] == {"provider": "voodoo"} for span in spans if span["name"].startswith("store.execution."))
+        assert all(span["attributes"] == {"provider": "grumo"} for span in spans if span["name"].startswith("store.execution."))
     finally:
         bind_active_runtime_store(None)
         runtime.stop()
@@ -80,11 +80,11 @@ def test_execution_save_load_and_timeline_are_durable(tmp_path: Path) -> None:
 def test_execution_artifacts_and_approvals_share_application_store(
     tmp_path: Path,
 ) -> None:
-    from voodoo.observability import telemetry_store
+    from grumo.observability import telemetry_store
 
     runtime = _runtime(tmp_path)
     try:
-        store = VoodooStoreExecutionStore()
+        store = GrumoStoreExecutionStore()
         span_start = len(telemetry_store.metrics["spans"])
         execution = Execution(trace_id="trace-2")
         store.save(execution)
@@ -158,7 +158,7 @@ def test_execution_artifacts_and_approvals_share_application_store(
             "store.execution.save_approval",
         ]
         assert all(
-            span["attributes"] == {"provider": "voodoo"}
+            span["attributes"] == {"provider": "grumo"}
             for span in spans
             if span["name"].startswith("store.execution.")
         )
@@ -170,7 +170,7 @@ def test_execution_artifacts_and_approvals_share_application_store(
 def test_execution_store_reads_legacy_materialized_records(tmp_path: Path) -> None:
     runtime = _runtime(tmp_path)
     try:
-        store = VoodooStoreExecutionStore()
+        store = GrumoStoreExecutionStore()
         execution = Execution(trace_id="legacy-trace", actor="agent:legacy")
         legacy = execution.model_dump(mode="json")
         native = runtime.provider.native
@@ -204,7 +204,7 @@ def test_execution_store_reads_legacy_materialized_records(tmp_path: Path) -> No
 def test_execution_store_migrates_legacy_events_to_native_stream(tmp_path: Path) -> None:
     runtime = _runtime(tmp_path)
     try:
-        store = VoodooStoreExecutionStore()
+        store = GrumoStoreExecutionStore()
         native = runtime.provider.native
         event = {
             "sequence": 1,

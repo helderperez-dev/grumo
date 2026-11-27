@@ -2,10 +2,10 @@ import asyncio
 
 import pytest
 
-from voodoo import task
-from voodoo.mesh import mesh
-from voodoo.observability import telemetry_store
-from voodoo.runtime.scheduling import TaskError
+from grumo import task
+from grumo.mesh import mesh
+from grumo.observability import telemetry_store
+from grumo.runtime.scheduling import TaskError
 
 
 def _spans_for(name: str) -> list[dict]:
@@ -100,7 +100,7 @@ async def test_task_with_explicit_name():
 
 @pytest.mark.asyncio
 async def test_task_enqueue_runs_in_background():
-    from voodoo.runtime.scheduling import start_workers, stop_workers
+    from grumo.runtime.scheduling import start_workers, stop_workers
 
     processed: list[str] = []
 
@@ -149,9 +149,9 @@ async def test_mesh_on_to_task_chain():
 @pytest.mark.asyncio
 async def test_worker_job_executes_through_runtime_engine():
     """Background queue jobs produce an Execution record (intent worker:<name>)."""
-    from voodoo.runtime.execution import ExecutionStatus
-    from voodoo.runtime.execution.engine import engine as runtime_engine
-    from voodoo.runtime.scheduling import start_workers, stop_workers
+    from grumo.runtime.execution import ExecutionStatus
+    from grumo.runtime.execution.engine import engine as runtime_engine
+    from grumo.runtime.scheduling import start_workers, stop_workers
 
     telemetry_store.metrics["custom_traces"].clear()
     processed: list[str] = []
@@ -185,9 +185,9 @@ async def test_worker_job_executes_through_runtime_engine():
 @pytest.mark.asyncio
 async def test_worker_failure_records_failed_execution_and_keeps_running():
     """A failing job marks the Execution failed but the worker stays alive."""
-    from voodoo.runtime.execution import ExecutionStatus
-    from voodoo.runtime.execution.engine import engine as runtime_engine
-    from voodoo.runtime.scheduling import start_workers, stop_workers
+    from grumo.runtime.execution import ExecutionStatus
+    from grumo.runtime.execution.engine import engine as runtime_engine
+    from grumo.runtime.scheduling import start_workers, stop_workers
 
     telemetry_store.metrics["custom_traces"].clear()
     @task(retries=0, name="rt_bad_job")

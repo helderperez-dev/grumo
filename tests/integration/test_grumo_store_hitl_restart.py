@@ -1,4 +1,4 @@
-"""Sprint 28.8 acceptance for HITL recovery over application.vstore."""
+"""Sprint 28.8 acceptance for HITL recovery over application.grumo."""
 
 from __future__ import annotations
 
@@ -6,19 +6,19 @@ from pathlib import Path
 
 import pytest
 
-from voodoo.primitives.intent import Intent
-from voodoo.runtime.context import ExecutionContext
-from voodoo.runtime.errors import ApprovalRequired
-from voodoo.runtime.execution.engine import ExecutionEngine
-from voodoo.runtime.store import RuntimeStore, StoreConfig, bind_active_runtime_store
-from voodoo.storage.execution.store import VoodooStoreExecutionStore
+from grumo.primitives.intent import Intent
+from grumo.runtime.context import ExecutionContext
+from grumo.runtime.errors import ApprovalRequired
+from grumo.runtime.execution.engine import ExecutionEngine
+from grumo.runtime.store import RuntimeStore, StoreConfig, bind_active_runtime_store
+from grumo.storage.execution.store import GrumoStoreExecutionStore
 
 
-def _open(path: Path) -> tuple[RuntimeStore, VoodooStoreExecutionStore]:
+def _open(path: Path) -> tuple[RuntimeStore, GrumoStoreExecutionStore]:
     runtime = RuntimeStore(StoreConfig(path=path))
     runtime.start()
     bind_active_runtime_store(runtime)
-    return runtime, VoodooStoreExecutionStore()
+    return runtime, GrumoStoreExecutionStore()
 
 
 def _close(runtime: RuntimeStore) -> None:
@@ -26,7 +26,7 @@ def _close(runtime: RuntimeStore) -> None:
     runtime.stop()
 
 
-def _execution(store: VoodooStoreExecutionStore, execution_id: str):
+def _execution(store: GrumoStoreExecutionStore, execution_id: str):
     return next(item for item in store.load_all() if item.id == execution_id)
 
 
@@ -34,7 +34,7 @@ def _execution(store: VoodooStoreExecutionStore, execution_id: str):
 async def test_pending_approval_is_rehydrated_and_denied_after_store_restart(
     tmp_path: Path,
 ) -> None:
-    path = tmp_path / "application.vstore"
+    path = tmp_path / "application.grumo"
     first_runtime, first_store = _open(path)
     first = ExecutionEngine()
     first.use_store(first_store)
@@ -91,7 +91,7 @@ async def test_pending_approval_is_rehydrated_and_denied_after_store_restart(
 async def test_pending_approval_can_resume_registered_compute_after_store_restart(
     tmp_path: Path,
 ) -> None:
-    path = tmp_path / "application.vstore"
+    path = tmp_path / "application.grumo"
 
     def deploy(ctx: ExecutionContext):
         if ctx.metadata.get("approval") != "approved":

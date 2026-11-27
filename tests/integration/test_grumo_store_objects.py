@@ -5,15 +5,15 @@ import json
 
 import pytest
 
-from voodoo.runtime.store import RuntimeStore, StoreConfig, bind_active_runtime_store
-from voodoo.storage.objects.store import VoodooStoreObjectStore
+from grumo.runtime.store import RuntimeStore, StoreConfig, bind_active_runtime_store
+from grumo.storage.objects.store import GrumoStoreObjectStore
 
 
 def _start(tmp_path):
     runtime = RuntimeStore(StoreConfig(path=tmp_path / "objects.vstore"))
     runtime.start()
     bind_active_runtime_store(runtime)
-    return runtime, VoodooStoreObjectStore()
+    return runtime, GrumoStoreObjectStore()
 
 
 def test_native_store_object_adapter_contract_and_reopen(tmp_path):
@@ -47,7 +47,7 @@ def test_native_store_object_adapter_contract_and_reopen(tmp_path):
         assert store.get("reports/2026.txt") == b"version-2"
 
         uri = store.presign("reports/2026.txt")
-        assert uri == "voodoo://objects/reports/2026.txt"
+        assert uri == "grumo://objects/reports/2026.txt"
     finally:
         store.close()
         bind_active_runtime_store(None)
@@ -91,7 +91,7 @@ def test_native_store_object_metadata_rejects_malformed_json():
             assert object_id == b"metadata-id"
             return b"[\"not\", \"metadata\"]"
 
-    store = VoodooStoreObjectStore()
+    store = GrumoStoreObjectStore()
     store._native = lambda: FakeStore()
     with pytest.raises(ValueError, match="JSON object"):
         store.stat("reports/corrupt.txt")
@@ -142,7 +142,7 @@ def test_native_store_object_metadata_rejects_integrity_mismatch(metadata, messa
             assert object_id == b"metadata-id"
             return json.dumps(metadata).encode("utf-8")
 
-    store = VoodooStoreObjectStore()
+    store = GrumoStoreObjectStore()
     store._native = lambda: FakeStore()
     with pytest.raises(ValueError, match=message):
         store.stat("reports/corrupt.txt")
@@ -167,7 +167,7 @@ def test_native_store_object_get_rejects_payload_checksum_mismatch():
                 }
             ).encode("utf-8")
 
-    store = VoodooStoreObjectStore()
+    store = GrumoStoreObjectStore()
     store._native = lambda: FakeStore()
     with pytest.raises(ValueError, match="checksum mismatch"):
         store.get("reports/item.txt")

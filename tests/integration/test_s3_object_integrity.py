@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo.storage.objects.s3 import S3ObjectStore
+from grumo.storage.objects.s3 import S3ObjectStore
 
 
 class _Body:

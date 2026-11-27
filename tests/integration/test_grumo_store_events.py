@@ -3,19 +3,19 @@ from __future__ import annotations
 import json
 import logging
 
-from voodoo.runtime.store import (
+from grumo.runtime.store import (
     RuntimeStore,
     StoreConfig,
     bind_active_runtime_store,
 )
-from voodoo.storage.events.store import VoodooStoreEventBus
+from grumo.storage.events.store import GrumoStoreEventBus
 
 
 def test_store_event_bus_persists_notifies_and_replays_in_order(tmp_path) -> None:
     runtime = RuntimeStore(StoreConfig(path=tmp_path / "events.vstore"))
     runtime.start()
     bind_active_runtime_store(runtime)
-    bus = VoodooStoreEventBus()
+    bus = GrumoStoreEventBus()
 
     delivered: list[dict] = []
     replayed: list[dict] = []
@@ -37,7 +37,7 @@ def test_store_event_bus_persists_notifies_and_replays_in_order(tmp_path) -> Non
         assert [event["payload"]["id"] for event in replayed] == [1, 2]
 
         capabilities = bus.capabilities()
-        assert capabilities.provider == "voodoo"
+        assert capabilities.provider == "grumo"
         assert capabilities.durable is True
         assert capabilities.replay is True
         assert capabilities.ordering is True
@@ -51,7 +51,7 @@ def test_store_event_bus_isolated_by_event_type(tmp_path) -> None:
     runtime = RuntimeStore(StoreConfig(path=tmp_path / "events.vstore"))
     runtime.start()
     bind_active_runtime_store(runtime)
-    bus = VoodooStoreEventBus()
+    bus = GrumoStoreEventBus()
 
     replayed: list[dict] = []
     try:
@@ -74,14 +74,14 @@ def test_store_event_subscriber_failure_is_diagnostic_and_non_fatal(
     runtime = RuntimeStore(StoreConfig(path=tmp_path / "events.vstore"))
     runtime.start()
     bind_active_runtime_store(runtime)
-    bus = VoodooStoreEventBus()
+    bus = GrumoStoreEventBus()
 
     def broken_subscriber(_event: dict) -> None:
         raise RuntimeError("password=super-secret")
 
     bus.subscribe("patient.updated", broken_subscriber)
     try:
-        with caplog.at_level(logging.WARNING, logger="voodoo.events"):
+        with caplog.at_level(logging.WARNING, logger="grumo.events"):
             event = bus.publish("patient.updated", {"id": 3})
 
         assert event["event_type"] == "patient.updated"
@@ -100,7 +100,7 @@ def test_store_event_replay_rejects_future_schema(tmp_path, caplog) -> None:
     runtime = RuntimeStore(StoreConfig(path=tmp_path / "future-events.vstore"))
     runtime.start()
     bind_active_runtime_store(runtime)
-    bus = VoodooStoreEventBus()
+    bus = GrumoStoreEventBus()
     try:
         topic = bus._topic("future.event")
         runtime.provider.native.publish_topic(
@@ -117,7 +117,7 @@ def test_store_event_replay_rejects_future_schema(tmp_path, caplog) -> None:
             ).encode(),
         )
         replayed: list[dict] = []
-        with caplog.at_level(logging.WARNING, logger="voodoo.events"):
+        with caplog.at_level(logging.WARNING, logger="grumo.events"):
             assert bus.replay("future.event", replayed.append) == 0
         assert replayed == []
         assert "unsupported event schema" in caplog.text
@@ -131,7 +131,7 @@ def test_store_event_replay_accepts_legacy_unversioned_envelope(tmp_path) -> Non
     runtime = RuntimeStore(StoreConfig(path=tmp_path / "legacy-events.vstore"))
     runtime.start()
     bind_active_runtime_store(runtime)
-    bus = VoodooStoreEventBus()
+    bus = GrumoStoreEventBus()
     try:
         runtime.provider.native.publish_topic(
             bus._topic("legacy.event"),

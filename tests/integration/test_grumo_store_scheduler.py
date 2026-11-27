@@ -8,12 +8,12 @@ from typing import Any
 
 import pytest
 
-from voodoo.core.errors import ConfigurationError
-from voodoo.runtime.scheduling import ScheduleService
-from voodoo.runtime.store import RuntimeStore, StoreConfig, bind_active_runtime_store
-from voodoo.storage.scheduler import create_schedule_store
-from voodoo.storage.scheduler import store as scheduler_module
-from voodoo.storage.scheduler.store import VoodooStoreScheduleStore
+from grumo.core.errors import ConfigurationError
+from grumo.runtime.scheduling import ScheduleService
+from grumo.runtime.store import RuntimeStore, StoreConfig, bind_active_runtime_store
+from grumo.storage.scheduler import create_schedule_store
+from grumo.storage.scheduler import store as scheduler_module
+from grumo.storage.scheduler.store import GrumoStoreScheduleStore
 
 
 class _FakeNativeScheduler:
@@ -154,13 +154,13 @@ def _bind(monkeypatch, native):
 def test_store_scheduler_requires_active_runtime_store(monkeypatch):
     monkeypatch.setattr(scheduler_module, "get_active_runtime_store", lambda: None)
     with pytest.raises(ConfigurationError, match="active application RuntimeStore"):
-        VoodooStoreScheduleStore()
+        GrumoStoreScheduleStore()
 
 
 def test_store_scheduler_preserves_management_surface(monkeypatch):
     native = _FakeNativeScheduler()
     _bind(monkeypatch, native)
-    store = VoodooStoreScheduleStore()
+    store = GrumoStoreScheduleStore()
     now = datetime.now(UTC)
 
     store.create("s1", "once", "at", now.isoformat(), now, "email.send", {"x": 1})
@@ -170,7 +170,7 @@ def test_store_scheduler_preserves_management_surface(monkeypatch):
     assert record["task_type"] == "email.send"
     assert json.loads(record["payload"]) == {"x": 1}
     assert record["active"] == 1
-    metadata_raw = native.kv[next(key for key in native.kv if key.startswith(b"voodoo:scheduler:meta:"))]
+    metadata_raw = native.kv[next(key for key in native.kv if key.startswith(b"grumo:scheduler:meta:"))]
     assert json.loads(metadata_raw)["_schema_version"] == 1
 
     assert [item["id"] for item in store.list_all()] == ["s1"]
@@ -181,11 +181,11 @@ def test_store_scheduler_preserves_management_surface(monkeypatch):
 
 
 def test_timespec_interval_creates_native_interval_schedule(monkeypatch):
-    from voodoo.primitives.time import TimeSpec
+    from grumo.primitives.time import TimeSpec
 
     native = _FakeNativeScheduler()
     _bind(monkeypatch, native)
-    store = VoodooStoreScheduleStore()
+    store = GrumoStoreScheduleStore()
 
     assert store.schedule_from_timespec(
         "interval-1", TimeSpec.with_interval(30), "heartbeat", {"ok": True}
@@ -202,7 +202,7 @@ def test_provider_resolution_requires_native_store(monkeypatch, tmp_path):
     native = _FakeNativeScheduler()
     _bind(monkeypatch, native)
     resolved = create_schedule_store(tmp_path / "ignored.db")
-    assert isinstance(resolved, VoodooStoreScheduleStore)
+    assert isinstance(resolved, GrumoStoreScheduleStore)
 
 
 def test_provider_resolution_rejects_old_binding_instead_of_falling_back(
@@ -223,7 +223,7 @@ def test_native_scheduler_metadata_collection_survives_restart(tmp_path):
     bind_active_runtime_store(runtime)
     now = datetime.now(UTC) + timedelta(minutes=1)
     try:
-        store = VoodooStoreScheduleStore()
+        store = GrumoStoreScheduleStore()
         store.create("native-persisted", "persisted", "at", now.isoformat(), now, "work")
         assert runtime.provider.native.collection_definition(
             b"runtime.scheduler_metadata"
@@ -239,7 +239,7 @@ def test_native_scheduler_metadata_collection_survives_restart(tmp_path):
     reopened_runtime.start()
     bind_active_runtime_store(reopened_runtime)
     try:
-        reopened = VoodooStoreScheduleStore()
+        reopened = GrumoStoreScheduleStore()
         assert reopened.get("native-persisted")["name"] == "persisted"
         assert [item["id"] for item in reopened.list_all()] == ["native-persisted"]
     finally:
@@ -265,7 +265,7 @@ def test_native_scheduler_metadata_rejects_future_schema(tmp_path):
             ).encode(),
         )
         with pytest.raises(ValueError, match="unsupported"):
-            VoodooStoreScheduleStore().get("future-schedule")
+            GrumoStoreScheduleStore().get("future-schedule")
     finally:
         bind_active_runtime_store(None)
         runtime.stop()
@@ -275,7 +275,7 @@ def test_native_scheduler_metadata_rejects_future_schema(tmp_path):
 async def test_native_tick_creates_job_without_framework_enqueue(monkeypatch):
     native = _FakeNativeScheduler()
     _bind(monkeypatch, native)
-    store = VoodooStoreScheduleStore()
+    store = GrumoStoreScheduleStore()
     due = datetime.now(UTC) - timedelta(seconds=1)
     store.create("native", "native", "at", due.isoformat(), due, "work", {"n": 1})
 
