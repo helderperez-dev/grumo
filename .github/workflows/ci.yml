@@ -93,17 +93,17 @@ jobs:
       - name: 🔎 Mypy — production-critical boundaries
         run: >-
           uv run --python 3.12 mypy --follow-imports=silent
-          src/voodoo/runtime/planner.py
-          src/voodoo/edge/world.py
-          src/voodoo/protocol/operational.py
-          src/voodoo/config.py
-          src/voodoo/auth/middleware.py
-          src/voodoo/security
-          src/voodoo/ui/events.py
-          src/voodoo/ui/state.py
-          src/voodoo/routing/pages.py
-          src/voodoo/cli/new.py
-          src/voodoo/cli/create.py
+          src/grumo/runtime/planner.py
+          src/grumo/edge/world.py
+          src/grumo/protocol/operational.py
+          src/grumo/config.py
+          src/grumo/auth/middleware.py
+          src/grumo/security
+          src/grumo/ui/events.py
+          src/grumo/ui/state.py
+          src/grumo/routing/pages.py
+          src/grumo/cli/new.py
+          src/grumo/cli/create.py
 
   typecheck-ratchet:
     name: 🔎 Full-package Mypy Ratchet
@@ -180,21 +180,21 @@ jobs:
       - name: 🐍 Set up Python 3.12
         run: uv python install 3.12
       - name: 📦 Export shipped base dependencies
-        run: uv export --python 3.12 --no-dev --no-hashes > /tmp/voodoo-requirements.txt
+        run: uv export --python 3.12 --no-dev --no-hashes > /tmp/grumo-requirements.txt
       - name: 🔐 Audit shipped Python dependencies
         run: |
-          uv venv --python 3.12 --seed /tmp/voodoo-audit
-          /tmp/voodoo-audit/bin/python -m pip install --quiet "pip-audit==2.10.1"
-          /tmp/voodoo-audit/bin/pip-audit -r /tmp/voodoo-requirements.txt
+          uv venv --python 3.12 --seed /tmp/grumo-audit
+          /tmp/grumo-audit/bin/python -m pip install --quiet "pip-audit==2.10.1"
+          /tmp/grumo-audit/bin/pip-audit -r /tmp/grumo-requirements.txt
       - name: 📋 Generate shipped dependency SBOM
         run: |
-          /tmp/voodoo-audit/bin/pip-audit -r /tmp/voodoo-requirements.txt \
-            --format cyclonedx-json --output voodoo-base-sbom.json
+          /tmp/grumo-audit/bin/pip-audit -r /tmp/grumo-requirements.txt \
+            --format cyclonedx-json --output grumo-base-sbom.json
       - name: ⬆️ Upload dependency SBOM
         uses: actions/upload-artifact@v7
         with:
-          name: voodoo-base-sbom
-          path: voodoo-base-sbom.json
+          name: grumo-base-sbom
+          path: grumo-base-sbom.json
           retention-days: 30
 
   clean-install:
@@ -219,12 +219,12 @@ jobs:
 
       - name: 📦 Install wheel without extras
         run: |
-          uv venv --python 3.12 /tmp/voodoo-clean
-          uv pip install --python /tmp/voodoo-clean/bin/python dist/*.whl
+          uv venv --python 3.12 /tmp/grumo-clean
+          uv pip install --python /tmp/grumo-clean/bin/python dist/*.whl
 
       - name: 🚫 Verify optional SQLite is absent
         run: |
-          /tmp/voodoo-clean/bin/python - <<'PY'
+          /tmp/grumo-clean/bin/python - <<'PY'
           import importlib.util
           assert importlib.util.find_spec("aiosqlite") is None
           PY
@@ -232,24 +232,24 @@ jobs:
       - name: 🪄 Scaffold and run full Runtime lifecycle
         run: |
           cd /tmp
-          rm -rf voodoo-clean-app
-          /tmp/voodoo-clean/bin/voodoo new voodoo-clean-app --no-install
-          cd voodoo-clean-app
-          /tmp/voodoo-clean/bin/python - <<'PY'
+          rm -rf grumo-clean-app
+          /tmp/grumo-clean/bin/grumo new grumo-clean-app --no-install
+          cd grumo-clean-app
+          /tmp/grumo-clean/bin/python - <<'PY'
           from pathlib import Path
 
           from starlette.testclient import TestClient
-          from voodoo import App
+          from grumo import App
 
           app = App()
           with TestClient(app) as client:
               response = client.get("/")
               assert response.status_code == 200, response.text
-              assert "Hello, Voodoo" in response.text
+              assert "Hello, Grumo" in response.text
               assert client.get("/about").status_code == 200
               assert client.get("/users/42").status_code == 200
 
-          store = Path(".voodoo/application.vstore")
+          store = Path(".grumo/application.grumo")
           assert store.exists()
           assert store.stat().st_size > 0
           assert list(Path(".").rglob("*.db")) == []
@@ -284,8 +284,8 @@ jobs:
 
       - name: 🧪 Run Component Lab browser acceptance
         env:
-          VOODOO_BROWSER_TESTS: "1"
-          VOODOO_BROWSER_NAME: ${{ matrix.browser }}
+          GRUMO_BROWSER_TESTS: "1"
+          GRUMO_BROWSER_NAME: ${{ matrix.browser }}
         run: >-
           uv run --python 3.12 pytest
           tests/browser/test_component_lab_browser.py --tb=short
@@ -322,7 +322,7 @@ jobs:
         run: uv sync --python 3.12 --extra ${{ matrix.extra }} --extra dev
       - name: 🔌 Import provider family
         env:
-          VOODOO_OPTIONAL_EXTRA: ${{ matrix.extra }}
+          GRUMO_OPTIONAL_EXTRA: ${{ matrix.extra }}
         run: uv run --python 3.12 python scripts/check_optional_extra.py
 
   test:
@@ -338,13 +338,13 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_DB: voodoo_test
-          POSTGRES_USER: voodoo
-          POSTGRES_PASSWORD: voodoo
+          POSTGRES_DB: grumo_test
+          POSTGRES_USER: grumo
+          POSTGRES_PASSWORD: grumo
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U voodoo"
+          --health-cmd "pg_isready -U grumo"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -359,8 +359,8 @@ jobs:
           --health-retries 5
 
     env:
-      VOODOO_TEST_DATABASE_URL: postgresql://voodoo:voodoo@localhost:5432/voodoo_test
-      VOODOO_TEST_REDIS_URL: redis://localhost:6379/0
+      GRUMO_TEST_DATABASE_URL: postgresql://grumo:grumo@localhost:5432/grumo_test
+      GRUMO_TEST_REDIS_URL: redis://localhost:6379/0
 
     steps:
       - name: 📥 Checkout code
