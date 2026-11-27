@@ -3,7 +3,7 @@ name = "{{ project_name }}"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
-    "grumo>=1.0.0,<2.0.0",
+    "grumo>=2.0.0,<3.0.0",
 ]
 
 [project.optional-dependencies]
