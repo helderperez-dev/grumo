@@ -5,12 +5,10 @@ Covers:
   2. OTel-compatible Span model (record, start_span, parent hierarchy).
   3. Telemetry summary persistence across restarts.
   4. CLI ``grumo status`` and ``grumo workers``.
-  5. OTLP exporter availability check.
 """
 
 from __future__ import annotations
 
-import os
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -84,6 +82,12 @@ class TestSpanModel:
         stored = telemetry_store.metrics["spans"][0]
         assert stored["name"] == "test.span"
         assert stored["trace_id"] == "t1"
+
+    def test_record_span_stays_local_with_legacy_export_setting(self, monkeypatch):
+        monkeypatch.setenv("GRUMO_OTEL_EXPORTER", "otlp")
+        _clear_spans()
+        telemetry_store.record_span(Span(trace_id="local", name="local.span"))
+        assert telemetry_store.metrics["spans"][-1]["name"] == "local.span"
 
     def test_span_ring_buffer_limit(self):
         _clear_spans()
@@ -472,69 +476,7 @@ class TestCLICommands:
 
 
 # ---------------------------------------------------------------------------
-# 5. OTLP exporter
-# ---------------------------------------------------------------------------
-
-
-class TestOTLPExporter:
-    """OTLP availability check and graceful degradation."""
-
-    def test_is_available_false_without_env(self):
-        from grumo.integrations.otel import is_available
-
-        old = os.environ.pop("GRUMO_OTEL_EXPORTER", None)
-        try:
-            assert is_available() is False
-        finally:
-            if old is not None:
-                os.environ["GRUMO_OTEL_EXPORTER"] = old
-
-    def test_export_span_noop_without_env(self):
-        """export_span should be a no-op when OTLP is not configured."""
-        from grumo.integrations.otel import export_span
-
-        old = os.environ.pop("GRUMO_OTEL_EXPORTER", None)
-        try:
-            # Should not raise
-            span = Span(trace_id="t1", name="test")
-            export_span(span)
-        finally:
-            if old is not None:
-                os.environ["GRUMO_OTEL_EXPORTER"] = old
-
-    def test_exporter_setup_runtime_failure_degrades(self, monkeypatch):
-        import grumo.integrations.otel as otel
-
-        monkeypatch.setattr(otel, "_checked", False)
-        monkeypatch.setattr(otel, "_exporter", None)
-        monkeypatch.setattr(otel, "is_available", lambda: True)
-
-        class BrokenExporter:
-            def __init__(self):
-                raise RuntimeError("collector unavailable")
-
-        monkeypatch.setattr(otel, "OTLPExporter", BrokenExporter)
-        assert otel._get_exporter() is None
-        assert otel._checked is True
-
-    def test_exporter_setup_unexpected_failure_propagates(self, monkeypatch):
-        import grumo.integrations.otel as otel
-
-        monkeypatch.setattr(otel, "_checked", False)
-        monkeypatch.setattr(otel, "_exporter", None)
-        monkeypatch.setattr(otel, "is_available", lambda: True)
-
-        class BrokenExporter:
-            def __init__(self):
-                raise AssertionError("exporter invariant failed")
-
-        monkeypatch.setattr(otel, "OTLPExporter", BrokenExporter)
-        with pytest.raises(AssertionError, match="invariant failed"):
-            otel._get_exporter()
-
-
-# ---------------------------------------------------------------------------
-# 6. new_trace_id helper
+# 5. new_trace_id helper
 # ---------------------------------------------------------------------------
 
 
