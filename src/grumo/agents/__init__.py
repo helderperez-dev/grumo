@@ -4,7 +4,7 @@ Agents are compute participants with stable identity, capabilities, state,
 and queryable execution history. The registry persists agent metadata and
 links every run to its execution record.
 
-    from voodoo import AgentEntity, AgentRegistry, SQLiteAgentRegistry
+    from grumo import AgentEntity, AgentRegistry, SQLiteAgentRegistry
 
     registry = SQLiteAgentRegistry("data/agents.db")
     entity = AgentEntity(
@@ -17,8 +17,8 @@ links every run to its execution record.
     agent = Agent(model="openai:gpt-4o", agent_id="lead-scorer", registry=registry)
 """
 
-from voodoo.agents.models import AgentEntity, AgentRunRecord
-from voodoo.agents.registry import (
+from grumo.agents.models import AgentEntity, AgentRunRecord
+from grumo.agents.registry import (
     AgentRegistry,
     InMemoryAgentRegistry,
     SQLiteAgentRegistry,

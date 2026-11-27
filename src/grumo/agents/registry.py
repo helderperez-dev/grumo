@@ -1,6 +1,6 @@
 """Agent registry persistence.
 
-Voodoo Store is the canonical durable backend. SQLite remains an explicit
+Grumo Store is the canonical durable backend. SQLite remains an explicit
 compatibility adapter; the in-memory implementation is intended for tests.
 """
 
@@ -11,12 +11,12 @@ import sqlite3
 from pathlib import Path
 from typing import Any, Protocol, cast
 
-from voodoo.agents.models import AgentEntity, AgentRunRecord
+from grumo.agents.models import AgentEntity, AgentRunRecord
 
 __all__ = [
     "AgentRegistry",
     "InMemoryAgentRegistry",
-    "VoodooStoreAgentRegistry",
+    "GrumoStoreAgentRegistry",
     "SQLiteAgentRegistry",
 ]
 
@@ -135,7 +135,7 @@ class InMemoryAgentRegistry:
 
 
 # ---------------------------------------------------------------------------
-# Voodoo Store implementation
+# Grumo Store implementation
 # ---------------------------------------------------------------------------
 
 _AGENT_PREFIX = b"runtime:agent:entity:"
@@ -146,12 +146,12 @@ _SCHEMA_KEY = "_schema_version"
 _SCHEMA_VERSION = 1
 
 
-class VoodooStoreAgentRegistry:
+class GrumoStoreAgentRegistry:
     """Durable agent registry backed by the active application RuntimeStore."""
 
     def __init__(self) -> None:
-        from voodoo.core.errors import ConfigurationError
-        from voodoo.runtime.store import get_active_runtime_store
+        from grumo.core.errors import ConfigurationError
+        from grumo.runtime.store import get_active_runtime_store
 
         runtime_store = get_active_runtime_store()
         if runtime_store is None:
@@ -162,7 +162,7 @@ class VoodooStoreAgentRegistry:
         native = None if provider is None else getattr(provider, "native", None)
         if native is None:
             raise ConfigurationError(
-                "The active Voodoo Store provider does not expose durable storage."
+                "The active Grumo Store provider does not expose durable storage."
             )
         self._store = native
 

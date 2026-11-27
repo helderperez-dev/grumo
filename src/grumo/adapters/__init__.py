@@ -1,12 +1,12 @@
-"""Voodoo style adapters.
+"""Grumo style adapters.
 
-The native Voodoo CSS adapter is the default; Tailwind is opt-in::
+The native Grumo CSS adapter is the default; Tailwind is opt-in::
 
-    from voodoo import TailwindAdapter, set_style_adapter
+    from grumo import TailwindAdapter, set_style_adapter
     set_style_adapter(TailwindAdapter())
 """
 
-from voodoo.adapters.capabilities import (
+from grumo.adapters.capabilities import (
     AdapterCapabilities,
     CapabilityError,
     DatabaseCapabilities,
@@ -17,13 +17,13 @@ from voodoo.adapters.capabilities import (
     negotiate,
     require,
 )
-from voodoo.adapters.registry import ProviderRegistry, registry
-from voodoo.adapters.tailwind import TailwindAdapter
-from voodoo.adapters.voodoo_css import VoodooCSSAdapter, generate_component_css
+from grumo.adapters.registry import ProviderRegistry, registry
+from grumo.adapters.tailwind import TailwindAdapter
+from grumo.adapters.grumo_css import GrumoCSSAdapter, generate_component_css
 
 __all__ = [
     "TailwindAdapter",
-    "VoodooCSSAdapter",
+    "GrumoCSSAdapter",
     "generate_component_css",
     "AdapterCapabilities",
     "CapabilityError",

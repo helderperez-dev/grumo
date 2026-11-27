@@ -1,4 +1,4 @@
-"""Voodoo computational model.
+"""Grumo computational model.
 
 The fundamental ontology from which all higher-level capabilities emerge:
 
@@ -20,14 +20,14 @@ These are computational concepts, not application features.
 The sophistication should be in the model, not in the API surface.
 """
 
-from voodoo.primitives.capability import Capability
-from voodoo.primitives.compute import ComputeKind, ComputeSpec
-from voodoo.primitives.constraint import Constraint
-from voodoo.primitives.effect import Effect, EffectStatus
-from voodoo.primitives.intent import Intent, IntentStatus
-from voodoo.primitives.resource import Resource
-from voodoo.primitives.state import State
-from voodoo.primitives.time import TimeSpec
+from grumo.primitives.capability import Capability
+from grumo.primitives.compute import ComputeKind, ComputeSpec
+from grumo.primitives.constraint import Constraint
+from grumo.primitives.effect import Effect, EffectStatus
+from grumo.primitives.intent import Intent, IntentStatus
+from grumo.primitives.resource import Resource
+from grumo.primitives.state import State
+from grumo.primitives.time import TimeSpec
 
 __all__ = [
     "State",

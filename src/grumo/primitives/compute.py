@@ -9,7 +9,7 @@ A Compute operation may execute:
     symbolic computation, human-assisted computation
 
 AI is simply one form of Compute. This is one of the most important
-architectural decisions in Voodoo. Do not create an "AI framework" —
+architectural decisions in Grumo. Do not create an "AI framework" —
 create Compute. AI becomes a capability of Compute.
 
 Possible execution environments:
@@ -24,8 +24,8 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from voodoo.primitives.constraint import Constraint
-from voodoo.primitives.resource import Resource
+from grumo.primitives.constraint import Constraint
+from grumo.primitives.resource import Resource
 
 
 class ComputeKind(StrEnum):

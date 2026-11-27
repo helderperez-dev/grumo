@@ -1,6 +1,6 @@
 """Provider registry mapping configuration names to adapter factories (Spec §31, §28).
 
-All built-in adapters register here. Sprint 28 adds Voodoo Store as the
+All built-in adapters register here. Sprint 28 adds Grumo Store as the
 Runtime-owned local-first infrastructure substrate while preserving external
 providers as explicit overrides.
 """
@@ -10,7 +10,7 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from typing import Any
 
-from voodoo.config import (
+from grumo.config import (
     CacheConfig,
     DatabaseConfig,
     EventsConfig,
@@ -18,7 +18,7 @@ from voodoo.config import (
     QueueConfig,
     get_config,
 )
-from voodoo.core.errors import ConfigurationError
+from grumo.core.errors import ConfigurationError
 
 DatabaseFactory = Callable[..., Any]
 QueueFactory = Callable[..., Any]
@@ -43,18 +43,18 @@ class ProviderRegistry:
         self.register_database("sqlite", self._create_sqlite_database)
         self.register_database("postgres", self._create_postgres_database)
 
-        self.register_queue("voodoo", self._create_voodoo_queue)
+        self.register_queue("grumo", self._create_grumo_queue)
         self.register_queue("sqlite", self._create_sqlite_queue)
         self.register_queue("memory", self._create_memory_queue)
         self.register_queue("postgres", self._create_postgres_queue)
         self.register_queue("redis", self._create_redis_queue)
 
-        self.register_events("voodoo", self._create_voodoo_events)
+        self.register_events("grumo", self._create_grumo_events)
         self.register_events("sqlite", self._create_sqlite_events)
         self.register_events("local", self._create_local_events)
         self.register_events("postgres", self._create_postgres_events)
 
-        self.register_objects("voodoo", self._create_voodoo_objects)
+        self.register_objects("grumo", self._create_grumo_objects)
         self.register_objects("local", self._create_local_objects)
         self.register_objects("s3", self._create_s3_objects)
 
@@ -85,7 +85,7 @@ class ProviderRegistry:
             available = ", ".join(sorted(self._database_providers.keys()))
             raise ConfigurationError(
                 f"Unknown database provider '{name}'. Available providers: {available}. "
-                "Check your voodoo.yaml or VOODOO_DATABASE_PROVIDER setting."
+                "Check your grumo.yaml or GRUMO_DATABASE_PROVIDER setting."
             )
         return self._database_providers[name](cfg, migrations=migrations)
 
@@ -96,7 +96,7 @@ class ProviderRegistry:
             available = ", ".join(sorted(self._queue_providers.keys()))
             raise ConfigurationError(
                 f"Unknown queue provider '{name}'. Available providers: {available}. "
-                "Check your voodoo.yaml or VOODOO_QUEUE_PROVIDER setting."
+                "Check your grumo.yaml or GRUMO_QUEUE_PROVIDER setting."
             )
         if name in ("sqlite", "postgres"):
             return self._queue_providers[name](cfg, db=db)
@@ -109,7 +109,7 @@ class ProviderRegistry:
             available = ", ".join(sorted(self._events_providers.keys()))
             raise ConfigurationError(
                 f"Unknown events provider '{name}'. Available providers: {available}. "
-                "Check your voodoo.yaml or VOODOO_EVENTS_PROVIDER setting."
+                "Check your grumo.yaml or GRUMO_EVENTS_PROVIDER setting."
             )
         return self._events_providers[name](cfg)
 
@@ -120,7 +120,7 @@ class ProviderRegistry:
             available = ", ".join(sorted(self._objects_providers.keys()))
             raise ConfigurationError(
                 f"Unknown objects provider '{name}'. Available providers: {available}. "
-                "Check your voodoo.yaml or VOODOO_OBJECTS_PROVIDER setting."
+                "Check your grumo.yaml or GRUMO_OBJECTS_PROVIDER setting."
             )
         return self._objects_providers[name](cfg)
 
@@ -131,16 +131,16 @@ class ProviderRegistry:
             available = ", ".join(sorted(self._cache_providers.keys()))
             raise ConfigurationError(
                 f"Unknown cache provider '{name}'. Available providers: {available}. "
-                "Check your voodoo.yaml or VOODOO_CACHE_PROVIDER setting."
+                "Check your grumo.yaml or GRUMO_CACHE_PROVIDER setting."
             )
         return self._cache_providers[name](cfg)
 
     def _create_sqlite_database(
         self, cfg: DatabaseConfig, migrations: Sequence[Any] = ()
     ) -> Any:
-        from voodoo.storage.database.sqlite import SQLiteDatabase
+        from grumo.storage.database.sqlite import SQLiteDatabase
 
-        path = cfg.path or cfg.url or ".voodoo/state/data.db"
+        path = cfg.path or cfg.url or ".grumo/state/data.db"
         if path.startswith("sqlite:///"):
             path = path[len("sqlite:///") :] or ":memory:"
         elif path == "sqlite://":
@@ -152,35 +152,35 @@ class ProviderRegistry:
     ) -> Any:
         import os
 
-        from voodoo.storage.database.postgres import PostgresDatabase
+        from grumo.storage.database.postgres import PostgresDatabase
 
         url = cfg.url
         if not url:
-            url = os.getenv("VOODOO_DATABASE_URL", "")
+            url = os.getenv("GRUMO_DATABASE_URL", "")
         if not url:
             host = cfg.extra.get("host") or "localhost"
             port = cfg.extra.get("port") or "5432"
-            dbname = cfg.extra.get("dbname") or cfg.extra.get("database") or "voodoo"
+            dbname = cfg.extra.get("dbname") or cfg.extra.get("database") or "grumo"
             user = cfg.extra.get("user") or cfg.extra.get("username") or "postgres"
             password = cfg.extra.get("password") or ""
             creds = f"{user}:{password}@" if password else f"{user}@"
             url = f"postgresql://{creds}{host}:{port}/{dbname}"
         return PostgresDatabase(url, migrations=migrations)
 
-    def _create_voodoo_queue(self, cfg: QueueConfig) -> Any:
-        from voodoo.storage.queue.store import VoodooStoreQueue
+    def _create_grumo_queue(self, cfg: QueueConfig) -> Any:
+        from grumo.storage.queue.store import GrumoStoreQueue
 
-        return VoodooStoreQueue()
+        return GrumoStoreQueue()
 
     def _create_sqlite_queue(self, cfg: QueueConfig, db: Any = None) -> Any:
-        from voodoo.storage.queue.sqlite import SQLiteQueue
+        from grumo.storage.queue.sqlite import SQLiteQueue
 
         if db is None:
             db = self.get_database()
         return SQLiteQueue(db)
 
     def _create_postgres_queue(self, cfg: QueueConfig, db: Any = None) -> Any:
-        from voodoo.storage.queue.postgres import PostgresQueue
+        from grumo.storage.queue.postgres import PostgresQueue
 
         if db is None:
             db = self.get_database()
@@ -192,19 +192,19 @@ class ProviderRegistry:
         return PostgresQueue(db)
 
     def _create_memory_queue(self, cfg: QueueConfig) -> Any:
-        from voodoo.storage.queue.memory import MemoryQueue
+        from grumo.storage.queue.memory import MemoryQueue
 
         return MemoryQueue()
 
     def _create_redis_queue(self, cfg: QueueConfig) -> Any:
         import os
 
-        from voodoo.storage.queue.redis import RedisQueue
+        from grumo.storage.queue.redis import RedisQueue
 
         url = (
             cfg.url
-            or os.getenv("VOODOO_QUEUE_URL")
-            or os.getenv("VOODOO_REDIS_URL")
+            or os.getenv("GRUMO_QUEUE_URL")
+            or os.getenv("GRUMO_REDIS_URL")
             or ""
         )
         if not url:
@@ -214,15 +214,15 @@ class ProviderRegistry:
             url = f"redis://{host}:{port}/{db}"
         return RedisQueue(url)
 
-    def _create_voodoo_events(self, cfg: EventsConfig) -> Any:
-        from voodoo.storage.events.store import VoodooStoreEventBus
+    def _create_grumo_events(self, cfg: EventsConfig) -> Any:
+        from grumo.storage.events.store import GrumoStoreEventBus
 
-        return VoodooStoreEventBus()
+        return GrumoStoreEventBus()
 
     def _create_sqlite_events(self, cfg: EventsConfig) -> Any:
-        from voodoo.storage.events.sqlite import SQLiteEventBus
+        from grumo.storage.events.sqlite import SQLiteEventBus
 
-        path = cfg.path or cfg.url or ".voodoo/state/data.db"
+        path = cfg.path or cfg.url or ".grumo/state/data.db"
         if path.startswith("sqlite:///"):
             path = path[len("sqlite:///") :] or ":memory:"
         elif path == "sqlite://":
@@ -230,66 +230,66 @@ class ProviderRegistry:
         return SQLiteEventBus(path)
 
     def _create_local_events(self, cfg: EventsConfig) -> Any:
-        from voodoo.storage.events.local import LocalEventBus
+        from grumo.storage.events.local import LocalEventBus
 
         return LocalEventBus()
 
     def _create_postgres_events(self, cfg: EventsConfig) -> Any:
         import os
 
-        from voodoo.storage.events.postgres import PostgresEventStore
+        from grumo.storage.events.postgres import PostgresEventStore
 
         url = (
             cfg.url
-            or os.getenv("VOODOO_EVENTS_URL")
-            or os.getenv("VOODOO_DATABASE_URL", "")
+            or os.getenv("GRUMO_EVENTS_URL")
+            or os.getenv("GRUMO_DATABASE_URL", "")
         )
         if not url:
             raise ConfigurationError(
                 "The 'postgres' events provider requires a URL: set events.url "
-                "in voodoo.yaml, or export VOODOO_EVENTS_URL / VOODOO_DATABASE_URL."
+                "in grumo.yaml, or export GRUMO_EVENTS_URL / GRUMO_DATABASE_URL."
             )
         return PostgresEventStore(url)
 
-    def _create_voodoo_objects(self, cfg: ObjectsConfig) -> Any:
-        from voodoo.storage.objects.store import VoodooStoreObjectStore
+    def _create_grumo_objects(self, cfg: ObjectsConfig) -> Any:
+        from grumo.storage.objects.store import GrumoStoreObjectStore
 
-        return VoodooStoreObjectStore()
+        return GrumoStoreObjectStore()
 
     def _create_local_objects(self, cfg: ObjectsConfig) -> Any:
-        from voodoo.storage.objects.local import LocalObjectStore
+        from grumo.storage.objects.local import LocalObjectStore
 
-        base_dir = cfg.base_dir or ".voodoo/objects"
+        base_dir = cfg.base_dir or ".grumo/objects"
         return LocalObjectStore(base_dir)
 
     def _create_s3_objects(self, cfg: ObjectsConfig) -> Any:
         import os
 
-        from voodoo.storage.objects.s3 import S3ObjectStore
+        from grumo.storage.objects.s3 import S3ObjectStore
 
         bucket = (
             cfg.bucket
-            or os.getenv("VOODOO_BUCKET")
+            or os.getenv("GRUMO_BUCKET")
             or os.getenv("AWS_BUCKET")
-            or os.getenv("VOODOO_S3_BUCKET")
-            or "voodoo-objects"
+            or os.getenv("GRUMO_S3_BUCKET")
+            or "grumo-objects"
         )
         endpoint = (
             cfg.endpoint
-            or os.getenv("VOODOO_OBJECTS_ENDPOINT")
+            or os.getenv("GRUMO_OBJECTS_ENDPOINT")
             or os.getenv("AWS_ENDPOINT_URL")
-            or os.getenv("VOODOO_S3_ENDPOINT")
+            or os.getenv("GRUMO_S3_ENDPOINT")
         )
         access_key = (
             cfg.extra.get("key")
             or os.getenv("AWS_ACCESS_KEY_ID")
-            or os.getenv("VOODOO_S3_KEY")
+            or os.getenv("GRUMO_S3_KEY")
             or ""
         )
         secret_key = (
             cfg.extra.get("secret")
             or os.getenv("AWS_SECRET_ACCESS_KEY")
-            or os.getenv("VOODOO_S3_SECRET")
+            or os.getenv("GRUMO_S3_SECRET")
             or ""
         )
         region = os.getenv("AWS_DEFAULT_REGION") or os.getenv("AWS_REGION", "us-east-1")
@@ -304,19 +304,19 @@ class ProviderRegistry:
         )
 
     def _create_memory_cache(self, cfg: CacheConfig) -> Any:
-        from voodoo.storage.cache.memory import MemoryCache
+        from grumo.storage.cache.memory import MemoryCache
 
         return MemoryCache()
 
     def _create_redis_cache(self, cfg: CacheConfig) -> Any:
         import os
 
-        from voodoo.storage.cache.redis import RedisCache
+        from grumo.storage.cache.redis import RedisCache
 
         url = (
             cfg.url
-            or os.getenv("VOODOO_CACHE_URL")
-            or os.getenv("VOODOO_REDIS_URL")
+            or os.getenv("GRUMO_CACHE_URL")
+            or os.getenv("GRUMO_REDIS_URL")
             or ""
         )
         if not url:

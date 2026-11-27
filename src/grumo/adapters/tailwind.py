@@ -11,7 +11,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
-from voodoo.ui.styles.theme import Theme
+from grumo.ui.styles.theme import Theme
 
 # ---------------------------------------------------------------------------
 # Buttons — legacy default kept byte-identical; semantic variants opt-in

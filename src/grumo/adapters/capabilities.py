@@ -15,7 +15,7 @@ Rules (spec §10):
 - degrade explicitly.
 
 All capability models share a single base (:class:`AdapterCapabilities`) so a
-provider matrix can be rendered uniformly by ``voodoo doctor`` and queried by
+provider matrix can be rendered uniformly by ``grumo doctor`` and queried by
 the runtime.
 """
 
@@ -82,7 +82,7 @@ class AdapterCapabilities:
         return bool(value)
 
     def describe(self) -> dict[str, Any]:
-        """JSON-ready view for CLI/API output and ``voodoo doctor``."""
+        """JSON-ready view for CLI/API output and ``grumo doctor``."""
         return {f.name: getattr(self, f.name) for f in fields(self)}
 
 
@@ -183,7 +183,7 @@ def negotiate(
 def capability_matrix(
     adapters: Iterable[AdapterCapabilities],
 ) -> dict[str, dict[str, Any]]:
-    """Build a uniform provider matrix for reporting/``voodoo doctor``.
+    """Build a uniform provider matrix for reporting/``grumo doctor``.
 
     Returns ``{provider: {feature: value, ...}}``.
     """
