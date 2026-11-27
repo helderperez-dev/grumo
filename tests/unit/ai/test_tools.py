@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo import tool
-from voodoo.ai.tools import ToolRegistry, ToolSpec
-from voodoo.ai.tools import registry as tools_module
+from grumo import tool
+from grumo.ai.tools import ToolRegistry, ToolSpec
+from grumo.ai.tools import registry as tools_module
 
 
 @pytest.fixture(autouse=True)
@@ -213,7 +213,7 @@ def test_registry_register_overwrites_by_name():
 
 
 def test_registry_register_rejects_empty_name():
-    from voodoo.core.errors import ToolError
+    from grumo.core.errors import ToolError
 
     reg = ToolRegistry()
     with pytest.raises(ToolError):
@@ -250,7 +250,7 @@ async def test_registry_call_sync_tool():
 
 @pytest.mark.asyncio
 async def test_registry_call_unknown_raises_toolerror():
-    from voodoo.core.errors import ToolError
+    from grumo.core.errors import ToolError
 
     reg = ToolRegistry()
     with pytest.raises(ToolError):

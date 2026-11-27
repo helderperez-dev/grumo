@@ -1,4 +1,4 @@
-"""Tests for the voodoo inspect CLI."""
+"""Tests for the grumo inspect CLI."""
 
 from __future__ import annotations
 
@@ -7,9 +7,9 @@ import json
 import pytest
 from typer.testing import CliRunner
 
-from voodoo.cli.inspect import inspect_app
-from voodoo.primitives import Capability, Effect, Resource
-from voodoo.runtime import ComputeResult, Intent, execute, register_capability
+from grumo.cli.inspect import inspect_app
+from grumo.primitives import Capability, Effect, Resource
+from grumo.runtime import ComputeResult, Intent, execute, register_capability
 
 runner = CliRunner()
 
@@ -17,7 +17,7 @@ runner = CliRunner()
 @pytest.fixture(autouse=True)
 def fresh_engine():
     """Give each test a fresh engine so executions don't leak across tests."""
-    from voodoo.runtime import engine
+    from grumo.runtime import engine
 
     engine.executions.clear()
     yield
@@ -35,7 +35,7 @@ async def _run_sample_execution() -> str:
         ),
         capabilities=["test.write"],
     )
-    from voodoo.runtime import engine
+    from grumo.runtime import engine
 
     return engine.recent(1)[0].id
 
@@ -105,8 +105,8 @@ class TestInspectOther:
         assert "sample_intent" in result.output
 
     async def test_state(self):
-        from voodoo.primitives import State
-        from voodoo.runtime import engine
+        from grumo.primitives import State
+        from grumo.runtime import engine
 
         async def compute(ctx):
             return ComputeResult(value=1, states=[State(kind="lead", data={"n": 1})])
@@ -123,8 +123,8 @@ class TestInspectOther:
 
 class TestInspectApprovals:
     def test_lists_pending_approvals_json(self):
-        from voodoo.runtime import engine
-        from voodoo.runtime.human import Approval, ApprovalStatus
+        from grumo.runtime import engine
+        from grumo.runtime.human import Approval, ApprovalStatus
 
         engine.approvals.records["a1"] = Approval(
             execution_id="a1",
@@ -141,8 +141,8 @@ class TestInspectApprovals:
         assert data[0]["status"] == "pending"
 
     def test_pending_filter_excludes_decided(self):
-        from voodoo.runtime import engine
-        from voodoo.runtime.human import Approval, ApprovalStatus
+        from grumo.runtime import engine
+        from grumo.runtime.human import Approval, ApprovalStatus
 
         engine.approvals.records["a1"] = Approval(
             execution_id="a1", trace_id="t1", status=ApprovalStatus.PENDING
@@ -161,7 +161,7 @@ class TestInspectApprovals:
 
 class TestRecoverCLI:
     def test_recover_returns_empty_for_missing_store(self, tmp_path):
-        from voodoo.cli import app
+        from grumo.cli import app
 
         store = tmp_path / "executions.jsonl"
         result = runner.invoke(app, ["recover", "--store", str(store), "--json"])
@@ -170,11 +170,11 @@ class TestRecoverCLI:
         assert data["recovered"] == []
 
     def test_recover_restores_unfinished_execution(self, tmp_path):
-        from voodoo.cli import app
-        from voodoo.primitives.intent import Intent
-        from voodoo.runtime import engine
-        from voodoo.runtime.execution import Execution, ExecutionStatus
-        from voodoo.runtime.persistence import JSONFileExecutionStore
+        from grumo.cli import app
+        from grumo.primitives.intent import Intent
+        from grumo.runtime import engine
+        from grumo.runtime.execution import Execution, ExecutionStatus
+        from grumo.runtime.persistence import JSONFileExecutionStore
 
         store = JSONFileExecutionStore(tmp_path / "executions.jsonl")
         waiting = Execution(

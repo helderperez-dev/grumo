@@ -15,13 +15,13 @@ from pathlib import Path
 
 import pytest
 
-from voodoo.memory.interfaces import (
+from grumo.memory.interfaces import (
     InMemoryMemoryStore,
     MemoryEntry,
     MemoryLayer,
     MemorySearchResult,
 )
-from voodoo.memory.sqlite import SQLiteMemoryStore
+from grumo.memory.sqlite import SQLiteMemoryStore
 
 # ---------------------------------------------------------------------------
 # MemoryEntry
@@ -333,7 +333,7 @@ class TestAgentMemory:
 
     @pytest.mark.asyncio
     async def test_agent_has_memory_property(self) -> None:
-        from voodoo.ai.agent import Agent
+        from grumo.ai.agent import Agent
 
         agent = Agent(model="mock:test", tools=[])
         assert agent.memory is not None
@@ -343,7 +343,7 @@ class TestAgentMemory:
     @pytest.mark.asyncio
     async def test_agent_memory_is_stable(self) -> None:
         """Accessing .memory twice returns the same store."""
-        from voodoo.ai.agent import Agent
+        from grumo.ai.agent import Agent
 
         agent = Agent(model="mock:test", tools=[])
         m1 = agent.memory
@@ -352,7 +352,7 @@ class TestAgentMemory:
 
     @pytest.mark.asyncio
     async def test_agent_run_writes_episodic_memory(self) -> None:
-        from voodoo.ai.agent import Agent
+        from grumo.ai.agent import Agent
 
         agent = Agent(model="mock:test", tools=[])
         run = await agent.run("What is 2+2?")
@@ -367,7 +367,7 @@ class TestAgentMemory:
 
     @pytest.mark.asyncio
     async def test_agent_stream_writes_episodic_memory(self) -> None:
-        from voodoo.ai.agent import Agent
+        from grumo.ai.agent import Agent
 
         agent = Agent(model="mock:test", tools=[])
         events = []
@@ -382,8 +382,8 @@ class TestAgentMemory:
     @pytest.mark.asyncio
     async def test_agent_custom_memory_store(self) -> None:
         """Agent accepts a custom memory store."""
-        from voodoo.ai.agent import Agent
-        from voodoo.memory.interfaces import InMemoryMemoryStore
+        from grumo.ai.agent import Agent
+        from grumo.memory.interfaces import InMemoryMemoryStore
 
         custom_store = InMemoryMemoryStore()
         agent = Agent(model="mock:test", tools=[], memory=custom_store)
@@ -391,7 +391,7 @@ class TestAgentMemory:
 
     @pytest.mark.asyncio
     async def test_agent_memory_search_after_runs(self) -> None:
-        from voodoo.ai.agent import Agent
+        from grumo.ai.agent import Agent
 
         agent = Agent(model="mock:test", tools=[])
         await agent.run("Tell me about Python")

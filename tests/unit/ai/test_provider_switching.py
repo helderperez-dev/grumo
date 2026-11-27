@@ -1,6 +1,6 @@
 """Verify Sprint 9 acceptance criteria:
 
-Switching `queue: sqlite` -> `queue: memory` in `voodoo.yaml` changes behavior
+Switching `queue: sqlite` -> `queue: memory` in `grumo.yaml` changes behavior
 with zero application-code edits, verified by running the same app against two
 providers.
 """
@@ -12,17 +12,17 @@ from pathlib import Path
 import pytest
 import yaml
 
-from voodoo.adapters.capabilities import CapabilityError
-from voodoo.config import get_config
-from voodoo.runtime.scheduling import workers as workers_queue
+from grumo.adapters.capabilities import CapabilityError
+from grumo.config import get_config
+from grumo.runtime.scheduling import workers as workers_queue
 
 
 @pytest.mark.asyncio
 async def test_queue_provider_switching_via_config():
     """Verify switching queue provider via config dynamically changes the active backend."""
-    cfg_module = sys.modules["voodoo.config"]
+    cfg_module = sys.modules["grumo.config"]
     with tempfile.TemporaryDirectory() as tmpdir:
-        sqlite_yaml = Path(tmpdir) / "voodoo_sqlite.yaml"
+        sqlite_yaml = Path(tmpdir) / "grumo_sqlite.yaml"
         with open(sqlite_yaml, "w") as f:
             yaml.dump(
                 {
@@ -32,7 +32,7 @@ async def test_queue_provider_switching_via_config():
                 f,
             )
 
-        memory_yaml = Path(tmpdir) / "voodoo_memory.yaml"
+        memory_yaml = Path(tmpdir) / "grumo_memory.yaml"
         with open(memory_yaml, "w") as f:
             yaml.dump(
                 {

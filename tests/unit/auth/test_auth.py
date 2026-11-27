@@ -6,7 +6,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 from starlette.routing import Route
 
-from voodoo.auth import (
+from grumo.auth import (
     AuthMiddleware,
     AuthUser,
     ExpiredTokenError,
@@ -27,8 +27,8 @@ from voodoo.auth import (
     verify_api_key,
     verify_password,
 )
-from voodoo.config import config
-from voodoo.data import BaseModel, close_db, init_db, rls_policy
+from grumo.config import config
+from grumo.data import BaseModel, close_db, init_db, rls_policy
 
 
 def test_password_hashing():

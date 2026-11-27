@@ -10,7 +10,7 @@ from starlette.responses import JSONResponse, PlainTextResponse
 from starlette.routing import Route
 from starlette.testclient import TestClient
 
-from voodoo.auth import (
+from grumo.auth import (
     AuthMiddleware,
     InvalidTokenError,
     clear_revoked_tokens,
@@ -20,8 +20,8 @@ from voodoo.auth import (
     revoke_subject_sessions,
     set_auth_cookie,
 )
-from voodoo.config import AuthConfig, SecurityConfig, config
-from voodoo.security import (
+from grumo.config import AuthConfig, SecurityConfig, config
+from grumo.security import (
     CORSMiddleware,
     CSRFMiddleware,
     RateLimitMiddleware,
@@ -96,7 +96,7 @@ def test_security_headers_emit_permissions_policy_when_configured():
 def test_security_headers_hash_inline_scripts_for_strict_csp():
     async def page(request: Request):
         return PlainTextResponse(
-            "<html><script>window.__voodoo = 1;</script></html>",
+            "<html><script>window.__grumo = 1;</script></html>",
             media_type="text/html",
         )
 
@@ -285,7 +285,7 @@ def test_cookie_flags_http_only_and_samesite():
 
 def test_jwt_expired_token_rejected():
     """JWT with past expiry must be rejected."""
-    from voodoo.auth import ExpiredTokenError
+    from grumo.auth import ExpiredTokenError
 
     secret = "threat-model-test-secret"
     token = create_access_token(
@@ -337,7 +337,7 @@ def test_jwt_nbf_future_claim_rejected():
 
 def test_jwt_iat_future_claim_rejected(monkeypatch: pytest.MonkeyPatch):
     """A token cannot claim it was issued in the future."""
-    import voodoo.auth.jwt as jwt_module
+    import grumo.auth.jwt as jwt_module
 
     secret = "threat-model-test-secret"
     real_time = jwt_module.time.time
@@ -368,10 +368,10 @@ def test_jwt_rejects_algorithm_confusion_header():
 
 def test_jwt_issuer_and_audience_are_enforced(monkeypatch: pytest.MonkeyPatch):
     secret = "threat-model-test-secret"
-    monkeypatch.setattr(config.auth, "jwt_issuer", "voodoo-test")
+    monkeypatch.setattr(config.auth, "jwt_issuer", "grumo-test")
     monkeypatch.setattr(config.auth, "jwt_audience", "web")
     token = create_access_token({"sub": 1}, secret_key=secret)
-    assert decode_access_token(token, secret_key=secret)["iss"] == "voodoo-test"
+    assert decode_access_token(token, secret_key=secret)["iss"] == "grumo-test"
 
     monkeypatch.setattr(config.auth, "jwt_audience", "api")
     with pytest.raises(InvalidTokenError, match="audience"):
@@ -625,7 +625,7 @@ def test_rate_limit_ignores_unvalidated_credential_buckets():
 
 @pytest.mark.asyncio
 async def test_rate_limiter_rejects_invalid_runtime_limits():
-    from voodoo.security.rate_limit import RateLimiter
+    from grumo.security.rate_limit import RateLimiter
 
     with pytest.raises(ValueError, match="max_clients"):
         RateLimiter(max_clients=0)
@@ -688,7 +688,7 @@ def test_password_hash_uses_constant_time():
     """Password verification must use constant-time comparison (secrets.compare_digest)."""
     import inspect
 
-    import voodoo.auth as auth_mod
+    import grumo.auth as auth_mod
 
     # Verify the function uses secrets.compare_digest by checking the source
     source = inspect.getsource(auth_mod.verify_password)
