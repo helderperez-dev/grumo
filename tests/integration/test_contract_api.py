@@ -49,4 +49,4 @@ def test_catalog_symbols_are_not_root_exports() -> None:
 def test_version_is_string() -> None:
     assert isinstance(grumo.__version__, str)
     assert grumo.__version__.count(".") == 2
-    assert grumo.__version__.split(".")[0] == "1"
+    assert grumo.__version__.split(".")[0] == "2"
