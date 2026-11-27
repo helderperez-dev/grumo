@@ -310,7 +310,7 @@ Every execution carries a `trace_id` that propagates through:
 - Agent runs (tokens, cost, tool calls)
 - HTTP requests (latency, status)
 - Tool calls (duration, errors)
-- Custom spans (OTel-compatible)
+- Native custom spans with parent hierarchy
 
 ---
 
