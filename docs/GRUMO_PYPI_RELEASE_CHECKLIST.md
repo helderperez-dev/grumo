@@ -1,7 +1,7 @@
 # Grumo PyPI release cutover
 
-This is the public package migration plan for Voodoo → Grumo. The existing
-distribution `voodoo-framework==3.2.2` and Store `voodoo-store==0.3.2`
+This is the public package migration plan for Grumo → Grumo. The existing
+distribution `grumo-framework==3.2.2` and Store `grumo-store==0.3.2`
 remain live until the replacement packages build, publish, and pass validation.
 
 ## Required new packages
@@ -35,7 +35,7 @@ Official guide: https://docs.pypi.org/trusted-publishers/creating-a-project-thro
 
 - [ ] Rename Rust workspace packages, internal dependencies and Cargo.lock
       consistently. Keep persisted file magic/version/schema unchanged.
-- [ ] Rename `python/voodoo_store` to `python/grumo_store` and update
+- [ ] Rename `python/grumo_store` to `python/grumo_store` and update
       PyO3/maturin extension path.
 - [ ] Update Python imports across package, tests, scripts and release jobs.
 - [ ] Build all Rust and wheel targets, including supported Python 3.9–3.13.
@@ -48,7 +48,7 @@ Official guide: https://docs.pypi.org/trusted-publishers/creating-a-project-thro
 - [ ] Rename module directory to `src/grumo`, package discovery and dynamic
       version config, preserving public behavior.
 - [ ] Depend on the published compatible `grumo-store` release.
-- [ ] Update CLI to `grumo`, leaving `voodoo` as a deliberate transition
+- [ ] Update CLI to `grumo`, leaving `grumo` as a deliberate transition
       entrypoint where necessary.
 - [ ] Ensure scaffold creates `grumo.toml` and new Store path for new apps.
 - [ ] Verify generated apps do not rely on old import/package names.
@@ -65,7 +65,7 @@ Official guide: https://docs.pypi.org/trusted-publishers/creating-a-project-thro
   conflicts; explicitly test them in isolated environments.
 - Do not delete existing PyPI projects or their historical releases. Existing
   installs must continue resolving consistent artifacts.
-- Do not change Homebrew `voodoo` formula until both new PyPI distributions
+- Do not change Homebrew `grumo` formula until both new PyPI distributions
   exist. Homebrew formula name `grumo` and tap rename are a separate cutover.
 
 ## Final smoke commands

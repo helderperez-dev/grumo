@@ -3,7 +3,7 @@
 > **Status:** Implemented. Adaptive supervisor with retry, fallback,
 > delegation, and budget steering is live.
 
-Voodoo's adaptive runtime is the layer that makes executions resilient.
+Grumo's adaptive runtime is the layer that makes executions resilient.
 When a capability fails, the planner can resolve an alternative compute
 participant. When an execution struggles, the supervisor can retry,
 fallback, delegate, or steer the budget.
@@ -27,7 +27,7 @@ flowchart TD
 ### Capability Resolution
 
 ```python
-from voodoo.runtime import Planner, ComputeParticipant
+from grumo.runtime import Planner, ComputeParticipant
 
 planner = Planner()
 
@@ -71,7 +71,7 @@ The `AdaptiveSupervisor` wraps execution with a control loop that
 monitors progress and intervenes when things go wrong.
 
 ```python
-from voodoo.runtime import AdaptiveSupervisor, SupervisorConfig
+from grumo.runtime import AdaptiveSupervisor, SupervisorConfig
 
 supervisor = AdaptiveSupervisor(
     config=SupervisorConfig(
@@ -104,7 +104,7 @@ When a retry is needed, the supervisor provides **hints** based on the
 failure cause:
 
 ```python
-from voodoo.runtime import SupervisorDecision
+from grumo.runtime import SupervisorDecision
 
 # The supervisor returns a decision with context
 decision = SupervisorDecision(
@@ -124,7 +124,7 @@ The `ResourceAccountant` tracks resource consumption across executions:
 - **Custom resources** — any named budget
 
 ```python
-from voodoo.runtime import ResourceAccountant
+from grumo.runtime import ResourceAccountant
 
 accountant = ResourceAccountant(
     budget={
@@ -144,8 +144,8 @@ The `ConstraintEnforcer` validates that executions stay within declared
 constraints before, during, and after compute:
 
 ```python
-from voodoo.primitives import Constraint
-from voodoo.runtime import ConstraintEnforcer
+from grumo.primitives import Constraint
+from grumo.runtime import ConstraintEnforcer
 
 enforcer = ConstraintEnforcer(
     constraints=[

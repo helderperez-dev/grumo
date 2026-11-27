@@ -5,7 +5,7 @@ Status: **implementation in phases; not a completed rename**.
 ## Product identity and scope
 
 **Grumo** is the successor brand for the existing programmable runtime,
-application framework and infrastructure engine. Preserve the original Voodoo
+application framework and infrastructure engine. Preserve the original Grumo
 architecture: application APIs/UI, durable Store, canonical governed Execution,
 AI agents, workflows, World model, Runtime Fabric and Edge devices. Local-first
 and offline synchronization are deployment options and roadmap features, **not
@@ -15,28 +15,28 @@ a narrowing of the runtime's purpose**.
 
 | Current | Target |
 | --- | --- |
-| `helderperez-dev/voodoo` | `helderperez-dev/grumo` |
-| `helderperez-dev/voodoo-store` | `helderperez-dev/grumo-store` |
-| `helderperez-dev/voodoo-edge` | `helderperez-dev/grumo-edge` |
-| `helderperez-dev/voodoo-site` | `helderperez-dev/grumo-site` |
-| `helderperez-dev/voodoo-templates` | `helderperez-dev/grumo-templates` |
-| `helderperez-dev/voodoo-skills` | `helderperez-dev/grumo-skills` |
-| `helderperez-dev/homebrew-voodoo` | `helderperez-dev/homebrew-grumo` |
-| `voodoo-framework` on PyPI | `grumo` (availability/publish gate) |
-| `voodoo-store` on PyPI | `grumo-store` |
-| `from voodoo import App` | `from grumo import App` |
-| `import voodoo_store` | `import grumo_store` |
-| `voodoo new / dev / start` | `grumo new / dev / start` |
-| `.voodoo/application.vstore` | `.grumo/application.grumo` |
-| `VOODOO_*` | `GRUMO_*` |
-| `voodoo.toml` | `grumo.toml` |
-| `voodoo-store-core` crate | `grumo-store-core` |
-| `voodoo-store-ffi` crate | `grumo-store-ffi` |
-| `voodoo-store-cli` crate | `grumo-store-cli` |
+| `helderperez-dev/grumo` | `helderperez-dev/grumo` |
+| `helderperez-dev/grumo-store` | `helderperez-dev/grumo-store` |
+| `helderperez-dev/grumo-edge` | `helderperez-dev/grumo-edge` |
+| `helderperez-dev/grumo-site` | `helderperez-dev/grumo-site` |
+| `helderperez-dev/grumo-templates` | `helderperez-dev/grumo-templates` |
+| `helderperez-dev/grumo-skills` | `helderperez-dev/grumo-skills` |
+| `helderperez-dev/homebrew-grumo` | `helderperez-dev/homebrew-grumo` |
+| `grumo-framework` on PyPI | `grumo` (availability/publish gate) |
+| `grumo-store` on PyPI | `grumo-store` |
+| `from grumo import App` | `from grumo import App` |
+| `import grumo_store` | `import grumo_store` |
+| `grumo new / dev / start` | `grumo new / dev / start` |
+| `.grumo/application.grumo` | `.grumo/application.grumo` |
+| `GRUMO_*` | `GRUMO_*` |
+| `grumo.toml` | `grumo.toml` |
+| `grumo-store-core` crate | `grumo-store-core` |
+| `grumo-store-ffi` crate | `grumo-store-ffi` |
+| `grumo-store-cli` crate | `grumo-store-cli` |
 
 The exact rename of C ABI symbols, protocol identifiers, websocket routes and
 persisted record names requires an explicit compatibility policy; do not bulk
-replace those merely because they contain the Voodoo prefix.
+replace those merely because they contain the Grumo prefix.
 
 ## Implementation order
 
@@ -58,7 +58,7 @@ replace those merely because they contain the Voodoo prefix.
    - Preserve historical fixtures, backup/restore and rollback.
 
 3. **Framework public API**
-   - Rename `src/voodoo` to `src/grumo` and adjust relative/absolute imports
+   - Rename `src/grumo` to `src/grumo` and adjust relative/absolute imports
      as one atomic code change.
    - Update dynamic version attribute, package discovery, scripts, package
      data, type tooling, docs manifest, scaffold engine, tests and lockfiles.
@@ -113,7 +113,7 @@ replace those merely because they contain the Voodoo prefix.
 
 | Stage | Status |
 | --- | --- |
-| Store compatibility PR | In review (voodoo-store PR #23) |
+| Store compatibility PR | In review (grumo-store PR #23) |
 | Store package / crate rename | Not started |
 | Framework code / public API rename | Not started |
 | Default Store path + migration CLI | Not started |

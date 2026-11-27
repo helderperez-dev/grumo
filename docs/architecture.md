@@ -1,6 +1,6 @@
 # Architecture
 
-Voodoo is a programmable Runtime for adaptive applications and operational
+Grumo is a programmable Runtime for adaptive applications and operational
 systems. Web, APIs, agents, workers, human workflows, remote nodes and physical
 devices are different participants around one Runtime — not independent stacks
 with separate authority and execution semantics.
@@ -25,7 +25,7 @@ Two laws follow from this:
                          Application
                              |
                              v
-                       Voodoo Runtime
+                       Grumo Runtime
                              |
         +--------------------+--------------------+
         |                    |                    |
@@ -46,10 +46,10 @@ Two laws follow from this:
                         RuntimeStore
                              |
                              v
-                  .voodoo/application.vstore
+                  .grumo/application.grumo
 ```
 
-Voodoo Store is the default durable infrastructure substrate for a fresh app.
+Grumo Store is the default durable infrastructure substrate for a fresh app.
 SQLite, PostgreSQL, Redis and S3-compatible storage are explicit adapters.
 
 ## Core concepts
@@ -107,20 +107,20 @@ A fresh app normally needs no infrastructure configuration:
 
 ```toml
 [store]
-provider = "voodoo"
-path = ".voodoo/application.vstore"
+provider = "grumo"
+path = ".grumo/application.grumo"
 
 [database]
-provider = "voodoo"
+provider = "grumo"
 
 [queue]
-provider = "voodoo"
+provider = "grumo"
 
 [events]
-provider = "voodoo"
+provider = "grumo"
 
 [objects]
-provider = "voodoo"
+provider = "grumo"
 ```
 
 These are effective defaults; users normally do not write them.
@@ -148,7 +148,7 @@ Process
   |
   `-- RuntimeStore
         |
-        `-- application.vstore
+        `-- application.grumo
               +-- Data
               +-- Queue
               +-- Events
@@ -161,7 +161,7 @@ Process
 ## Local transaction boundary
 
 `RuntimeTransaction` exposes provider-neutral atomicity over the capabilities
-Voodoo Store can actually commit together: KV/Collection mutations and an
+Grumo Store can actually commit together: KV/Collection mutations and an
 Outbox record.
 
 ```text
@@ -172,7 +172,7 @@ state mutation + outbox message
 ```
 
 Outbox publication happens after commit and is at-least-once. Message ids are
-stable idempotency keys. Voodoo does not call an external API part of the same
+stable idempotency keys. Grumo does not call an external API part of the same
 local transaction.
 
 ## Workers and scheduling
@@ -183,12 +183,12 @@ Each application attempt executes through the canonical `ExecutionEngine`.
 
 Schedules/Cron/Triggers are Store-backed on the default path. Store 0.3 can
 enable/disable existing schedules but cannot arbitrarily reposition a schedule
-cursor; Voodoo fails clearly for that unsupported operation.
+cursor; Grumo fails clearly for that unsupported operation.
 
 ## Events and objects
 
 Events and objects use the native Store messaging (Topics) and content-addressed
-Objects subsystems through Voodoo-owned adapters behind stable Framework APIs.
+Objects subsystems through Grumo-owned adapters behind stable Framework APIs.
 The adapters share the active RuntimeStore lifecycle and keep native binding
 types out of application code.
 
@@ -198,15 +198,15 @@ Durability is checkpoint-oriented:
 
 - Execution state/journal persists;
 - Workflow orchestration checkpoints reference canonical Execution ids;
-- Goal checkpoints can use Voodoo Store;
+- Goal checkpoints can use Grumo Store;
 - HITL approvals persist and are rehydrated after restart.
 
-Resume semantics must respect already committed effects and idempotency. Voodoo
+Resume semantics must respect already committed effects and idempotency. Grumo
 does not equate persistence with global exactly-once execution.
 
 ## Runtime Fabric
 
-The same app semantics can grow into multiple Voodoo Nodes:
+The same app semantics can grow into multiple Grumo Nodes:
 
 ```text
 Application semantics
@@ -257,7 +257,7 @@ effect.
 
 Node advertisements, memberships, fabric work requests/outcomes and existing
 remote Execution semantics have transport-neutral models under
-`voodoo.protocol`. HTTP, WebSocket, MQTT, QUIC or another transport can carry
+`grumo.protocol`. HTTP, WebSocket, MQTT, QUIC or another transport can carry
 those contracts without changing Runtime authority.
 
 ## Edge
@@ -279,7 +279,7 @@ RuntimeStore. `SQLiteDeviceStore` remains available as an explicit adapter.
 
 Store-first local deployment obeys:
 
-> **one process = one Voodoo Node = one local Store writer**
+> **one process = one Grumo Node = one local Store writer**
 
 Do not use multiple uvicorn/gunicorn worker processes against the same
 `.vstore`. Scale by creating separate nodes with separate local Stores.
@@ -289,7 +289,7 @@ not a substitute.
 
 ## External adapters
 
-Voodoo supports explicit domain overrides where needed:
+Grumo supports explicit domain overrides where needed:
 
 ```text
 Database -> PostgreSQL / SQLite
@@ -301,7 +301,7 @@ Telemetry-> OpenTelemetry
 
 Adapters change infrastructure mechanics, not Runtime meaning or authority.
 
-## What Voodoo does not claim yet
+## What Grumo does not claim yet
 
 - automatic Store replication/sync;
 - shared multi-writer `.vstore` files;
@@ -314,12 +314,12 @@ Adapters change infrastructure mechanics, not Runtime meaning or authority.
 ## Public API ownership
 
 ```python
-from voodoo import App, Agent, Model, page, state, task, tool
-from voodoo.ui import Button, Card, DataTable
-from voodoo.runtime import ExecutionEngine, Goal, GoalRuntime, Planner
-from voodoo.world import Entity, Observation, WorldModel
-from voodoo.edge import DeviceGateway, WorldAwareDeviceGateway
-from voodoo.protocol import WorldSnapshot, RemoteExecutionRequest
+from grumo import App, Agent, Model, page, state, task, tool
+from grumo.ui import Button, Card, DataTable
+from grumo.runtime import ExecutionEngine, Goal, GoalRuntime, Planner
+from grumo.world import Entity, Observation, WorldModel
+from grumo.edge import DeviceGateway, WorldAwareDeviceGateway
+from grumo.protocol import WorldSnapshot, RemoteExecutionRequest
 ```
 
 Concepts should live in the namespace that owns them; the 2.x package root is a

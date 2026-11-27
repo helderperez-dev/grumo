@@ -1,6 +1,6 @@
 # Architecture
 
-Voodoo architecture documentation is split by purpose:
+Grumo architecture documentation is split by purpose:
 
 - [Repository architecture](repository.md) — canonical domains, dependency
   direction, tests, docs, examples, and package-root law.

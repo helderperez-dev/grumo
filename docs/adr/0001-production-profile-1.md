@@ -2,7 +2,7 @@
 
 - **Status:** Accepted
 - **Date:** 2026-10-06
-- **Owners:** Voodoo Framework and Voodoo Store maintainers
+- **Owners:** Grumo Framework and Grumo Store maintainers
 - **Scope:** Framework Runtime, Store integration, generated applications, and
   the release/support contract
 
@@ -11,8 +11,8 @@
 The first supported production profile is deliberately local-first:
 
 1. one application instance;
-2. one Voodoo Runtime process;
-3. one Voodoo Store writer for each Store path;
+2. one Grumo Runtime process;
+3. one Grumo Store writer for each Store path;
 4. multiple isolated authenticated browser sessions; and
 5. durable local state with verified backup and restore.
 

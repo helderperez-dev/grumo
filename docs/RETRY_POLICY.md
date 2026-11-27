@@ -1,6 +1,6 @@
 # Retry policy
 
-Voodoo retries are owned by the execution layer that can durably schedule the
+Grumo retries are owned by the execution layer that can durably schedule the
 work. Inline `@task` calls retry in process; durable workers record one attempt
 and delegate retry scheduling to the configured queue provider.
 
