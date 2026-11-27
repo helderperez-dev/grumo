@@ -16,7 +16,6 @@ def _application_snapshot() -> dict[str, Any]:
     """Return the stable machine-readable application/Runtime status contract."""
     from grumo import __version__
     from grumo.config import get_config
-    from grumo.integrations.otel import is_available as otlp_available
     from grumo.observability import telemetry_store
 
     cfg = get_config()
@@ -55,7 +54,7 @@ def _application_snapshot() -> dict[str, Any]:
             "model": cfg.models.default,
         },
         "telemetry": {
-            "otlp_export": "active" if otlp_available() else "off",
+            "mode": "native",
         },
     }
 
@@ -103,5 +102,5 @@ def status(
     terminal.label_value("tool calls", str(runtime["tool_calls_total"]))
 
     terminal.heading("telemetry")
-    terminal.status("otlp export", snapshot["telemetry"]["otlp_export"])
+    terminal.label_value("mode", snapshot["telemetry"]["mode"])
     terminal.blank()
