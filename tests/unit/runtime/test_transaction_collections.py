@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-from voodoo.runtime.transaction import (
+from grumo.runtime.transaction import (
     OutboxDispatcher,
     OutboxMessage,
     RuntimeTransaction,
@@ -67,7 +67,7 @@ class _CollectionNative:
 def test_outbox_collection_fallback_is_atomic_and_dispatchable() -> None:
     native = _CollectionNative()
     runtime = SimpleNamespace(
-        provider=SimpleNamespace(name="voodoo", opened=True, native=native)
+        provider=SimpleNamespace(name="grumo", opened=True, native=native)
     )
     message = OutboxMessage(
         id="collection-event",

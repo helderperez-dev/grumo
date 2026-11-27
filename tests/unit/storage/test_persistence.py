@@ -6,11 +6,11 @@ import json
 
 import pytest
 
-from voodoo.primitives.intent import Intent
-from voodoo.runtime import ExecutionEngine
-from voodoo.runtime.errors import ApprovalRequired
-from voodoo.runtime.execution import Execution, ExecutionStatus
-from voodoo.runtime.persistence import (
+from grumo.primitives.intent import Intent
+from grumo.runtime import ExecutionEngine
+from grumo.runtime.errors import ApprovalRequired
+from grumo.runtime.execution import Execution, ExecutionStatus
+from grumo.runtime.persistence import (
     InMemoryExecutionStore,
     JSONFileExecutionStore,
     filter_unfinished,
@@ -153,7 +153,7 @@ def test_persisted_approval_survives_restart_end_to_end(tmp_path):
     engine.use_store(store)
 
     async def compute(ctx):
-        from voodoo.runtime.human import ApprovalStatus as S
+        from grumo.runtime.human import ApprovalStatus as S
 
         if ctx.metadata.get("approval") != S.APPROVED.value:
             raise ApprovalRequired("please approve", execution_id=ctx.execution_id)
@@ -178,8 +178,8 @@ def test_persisted_approval_survives_restart_end_to_end(tmp_path):
 def test_workflow_checkpoints_each_task(tmp_path):
     """A sequential workflow persists each task's execution to the store
     as it completes, so a mid-workflow restart can recover partial progress."""
-    from voodoo.runtime import Task, Workflow, WorkflowStrategy
-    from voodoo.runtime.persistence import JSONFileExecutionStore
+    from grumo.runtime import Task, Workflow, WorkflowStrategy
+    from grumo.runtime.persistence import JSONFileExecutionStore
 
     store = JSONFileExecutionStore(tmp_path / "wf_executions.jsonl")
     engine = ExecutionEngine()

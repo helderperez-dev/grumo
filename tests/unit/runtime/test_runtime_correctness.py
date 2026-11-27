@@ -10,10 +10,10 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from voodoo.runtime import ComputeResult, Task, Workflow, WorkflowStrategy
-from voodoo.runtime.errors import WorkflowFailure
-from voodoo.runtime.execution import Execution, ExecutionStatus
-from voodoo.storage.execution import SQLiteExecutionStore
+from grumo.runtime import ComputeResult, Task, Workflow, WorkflowStrategy
+from grumo.runtime.errors import WorkflowFailure
+from grumo.runtime.execution import Execution, ExecutionStatus
+from grumo.storage.execution import SQLiteExecutionStore
 
 
 def test_execution_duration_survives_store_round_trip(tmp_path) -> None:
@@ -97,7 +97,7 @@ async def test_workflow_rejects_duplicate_task_names() -> None:
 async def test_workflow_event_invariant_failures_are_not_silenced(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from voodoo.mesh import mesh
+    from grumo.mesh import mesh
 
     async def broken_broadcast(_event: str, _payload: dict[str, object]) -> None:
         raise AssertionError("mesh invariant broken")

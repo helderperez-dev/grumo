@@ -7,7 +7,7 @@ from uuid import UUID
 
 import pytest
 
-from voodoo.data import (
+from grumo.data import (
     Delete,
     Max,
     MaxLength,
@@ -21,8 +21,8 @@ from voodoo.data import (
     validate,
     validate_model,
 )
-from voodoo.data.store_backend import bind_runtime_store
-from voodoo.runtime.store import RuntimeStore, StoreConfig
+from grumo.data.store_backend import bind_runtime_store
+from grumo.runtime.store import RuntimeStore, StoreConfig
 
 
 class StoreLead(Model):
@@ -35,7 +35,7 @@ class StoreLead(Model):
 @pytest.fixture
 def store_runtime(tmp_path: Path):
     runtime = RuntimeStore(
-        StoreConfig(path=tmp_path / "application.vstore", enabled=True)
+        StoreConfig(path=tmp_path / "application.grumo", enabled=True)
     )
     runtime.start()
     bind_runtime_store(runtime)
@@ -51,7 +51,7 @@ async def test_model_crud_uses_application_store_without_sqlite(store_runtime):
     await close_db()
 
     lead = await StoreLead.create(
-        name="Ada", email="ada@voodoo.build", score=42, active=True
+        name="Ada", email="ada@grumo.build", score=42, active=True
     )
     assert isinstance(lead.id, UUID)
     assert lead.id.version == 7
@@ -593,8 +593,8 @@ async def test_annotated_constraints_express_domain_rules(monkeypatch):
         name: Annotated[str, MinLength(2), MaxLength(10)]
         score: Annotated[int, Min(0), Max(100)]
 
-    product = await Product.create(name="Voodoo", score=100)
-    assert product.name == "Voodoo"
+    product = await Product.create(name="Grumo", score=100)
+    assert product.name == "Grumo"
 
     with pytest.raises(ValueError, match="name length must be >= 2"):
         await Product.create(name="x", score=10)

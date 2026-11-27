@@ -1,5 +1,5 @@
-from voodoo.runtime.dependency_graph import DependencyGraph
-from voodoo.ui.state import (
+from grumo.runtime.dependency_graph import DependencyGraph
+from grumo.ui.state import (
     start_dependency_tracking,
     state,
     stop_dependency_tracking,

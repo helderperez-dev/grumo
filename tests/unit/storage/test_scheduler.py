@@ -7,7 +7,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from voodoo.storage.scheduler import SQLiteScheduleStore
+from grumo.storage.scheduler import SQLiteScheduleStore
 
 
 def _make_store(tmp_path):
@@ -118,7 +118,7 @@ class TestCronNext:
 
 class TestScheduleSurvivesRestart:
     def test_schedule_from_timespec(self, tmp_path):
-        from voodoo.primitives.time import TimeSpec
+        from grumo.primitives.time import TimeSpec
 
         store = _make_store(tmp_path)
         spec = TimeSpec.with_interval(30)
@@ -131,7 +131,7 @@ class TestScheduleSurvivesRestart:
         store.close()
 
     def test_schedule_from_timespec_without_schedule(self, tmp_path):
-        from voodoo.primitives.time import TimeSpec
+        from grumo.primitives.time import TimeSpec
 
         store = _make_store(tmp_path)
         spec = TimeSpec()  # no schedule, no interval

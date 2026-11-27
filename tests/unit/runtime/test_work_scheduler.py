@@ -1,7 +1,7 @@
 from datetime import UTC, datetime, timedelta
 
-from voodoo.primitives.intent import Intent
-from voodoo.runtime.scheduling.work import (
+from grumo.primitives.intent import Intent
+from grumo.runtime.scheduling.work import (
     RuntimeScheduler,
     ScheduledWork,
     WorkEligibility,
@@ -52,7 +52,7 @@ def test_scheduler_orders_by_priority_then_deadline():
 
 
 def test_scheduler_preserves_placement_without_deciding_location():
-    from voodoo.runtime.distributed.fabric import PlacementRequirement
+    from grumo.runtime.distributed.fabric import PlacementRequirement
 
     requirement = PlacementRequirement(capability="camera", location="edge")
     work = ScheduledWork(Intent(name="capture"), placement=requirement)
@@ -97,7 +97,7 @@ def test_scheduler_respects_backpressure_without_rejecting_work():
 
 
 def test_scheduler_explains_placement_without_selecting_node():
-    from voodoo.runtime.distributed.fabric import PlacementRequirement
+    from grumo.runtime.distributed.fabric import PlacementRequirement
 
     work = ScheduledWork(
         Intent(name="capture"),
@@ -113,8 +113,8 @@ def test_scheduler_explains_placement_without_selecting_node():
 
 
 def test_scheduled_work_derives_intent_semantics():
-    from voodoo.primitives.constraint import Constraint
-    from voodoo.runtime.scheduling.work import scheduled_work_from_intent
+    from grumo.primitives.constraint import Constraint
+    from grumo.runtime.scheduling.work import scheduled_work_from_intent
 
     intent = Intent(
         name="capture",
@@ -138,7 +138,7 @@ def test_scheduled_work_derives_intent_semantics():
 
 
 def test_scheduler_blocks_terminal_intent():
-    from voodoo.primitives.intent import IntentStatus
+    from grumo.primitives.intent import IntentStatus
 
     intent = Intent(name="done")
     intent.status = IntentStatus.COMPLETED
@@ -149,7 +149,7 @@ def test_scheduler_blocks_terminal_intent():
 
 
 def test_scheduler_waits_for_already_executing_intent():
-    from voodoo.primitives.intent import IntentStatus
+    from grumo.primitives.intent import IntentStatus
 
     intent = Intent(name="running")
     intent.status = IntentStatus.EXECUTING
@@ -160,7 +160,7 @@ def test_scheduler_waits_for_already_executing_intent():
 
 
 def test_scheduled_work_preserves_all_required_capabilities():
-    from voodoo.runtime.scheduling.work import scheduled_work_from_intent
+    from grumo.runtime.scheduling.work import scheduled_work_from_intent
 
     intent = Intent(name="capture-and-store")
     intent.require("camera.capture")

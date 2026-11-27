@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo.primitives.intent import Intent
-from voodoo.runtime import ExecutionEngine
-from voodoo.runtime.execution import Execution, ExecutionStatus
-from voodoo.runtime.persistence import JSONFileExecutionStore
-from voodoo.storage.execution import SQLiteExecutionStore
+from grumo.primitives.intent import Intent
+from grumo.runtime import ExecutionEngine
+from grumo.runtime.execution import Execution, ExecutionStatus
+from grumo.runtime.persistence import JSONFileExecutionStore
+from grumo.storage.execution import SQLiteExecutionStore
 
 
 def _execution(**overrides) -> Execution:
