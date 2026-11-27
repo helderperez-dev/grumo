@@ -94,9 +94,9 @@ just mqtt-up   # Mosquitto, no auth, localhost only
 ## Python API
 
 ```python
-from grumo.edge import DeviceGateway, SQLiteDeviceStore, EdgeMQTTTransport
+from grumo.edge import DeviceGateway, SQLiteDeviceStore
 from grumo.runtime import engine
-from grumo.edge.mqtt import topic_for
+from grumo.edge.mqtt import EdgeMQTTTransport, topic_for
 
 gateway = DeviceGateway(SQLiteDeviceStore("data/devices.db"), engine)
 transport = EdgeMQTTTransport(
