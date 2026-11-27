@@ -1,7 +1,7 @@
 """About route — app/about/page.py maps to /about."""
 
-from voodoo.seo import SEO
-from voodoo.ui import Container, Heading, Page, Stack, Text
+from grumo.seo import SEO
+from grumo.ui import Container, Heading, Page, Stack, Text
 
 
 def page(request: object) -> tuple[SEO, object]:

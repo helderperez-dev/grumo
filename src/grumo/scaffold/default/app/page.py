@@ -1,19 +1,19 @@
 """Home route — app/page.py maps to /."""
 
-from voodoo.seo import SEO
-from voodoo.ui import A, Badge, Button, Card, Flex, Grid, Heading, Page, Stack, Text
+from grumo.seo import SEO
+from grumo.ui import A, Badge, Button, Card, Flex, Grid, Heading, Page, Stack, Text
 
 
 def page(request: object) -> tuple[SEO, object]:
     seo = SEO(
         title="{{ project_name }}",
         description=(
-            "Built with Voodoo: Python UI, semantic components, and themeable tokens."
+            "Built with Grumo: Python UI, semantic components, and themeable tokens."
         ),
     )
     ui = Page(
         Stack(
-            Heading("Hello, Voodoo", level=1, size="xl"),
+            Heading("Hello, Grumo", level=1, size="xl"),
             Text(
                 "Build your UI in Python with semantic, themeable components.",
                 tone="muted",

@@ -1,7 +1,7 @@
 """Dynamic user route — app/users/[id]/page.py maps to /users/{id}."""
 
-from voodoo.seo import SEO
-from voodoo.ui import Card, Heading, Page, Stack, Text
+from grumo.seo import SEO
+from grumo.ui import Card, Heading, Page, Stack, Text
 
 
 def page(request: object, id: int) -> tuple[SEO, object]:
