@@ -4,13 +4,13 @@ import pytest
 from starlette.responses import RedirectResponse
 from starlette.testclient import TestClient
 
-import voodoo.data
-from voodoo import App, page
-from voodoo.config import config
-from voodoo.core.errors import ConfigurationError, VoodooError
-from voodoo.core.routing import page_registry
-from voodoo.seo import SEO
-from voodoo.ui import Card, Heading, Text
+import grumo.data
+from grumo import App, page
+from grumo.config import config
+from grumo.core.errors import ConfigurationError, GrumoError
+from grumo.core.routing import page_registry
+from grumo.seo import SEO
+from grumo.ui import Card, Heading, Text
 
 
 @pytest.fixture
@@ -21,13 +21,13 @@ def make_app(monkeypatch, tmp_path):
     the Starlette app is assembled on first use.
     """
 
-    real_init_db = voodoo.data.init_db
+    real_init_db = grumo.data.init_db
 
     async def memory_db(db_path=":memory:"):
         await real_init_db(":memory:")
 
     monkeypatch.setattr(config, "db_path", ":memory:")
-    monkeypatch.setattr(voodoo.data, "init_db", memory_db)
+    monkeypatch.setattr(grumo.data, "init_db", memory_db)
 
     def _make() -> App:
         return App(app_dir=str(tmp_path / "no-such-app-dir"))
@@ -43,12 +43,12 @@ def test_app_is_asgi_callable(make_app):
 def test_page_decorator_sync(make_app):
     @page("/")
     def home():
-        return Text("Hello Voodoo")
+        return Text("Hello Grumo")
 
     with TestClient(make_app()) as client:
         response = client.get("/")
     assert response.status_code == 200
-    assert "Hello Voodoo" in response.text
+    assert "Hello Grumo" in response.text
     assert "<!DOCTYPE html>" in response.text
 
 
@@ -118,7 +118,7 @@ def test_page_decorator_returns_function_unchanged():
         return Text("x")
 
     assert callable(handler)
-    assert handler.voodoo_path == "/x"
+    assert handler.grumo_path == "/x"
 
 
 def test_page_registry_tracks_routes():
@@ -145,7 +145,7 @@ def test_app_use_plugin(make_app):
 
 
 def test_app_theme_applied():
-    from voodoo.ui.styles import theme as theme_module
+    from grumo.ui.styles import theme as theme_module
 
     original = theme_module.default_theme
     theme = theme_module.Theme()
@@ -161,28 +161,28 @@ def test_app_run_reload_requires_import_string(make_app):
         make_app().run(reload=True)
 
 
-def test_auth_error_in_voodoo_tree():
-    from voodoo.auth import AuthError
-    from voodoo.core.errors import AuthError as CoreAuthError
+def test_auth_error_in_grumo_tree():
+    from grumo.auth import AuthError
+    from grumo.core.errors import AuthError as CoreAuthError
 
     assert issubclass(AuthError, CoreAuthError)
-    assert issubclass(AuthError, VoodooError)
+    assert issubclass(AuthError, GrumoError)
 
 
 def test_config_debug_flag(monkeypatch):
-    from voodoo.config import _resolve_debug
+    from grumo.config import _resolve_debug
 
-    monkeypatch.setenv("VOODOO_ENV", "development")
-    monkeypatch.setenv("VOODOO_DEBUG", "false")
+    monkeypatch.setenv("GRUMO_ENV", "development")
+    monkeypatch.setenv("GRUMO_DEBUG", "false")
     assert _resolve_debug() is False
-    monkeypatch.setenv("VOODOO_DEBUG", "1")
+    monkeypatch.setenv("GRUMO_DEBUG", "1")
     assert _resolve_debug() is True
 
 
 def test_config_database_url(monkeypatch):
-    from voodoo.config import _resolve_db_path
+    from grumo.config import _resolve_db_path
 
-    monkeypatch.delenv("VOODOO_DB_PATH", raising=False)
+    monkeypatch.delenv("GRUMO_DB_PATH", raising=False)
     monkeypatch.setenv("DATABASE_URL", "sqlite:///tmp/foo.db")
     assert _resolve_db_path() == "tmp/foo.db"
 
@@ -209,15 +209,15 @@ def test_config_database_url(monkeypatch):
 @pytest.fixture
 def file_based_app(tmp_path, monkeypatch):
     """Factory that creates an App with real file-based pages on disk."""
-    import voodoo.data
+    import grumo.data
 
-    real_init_db = voodoo.data.init_db
+    real_init_db = grumo.data.init_db
 
     async def memory_db(db_path=":memory:"):
         await real_init_db(":memory:")
 
     monkeypatch.setattr(config, "db_path", ":memory:")
-    monkeypatch.setattr(voodoo.data, "init_db", memory_db)
+    monkeypatch.setattr(grumo.data, "init_db", memory_db)
 
     app_dir = tmp_path / "app"
     app_dir.mkdir()
@@ -235,7 +235,7 @@ def test_pages_directory_index_route(file_based_app):
     app_dir, _write = file_based_app
     _write(
         "pages/index.py",
-        "from voodoo.components import Div, Text\n\n"
+        "from grumo.components import Div, Text\n\n"
         "def page(request):\n"
         "    return Div(Text('Home page'))\n",
     )
@@ -252,7 +252,7 @@ def test_pages_directory_about_route(file_based_app):
     app_dir, _write = file_based_app
     _write(
         "pages/about.py",
-        "from voodoo.components import Div, Text\n\n"
+        "from grumo.components import Div, Text\n\n"
         "def page(request):\n"
         "    return Div(Text('About page'))\n",
     )
@@ -269,7 +269,7 @@ def test_pages_directory_dynamic_route(file_based_app):
     app_dir, _write = file_based_app
     _write(
         "pages/users/[id].py",
-        "from voodoo.components import Div, Text\n\n"
+        "from grumo.components import Div, Text\n\n"
         "def page(request, id: str):\n"
         "    return Div(Text(f'User ' + id))\n",
     )
@@ -286,13 +286,13 @@ def test_pages_directory_and_page_py_coexist(file_based_app):
     app_dir, _write = file_based_app
     _write(
         "page.py",
-        "from voodoo.components import Div, Text\n\n"
+        "from grumo.components import Div, Text\n\n"
         "def page(request):\n"
         "    return Div(Text('Root page'))\n",
     )
     _write(
         "pages/about.py",
-        "from voodoo.components import Div, Text\n\n"
+        "from grumo.components import Div, Text\n\n"
         "def page(request):\n"
         "    return Div(Text('About'))\n",
     )
@@ -312,7 +312,7 @@ def test_pages_directory_nested_dynamic_route(file_based_app):
     app_dir, _write = file_based_app
     _write(
         "pages/blog/[slug].py",
-        "from voodoo.components import Div, Text\n\n"
+        "from grumo.components import Div, Text\n\n"
         "def page(request, slug: str):\n"
         "    return Div(Text(f'Post: ' + slug))\n",
     )
@@ -333,7 +333,7 @@ def test_pages_directory_ignores_underscore_files(file_based_app):
     )
     _write(
         "pages/index.py",
-        "from voodoo.components import Div, Text\n\n"
+        "from grumo.components import Div, Text\n\n"
         "def page(request):\n"
         "    return Div(Text('Index'))\n",
     )

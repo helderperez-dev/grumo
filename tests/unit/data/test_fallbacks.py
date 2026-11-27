@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-import voodoo.data.base as data_base
+import grumo.data.base as data_base
 
 
 class _UnexpectedAdapterBug(Exception):

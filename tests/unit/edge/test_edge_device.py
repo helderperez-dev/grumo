@@ -4,24 +4,24 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo.edge.auth import (
+from grumo.edge.auth import (
     authenticate_device,
     consume_enrollment,
     create_enrollment,
     rotate_device_credential,
 )
-from voodoo.edge.errors import (
+from grumo.edge.errors import (
     AuthenticationFailedError,
     DeviceRevokedError,
 )
-from voodoo.edge.models import (
+from grumo.edge.models import (
     Device,
     DeviceCredential,
     DeviceEnrollment,
     DeviceStatus,
     EnrollmentStatus,
 )
-from voodoo.edge.store import InMemoryDeviceStore, SQLiteDeviceStore
+from grumo.edge.store import InMemoryDeviceStore, SQLiteDeviceStore
 
 # ---------------------------------------------------------------------------
 # Device model
@@ -164,7 +164,7 @@ class TestSQLiteStore:
     async def test_effect_delivery_idempotent(self, tmp_path):
         store = SQLiteDeviceStore(str(tmp_path / "devices.db"))
         try:
-            from voodoo.edge.store import EffectDelivery
+            from grumo.edge.store import EffectDelivery
 
             delivery = EffectDelivery(
                 effect_id="effect_1",
@@ -238,7 +238,7 @@ class TestEnrollment:
         # Already expired (0 seconds)
         expired = await store.find_enrollment_by_hash(
             __import__(
-                "voodoo.edge.auth", fromlist=["hash_enrollment_key"]
+                "grumo.edge.auth", fromlist=["hash_enrollment_key"]
             ).hash_enrollment_key(key)
         )
         assert expired is not None
@@ -301,7 +301,7 @@ class TestAuthentication:
         store, device, credential = await self._enrolled()
         await store.revoke_device(device.device_id)
         # Simulate an unrevoked credential pointing at the revoked device.
-        from voodoo.edge.auth import hash_device_credential
+        from grumo.edge.auth import hash_device_credential
 
         await store.create_credential(
             DeviceCredential(

@@ -6,7 +6,7 @@ from starlette.responses import PlainTextResponse
 from starlette.routing import Route
 from starlette.testclient import TestClient
 
-from voodoo.i18n import I18n, I18nMiddleware, _, current_language
+from grumo.i18n import I18n, I18nMiddleware, _, current_language
 
 
 @pytest.fixture
@@ -46,9 +46,9 @@ def test_i18n_middleware(mock_locales):
     async def homepage(request):
         # We temporarily override the global i18n_instance in the test
         # but here we can just use the context var directly
-        import voodoo.i18n
+        import grumo.i18n
 
-        voodoo.i18n.i18n_instance = i18n
+        grumo.i18n.i18n_instance = i18n
 
         return PlainTextResponse(f"Lang: {current_language.get()} - Msg: {_('hello')}")
 
@@ -66,7 +66,7 @@ def test_i18n_middleware(mock_locales):
     assert resp.text == "Lang: pt - Msg: Olá"
 
     # 3. Cookie
-    client.cookies = {"voodoo_lang": "pt"}
+    client.cookies = {"grumo_lang": "pt"}
     resp = client.get("/")
     assert resp.text == "Lang: pt - Msg: Olá"
 
@@ -74,4 +74,4 @@ def test_i18n_middleware(mock_locales):
     resp = client.get("/?lang=en")
     assert resp.text == "Lang: en - Msg: Hello"
     # Query param sets the cookie
-    assert "voodoo_lang=en" in resp.headers.get("set-cookie", "")
+    assert "grumo_lang=en" in resp.headers.get("set-cookie", "")

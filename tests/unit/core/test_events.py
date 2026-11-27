@@ -2,7 +2,7 @@
 
 import pytest
 
-from voodoo.core.events import event, event_handlers, register_event
+from grumo.core.events import event, event_handlers, register_event
 
 
 def test_event_decorator_registers_handler():

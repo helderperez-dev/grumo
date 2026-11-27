@@ -2,9 +2,9 @@
 
 import pytest
 
-from voodoo.adapters import TailwindAdapter, VoodooCSSAdapter
-from voodoo.ui import EmptyState, set_style_adapter
-from voodoo.ui.data_extended import (
+from grumo.adapters import TailwindAdapter, GrumoCSSAdapter
+from grumo.ui import EmptyState, set_style_adapter
+from grumo.ui.data_extended import (
     ColumnDef,
     DataList,
     DataRow,
@@ -17,10 +17,10 @@ from voodoo.ui.data_extended import (
     Stat,
     StatGroup,
 )
-from voodoo.ui.styles import current_adapter
+from grumo.ui.styles import current_adapter
 
 
-@pytest.fixture(params=[VoodooCSSAdapter, TailwindAdapter])
+@pytest.fixture(params=[GrumoCSSAdapter, TailwindAdapter])
 def adapter(request):
     original = current_adapter()
     set_style_adapter(request.param())
@@ -54,12 +54,12 @@ def test_description_item_with_link(adapter):
     html = DescriptionList(
         DescriptionItem(
             "Website",
-            "voodoo.dev",
-            href="https://voodoo.dev",
+            "grumo.dev",
+            href="https://grumo.dev",
         ),
     ).render()
-    assert "voodoo.dev" in html
-    assert "https://voodoo.dev" in html
+    assert "grumo.dev" in html
+    assert "https://grumo.dev" in html
 
 
 def test_description_section(adapter):

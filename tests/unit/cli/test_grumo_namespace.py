@@ -1,37 +1,22 @@
-"""Grumo public namespace compatibility before the distribution cutover."""
-
-from __future__ import annotations
-
-import importlib
+"""Canonical Grumo package and CLI identity."""
+import importlib.util
 import tomllib
 from pathlib import Path
-
+import grumo
+from grumo.cli import app
 from typer.testing import CliRunner
 
-import grumo
-import voodoo
-from grumo.cli import app as grumo_cli
-from voodoo.cli import app as voodoo_cli
+def test_canonical_package_exports():
+    assert grumo.App.__module__.startswith("grumo.")
+    assert grumo.Agent.__module__.startswith("grumo.")
+    assert importlib.util.find_spec("voodoo") is None
+    assert importlib.util.find_spec("voodoo_store") is None
 
-
-def test_public_grumo_exports_are_identical_to_legacy_exports() -> None:
-    assert grumo.__version__ == voodoo.__version__
-    for name in grumo.__all__:
-        assert getattr(grumo, name) is getattr(voodoo, name)
-
-
-def test_grumo_import_can_be_loaded_independently() -> None:
-    assert importlib.import_module("grumo").App is voodoo.App
-
-
-def test_console_scripts_use_same_runtime_without_duplicated_state() -> None:
-    project = Path(__file__).resolve().parents[3] / "pyproject.toml"
-    with project.open("rb") as stream:
-        metadata = tomllib.load(stream)
-    assert metadata["project"]["scripts"]["grumo"] == "grumo.cli:app"
-    assert metadata["project"]["scripts"]["voodoo"] == "voodoo.cli:app"
-    assert grumo_cli is voodoo_cli
-    result = CliRunner().invoke(grumo_cli, ["--help"])
+def test_canonical_console_script():
+    with (Path(__file__).resolve().parents[3] / "pyproject.toml").open("rb") as stream:
+        scripts = tomllib.load(stream)["project"]["scripts"]
+    assert scripts == {"grumo": "grumo.cli:app"}
+    result = CliRunner().invoke(app, ["--help"])
     assert result.exit_code == 0
     for command in ("new", "dev", "start", "doctor", "fabric"):
         assert command in result.output

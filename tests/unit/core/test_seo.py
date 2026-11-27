@@ -1,8 +1,8 @@
-"""Tests for voodoo.seo — SEO & GEO metadata system."""
+"""Tests for grumo.seo — SEO & GEO metadata system."""
 
 import json
 
-from voodoo.components import (
+from grumo.components import (
     Address,
     Article,
     Aside,
@@ -18,8 +18,8 @@ from voodoo.components import (
     Section,
     Time,
 )
-from voodoo.core import render_page
-from voodoo.seo import FAQ, GEO, SEO, OpenGraph, TwitterCard, _esc
+from grumo.core import render_page
+from grumo.seo import FAQ, GEO, SEO, OpenGraph, TwitterCard, _esc
 
 # ==============================================================================
 # SEO Model Basics
@@ -29,7 +29,7 @@ from voodoo.seo import FAQ, GEO, SEO, OpenGraph, TwitterCard, _esc
 class TestSEOModel:
     def test_defaults(self):
         seo = SEO()
-        assert seo.title == "Voodoo App"
+        assert seo.title == "Grumo App"
         assert seo.description == ""
         assert seo.robots == "index, follow"
         assert seo.lang == "en"
@@ -204,7 +204,7 @@ class TestStructuredData:
                 published_date="2026-08-15",
             ),
         )
-        ld = seo.render_structured_data(site_name="Voodoo Site")
+        ld = seo.render_structured_data(site_name="Grumo Site")
         parsed = json.loads(
             ld.split('<script type="application/ld+json">')[1].split("</script>")[0]
         )
@@ -213,13 +213,13 @@ class TestStructuredData:
         assert parsed["author"]["name"] == "Merlin"
         assert parsed["author"]["jobTitle"] == "Chief Wizard"
         assert parsed["datePublished"] == "2026-08-15"
-        assert parsed["publisher"]["name"] == "Voodoo Site"
+        assert parsed["publisher"]["name"] == "Grumo Site"
 
     def test_auto_faq_schema_from_geo(self):
         seo = SEO(
             geo=GEO(
                 faq=[
-                    FAQ(question="What is Voodoo?", answer="A Python framework."),
+                    FAQ(question="What is Grumo?", answer="A Python framework."),
                     FAQ(question="Is it fast?", answer="Yes."),
                 ]
             )
@@ -230,7 +230,7 @@ class TestStructuredData:
         )
         assert parsed["@type"] == "FAQPage"
         assert len(parsed["mainEntity"]) == 2
-        assert parsed["mainEntity"][0]["name"] == "What is Voodoo?"
+        assert parsed["mainEntity"][0]["name"] == "What is Grumo?"
         assert (
             parsed["mainEntity"][0]["acceptedAnswer"]["text"] == "A Python framework."
         )
@@ -305,7 +305,7 @@ class TestRenderPage:
         """render_page(component) without SEO still works with defaults."""
         comp = Div("Hello", id="test")
         html = render_page(comp)
-        assert "<title>Voodoo App</title>" in html
+        assert "<title>Grumo App</title>" in html
         assert '<div id="test">Hello</div>' in html
         assert "<!DOCTYPE html>" in html
 
@@ -327,7 +327,7 @@ class TestRenderPage:
 
     def test_generator_meta_tag(self):
         html = render_page(Div("x", id="t"))
-        assert '<meta name="generator" content="Voodoo Framework">' in html
+        assert '<meta name="generator" content="Grumo Framework">' in html
 
     def test_structured_data_in_page(self):
         seo = SEO(
@@ -424,7 +424,7 @@ class TestSemanticComponents:
         html = img.render()
         assert 'alt=""' in html
         captured = capsys.readouterr()
-        assert "[Voodoo SEO Warning]" in captured.err
+        assert "[Grumo SEO Warning]" in captured.err
 
     def test_paragraph(self):
         p = Paragraph("Some text", id="p-1")
@@ -459,25 +459,25 @@ class TestAppSEOEndpoints:
     def test_sitemap_and_robots_routes(self, tmp_path, monkeypatch):
         from starlette.testclient import TestClient
 
-        import voodoo.data
-        from voodoo.core import create_app
+        import grumo.data
+        from grumo.core import create_app
 
         # Create temporary app directory structure
         app_dir = tmp_path / "app"
         app_dir.mkdir()
         (app_dir / "page.py").write_text(
-            'from voodoo.ui import Div, Heading\nfrom voodoo.seo import SEO\ndef page():\n    return SEO(title="Home Page"), Div(Heading("Home"))'
+            'from grumo.ui import Div, Heading\nfrom grumo.seo import SEO\ndef page():\n    return SEO(title="Home Page"), Div(Heading("Home"))'
         )
         about_dir = app_dir / "about"
         about_dir.mkdir()
         (about_dir / "page.py").write_text(
-            'from voodoo.ui import Div\ndef page():\n    return Div("About Us")'
+            'from grumo.ui import Div\ndef page():\n    return Div("About Us")'
         )
 
         async def mock_init_db(db_path=":memory:"):
             pass
 
-        monkeypatch.setattr(voodoo.data, "init_db", mock_init_db)
+        monkeypatch.setattr(grumo.data, "init_db", mock_init_db)
 
         app = create_app(app_dir=str(app_dir))
         with TestClient(app) as client:
@@ -492,7 +492,7 @@ class TestAppSEOEndpoints:
             res_robots = client.get("/robots.txt")
             assert res_robots.status_code == 200
             assert "User-agent: *" in res_robots.text
-            assert "Disallow: /_voodoo_ws" in res_robots.text
+            assert "Disallow: /_grumo_ws" in res_robots.text
             assert "Sitemap: http://testserver/sitemap.xml" in res_robots.text
 
             # Test page with (SEO, Component) tuple
@@ -504,5 +504,5 @@ class TestAppSEOEndpoints:
             # Test page with plain Component (backwards compatible)
             res_about = client.get("/about")
             assert res_about.status_code == 200
-            assert "<title>Voodoo App</title>" in res_about.text
+            assert "<title>Grumo App</title>" in res_about.text
             assert "About Us</div>" in res_about.text

@@ -2,7 +2,7 @@ import asyncio
 
 import pytest
 
-from voodoo.data import BaseModel, on_insert, on_update, rls_policy
+from grumo.data import BaseModel, on_insert, on_update, rls_policy
 
 
 class User(BaseModel):
