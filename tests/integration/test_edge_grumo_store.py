@@ -1,4 +1,4 @@
-"""Sprint 28 Edge persistence acceptance over application.vstore."""
+"""Sprint 28 Edge persistence acceptance over application.grumo."""
 
 from __future__ import annotations
 
@@ -6,25 +6,25 @@ import json
 
 import pytest
 
-from voodoo.edge import (
+from grumo.edge import (
     AuthenticatedDeviceContext,
     Device,
     DeviceGateway,
     EdgeMessageType,
     EffectAckStatus,
-    VoodooStoreDeviceStore,
+    GrumoStoreDeviceStore,
     make_message,
 )
-from voodoo.runtime.store import RuntimeStore, StoreConfig, bind_active_runtime_store
+from grumo.runtime.store import RuntimeStore, StoreConfig, bind_active_runtime_store
 
 
 @pytest.mark.asyncio
 async def test_edge_device_and_effect_survive_store_restart(tmp_path) -> None:
-    path = tmp_path / "application.vstore"
+    path = tmp_path / "application.grumo"
     runtime = RuntimeStore(StoreConfig(path=path))
     runtime.start()
     bind_active_runtime_store(runtime)
-    store = VoodooStoreDeviceStore(runtime)
+    store = GrumoStoreDeviceStore(runtime)
     gateway = DeviceGateway(store)
     device = Device(device_id="device-1", capabilities=["relay.control"])
     await store.register_device(device)
@@ -47,7 +47,7 @@ async def test_edge_device_and_effect_survive_store_restart(tmp_path) -> None:
     reopened.start()
     bind_active_runtime_store(reopened)
     try:
-        restored_store = VoodooStoreDeviceStore(reopened)
+        restored_store = GrumoStoreDeviceStore(reopened)
         restored = await restored_store.get_device("device-1")
         delivery = await restored_store.get_effect_delivery("effect-1")
         assert restored is not None
@@ -67,7 +67,7 @@ async def test_edge_closed_loop_ack_is_durable(tmp_path) -> None:
     runtime.start()
     bind_active_runtime_store(runtime)
     try:
-        store = VoodooStoreDeviceStore(runtime)
+        store = GrumoStoreDeviceStore(runtime)
         gateway = DeviceGateway(store)
         device = Device(device_id="robot-1", capabilities=["robot.move"])
         await store.register_device(device)
@@ -99,7 +99,7 @@ async def test_edge_closed_loop_ack_is_durable(tmp_path) -> None:
     reopened.start()
     bind_active_runtime_store(reopened)
     try:
-        store = VoodooStoreDeviceStore(reopened)
+        store = GrumoStoreDeviceStore(reopened)
         delivery = await store.get_effect_delivery("move-1")
         assert delivery is not None
         assert delivery.status == EffectAckStatus.COMPLETED.value
@@ -116,7 +116,7 @@ async def test_edge_replay_records_use_native_collections(tmp_path) -> None:
     runtime.start()
     bind_active_runtime_store(runtime)
     try:
-        store = VoodooStoreDeviceStore(runtime)
+        store = GrumoStoreDeviceStore(runtime)
         await store.mark_message_seen("message-1")
         await store.store_response("message-1", '{"status":"accepted"}')
         native = runtime.provider.native
@@ -138,7 +138,7 @@ async def test_edge_future_schema_fails_closed_on_hydration(tmp_path) -> None:
     runtime.start()
     bind_active_runtime_store(runtime)
     try:
-        store = VoodooStoreDeviceStore(runtime)
+        store = GrumoStoreDeviceStore(runtime)
         store._native.upsert_record(
             b"runtime.edge_devices",
             b"future-device",
@@ -151,7 +151,7 @@ async def test_edge_future_schema_fails_closed_on_hydration(tmp_path) -> None:
             ).encode("utf-8"),
         )
         with pytest.raises(ValueError, match="unsupported edge schema version"):
-            VoodooStoreDeviceStore(runtime)
+            GrumoStoreDeviceStore(runtime)
     finally:
         bind_active_runtime_store(None)
         runtime.stop()
@@ -164,7 +164,7 @@ async def test_edge_reads_legacy_unversioned_device_record(tmp_path) -> None:
     runtime.start()
     bind_active_runtime_store(runtime)
     try:
-        first = VoodooStoreDeviceStore(runtime)
+        first = GrumoStoreDeviceStore(runtime)
         device = Device(device_id="legacy-device", capabilities=["relay.control"])
         await first.register_device(device)
         raw = device.to_dict()
@@ -173,7 +173,7 @@ async def test_edge_reads_legacy_unversioned_device_record(tmp_path) -> None:
             b"runtime.edge_devices", b"legacy-device", json.dumps(raw).encode()
         )
 
-        restored = VoodooStoreDeviceStore(runtime)
+        restored = GrumoStoreDeviceStore(runtime)
         loaded = await restored.get_device("legacy-device")
         assert loaded is not None
         assert loaded.capabilities == ["relay.control"]

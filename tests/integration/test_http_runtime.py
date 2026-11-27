@@ -1,6 +1,6 @@
 """Tests for HTTP × Runtime integration.
 
-Every API handler runs through the Voodoo runtime engine, producing an
+Every API handler runs through the Grumo runtime engine, producing an
 Execution record (intent ``http:GET /path``) with actor, effects and cost.
 """
 
@@ -12,15 +12,15 @@ import importlib
 import pytest
 from starlette.testclient import TestClient
 
-import voodoo.data
-from voodoo.core import create_app
-from voodoo.observability import telemetry_store
-from voodoo.routing.api import api
-from voodoo.runtime.execution import ExecutionStatus
-from voodoo.runtime.execution.engine import engine as runtime_engine
-from voodoo.runtime.store import get_active_runtime_store
+import grumo.data
+from grumo.core import create_app
+from grumo.observability import telemetry_store
+from grumo.routing.api import api
+from grumo.runtime.execution import ExecutionStatus
+from grumo.runtime.execution.engine import engine as runtime_engine
+from grumo.runtime.store import get_active_runtime_store
 
-app_module = importlib.import_module("voodoo.core.app")
+app_module = importlib.import_module("grumo.core.app")
 
 
 @pytest.fixture
@@ -31,12 +31,12 @@ def make_client(monkeypatch):
     factory — the Starlette app snapshots ``api.routes`` at creation time.
     """
 
-    real_init_db = voodoo.data.init_db
+    real_init_db = grumo.data.init_db
 
     async def memory_db(db_path=":memory:"):
         await real_init_db(":memory:")
 
-    monkeypatch.setattr(voodoo.data, "init_db", memory_db)
+    monkeypatch.setattr(grumo.data, "init_db", memory_db)
 
     def _make(raise_server_exceptions: bool = True) -> TestClient:
         return TestClient(create_app(), raise_server_exceptions=raise_server_exceptions)
@@ -105,7 +105,7 @@ class TestHTTPRuntimeIntegration:
 
     def test_readiness_reports_migration_required_mode(self, make_client, monkeypatch):
         monkeypatch.setattr(
-            "voodoo.data.base.migration_health",
+            "grumo.data.base.migration_health",
             lambda: {
                 "status": "migration_required",
                 "current_version": 4,
@@ -218,14 +218,14 @@ class TestHTTPRuntimeIntegration:
             return {"hello": name}
 
         with make_client() as client:
-            response = client.get("/runtime-echo", params={"name": "voodoo"})
+            response = client.get("/runtime-echo", params={"name": "grumo"})
 
         assert response.status_code == 200
-        assert response.json() == {"hello": "voodoo"}
+        assert response.json() == {"hello": "grumo"}
 
         ex = _execution_for("http:GET /runtime-echo")
         assert ex is not None
-        assert ex.intent.params.get("name") == "voodoo"
+        assert ex.intent.params.get("name") == "grumo"
 
     def test_async_route(self, make_client):
         @api.get("/runtime-async")

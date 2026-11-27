@@ -5,23 +5,23 @@ from pathlib import Path
 
 import pytest
 
-from voodoo.runtime import (
+from grumo.runtime import (
     ComputeResult,
     ExecutionEngine,
     RuntimeStore,
     StoreConfig,
     Task,
-    VoodooStoreWorkflowStore,
+    GrumoStoreWorkflowStore,
     Workflow,
     WorkflowStrategy,
 )
 
 
-def test_voodoo_store_workflow_checkpoints_share_application_store(tmp_path: Path):
-    path = tmp_path / "application.vstore"
+def test_grumo_store_workflow_checkpoints_share_application_store(tmp_path: Path):
+    path = tmp_path / "application.grumo"
     runtime_store = RuntimeStore(StoreConfig(path=path))
     runtime_store.start()
-    store = VoodooStoreWorkflowStore(runtime_store)
+    store = GrumoStoreWorkflowStore(runtime_store)
     running = {
         "workflow_id": "wf-running",
         "status": "running",
@@ -47,7 +47,7 @@ def test_voodoo_store_workflow_checkpoints_share_application_store(tmp_path: Pat
 
     store.save("wf-running", running)
     store.save("wf-done", completed)
-    assert store.provider == "voodoo"
+    assert store.provider == "grumo"
     assert store.path == path
     index_record = runtime_store.provider.native.get_record(
         b"runtime.workflow_index", b"wf-running"
@@ -68,7 +68,7 @@ def test_voodoo_store_workflow_checkpoints_share_application_store(tmp_path: Pat
 
     reopened_runtime = RuntimeStore(StoreConfig(path=path))
     reopened_runtime.start()
-    reopened = VoodooStoreWorkflowStore(reopened_runtime)
+    reopened = GrumoStoreWorkflowStore(reopened_runtime)
     assert reopened.load("wf-running") == running
     assert reopened.load_unfinished() == [running]
     reopened_runtime.stop()
@@ -80,7 +80,7 @@ def test_workflow_checkpoint_codec_migrates_legacy_and_rejects_future_schema(
     path = tmp_path / "versioned-workflows.vstore"
     runtime_store = RuntimeStore(StoreConfig(path=path))
     runtime_store.start()
-    store = VoodooStoreWorkflowStore(runtime_store)
+    store = GrumoStoreWorkflowStore(runtime_store)
     legacy = {
         "workflow_id": "legacy",
         "status": "running",
@@ -103,7 +103,7 @@ def test_workflow_checkpoint_codec_migrates_legacy_and_rejects_future_schema(
     with pytest.raises(ValueError, match="identity"):
         store.load("mismatch")
     native_id = native.create_workflow(
-        b"voodoo.workflow", b"checkpoint", b'{"workflow_id":"native-future"}', 1
+        b"grumo.workflow", b"checkpoint", b'{"workflow_id":"native-future"}', 1
     )
     native.put(store._native_index_key("native-future"), native_id)
     native.set_workflow_step(
@@ -123,10 +123,10 @@ def test_existing_native_workflow_index_migrates_to_collection(tmp_path: Path):
     path = tmp_path / "migrate-workflow-index.vstore"
     runtime_store = RuntimeStore(StoreConfig(path=path))
     runtime_store.start()
-    store = VoodooStoreWorkflowStore(runtime_store)
+    store = GrumoStoreWorkflowStore(runtime_store)
     native = runtime_store.provider.native
     native_id = native.create_workflow(
-        b"voodoo.workflow",
+        b"grumo.workflow",
         b"checkpoint",
         json.dumps({"workflow_id": "legacy-index", "status": "running"}).encode(),
         1,
@@ -151,10 +151,10 @@ def test_existing_native_workflow_index_migrates_to_collection(tmp_path: Path):
 
 
 async def test_sequential_workflow_resume_skips_checkpointed_steps(tmp_path: Path):
-    path = tmp_path / "application.vstore"
+    path = tmp_path / "application.grumo"
     runtime_store = RuntimeStore(StoreConfig(path=path))
     runtime_store.start()
-    store = VoodooStoreWorkflowStore(runtime_store)
+    store = GrumoStoreWorkflowStore(runtime_store)
     calls = {"a": 0, "b": 0}
 
     def compute_a(ctx):
@@ -203,10 +203,10 @@ async def test_sequential_workflow_resume_skips_checkpointed_steps(tmp_path: Pat
 
 
 async def test_iterative_workflow_resume_uses_iteration_checkpoint(tmp_path: Path):
-    path = tmp_path / "application.vstore"
+    path = tmp_path / "application.grumo"
     runtime_store = RuntimeStore(StoreConfig(path=path))
     runtime_store.start()
-    store = VoodooStoreWorkflowStore(runtime_store)
+    store = GrumoStoreWorkflowStore(runtime_store)
     calls = {"tick": 0}
 
     def tick(ctx):

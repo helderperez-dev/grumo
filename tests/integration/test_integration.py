@@ -13,20 +13,20 @@ import pytest
 import pytest_asyncio
 from starlette.testclient import TestClient
 
-import voodoo.data
-from voodoo import Agent, page, state
-from voodoo.ai.providers import ProviderResponse
-from voodoo.ai.providers.mock import MockProvider
-from voodoo.ai.tools import registry as tools_module
-from voodoo.ai.tools.registry import ToolRegistry, build_spec
-from voodoo.auth import create_access_token
-from voodoo.core import create_app
-from voodoo.core.events import event, ws_manager
-from voodoo.core.state import StateRenderer, state_renderer
-from voodoo.integrations.mcp import MCPServer
-from voodoo.mesh import mesh
-from voodoo.observability import telemetry_store, trace_id_var
-from voodoo.ui import Div, Text
+import grumo.data
+from grumo import Agent, page, state
+from grumo.ai.providers import ProviderResponse
+from grumo.ai.providers.mock import MockProvider
+from grumo.ai.tools import registry as tools_module
+from grumo.ai.tools.registry import ToolRegistry, build_spec
+from grumo.auth import create_access_token
+from grumo.core import create_app
+from grumo.core.events import event, ws_manager
+from grumo.core.state import StateRenderer, state_renderer
+from grumo.integrations.mcp import MCPServer
+from grumo.mesh import mesh
+from grumo.observability import telemetry_store, trace_id_var
+from grumo.ui import Div, Text
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -43,7 +43,7 @@ def _clean_subsystems():
     mesh.active_nodes.clear()
     mesh.exposed_functions.clear()
     tools_module.default_registry._tools.clear()
-    from voodoo.core.events import event_handlers as _event_handlers
+    from grumo.core.events import event_handlers as _event_handlers
 
     _event_handlers.clear()
     state_renderer._bindings.clear()
@@ -61,10 +61,10 @@ def _clean_subsystems():
 
 @pytest_asyncio.fixture
 async def test_db():
-    await voodoo.data.init_db(":memory:")
-    db = await voodoo.data.get_db()
+    await grumo.data.init_db(":memory:")
+    db = await grumo.data.get_db()
     yield db
-    await voodoo.data.close_db()
+    await grumo.data.close_db()
 
 
 # ---------------------------------------------------------------------------
@@ -116,7 +116,7 @@ async def test_reactive_event_handler_updates_state():
     async def increment(element_id, value):
         counter.set(counter.get() + value)
 
-    from voodoo.core.events import event_handlers
+    from grumo.core.events import event_handlers
 
     handler = event_handlers["increment"]
     assert handler is not None
@@ -137,7 +137,7 @@ async def test_reactive_event_handler_updates_state():
 async def test_mesh_to_worker_to_agent_chain(test_db):
     """Mesh event fires → worker task picks it up → agent runs → result recorded."""
 
-    from voodoo.data import Model
+    from grumo.data import Model
 
     class Lead(Model):
         name: str
@@ -170,7 +170,7 @@ async def test_mesh_to_worker_to_agent_chain(test_db):
 async def test_agent_with_tool_and_db(test_db):
     """Agent calls a tool that persists to the database."""
 
-    from voodoo.data import Model
+    from grumo.data import Model
 
     class Note(Model):
         title: str
@@ -242,17 +242,17 @@ async def test_agent_with_tool_and_db(test_db):
 def test_auth_guarded_route_redirects_unauthenticated(monkeypatch):
     """A @page with require_auth should redirect unauthenticated users."""
 
-    from voodoo.auth import require_auth
-    from voodoo.core.routing import page_registry
+    from grumo.auth import require_auth
+    from grumo.core.routing import page_registry
 
     page_registry.clear()
 
-    original_init_db = voodoo.data.init_db
+    original_init_db = grumo.data.init_db
 
     async def mock_init_db(db_path=":memory:"):
         await original_init_db(db_path)
 
-    monkeypatch.setattr(voodoo.data, "init_db", mock_init_db)
+    monkeypatch.setattr(grumo.data, "init_db", mock_init_db)
 
     @page("/protected")
     @require_auth(redirect_url="/login")
@@ -271,17 +271,17 @@ def test_auth_guarded_route_redirects_unauthenticated(monkeypatch):
 def test_auth_guarded_route_allows_authenticated(monkeypatch):
     """A @page with require_auth should allow authenticated users."""
 
-    from voodoo.auth import require_auth
-    from voodoo.core.routing import page_registry
+    from grumo.auth import require_auth
+    from grumo.core.routing import page_registry
 
     page_registry.clear()
 
-    original_init_db = voodoo.data.init_db
+    original_init_db = grumo.data.init_db
 
     async def mock_init_db(db_path=":memory:"):
         await original_init_db(db_path)
 
-    monkeypatch.setattr(voodoo.data, "init_db", mock_init_db)
+    monkeypatch.setattr(grumo.data, "init_db", mock_init_db)
 
     @page("/dashboard")
     @require_auth(redirect_url="/login")
@@ -306,17 +306,17 @@ def test_auth_guarded_route_allows_authenticated(monkeypatch):
 def test_auth_guarded_route_returns_401_for_api(monkeypatch):
     """A @page with require_auth should return 401 JSON for non-HTML requests."""
 
-    from voodoo.auth import require_auth
-    from voodoo.core.routing import page_registry
+    from grumo.auth import require_auth
+    from grumo.core.routing import page_registry
 
     page_registry.clear()
 
-    original_init_db = voodoo.data.init_db
+    original_init_db = grumo.data.init_db
 
     async def mock_init_db(db_path=":memory:"):
         await original_init_db(db_path)
 
-    monkeypatch.setattr(voodoo.data, "init_db", mock_init_db)
+    monkeypatch.setattr(grumo.data, "init_db", mock_init_db)
 
     @page("/api/protected")
     @require_auth()
@@ -340,7 +340,7 @@ def test_auth_guarded_route_returns_401_for_api(monkeypatch):
 async def test_mcp_tool_exposed_and_callable():
     """A tool registered via @tool is visible through the MCP server's registry."""
 
-    from voodoo import tool
+    from grumo import tool
 
     @tool
     async def calculate_sum(a: int, b: int) -> int:
@@ -348,7 +348,7 @@ async def test_mcp_tool_exposed_and_callable():
         return a + b
 
     # The tool should be in the default registry
-    from voodoo.ai.tools.registry import default_registry
+    from grumo.ai.tools.registry import default_registry
 
     spec = default_registry.get("calculate_sum")
     assert spec is not None
@@ -379,7 +379,7 @@ async def test_mesh_expose_bridges_to_mcp_and_registry():
     assert "lookup_order" in mesh.exposed_functions
 
     # Should be in the default tool registry (bridged via MCP)
-    from voodoo.ai.tools.registry import default_registry
+    from grumo.ai.tools.registry import default_registry
 
     spec = default_registry.get("lookup_order")
     assert spec is not None
@@ -539,10 +539,10 @@ async def test_correlation_id_propagates_to_tool_call_telemetry():
 async def test_correlation_id_propagates_to_queue():
     """Enqueue captures the current trace_id and stores it on the task record."""
 
-    from voodoo.runtime.scheduling import enqueue
+    from grumo.runtime.scheduling import enqueue
 
     # Register a dummy worker so enqueue can find a handler
-    from voodoo.runtime.scheduling.workers import _get_queue, _workers
+    from grumo.runtime.scheduling.workers import _get_queue, _workers
 
     async def _handler(payload):
         pass

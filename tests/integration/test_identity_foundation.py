@@ -7,9 +7,9 @@ from pathlib import Path
 
 import pytest
 
-from voodoo.auth.user import AuthUser
-from voodoo.primitives.capability import Capability
-from voodoo.runtime import (
+from grumo.auth.user import AuthUser
+from grumo.primitives.capability import Capability
+from grumo.runtime import (
     AuthenticationEvidence,
     ExecutionContext,
     Identity,
@@ -21,7 +21,7 @@ from voodoo.runtime import (
     Principal,
     RuntimeStore,
     StoreConfig,
-    VoodooStoreIdentityStore,
+    GrumoStoreIdentityStore,
 )
 
 
@@ -32,9 +32,9 @@ def _runtime(path: Path) -> RuntimeStore:
 
 
 def test_identity_store_persists_all_runtime_identity_kinds(tmp_path: Path) -> None:
-    path = tmp_path / "application.vstore"
+    path = tmp_path / "application.grumo"
     runtime = _runtime(path)
-    store = VoodooStoreIdentityStore(runtime)
+    store = GrumoStoreIdentityStore(runtime)
     identities = [
         Identity(id="user:1", kind=IdentityKind.USER, display_name="Alice"),
         Identity(id="agent:planner", kind=IdentityKind.AGENT),
@@ -68,7 +68,7 @@ def test_identity_store_persists_all_runtime_identity_kinds(tmp_path: Path) -> N
 
     reopened_runtime = _runtime(path)
     try:
-        reopened = VoodooStoreIdentityStore(reopened_runtime)
+        reopened = GrumoStoreIdentityStore(reopened_runtime)
         assert reopened.get("user:1").display_name == "Alice"
         assert len(reopened.list()) == 5
         assert reopened.delete("service:billing") is True
@@ -81,7 +81,7 @@ def test_identity_store_persists_all_runtime_identity_kinds(tmp_path: Path) -> N
 def test_identity_codec_reads_legacy_and_rejects_future_schema(tmp_path: Path) -> None:
     runtime = _runtime(tmp_path / "identity-codec.vstore")
     try:
-        store = VoodooStoreIdentityStore(runtime)
+        store = GrumoStoreIdentityStore(runtime)
         identity = Identity(id="user:legacy", kind=IdentityKind.USER)
         legacy = identity.describe()
         native = runtime.provider.native
@@ -107,7 +107,7 @@ def test_principal_is_identity_plus_authentication_not_authority() -> None:
             AuthenticationEvidence(
                 method="token",
                 subject="planner",
-                issuer="voodoo-test",
+                issuer="grumo-test",
             ),
         ),
         claims={"roles": ["admin"], "scopes": ["*"]},

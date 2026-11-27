@@ -4,7 +4,7 @@ import hashlib
 
 import pytest
 
-from voodoo.storage.objects import LocalObjectStore
+from grumo.storage.objects import LocalObjectStore
 
 
 def _corrupt_payload(store: LocalObjectStore, key: str) -> None:
