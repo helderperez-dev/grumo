@@ -112,7 +112,7 @@ Use `create_theme` for simple overrides, or build a full `Theme` model:
 
 ```python
 from grumo import App
-from grumo.ui.styles import create_theme
+from grumo.ui.styles.theme import create_theme
 
 app = App(
     theme=create_theme(
