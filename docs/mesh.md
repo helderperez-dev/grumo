@@ -46,7 +46,7 @@ Exposed functions are callable by connected mesh nodes via JSON-RPC and auto-bri
 ### Stacking with @task
 
 ```python
-from grumo.workers import task
+from grumo.runtime.scheduling.tasks import task
 
 
 @mesh.on("lead.created")
