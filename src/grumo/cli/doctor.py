@@ -259,16 +259,7 @@ def _doctor_optional_services(cfg: object) -> None:
         )
         terminal.status("scheduler", "unavailable")
 
-    terminal.heading("otel")
-    try:
-        from grumo.integrations.otel import is_available
 
-        terminal.status("otlp exporter", "active" if is_available() else "off")
-    except Exception as error:
-        _logger.warning(
-            "doctor OTLP probe failed error=%s", redact_string(str(error))
-        )
-        terminal.status("otlp exporter", "off")
 
 
 def _doctor_ai_kit() -> None:
@@ -409,7 +400,7 @@ def doctor(
 
     _doctor_queue()
 
-    # ── Schedules / OTLP ─────────────────────────────
+    # ── Schedules ─────────────────────────────
     _doctor_optional_services(cfg)
 
     # ── AI Kit ──────────────────────────────────────
