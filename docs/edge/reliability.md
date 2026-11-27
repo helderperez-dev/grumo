@@ -1,6 +1,6 @@
 # Edge Reliability
 
-> Delivery semantics, idempotency, and failure handling. Voodoo makes
+> Delivery semantics, idempotency, and failure handling. Grumo makes
 > **no exactly-once claims** — anywhere.
 >
 > **Sprint 23.1:** Idempotent response replay (duplicates return stored
@@ -9,11 +9,11 @@
 
 ## The model: at-least-once + idempotency (EDGE §28)
 
-Networks redeliver; MQTT QoS 1 redelivers; HTTP retries redeliver. Voodoo
+Networks redeliver; MQTT QoS 1 redelivers; HTTP retries redeliver. Grumo
 embraces this rather than pretending it away:
 
 > **At-least-once delivery + idempotent messages/effects** is the
-> reliability contract of `voodoo-edge/v1`.
+> reliability contract of `grumo-edge/v1`.
 
 Two mechanisms make redelivery harmless:
 

@@ -4,7 +4,7 @@
 
 ## Model
 
-Device state uses the **standard Voodoo State semantics** — there is no
+Device state uses the **standard Grumo State semantics** — there is no
 separate `DeviceState` abstraction. The device's reported state and its
 monotonic `state_version` live on the Device entity; every accepted
 update bumps the stored version atoms via compare-and-swap.

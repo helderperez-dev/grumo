@@ -1,15 +1,15 @@
 # Store-first migration and compatibility
 
-Voodoo Store is the default durable substrate for new Voodoo applications.
+Grumo Store is the default durable substrate for new Grumo applications.
 Existing SQLite/PostgreSQL/Redis/S3 configurations remain explicit adapters;
 Sprint 28 does not silently reinterpret or migrate external data.
 
 ## Rules
 
-1. A fresh application uses `.voodoo/application.vstore` by default.
+1. A fresh application uses `.grumo/application.grumo` by default.
 2. Existing explicit provider configuration keeps its meaning.
 3. Removing an explicit legacy provider opts that domain into the Store-first path.
-4. Voodoo never copies production data from SQLite/PostgreSQL/Redis/S3 into Store during startup.
+4. Grumo never copies production data from SQLite/PostgreSQL/Redis/S3 into Store during startup.
 5. Migration is an operator-controlled export/import operation with verification and rollback.
 6. Store files are node-local. Do not place one `.vstore` on a shared filesystem and open it from multiple nodes.
 7. Multi-node scaling uses Runtime routing and explicit ownership before any future Store replication protocol.
@@ -17,11 +17,11 @@ Sprint 28 does not silently reinterpret or migrate external data.
 ## Recommended migration sequence
 
 ```text
-1. upgrade Framework + voodoo-store
+1. upgrade Framework + grumo-store
 2. keep existing explicit adapters enabled
 3. verify application behavior
 4. migrate one infrastructure domain at a time
-5. verify the resulting application.vstore
+5. verify the resulting application.grumo
 6. retain the old data source as rollback evidence
 7. remove the explicit adapter only after acceptance
 ```
@@ -58,9 +58,9 @@ fresh-application default. Existing SQLite applications should keep
 Use:
 
 ```text
-voodoo fabric verify
-voodoo fabric health
-voodoo fabric backup backups/application.vstore
+grumo fabric verify
+grumo fabric health
+grumo fabric backup backups/application.grumo
 ```
 
 `fabric backup` is intentionally a cold backup: it must acquire the Store writer lock
@@ -69,6 +69,6 @@ a live multi-writer copy as safe.
 
 ## Distributed migration
 
-Do not migrate by making multiple nodes share one Store file. Give each Voodoo Node
+Do not migrate by making multiple nodes share one Store file. Give each Grumo Node
 its own local Store and advertise ownership through Runtime membership. Routing moves
 work to the owner; future replication/sync is a separate protocol concern.

@@ -1,12 +1,12 @@
-# Voodoo Protocol — schemas and compatibility
+# Grumo Protocol — schemas and compatibility
 
-The `voodoo.protocol` package is the language-neutral semantic boundary for
-participants that need to understand Voodoo without importing Python runtime
+The `grumo.protocol` package is the language-neutral semantic boundary for
+participants that need to understand Grumo without importing Python runtime
 internals.
 
 It is intentionally **not** a second Runtime. Protocol models describe data that
 crosses a boundary; execution semantics continue to belong to the canonical
-Voodoo Runtime.
+Grumo Runtime.
 
 ## Current semantic surface
 
@@ -35,7 +35,7 @@ runtime classes.
 ## Quick start
 
 ```python
-from voodoo.protocol import (
+from grumo.protocol import (
     Entity,
     Observation,
     RemoteExecutionRequest,
@@ -51,11 +51,11 @@ assert "RemoteExecutionRequest" in schemas
 Export through the CLI:
 
 ```bash
-voodoo protocol export
-voodoo protocol export --entity Execution
-voodoo protocol export --entity Observation
-voodoo protocol export --output schemas.json
-voodoo protocol list
+grumo protocol export
+grumo protocol export --entity Execution
+grumo protocol export --entity Observation
+grumo protocol export --output schemas.json
+grumo protocol list
 ```
 
 ## Compatibility policy
@@ -117,7 +117,7 @@ A remote request must never bypass server-side authority evaluation.
 ## JSON Schema export
 
 ```python
-from voodoo.protocol import export_json_schemas, schema_for
+from grumo.protocol import export_json_schemas, schema_for
 
 all_schemas = export_json_schemas()
 observation_schema = schema_for("Observation")
@@ -126,8 +126,8 @@ observation_schema = schema_for("Observation")
 Each exported schema includes:
 
 - JSON Schema draft metadata;
-- a stable Voodoo URN;
-- `x-voodoo-schema-version`.
+- a stable Grumo URN;
+- `x-grumo-schema-version`.
 
 ## SDK direction
 

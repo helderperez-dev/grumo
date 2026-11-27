@@ -2,12 +2,12 @@
 
 ## What it is
 
-Voodoo Mesh is the unified realtime event bus. Local events fire immediately on in-process handlers; remote events serialize over WebSocket with a JSON-RPC 2.0 envelope. All event names must be namespaced (e.g. `"agent.started"`, not `"started"`).
+Grumo Mesh is the unified realtime event bus. Local events fire immediately on in-process handlers; remote events serialize over WebSocket with a JSON-RPC 2.0 envelope. All event names must be namespaced (e.g. `"agent.started"`, not `"started"`).
 
 ## Minimal example
 
 ```python
-from voodoo.mesh import mesh
+from grumo.mesh import mesh
 
 
 # Register a handler
@@ -46,7 +46,7 @@ Exposed functions are callable by connected mesh nodes via JSON-RPC and auto-bri
 ### Stacking with @task
 
 ```python
-from voodoo.workers import task
+from grumo.workers import task
 
 
 @mesh.on("lead.created")
@@ -65,13 +65,13 @@ When the event fires, the task runs with retries, timeout, and a telemetry span.
 
 ### Durable event bus (Sprint 11)
 
-Beyond the in-process `LocalEventBus`, Voodoo ships durable event bus
-providers behind the `VoodooEventBus` protocol (spec §7):
+Beyond the in-process `LocalEventBus`, Grumo ships durable event bus
+providers behind the `GrumoEventBus` protocol (spec §7):
 
 - **`SQLiteEventBus`** (default) — events are persisted and replayable.
 - **`PostgresEventStore`** — the same durable publish/subscribe/replay
-  semantics on PostgreSQL, enabled with `VOODOO_EVENTS_PROVIDER=postgres`
-  (plus `VOODOO_EVENTS_URL` / `VOODOO_DATABASE_URL`).
+  semantics on PostgreSQL, enabled with `GRUMO_EVENTS_PROVIDER=postgres`
+  (plus `GRUMO_EVENTS_URL` / `GRUMO_DATABASE_URL`).
 
 Both share the same `events` schema via the migration runner, so switching
 the provider changes only the backend, never application code.
@@ -81,25 +81,25 @@ the provider changes only the backend, never application code.
 ### Event envelope
 
 ```python
-from voodoo.mesh import _make_envelope
+from grumo.mesh import _make_envelope
 
 envelope = _make_envelope("agent.started", {"run_id": "abc"})
-# {"id": "...", "ts": 1234.5, "source": "voodoo",
+# {"id": "...", "ts": 1234.5, "source": "grumo",
 #  "correlation_id": "...", "event": "agent.started", "payload": {...}}
 ```
 
 ### WebSocket endpoint
 
-The mesh WebSocket endpoint is available at `/voodoo/mesh/ws`. Connected nodes can:
+The mesh WebSocket endpoint is available at `/grumo/mesh/ws`. Connected nodes can:
 - Call exposed functions (`method: "call"`)
 - Forward events (`method: "event"`)
 
 ### MeshClient
 
 ```python
-from voodoo.mesh import mesh
+from grumo.mesh import mesh
 
-client = await mesh.connect("ws://other-node:8000/voodoo/mesh/ws")
+client = await mesh.connect("ws://other-node:8000/grumo/mesh/ws")
 result = await client.call("lookup_order", order_id=42)
 ```
 
