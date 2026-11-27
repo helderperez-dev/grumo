@@ -19,10 +19,14 @@ def test_public_api_manifest_matches_package_root() -> None:
 
 
 def test_public_api_compatibility_registry_is_valid() -> None:
-    namespace = runpy.run_path(str(FRAMEWORK_ROOT / "scripts" / "check_api_compatibility.py"))
+    namespace = runpy.run_path(
+        str(FRAMEWORK_ROOT / "scripts" / "check_api_compatibility.py")
+    )
     assert namespace["main"]() == 0
 
 
 def test_legacy_agent_imports_are_confined_to_runtime_facades() -> None:
-    namespace = runpy.run_path(str(FRAMEWORK_ROOT / "scripts" / "check_api_compatibility.py"))
+    namespace = runpy.run_path(
+        str(FRAMEWORK_ROOT / "scripts" / "check_api_compatibility.py")
+    )
     assert namespace["_validate_legacy_import_boundaries"]() == []

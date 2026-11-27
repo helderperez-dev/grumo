@@ -195,9 +195,7 @@ class TelemetryStore:
         if self.metrics["requests_total"] % 50 == 0:
             self._persist_summary()
 
-    def record_trace(
-        self, name: str, latency_ms: float, error: bool = False
-    ) -> None:
+    def record_trace(self, name: str, latency_ms: float, error: bool = False) -> None:
         self.metrics["custom_traces"].append(
             {
                 "name": name,
@@ -377,7 +375,13 @@ class TelemetryStore:
                 self.metrics["errors_total"] = data.get("errors_total", 0)
                 self.metrics["db_queries"] = data.get("db_queries", 0)
                 self.metrics["agent_tokens"] = data.get("agent_tokens", 0)
-        except (OSError, UnicodeError, json.JSONDecodeError, TypeError, ValueError) as error:
+        except (
+            OSError,
+            UnicodeError,
+            json.JSONDecodeError,
+            TypeError,
+            ValueError,
+        ) as error:
             _report_observability_failure("load_summary", error)
 
     def get_summary(self) -> dict[str, Any]:

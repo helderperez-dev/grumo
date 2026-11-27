@@ -88,7 +88,9 @@ class TestHTTPRuntimeIntegration:
             assert response.status_code == 200
             assert response.json()["status"] == "ready"
 
-    @pytest.mark.parametrize("phase, mode", [("starting", "starting"), ("stopping", "shutting_down")])
+    @pytest.mark.parametrize(
+        "phase, mode", [("starting", "starting"), ("stopping", "shutting_down")]
+    )
     def test_readiness_fails_closed_during_lifecycle_transitions(
         self, make_client, phase, mode
     ):

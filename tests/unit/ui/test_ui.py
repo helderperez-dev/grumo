@@ -657,7 +657,7 @@ def test_login_form_state_contract_propagates():
     assert 'aria-busy="true"' in rendered
     assert 'aria-invalid="true"' in rendered
     assert 'data-vd-error="Authentication unavailable"' in rendered
-    assert 'data-vd-event-submit' not in rendered
+    assert "data-vd-event-submit" not in rendered
 
 
 def test_register_form_composed():

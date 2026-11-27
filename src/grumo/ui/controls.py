@@ -574,7 +574,9 @@ class RadioGroup(Component):
         if error:
             state_attrs["aria_invalid"] = "true"
             state_attrs["data_vd_state"] = "error"
-        super().__init__(*children, role="radiogroup", aria_label=label, **state_attrs, **kwargs)
+        super().__init__(
+            *children, role="radiogroup", aria_label=label, **state_attrs, **kwargs
+        )
         self.props = {
             "orientation": orientation,
             "disabled": disabled or loading,
@@ -640,7 +642,9 @@ class CheckboxGroup(Component):
         if error:
             state_attrs["aria_invalid"] = "true"
             state_attrs["data_vd_state"] = "error"
-        super().__init__(*children, role="group", aria_label=label, **state_attrs, **kwargs)
+        super().__init__(
+            *children, role="group", aria_label=label, **state_attrs, **kwargs
+        )
         self.props = {
             "orientation": orientation,
             "disabled": disabled or loading,

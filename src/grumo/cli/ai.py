@@ -23,7 +23,7 @@ def init(
         "-i",
         help="Target AI IDE rules (trae, cursor, windsurf, vscode, all, none). Auto-detects if omitted.",
     ),
-    ) -> None:
+) -> None:
     """
     Generate AI development context (.grumo/ai/) and optional IDE-specific integrations.
     """

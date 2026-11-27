@@ -356,8 +356,7 @@ def test_cli_new_generated_project_compiles_and_matches_runtime_contract(
     pyproject = (project_dir / "pyproject.toml").read_text()
     assert '"grumo>=2.0.0,<3.0.0"' in pyproject
     assert (
-        "Runtime creates application.grumo"
-        in (project_dir / "grumo.toml").read_text()
+        "Runtime creates application.grumo" in (project_dir / "grumo.toml").read_text()
     )
     assert not (project_dir / "main.py").exists()
     assert not (project_dir / ".env").exists()

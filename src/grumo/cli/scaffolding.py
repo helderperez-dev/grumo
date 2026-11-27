@@ -33,7 +33,13 @@ def _fetch_text(url: str, timeout: int = 3) -> str | None:
                 return data.decode("utf-8")
             if isinstance(data, str):
                 return data
-    except (OSError, TimeoutError, UnicodeError, ValueError, urllib.error.URLError) as error:
+    except (
+        OSError,
+        TimeoutError,
+        UnicodeError,
+        ValueError,
+        urllib.error.URLError,
+    ) as error:
         logger.warning(
             "remote AI asset fetch failed url=%s error=%s",
             redact_string(url),
@@ -437,9 +443,7 @@ def _remote_ai_assets(ide: str) -> dict[str, str]:
         "AUTH",
         "SECURITY",
     ]
-    assets = {
-        f".grumo/ai/{name}.md": f"{AI_DOCS_BASE_URL}/{name}.md" for name in names
-    }
+    assets = {f".grumo/ai/{name}.md": f"{AI_DOCS_BASE_URL}/{name}.md" for name in names}
     if ide in ("trae", "all"):
         assets[".trae/skills/grumo-builder/SKILL.md"] = AI_TRAE_SKILL_URL
     return assets

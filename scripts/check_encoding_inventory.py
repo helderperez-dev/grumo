@@ -48,7 +48,9 @@ def main() -> int:
         if invariant not in text:
             missing.append(f"invariant: {invariant}")
     if missing:
-        raise SystemExit("encoding inventory contract failed:\n- " + "\n- ".join(missing))
+        raise SystemExit(
+            "encoding inventory contract failed:\n- " + "\n- ".join(missing)
+        )
     print(f"encoding inventory contract passed ({len(REQUIRED_DOMAINS)} domains)")
     return 0
 

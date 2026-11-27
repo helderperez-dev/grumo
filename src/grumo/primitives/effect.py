@@ -118,9 +118,7 @@ class Effect(BaseModel):
             raise ValueError("compensation name must not be empty")
         self.compensation_name = normalized_name
         self.compensation_payload = payload
-        self.compensation_idempotency_key = idempotency_key or (
-            f"compensate:{self.id}"
-        )
+        self.compensation_idempotency_key = idempotency_key or (f"compensate:{self.id}")
         if trigger not in ("manual", "on_failure"):
             raise ValueError("compensation trigger must be 'manual' or 'on_failure'")
         self.compensation_trigger = trigger

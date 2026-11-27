@@ -343,9 +343,7 @@ class Composer(Component):
     def render(self) -> str:
         disabled_attr = " disabled" if self._unavailable else ""
         binding_attrs = (
-            f'data-vd-enter-send="{escape(self._binding)}"'
-            if self._binding
-            else ""
+            f'data-vd-enter-send="{escape(self._binding)}"' if self._binding else ""
         )
         trigger_attrs = (
             f'data-vd-enter-send-trigger="{escape(self._binding)}"'

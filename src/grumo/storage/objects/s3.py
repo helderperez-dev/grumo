@@ -239,7 +239,9 @@ class S3ObjectStore:
         with store_operation("object.get", provider=self.provider) as details:
             client = self._require_client()
             try:
-                response = client.get_object(Bucket=self.bucket, Key=self._full_key(key))
+                response = client.get_object(
+                    Bucket=self.bucket, Key=self._full_key(key)
+                )
             except Exception as error:
                 if self._is_missing_error(error):
                     raise KeyError(f"object {key!r} not found") from error
@@ -270,7 +272,9 @@ class S3ObjectStore:
             key = validate_object_key(key)
             client = self._require_client()
             try:
-                response = client.get_object(Bucket=self.bucket, Key=self._full_key(key))
+                response = client.get_object(
+                    Bucket=self.bucket, Key=self._full_key(key)
+                )
             except Exception as error:
                 if self._is_missing_error(error):
                     raise KeyError(f"object {key!r} not found") from error
@@ -386,22 +390,28 @@ class S3ObjectStore:
         key = validate_object_key(key)
         client = self._require_client()
         expires_in = self._validate_presign_expiry(expires_in)
-        return cast(str, client.generate_presigned_url(
-            "get_object",
-            Params={"Bucket": self.bucket, "Key": self._full_key(key)},
-            ExpiresIn=expires_in,
-        ))
+        return cast(
+            str,
+            client.generate_presigned_url(
+                "get_object",
+                Params={"Bucket": self.bucket, "Key": self._full_key(key)},
+                ExpiresIn=expires_in,
+            ),
+        )
 
     def presign_put(self, key: str, expires_in: int = 3600) -> str:
         """Return a presigned URL that permits a PUT to this object."""
         key = validate_object_key(key)
         client = self._require_client()
         expires_in = self._validate_presign_expiry(expires_in)
-        return cast(str, client.generate_presigned_url(
-            "put_object",
-            Params={"Bucket": self.bucket, "Key": self._full_key(key)},
-            ExpiresIn=expires_in,
-        ))
+        return cast(
+            str,
+            client.generate_presigned_url(
+                "put_object",
+                Params={"Bucket": self.bucket, "Key": self._full_key(key)},
+                ExpiresIn=expires_in,
+            ),
+        )
 
     @staticmethod
     def _validate_presign_expiry(expires_in: int) -> int:

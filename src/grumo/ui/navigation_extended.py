@@ -68,9 +68,7 @@ class Pagination(Component):
 
         unavailable = disabled or read_only or loading or bool(error)
         binding = (
-            bind_event(on_change)
-            if on_change is not None and not unavailable
-            else None
+            bind_event(on_change) if on_change is not None and not unavailable else None
         )
 
         items: list[Component] = []
@@ -493,7 +491,9 @@ class AnchorLink:
         if self.icon:
             children.append(self.icon)
         children.append(Text(self.label))
-        unavailable = self.disabled or self.read_only or self.loading or bool(self.error)
+        unavailable = (
+            self.disabled or self.read_only or self.loading or bool(self.error)
+        )
         attrs: dict[str, Any] = {
             "data_vd_anchor_level": str(self.level),
             "aria_label": self.label,
@@ -1054,7 +1054,9 @@ class NavTrigger:
         trigger_id = _nav_id("nav-trigger")
         content_id = _nav_id("nav-content")
 
-        unavailable = self.disabled or self.read_only or self.loading or bool(self.error)
+        unavailable = (
+            self.disabled or self.read_only or self.loading or bool(self.error)
+        )
         state_attrs: dict[str, Any] = {}
         if unavailable:
             state_attrs["aria_disabled"] = "true"

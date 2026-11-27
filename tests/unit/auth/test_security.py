@@ -301,7 +301,9 @@ def test_jwt_token_creation_rejects_non_expiring_or_non_integer_ttl():
         create_access_token({"sub": 1}, expires_delta_seconds=0, secret_key=secret)
     with pytest.raises(ValueError, match="must be an integer"):
         create_access_token(
-            {"sub": 1}, expires_delta_seconds=1.5, secret_key=secret  # type: ignore[arg-type]
+            {"sub": 1},
+            expires_delta_seconds=1.5,
+            secret_key=secret,  # type: ignore[arg-type]
         )
 
 
@@ -343,9 +345,7 @@ def test_jwt_iat_future_claim_rejected(monkeypatch: pytest.MonkeyPatch):
     real_time = jwt_module.time.time
     future = int(real_time()) + 3600
     monkeypatch.setattr(jwt_module.time, "time", lambda: future)
-    token = create_access_token(
-        {"sub": 1}, secret_key=secret
-    )
+    token = create_access_token({"sub": 1}, secret_key=secret)
     monkeypatch.setattr(jwt_module.time, "time", real_time)
     with pytest.raises(InvalidTokenError, match="issued-at"):
         decode_access_token(token, secret_key=secret)
@@ -359,9 +359,13 @@ def test_jwt_rejects_algorithm_confusion_header():
     secret = "threat-model-test-secret"
     token = create_access_token({"sub": 1}, secret_key=secret)
     header, payload, signature = token.split(".")
-    forged_header = base64.urlsafe_b64encode(
-        json.dumps({"alg": "none", "typ": "JWT"}, separators=(",", ":")).encode()
-    ).decode().rstrip("=")
+    forged_header = (
+        base64.urlsafe_b64encode(
+            json.dumps({"alg": "none", "typ": "JWT"}, separators=(",", ":")).encode()
+        )
+        .decode()
+        .rstrip("=")
+    )
     with pytest.raises(InvalidTokenError, match="algorithm"):
         decode_access_token(f"{forged_header}.{payload}.{signature}", secret_key=secret)
 
@@ -430,7 +434,9 @@ def test_jwt_subject_revocation_invalidates_all_subject_sessions():
 def test_auth_middleware_uses_configured_rotation_keys():
     old_secret = "old-middleware-secret"
     custom = SimpleNamespace(
-        auth=AuthConfig(secret_key="new-middleware-secret", jwt_previous_secrets=[old_secret])
+        auth=AuthConfig(
+            secret_key="new-middleware-secret", jwt_previous_secrets=[old_secret]
+        )
     )
 
     async def protected(request: Request):

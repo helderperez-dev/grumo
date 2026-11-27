@@ -285,7 +285,9 @@ async def test_queue_completion_release_reaper_and_manual_retry(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_compensation_survives_runtime_store_queue_boundary(tmp_path, monkeypatch):
+async def test_compensation_survives_runtime_store_queue_boundary(
+    tmp_path, monkeypatch
+):
     """A failed effect's compensation is durable and deduplicated natively."""
     from grumo.primitives.effect import Effect
     from grumo.runtime.scheduling import workers as worker_queue

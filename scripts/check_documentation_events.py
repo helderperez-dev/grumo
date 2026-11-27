@@ -7,7 +7,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).parents[1]
 GUIDE = ROOT / "docs/components.md"
-INLINE_HANDLER = re.compile(r"\bon(?:click|change|input|submit|keydown|keyup)\s*=", re.I)
+INLINE_HANDLER = re.compile(
+    r"\bon(?:click|change|input|submit|keydown|keyup)\s*=", re.I
+)
 
 
 def main() -> int:

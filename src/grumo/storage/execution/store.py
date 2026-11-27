@@ -223,8 +223,7 @@ class GrumoStoreExecutionStore:
             {
                 bytes(key)[len(_EXECUTION_PREFIX) :].decode("utf-8"): value
                 for key, value in self._store.scan_prefix(_EXECUTION_PREFIX)
-                if bytes(key)[len(_EXECUTION_PREFIX) :].decode("utf-8")
-                not in values
+                if bytes(key)[len(_EXECUTION_PREFIX) :].decode("utf-8") not in values
             }
         )
         executions: list[Execution] = []
@@ -234,7 +233,9 @@ class GrumoStoreExecutionStore:
                     Execution.model_validate(_decode_versioned(value, kind="execution"))
                 )
             except ValueError as error:
-                if str(error).startswith("unsupported ") and "schema version" in str(error):
+                if str(error).startswith("unsupported ") and "schema version" in str(
+                    error
+                ):
                     raise
                 continue
             except (TypeError, json.JSONDecodeError):
@@ -292,9 +293,7 @@ class GrumoStoreExecutionStore:
         if self._native_streams(self._store):
             events.extend(
                 _decode(value)
-                for _offset, value in self._store.read_stream(
-                    _EVENT_STREAM, 0, 100_000
-                )
+                for _offset, value in self._store.read_stream(_EVENT_STREAM, 0, 100_000)
             )
         events.sort(key=lambda event: int(event["sequence"]))
         return events
@@ -469,7 +468,9 @@ class GrumoStoreExecutionStore:
                 approval_id = str(record.get("id", bytes(key).decode("utf-8")))
                 approvals_by_id.setdefault(approval_id, record)
             except ValueError as error:
-                if str(error).startswith("unsupported ") and "schema version" in str(error):
+                if str(error).startswith("unsupported ") and "schema version" in str(
+                    error
+                ):
                     raise
                 continue
             except (TypeError, json.JSONDecodeError):

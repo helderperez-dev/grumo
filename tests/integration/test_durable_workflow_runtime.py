@@ -55,7 +55,9 @@ def test_grumo_store_workflow_checkpoints_share_application_store(tmp_path: Path
     assert index_record is not None
     index_payload = json.loads(bytes(index_record[1]).decode("utf-8"))
     native_id = bytes.fromhex(index_payload["native_id"])
-    assert runtime_store.provider.native.get(store._native_index_key("wf-running")) is None
+    assert (
+        runtime_store.provider.native.get(store._native_index_key("wf-running")) is None
+    )
     assert native_id is not None
     native_instance = runtime_store.provider.native.get_workflow(bytes(native_id))
     assert native_instance is not None
@@ -109,9 +111,7 @@ def test_workflow_checkpoint_codec_migrates_legacy_and_rejects_future_schema(
     native.set_workflow_step(
         native_id,
         b"checkpoint",
-        json.dumps(
-            {"workflow_id": "native-future", "_schema_version": 99}
-        ).encode(),
+        json.dumps({"workflow_id": "native-future", "_schema_version": 99}).encode(),
         2,
     )
     with pytest.raises(ValueError, match="newer than supported"):

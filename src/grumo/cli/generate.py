@@ -83,8 +83,7 @@ def generate(
 
             except Exception as e:
                 terminal.error(
-                    "Failed to generate code: "
-                    + redact_string(str(e)).strip()[:256],
+                    "Failed to generate code: " + redact_string(str(e)).strip()[:256],
                     hint="check the provider credentials/model configuration and retry",
                 )
                 raise typer.Exit(1) from None

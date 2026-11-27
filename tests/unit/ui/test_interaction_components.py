@@ -108,9 +108,7 @@ def test_sidebar_toggle_can_report_mode_changes(adapter):
 
 def test_sidebar_toggle_disabled_blocks_event_binding(adapter):
     sidebar = Sidebar(id="navigation")
-    html = SidebarToggle(
-        sidebar, on_change=lambda value: value, disabled=True
-    ).render()
+    html = SidebarToggle(sidebar, on_change=lambda value: value, disabled=True).render()
     assert " disabled" in html
     assert 'aria-disabled="true"' in html
     assert "data-vd-event-change" not in html
@@ -156,7 +154,7 @@ def test_sidebar_item_unavailable_states_suppress_activation(adapter, state, exp
         "Settings", href="/settings", on_click=lambda: None, **state
     ).render()
     assert expected in html
-    assert "href=\"/settings\"" not in html
+    assert 'href="/settings"' not in html
     assert "data-vd-event-click" not in html
 
 
@@ -328,7 +326,7 @@ def test_drawer_state_contract_blocks_unavailable_opening(adapter):
     assert 'aria-busy="true"' in html
     assert 'aria-invalid="true"' in html
     assert 'data-vd-error="Unavailable"' in html
-    assert 'data-vd-dialog-open' not in html
+    assert "data-vd-dialog-open" not in html
     assert 'open="open"' not in html
 
 

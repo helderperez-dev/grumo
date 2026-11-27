@@ -36,7 +36,9 @@ def _inline_script_hashes(body: bytes) -> list[str]:
     return hashes
 
 
-async def _materialize_html_response(response: Response) -> tuple[Response, bytes | None]:
+async def _materialize_html_response(
+    response: Response,
+) -> tuple[Response, bytes | None]:
     """Read a streaming HTML response so its inline scripts can be hashed."""
     content_type = response.headers.get("content-type", "").lower()
     if "text/html" not in content_type:
@@ -112,9 +114,13 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
                     )
                     # Do not mutate the shared application config. The helper
                     # accepts an object with the same attribute contract.
-                    sec_cfg = type("SecurityHeadersConfig", (), {
-                        **vars(sec_cfg),
-                        "csp_directives": directives,
-                    })()
+                    sec_cfg = type(
+                        "SecurityHeadersConfig",
+                        (),
+                        {
+                            **vars(sec_cfg),
+                            "csp_directives": directives,
+                        },
+                    )()
             _apply_security_headers(response, sec_cfg)
         return response

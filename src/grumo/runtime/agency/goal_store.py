@@ -79,13 +79,20 @@ class GrumoStoreGoalStore:
     def _native_collections(store: Any) -> bool:
         return all(
             hasattr(store, method)
-            for method in ("create_collection", "upsert_record", "get_record", "scan_collection")
+            for method in (
+                "create_collection",
+                "upsert_record",
+                "get_record",
+                "scan_collection",
+            )
         )
 
     @classmethod
     def _ensure_collection(cls, store: Any) -> None:
         if cls._native_collections(store):
-            store.create_collection(_COLLECTION, schema_version=_SCHEMA_VERSION, codec=b"json")
+            store.create_collection(
+                _COLLECTION, schema_version=_SCHEMA_VERSION, codec=b"json"
+            )
 
     def save(self, goal_id: str, payload: dict[str, Any]) -> None:
         body = dict(payload)

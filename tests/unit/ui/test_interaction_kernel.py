@@ -179,13 +179,17 @@ def test_toggle_group_disabled(adapter):
 
 
 def test_toggle_item_state_contract_propagates_unavailable_state(adapter):
-    html = ToggleItem(
-        value="a",
-        label="A",
-        read_only=True,
-        loading=True,
-        error="Unavailable",
-    ).render_toggled(False, False).render()
+    html = (
+        ToggleItem(
+            value="a",
+            label="A",
+            read_only=True,
+            loading=True,
+            error="Unavailable",
+        )
+        .render_toggled(False, False)
+        .render()
+    )
     assert 'aria-disabled="true"' in html
     assert 'aria-busy="true"' in html
     assert 'aria-invalid="true"' in html
@@ -241,13 +245,17 @@ def test_segment_has_tab_role(adapter):
 
 
 def test_segment_state_contract_propagates_unavailable_state(adapter):
-    html = Segment(
-        "tab",
-        label="Tab",
-        read_only=True,
-        loading=True,
-        error="Unavailable",
-    ).render_selected(False, False).render()
+    html = (
+        Segment(
+            "tab",
+            label="Tab",
+            read_only=True,
+            loading=True,
+            error="Unavailable",
+        )
+        .render_selected(False, False)
+        .render()
+    )
     assert 'aria-disabled="true"' in html
     assert 'aria-busy="true"' in html
     assert 'aria-invalid="true"' in html
@@ -394,7 +402,7 @@ def test_context_menu_state_contract_blocks_unavailable_actions(adapter):
     assert 'aria-busy="true"' in html
     assert 'aria-invalid="true"' in html
     assert 'data-vd-error="Unavailable"' in html
-    assert "data-vd-context-menu=\"" not in html
+    assert 'data-vd-context-menu="' not in html
     assert "data-vd-event-click" not in html
 
 
@@ -452,7 +460,7 @@ def test_command_palette_state_contract_disables_commands(adapter):
     assert 'aria-busy="true"' in html
     assert 'aria-invalid="true"' in html
     assert 'data-vd-error="Unavailable"' in html
-    assert 'data-vd-event-click' not in html
+    assert "data-vd-event-click" not in html
     assert 'open="open"' not in html
 
 

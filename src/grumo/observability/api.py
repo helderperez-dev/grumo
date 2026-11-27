@@ -96,4 +96,3 @@ async def get_metrics() -> dict[str, object]:
     if store_health is not None:
         summary["store_health"] = store_health
     return summary
-

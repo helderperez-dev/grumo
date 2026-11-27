@@ -592,7 +592,9 @@ def create_app(app_dir: str = "app", *, runtime: Any = None) -> Starlette:
 
         starlette.state.lifecycle_phase = "starting"
         application_store = None
-        runtime_engine = runtime.engine if runtime is not None else global_runtime_engine
+        runtime_engine = (
+            runtime.engine if runtime is not None else global_runtime_engine
+        )
         execution_store = None
         schedule_store = None
         scheduler = None

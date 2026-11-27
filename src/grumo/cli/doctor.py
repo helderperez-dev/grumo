@@ -228,7 +228,9 @@ def _doctor_queue() -> None:
             elif hasattr(queue, "depth"):
                 depth = await queue.depth()
         except Exception as error:
-            _logger.warning("doctor queue probe failed error=%s", redact_string(str(error)))
+            _logger.warning(
+                "doctor queue probe failed error=%s", redact_string(str(error))
+            )
             pass
         return depth, len(_workers)
 
@@ -237,7 +239,9 @@ def _doctor_queue() -> None:
         terminal.status("depth", str(depth))
         terminal.status("registered workers", str(workers))
     except Exception as error:
-        _logger.warning("doctor queue status failed error=%s", redact_string(str(error)))
+        _logger.warning(
+            "doctor queue status failed error=%s", redact_string(str(error))
+        )
         terminal.status("queue", "unavailable")
 
 
@@ -260,8 +264,6 @@ def _doctor_optional_services(cfg: object) -> None:
         terminal.status("scheduler", "unavailable")
 
 
-
-
 def _doctor_ai_kit() -> None:
     terminal.heading("ai kit")
     ai_dir = Path(".grumo/ai")
@@ -276,7 +278,7 @@ def doctor(
         "--json",
         help="Output side-effect-free machine-readable diagnostics.",
     ),
-    ) -> None:
+) -> None:
     """Run environment and configuration diagnostics."""
     import os
 
@@ -316,9 +318,7 @@ def doctor(
         terminal.status("store", "ready" if report.verified else "not found")
         terminal.muted(f"  {cfg.store.provider} ({cfg.store.path})")
     except Exception as error:
-        _logger.warning(
-            "doctor Store probe failed error=%s", redact_string(str(error))
-        )
+        _logger.warning("doctor Store probe failed error=%s", redact_string(str(error)))
         terminal.status("store", "unavailable")
 
     if cfg.database.provider.lower() == "grumo":

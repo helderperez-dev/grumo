@@ -224,7 +224,9 @@ class Task:
                         _logger.warning(
                             "task typed-output validation failed task=%s output_type=%s error=%s",
                             self.name,
-                            output_type.__name__ if output_type is not None else "unknown",
+                            output_type.__name__
+                            if output_type is not None
+                            else "unknown",
                             redact_string(str(error)),
                         )
                 return ComputeResult(

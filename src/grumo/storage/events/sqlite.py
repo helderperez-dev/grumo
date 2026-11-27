@@ -148,17 +148,21 @@ class SQLiteEventBus:
         count = 0
         for row in rows:
             try:
-                ev = validate_event({
-                    "event_id": row["event_id"],
-                    "event_type": row["event_type"],
-                    "timestamp": row["timestamp"],
-                    "source": row["source"],
-                    "subject": row["subject"],
-                    "correlation_id": row["correlation_id"],
-                    "causation_id": row["causation_id"],
-                    "payload": json.loads(row["payload"]) if row["payload"] else None,
-                    "schema_version": row["schema_version"],
-                })
+                ev = validate_event(
+                    {
+                        "event_id": row["event_id"],
+                        "event_type": row["event_type"],
+                        "timestamp": row["timestamp"],
+                        "source": row["source"],
+                        "subject": row["subject"],
+                        "correlation_id": row["correlation_id"],
+                        "causation_id": row["causation_id"],
+                        "payload": json.loads(row["payload"])
+                        if row["payload"]
+                        else None,
+                        "schema_version": row["schema_version"],
+                    }
+                )
                 handler(ev)
                 count += 1
             except Exception as error:

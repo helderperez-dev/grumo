@@ -34,7 +34,9 @@ class MCPClient:
             or timeout <= 0
             or timeout > _MAX_TIMEOUT_SECONDS
         ):
-            raise ValueError(f"MCP timeout must be between 0 and {_MAX_TIMEOUT_SECONDS:g} seconds")
+            raise ValueError(
+                f"MCP timeout must be between 0 and {_MAX_TIMEOUT_SECONDS:g} seconds"
+            )
         if (
             not isinstance(max_response_bytes, int)
             or isinstance(max_response_bytes, bool)
@@ -64,12 +66,16 @@ class MCPClient:
             }
             chunks: list[bytes] = []
             total = 0
-            async with client.stream("POST", self.endpoint_url, json=payload) as response:
+            async with client.stream(
+                "POST", self.endpoint_url, json=payload
+            ) as response:
                 response.raise_for_status()
                 async for chunk in response.aiter_bytes():
                     total += len(chunk)
                     if total > self.max_response_bytes:
-                        raise ValueError("MCP response exceeds the configured size limit")
+                        raise ValueError(
+                            "MCP response exceeds the configured size limit"
+                        )
                     chunks.append(chunk)
             try:
                 result = json.loads(b"".join(chunks))

@@ -259,7 +259,9 @@ class TestExecutionEngine:
         assert ex.intent.status == IntentStatus.COMPLETED
 
     @pytest.mark.asyncio
-    async def test_effect_recording_emits_structured_trace(self, engine: ExecutionEngine):
+    async def test_effect_recording_emits_structured_trace(
+        self, engine: ExecutionEngine
+    ):
         before = len(telemetry_store.metrics["custom_traces"])
 
         async def compute(ctx):
@@ -295,7 +297,9 @@ class TestExecutionEngine:
         async def compute(ctx):
             return ComputeResult(
                 value=1,
-                effects=[Effect(name="payment.execute", capability_name="payment.execute")],
+                effects=[
+                    Effect(name="payment.execute", capability_name="payment.execute")
+                ],
             )
 
         with pytest.raises(CapabilityDenied):

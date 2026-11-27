@@ -174,9 +174,9 @@ class GrumoStoreScheduleStore:
             "native_id": native_id.hex(),
             "created_at": datetime.now(UTC).isoformat(),
         }
-        encoded = json.dumps(
-            metadata, separators=(",", ":"), default=str
-        ).encode("utf-8")
+        encoded = json.dumps(metadata, separators=(",", ":"), default=str).encode(
+            "utf-8"
+        )
         if self._native_collections(self._store):
             self._store.upsert_record(
                 _META_COLLECTION, schedule_id.encode("utf-8"), encoded
@@ -357,12 +357,8 @@ class GrumoStoreScheduleStore:
             "name": metadata["name"],
             "kind": metadata["kind"],
             "spec": metadata["spec"],
-            "next_run_at": (
-                next_run.isoformat() if next_run is not None else None
-            ),
-            "last_run_at": (
-                last_run.isoformat() if last_run is not None else None
-            ),
+            "next_run_at": (next_run.isoformat() if next_run is not None else None),
+            "last_run_at": (last_run.isoformat() if last_run is not None else None),
             "task_type": metadata["task_type"],
             "payload": (
                 json.dumps(metadata["payload"])

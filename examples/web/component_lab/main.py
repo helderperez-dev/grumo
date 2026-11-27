@@ -821,7 +821,9 @@ def forms():
                         Calendar(year=2026, month=9, label="September 2026"),
                         Stack(
                             Field("Accept terms", Checkbox(name="terms", checked=True)),
-                            Field("Mode", Radio(name="mode", value="safe", checked=True)),
+                            Field(
+                                "Mode", Radio(name="mode", value="safe", checked=True)
+                            ),
                             gap="md",
                         ),
                         cols="2",

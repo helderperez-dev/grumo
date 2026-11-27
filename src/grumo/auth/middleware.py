@@ -60,7 +60,9 @@ class AuthMiddleware(BaseHTTPMiddleware):
             if auth_header.startswith("Bearer "):
                 token_str = auth_header[7:].strip()
                 try:
-                    payload = decode_access_token(token_str, auth_config=self._config.auth)
+                    payload = decode_access_token(
+                        token_str, auth_config=self._config.auth
+                    )
                     user = AuthUser(
                         id=payload.get("sub") or payload.get("id"),
                         email=payload.get("email"),

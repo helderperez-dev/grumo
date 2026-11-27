@@ -53,9 +53,7 @@ def _validate_interactive_states() -> None:
     ).render()
     if "disabled" not in disabled_input.lower():
         raise SystemExit("Input disabled state must render a disabled attribute")
-    submitted_form = ui.Form(
-        submit="Save", render_key="contract/form-submit"
-    ).render()
+    submitted_form = ui.Form(submit="Save", render_key="contract/form-submit").render()
     if 'type="submit"' not in submitted_form:
         raise SystemExit("Form submit shortcut must render a submit control")
 
@@ -68,7 +66,9 @@ def _validate_deterministic_identity(stable: set[str]) -> None:
         first = component_type(*example, render_key=f"contract/{name}")
         second = component_type(*example, render_key=f"contract/{name}")
         if first.id is None or first.id != second.id:
-            raise SystemExit(f"{name} render_key did not produce deterministic identity")
+            raise SystemExit(
+                f"{name} render_key did not produce deterministic identity"
+            )
         if not first.id.startswith(f"vd-{name.lower()}-"):
             raise SystemExit(f"{name} render_key identity has an unstable prefix")
         explicit = component_type(
@@ -98,7 +98,9 @@ def _validate_exported_component_sources(exported: set[str]) -> None:
         if "onclick=" in source or "onkeydown=" in source:
             violations.append(f"{name}: inline event handler")
     if violations:
-        raise SystemExit("exported component source safety violations: " + ", ".join(violations))
+        raise SystemExit(
+            "exported component source safety violations: " + ", ".join(violations)
+        )
 
 
 def _parse_wcag_rows(path: Path) -> list[tuple[str, str, str, str]]:
@@ -156,7 +158,9 @@ def main() -> int:
     _validate_exported_component_sources(exported)
     for name in sorted(stable):
         if name not in EXAMPLES or name not in exported:
-            raise SystemExit(f"missing accessibility example for stable component: {name}")
+            raise SystemExit(
+                f"missing accessibility example for stable component: {name}"
+            )
         rendered = getattr(ui, name)(*EXAMPLES[name]).render()
         tag, attrs = _opening(rendered)
         lowered = attrs.lower()

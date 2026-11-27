@@ -109,8 +109,7 @@ class RuntimeTransaction:
                 "Active Grumo Store does not expose transactional capability"
             )
         self._native_collections = all(
-            hasattr(native, method)
-            for method in ("create_collection", "upsert_record")
+            hasattr(native, method) for method in ("create_collection", "upsert_record")
         )
         if self._native_collections:
             native.create_collection(
@@ -127,7 +126,11 @@ class RuntimeTransaction:
         )
         self._native_outbox = all(
             hasattr(native, method)
-            for method in ("emit_outbox_event", "outbox_events_after", "ack_outbox_event")
+            for method in (
+                "emit_outbox_event",
+                "outbox_events_after",
+                "ack_outbox_event",
+            )
         )
         self._finished = False
 
@@ -195,9 +198,7 @@ class RuntimeTransaction:
     def __enter__(self) -> RuntimeTransaction:
         return self
 
-    def __exit__(
-        self, exc_type: Any, exc: Any, traceback: Any
-    ) -> Literal[False]:
+    def __exit__(self, exc_type: Any, exc: Any, traceback: Any) -> Literal[False]:
         if self._finished:
             return False
         if exc_type is None:
@@ -276,7 +277,9 @@ class OutboxDispatcher:
         ):
             expected_id = bytes(key).decode("utf-8")
             try:
-                message = OutboxMessage.decode(bytes(raw_value), expected_id=expected_id)
+                message = OutboxMessage.decode(
+                    bytes(raw_value), expected_id=expected_id
+                )
             except (TypeError, ValueError, json.JSONDecodeError):
                 continue
             if message.id not in self._native_receipts:
@@ -288,7 +291,9 @@ class OutboxDispatcher:
         for key, raw_value in self._native.scan_prefix(_OUTBOX_PENDING_PREFIX):
             expected_id = bytes(key)[len(_OUTBOX_PENDING_PREFIX) :].decode("utf-8")
             try:
-                message = OutboxMessage.decode(bytes(raw_value), expected_id=expected_id)
+                message = OutboxMessage.decode(
+                    bytes(raw_value), expected_id=expected_id
+                )
             except (TypeError, ValueError, json.JSONDecodeError):
                 continue
             if message.id not in self._native_receipts:
@@ -321,9 +326,7 @@ class OutboxDispatcher:
                     raise StoreProviderError(
                         "Store transaction lacks native collection deletion"
                     )
-                tx.delete_record(
-                    _OUTBOX_PENDING_COLLECTION, message.id.encode("utf-8")
-                )
+                tx.delete_record(_OUTBOX_PENDING_COLLECTION, message.id.encode("utf-8"))
                 tx.upsert_record(
                     _OUTBOX_DELIVERED_COLLECTION,
                     message.id.encode("utf-8"),

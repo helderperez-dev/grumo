@@ -35,9 +35,7 @@ async def test_edge_device_and_effect_survive_store_restart(tmp_path) -> None:
         capability="relay.control",
         payload={"on": True},
     )
-    raw = runtime.provider.native.get_record(
-        b"runtime.edge_devices", b"device-1"
-    )
+    raw = runtime.provider.native.get_record(b"runtime.edge_devices", b"device-1")
     assert raw is not None
     assert json.loads(bytes(raw[1]))["_schema_version"] == 1
     runtime.stop()

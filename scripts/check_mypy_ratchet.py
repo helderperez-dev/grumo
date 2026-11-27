@@ -27,7 +27,9 @@ def main() -> int:
     output = result.stdout + result.stderr
     actual = sum(bool(ERROR_RE.match(line)) for line in output.splitlines())
     if actual > expected:
-        print(f"mypy regression: {actual} errors (baseline {expected})", file=sys.stderr)
+        print(
+            f"mypy regression: {actual} errors (baseline {expected})", file=sys.stderr
+        )
         print(output, file=sys.stderr)
         return 1
     print(f"mypy ratchet passed: {actual} errors (baseline {expected})")

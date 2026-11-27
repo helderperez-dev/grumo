@@ -96,7 +96,9 @@ class TelemetryMiddleware:
                     trace_id,
                 )
             elif scope["type"] == "websocket":
-                logger.info("WebSocket session completed in %.2fms [%s]", latency_ms, trace_id)
+                logger.info(
+                    "WebSocket session completed in %.2fms [%s]", latency_ms, trace_id
+                )
 
             trace_id_var.reset(trace_token)
             correlation_id_var.reset(correlation_token)

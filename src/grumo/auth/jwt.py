@@ -169,7 +169,9 @@ def _decode_json_header(header_b64: str) -> dict[str, Any]:
     return header
 
 
-def _validate_registered_claims(payload: dict[str, Any], auth_config: AuthConfig) -> None:
+def _validate_registered_claims(
+    payload: dict[str, Any], auth_config: AuthConfig
+) -> None:
     issuer = auth_config.jwt_issuer
     if issuer is not None and payload.get("iss") != issuer:
         raise InvalidTokenError("Invalid token issuer")
@@ -289,7 +291,9 @@ def revoke_access_token(token: str, secret_key: str | None = None) -> None:
 def revoke_subject_sessions(subject: str | int, expires_at: int | None = None) -> None:
     """Invalidate tokens for one subject until a bounded expiry horizon."""
     now = int(time.time())
-    expiry = expires_at if expires_at is not None else now + config.auth.token_expiry_seconds
+    expiry = (
+        expires_at if expires_at is not None else now + config.auth.token_expiry_seconds
+    )
     _token_revocations.revoke(f"subject:{subject}", expiry, now)
 
 

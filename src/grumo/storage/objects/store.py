@@ -43,9 +43,10 @@ def _bounded_native_chunk(chunk: Any, chunk_size: int) -> bytes:
 
 def _verify_payload(data: bytes, metadata: dict[str, Any]) -> None:
     """Verify native bytes against their durable metadata contract."""
-    if len(data) != metadata["size"] or hashlib.sha256(data).hexdigest() != metadata[
-        "checksum"
-    ]:
+    if (
+        len(data) != metadata["size"]
+        or hashlib.sha256(data).hexdigest() != metadata["checksum"]
+    ):
         raise ValueError("object content checksum mismatch")
 
 

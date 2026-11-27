@@ -57,7 +57,10 @@ def test_execution_save_load_and_timeline_are_durable(tmp_path: Path) -> None:
         assert json.loads(bytes(native_record[1]))["_schema_version"] == 1
 
         timeline = store.timeline(execution.id)
-        assert len(runtime.provider.native.read_stream(b"runtime.execution.events", 0, 10)) == 3
+        assert (
+            len(runtime.provider.native.read_stream(b"runtime.execution.events", 0, 10))
+            == 3
+        )
         assert [event["event_type"] for event in timeline] == [
             "execution.created",
             "execution.started",
@@ -65,13 +68,21 @@ def test_execution_save_load_and_timeline_are_durable(tmp_path: Path) -> None:
         ]
         assert [event["sequence"] for event in timeline] == [1, 2, 3]
         spans = telemetry_store.metrics["spans"][span_start:]
-        assert [span["name"] for span in spans if span["name"].startswith("store.execution.")] == [
+        assert [
+            span["name"]
+            for span in spans
+            if span["name"].startswith("store.execution.")
+        ] == [
             "store.execution.save",
             "store.execution.save",
             "store.execution.save",
             "store.execution.load",
         ]
-        assert all(span["attributes"] == {"provider": "grumo"} for span in spans if span["name"].startswith("store.execution."))
+        assert all(
+            span["attributes"] == {"provider": "grumo"}
+            for span in spans
+            if span["name"].startswith("store.execution.")
+        )
     finally:
         bind_active_runtime_store(None)
         runtime.stop()
@@ -182,12 +193,14 @@ def test_execution_store_reads_legacy_materialized_records(tmp_path: Path) -> No
         loaded = store.load_all()
         assert [item.id for item in loaded] == [execution.id]
         store.save(execution)
-        assert native.get_record(
-            b"runtime.executions", execution.id.encode("utf-8")
-        ) is not None
-        assert native.get(
-            b"runtime:execution:data:" + execution.id.encode("utf-8")
-        ) is None
+        assert (
+            native.get_record(b"runtime.executions", execution.id.encode("utf-8"))
+            is not None
+        )
+        assert (
+            native.get(b"runtime:execution:data:" + execution.id.encode("utf-8"))
+            is None
+        )
         future = dict(legacy)
         future["_schema_version"] = 99
         native.put(
@@ -201,7 +214,9 @@ def test_execution_store_reads_legacy_materialized_records(tmp_path: Path) -> No
         runtime.stop()
 
 
-def test_execution_store_migrates_legacy_events_to_native_stream(tmp_path: Path) -> None:
+def test_execution_store_migrates_legacy_events_to_native_stream(
+    tmp_path: Path,
+) -> None:
     runtime = _runtime(tmp_path)
     try:
         store = GrumoStoreExecutionStore()

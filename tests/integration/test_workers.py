@@ -190,6 +190,7 @@ async def test_worker_failure_records_failed_execution_and_keeps_running():
     from grumo.runtime.scheduling import start_workers, stop_workers
 
     telemetry_store.metrics["custom_traces"].clear()
+
     @task(retries=0, name="rt_bad_job")
     async def rt_bad_job(payload):
         raise RuntimeError("worker blew up")

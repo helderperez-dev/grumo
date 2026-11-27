@@ -29,7 +29,6 @@ async def test_mcp_client_bounds_request_and_response(monkeypatch) -> None:
         def raise_for_status(self) -> None:
             calls["status_checked"] = True
 
-
         async def aiter_bytes(self):
             yield self.content
 

@@ -101,8 +101,7 @@ def test_lineage_reads_legacy_unversioned_record(tmp_path):
 def test_lineage_skips_future_schema_with_diagnostic(tmp_path, caplog):
     path = tmp_path / "future-lineage.jsonl"
     path.write_text(
-        '{"_schema_version":99,"kind":"goal","subject_id":"future","reason":"old"}'
-        "\n"
+        '{"_schema_version":99,"kind":"goal","subject_id":"future","reason":"old"}\n'
     )
 
     with caplog.at_level("WARNING", logger="grumo.runtime.lineage"):

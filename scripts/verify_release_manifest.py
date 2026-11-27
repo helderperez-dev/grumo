@@ -48,7 +48,9 @@ def verify(dist: Path) -> None:
             or isinstance(size, bool)
             or size < 0
         ):
-            raise ValueError("release manifest contains invalid or duplicate artifact metadata")
+            raise ValueError(
+                "release manifest contains invalid or duplicate artifact metadata"
+            )
         seen.add(name)
         path = _safe_artifact_path(dist, name)
         if not path.is_file():

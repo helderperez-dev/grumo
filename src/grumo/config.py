@@ -191,9 +191,7 @@ def _production_cors_problems(security: SecurityConfig) -> list[str]:
             # Accessing ``port`` forces urlsplit to reject malformed ports.
             _ = parsed.port
         except ValueError:
-            problems.append(
-                "production CORS origins must be absolute HTTP(S) origins"
-            )
+            problems.append("production CORS origins must be absolute HTTP(S) origins")
             break
         if (
             parsed.scheme not in {"http", "https"}
@@ -204,9 +202,7 @@ def _production_cors_problems(security: SecurityConfig) -> list[str]:
             or parsed.query
             or parsed.fragment
         ):
-            problems.append(
-                "production CORS origins must be absolute HTTP(S) origins"
-            )
+            problems.append("production CORS origins must be absolute HTTP(S) origins")
             break
     if "*" in security.cors_allow_methods:
         problems.append("production CORS methods cannot allow a wildcard")
@@ -270,7 +266,7 @@ class AuthConfig(BaseModel):
         le=31_536_000,
         default_factory=lambda: int(
             os.getenv("GRUMO_TOKEN_EXPIRY", str(7 * 24 * 3600))
-        )
+        ),
     )
     jwt_issuer: str | None = Field(
         default_factory=lambda: os.getenv("GRUMO_JWT_ISSUER") or None

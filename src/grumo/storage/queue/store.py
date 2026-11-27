@@ -225,9 +225,7 @@ class GrumoStoreQueue:
         if generation is None:
             return None
         _ = backoff_base
-        with store_span(
-            "store.queue.fail", attributes={"provider": self.provider}
-        ):
+        with store_span("store.queue.fail", attributes={"provider": self.provider}):
             self._store().fail_job(
                 _native_id(task_id), generation, _now_ms(), error.encode("utf-8")
             )

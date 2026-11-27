@@ -204,7 +204,12 @@ class GrumoStoreAgentRegistry:
     def _native_collections(store: Any) -> bool:
         return all(
             hasattr(store, method)
-            for method in ("create_collection", "upsert_record", "get_record", "scan_collection")
+            for method in (
+                "create_collection",
+                "upsert_record",
+                "get_record",
+                "scan_collection",
+            )
         )
 
     @classmethod
@@ -218,7 +223,9 @@ class GrumoStoreAgentRegistry:
         encoded = self._encode(entity.to_dict())
         if self._native_collections(store):
             self._ensure_collections(store)
-            store.upsert_record(_AGENT_COLLECTION, entity.agent_id.encode("utf-8"), encoded)
+            store.upsert_record(
+                _AGENT_COLLECTION, entity.agent_id.encode("utf-8"), encoded
+            )
             # Native collections are canonical.  Remove the legacy KV record
             # only after the collection write succeeds so a failed migration
             # remains recoverable through the read-through path.
@@ -251,14 +258,16 @@ class GrumoStoreAgentRegistry:
             for key, raw, _indexes in self._store.scan_collection(_AGENT_COLLECTION):
                 agent = AgentEntity.from_dict(self._decode(raw))
                 agents_by_id[bytes(key).decode("utf-8")] = agent
-        agents_by_id.update({
-            agent.agent_id: agent
-            for agent in (
-            AgentEntity.from_dict(self._decode(raw))
-            for _key, raw in self._store.scan_prefix(_AGENT_PREFIX)
-            )
-            if agent.agent_id not in agents_by_id
-        })
+        agents_by_id.update(
+            {
+                agent.agent_id: agent
+                for agent in (
+                    AgentEntity.from_dict(self._decode(raw))
+                    for _key, raw in self._store.scan_prefix(_AGENT_PREFIX)
+                )
+                if agent.agent_id not in agents_by_id
+            }
+        )
         agents = list(agents_by_id.values())
         if state is not None:
             agents = [agent for agent in agents if agent.state == state]
@@ -292,7 +301,9 @@ class GrumoStoreAgentRegistry:
         encoded = self._encode(record.to_dict())
         if self._native_collections(self._store):
             self._ensure_collections(self._store)
-            self._store.upsert_record(_RUN_COLLECTION, record.run_id.encode("utf-8"), encoded)
+            self._store.upsert_record(
+                _RUN_COLLECTION, record.run_id.encode("utf-8"), encoded
+            )
             # Legacy run keys include the start timestamp, so remove matching
             # records by decoding the bounded agent prefix after the canonical
             # collection write.  This keeps migration idempotent and preserves
@@ -318,14 +329,16 @@ class GrumoStoreAgentRegistry:
                 run = AgentRunRecord.from_dict(self._decode(raw))
                 if run.agent_id == agent_id:
                     runs_by_id[run.run_id] = run
-        runs_by_id.update({
-            run.run_id: run
-            for run in (
-            AgentRunRecord.from_dict(self._decode(raw))
-            for _key, raw in self._store.scan_prefix(self._run_prefix(agent_id))
-            )
-            if run.run_id not in runs_by_id
-        })
+        runs_by_id.update(
+            {
+                run.run_id: run
+                for run in (
+                    AgentRunRecord.from_dict(self._decode(raw))
+                    for _key, raw in self._store.scan_prefix(self._run_prefix(agent_id))
+                )
+                if run.run_id not in runs_by_id
+            }
+        )
         runs = list(runs_by_id.values())
         runs.sort(key=lambda run: run.started_at, reverse=True)
         return runs[:limit]

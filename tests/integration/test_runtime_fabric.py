@@ -146,9 +146,7 @@ def test_fabric_lease_is_durable_and_generation_increases(runtime_store) -> None
     assert second.generation == 2
     assert fabric.get_lease("work-1") == second
 
-    raw = runtime_store.provider.native.get_record(
-        b"runtime.fabric_leases", b"work-1"
-    )
+    raw = runtime_store.provider.native.get_record(b"runtime.fabric_leases", b"work-1")
     assert raw is not None
     assert json.loads(bytes(raw[1]))["_schema_version"] == 1
 

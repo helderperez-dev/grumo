@@ -283,7 +283,9 @@ class ToggleGroup(Component):
         }
         if on_change is not None and not unavailable:
             attrs["data_vd_event_change"] = bind_event(on_change)
-        attrs.update(_state_attrs(unavailable=unavailable, loading=loading, error=error))
+        attrs.update(
+            _state_attrs(unavailable=unavailable, loading=loading, error=error)
+        )
         super().__init__(**attrs, **kwargs)
         self.props = {
             "type": type,
@@ -330,7 +332,9 @@ class ToggleItem(Component):
 
     def render_toggled(self, pressed: bool, group_disabled: bool) -> Component:
         """Return a configured toggle button for the group."""
-        unavailable = self._disabled or self._read_only or self._loading or group_disabled
+        unavailable = (
+            self._disabled or self._read_only or self._loading or group_disabled
+        )
         content: list[Any] = []
         if self._icon is not None:
             content.append(self._icon)
@@ -464,7 +468,9 @@ class Segment(Component):
         super().__init__(**kwargs)
 
     def render_selected(self, selected: bool, group_disabled: bool) -> Component:
-        unavailable = self._disabled or self._read_only or self._loading or group_disabled
+        unavailable = (
+            self._disabled or self._read_only or self._loading or group_disabled
+        )
         content: list[Any] = []
         if self._icon is not None:
             content.append(self._icon)
@@ -548,7 +554,9 @@ class MenuCheckboxItem(Component):
         if unavailable:
             attrs["disabled"] = True
             attrs["aria_disabled"] = "true"
-        attrs.update(_state_attrs(unavailable=unavailable, loading=loading, error=error))
+        attrs.update(
+            _state_attrs(unavailable=unavailable, loading=loading, error=error)
+        )
         if on_select is not None and not unavailable:
             attrs["data_vd_event_click"] = bind_event(on_select)
         super().__init__(**attrs, **kwargs)
@@ -607,7 +615,9 @@ class MenuRadioItem(Component):
         if unavailable:
             attrs["disabled"] = True
             attrs["aria_disabled"] = "true"
-        attrs.update(_state_attrs(unavailable=unavailable, loading=loading, error=error))
+        attrs.update(
+            _state_attrs(unavailable=unavailable, loading=loading, error=error)
+        )
         if on_select is not None and not unavailable:
             attrs["data_vd_event_click"] = bind_event(on_select)
         super().__init__(**attrs, **kwargs)

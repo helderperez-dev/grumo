@@ -327,7 +327,9 @@ async def test_destroyed_ui_session_discards_bindings_and_state(make_app):
         async def increment():
             count.set(count.get() + 1)
 
-        return Stack(Text(f"Count: {count.get()}"), Button("Increment", on_click=increment))
+        return Stack(
+            Text(f"Count: {count.get()}"), Button("Increment", on_click=increment)
+        )
 
     from grumo.ui.events import dispatch_ui_event, ws_manager
 
@@ -343,9 +345,12 @@ async def test_destroyed_ui_session_discards_bindings_and_state(make_app):
 
         ws_manager.destroy_session(session_id)
         assert ws_manager.get_session(session_id) is None
-        assert await dispatch_ui_event(
-            binding.group(1), event_type="click", session_id=session_id
-        ) is False
+        assert (
+            await dispatch_ui_event(
+                binding.group(1), event_type="click", session_id=session_id
+            )
+            is False
+        )
 
     assert count.get() == 0
 

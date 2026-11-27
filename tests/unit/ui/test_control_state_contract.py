@@ -81,7 +81,9 @@ def test_composite_controls_do_not_bind_changes_when_unavailable():
     controls = (
         Combobox(options, name="choice", on_change=changed, disabled=True),
         MultiSelect(options, name="choices", on_change=changed, read_only=True),
-        RadioGroup(options, name="choice", label="Choice", on_change=changed, loading=True),
+        RadioGroup(
+            options, name="choice", label="Choice", on_change=changed, loading=True
+        ),
         Calendar(year=2026, month=10, on_change=changed, disabled=True),
         ListBox(ListOption("One"), on_select=changed, error="Unavailable"),
     )

@@ -75,9 +75,10 @@ def test_grumo_store_goal_checkpoints_share_application_store(tmp_path: Path):
         1,
         b"json",
     )
-    assert runtime_store.provider.native.get_record(
-        b"runtime.goals", b"goal-1"
-    ) is not None
+    assert (
+        runtime_store.provider.native.get_record(b"runtime.goals", b"goal-1")
+        is not None
+    )
     assert store.provider == "grumo"
     assert store.load("goal-1") == running
     assert store.load_unfinished() == [running]

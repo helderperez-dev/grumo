@@ -283,9 +283,7 @@ def test_menubar_item_with_shortcut(adapter):
         ({"error": "menu unavailable"}, 'data-vd-error="menu unavailable"'),
     ],
 )
-def test_menubar_item_unavailable_states_suppress_selection(
-    adapter, state, expected
-):
+def test_menubar_item_unavailable_states_suppress_selection(adapter, state, expected):
     def on_select(_event):
         return None
 

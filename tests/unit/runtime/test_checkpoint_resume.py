@@ -55,14 +55,18 @@ class TestCheckpointBoundaries:
     def test_json_file_store_fails_closed_on_future_schema(self, tmp_path):
         path = tmp_path / "executions.jsonl"
         store = JSONFileExecutionStore(path)
-        execution = Execution(id="legacy", trace_id="t", intent=Intent(name="legacy"), actor="test")
+        execution = Execution(
+            id="legacy", trace_id="t", intent=Intent(name="legacy"), actor="test"
+        )
         store.save(execution)
         with path.open("a", encoding="utf-8") as handle:
             future = execution.model_dump(mode="json")
             future["id"] = "future"
             future["_schema_version"] = 99
             handle.write(json.dumps(future) + "\n")
-        with pytest.raises(ValueError, match="unsupported execution persistence schema"):
+        with pytest.raises(
+            ValueError, match="unsupported execution persistence schema"
+        ):
             store.load_all()
 
     def test_engine_recovery_propagates_future_schema_errors(self):

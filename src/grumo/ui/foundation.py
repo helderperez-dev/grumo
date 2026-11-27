@@ -254,7 +254,9 @@ class BreadcrumbItem(Component):
         self._sync_content()
 
     def _apply_state_attrs(self) -> None:
-        unavailable = self.disabled or self.read_only or self.loading or bool(self.error)
+        unavailable = (
+            self.disabled or self.read_only or self.loading or bool(self.error)
+        )
         if unavailable:
             self.attrs["aria_disabled"] = "true"
         if self.read_only:
@@ -267,7 +269,9 @@ class BreadcrumbItem(Component):
                 self.attrs["data_vd_error"] = self.error
 
     def _sync_content(self) -> None:
-        unavailable = self.disabled or self.read_only or self.loading or bool(self.error)
+        unavailable = (
+            self.disabled or self.read_only or self.loading or bool(self.error)
+        )
         if self.current or not self.href or unavailable:
             current_attrs: dict[str, Any] = {
                 "aria_current": "page" if self.current else None,
@@ -287,9 +291,7 @@ class BreadcrumbItem(Component):
                 current_attrs["aria_invalid"] = "true"
             if isinstance(self.error, str):
                 current_attrs["data_vd_error"] = self.error
-            self.children = (
-                _BreadcrumbCurrent(self.label, **current_attrs),
-            )
+            self.children = (_BreadcrumbCurrent(self.label, **current_attrs),)
         else:
             self.children = (_BreadcrumbLink(self.label, href=self.href),)
 
@@ -351,7 +353,9 @@ class ButtonGroup(Component):
             state_attrs["aria_invalid"] = "true"
             if isinstance(error, str):
                 state_attrs["data_vd_error"] = error
-        super().__init__(*buttons, role="group", aria_label=label, **state_attrs, **kwargs)
+        super().__init__(
+            *buttons, role="group", aria_label=label, **state_attrs, **kwargs
+        )
         self.props = {
             "orientation": orientation,
             "attached": attached,

@@ -31,6 +31,7 @@ def _report_data_fallback(operation: str, error: Exception) -> None:
         "data fallback operation=%s error=%s", operation, redact_string(str(error))
     )
 
+
 _db_connection = None
 _database: SQLiteDatabase | None = None
 _migration_health: dict[str, Any] = {

@@ -14,8 +14,7 @@ def create(
 ) -> None:
     """Create the canonical project without installing dependencies."""
     typer.echo(
-        "Warning: 'grumo create' is deprecated; use "
-        "'grumo new --no-install' instead.",
+        "Warning: 'grumo create' is deprecated; use 'grumo new --no-install' instead.",
         err=True,
     )
     new(project_name, template=None, variant="default", install=False)

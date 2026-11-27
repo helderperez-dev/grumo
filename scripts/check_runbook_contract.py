@@ -36,7 +36,9 @@ def main() -> int:
     if missing:
         raise SystemExit("runbook contract missing: " + ", ".join(missing))
     if "delete the source" not in haystack or "preserve the original" not in haystack:
-        raise SystemExit("runbook must preserve source files before destructive operations")
+        raise SystemExit(
+            "runbook must preserve source files before destructive operations"
+        )
     print(f"runbook contract passed ({len(REQUIRED_MARKERS)} markers)")
     return 0
 

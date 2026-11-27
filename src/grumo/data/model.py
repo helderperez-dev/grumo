@@ -89,9 +89,7 @@ class Model(BaseModel):
         return obj
 
     @classmethod
-    async def all(
-        cls, user_context: dict[str, Any] | None = None
-    ) -> list[Model]:
+    async def all(cls, user_context: dict[str, Any] | None = None) -> list[Model]:
         """Return every row as model instances (alias of ``find_all``)."""
         return cast(list[Model], await cls.find_all(user_context=user_context))
 

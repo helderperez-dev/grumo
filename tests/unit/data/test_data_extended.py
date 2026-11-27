@@ -87,7 +87,9 @@ def test_description_list_loading_and_error_states_are_explicit(adapter):
     assert "stale" not in loading
     assert 'aria-busy="true"' in loading
 
-    error = DescriptionList(DescriptionItem("stale", "value"), error="Unavailable").render()
+    error = DescriptionList(
+        DescriptionItem("stale", "value"), error="Unavailable"
+    ).render()
     assert "Unavailable" in error
     assert "data-vd-error-state" in error
     assert "stale" not in error
@@ -236,7 +238,7 @@ def test_list_box_shared_control_states_disable_options(adapter):
     assert 'aria-invalid="true"' in html
     assert "Options unavailable" in html
     assert 'data-vd-state="error"' in html
-    assert 'data-vd-event-click' not in html
+    assert "data-vd-event-click" not in html
 
 
 def test_list_box_state_rows_replace_stale_options(adapter):
@@ -377,7 +379,7 @@ def test_enhanced_data_table_state_contract_suppresses_activation(adapter):
     assert "data-vd-error-state" in html
     assert "Table unavailable" in html
     assert 'aria-live="polite"' in html
-    assert '>1<' not in html
+    assert ">1<" not in html
 
 
 def test_enhanced_data_table_empty(adapter):

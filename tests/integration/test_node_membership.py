@@ -50,9 +50,7 @@ def test_authenticated_node_join_is_durable(runtime_store) -> None:
     assert joined.status is MemberStatus.ACTIVE
     assert store.get("node-a") == joined
     assert store.list() == [joined]
-    raw = runtime_store.provider.native.get_record(
-        b"runtime.membership", b"node-a"
-    )
+    raw = runtime_store.provider.native.get_record(b"runtime.membership", b"node-a")
     assert raw is not None
     assert json.loads(bytes(raw[1]))["_schema_version"] == 1
 

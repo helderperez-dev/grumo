@@ -105,7 +105,9 @@ class DescriptionList(Component):
             flattened.extend(
                 (
                     _DescTerm("Status", data_vd_loading_state=True),
-                    _DescValue("Loading…", data_vd_loading_state=True, aria_live="polite"),
+                    _DescValue(
+                        "Loading…", data_vd_loading_state=True, aria_live="polite"
+                    ),
                 )
             )
         else:
@@ -119,7 +121,9 @@ class DescriptionList(Component):
             flattened.extend(
                 (
                     _DescTerm("Status", data_vd_empty_state=True),
-                    _DescValue(empty_text, data_vd_empty_state=True, aria_live="polite"),
+                    _DescValue(
+                        empty_text, data_vd_empty_state=True, aria_live="polite"
+                    ),
                 )
             )
 
@@ -272,7 +276,9 @@ class DataList(Component):
             rendered.extend(
                 (
                     _DataTerm("Status", data_vd_loading_state=True),
-                    _DataValue("Loading…", data_vd_loading_state=True, aria_live="polite"),
+                    _DataValue(
+                        "Loading…", data_vd_loading_state=True, aria_live="polite"
+                    ),
                 )
             )
         else:
@@ -282,7 +288,9 @@ class DataList(Component):
             rendered.extend(
                 (
                     _DataTerm("Status", data_vd_empty_state=True),
-                    _DataValue(empty_text, data_vd_empty_state=True, aria_live="polite"),
+                    _DataValue(
+                        empty_text, data_vd_empty_state=True, aria_live="polite"
+                    ),
                 )
             )
 
@@ -423,7 +431,9 @@ class ListBox(Component):
                 message = empty_text
                 state = "empty"
             rendered = (
-                _ListBoxState(message, role="option", aria_live="polite", data_vd_state=state),
+                _ListBoxState(
+                    message, role="option", aria_live="polite", data_vd_state=state
+                ),
             )
         else:
             enabled_indexes = [
@@ -436,7 +446,9 @@ class ListBox(Component):
                 for index, option in enumerate(options)
                 if option.selected and not option.disabled
             ]
-            focus_index = selected_indexes[0] if selected_indexes else enabled_indexes[0]
+            focus_index = (
+                selected_indexes[0] if selected_indexes else enabled_indexes[0]
+            )
             rendered = tuple(
                 option.render_option(
                     binding,
@@ -987,9 +999,9 @@ class EnhancedDataTable(Component):
     def _state_rows(
         error: bool | str, loading: bool, column_count: int
     ) -> list[Component]:
-        return EnhancedDataTable._error_rows(error, column_count) or EnhancedDataTable._loading_rows(
-            loading, column_count
-        )
+        return EnhancedDataTable._error_rows(
+            error, column_count
+        ) or EnhancedDataTable._loading_rows(loading, column_count)
 
     @staticmethod
     def _error_rows(error: bool | str, column_count: int) -> list[Component]:

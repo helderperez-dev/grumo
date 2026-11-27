@@ -383,8 +383,14 @@ class TestTracePropagation:
             "object.get",
             "object.close",
         }
-        assert any(entry["operation"] == "object.put" and entry["bytes"] == 7 for entry in operations)
-        assert any(entry["operation"] == "object.get" and entry["error"] for entry in operations)
+        assert any(
+            entry["operation"] == "object.put" and entry["bytes"] == 7
+            for entry in operations
+        )
+        assert any(
+            entry["operation"] == "object.get" and entry["error"]
+            for entry in operations
+        )
         serialized = repr(telemetry_store.metrics["spans"])
         assert "private/key" not in serialized
         assert "payload" not in serialized

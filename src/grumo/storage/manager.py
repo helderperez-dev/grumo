@@ -23,7 +23,9 @@ def _safe_object_key(bucket: str, path: str) -> str:
         raise ValueError("object path must be relative and non-empty")
     segments = combined.split("/")
     if any(segment in {"", ".", ".."} for segment in segments):
-        raise ValueError("object path must not contain empty, dot, or traversal segments")
+        raise ValueError(
+            "object path must not contain empty, dot, or traversal segments"
+        )
     return "/".join(segments)
 
 

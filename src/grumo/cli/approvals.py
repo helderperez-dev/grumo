@@ -66,9 +66,7 @@ def _list_approvals(store: Any, pending_only: bool) -> list[dict[str, Any]]:
     """Read approvals from a store, tolerating stores without the seam."""
     if not hasattr(store, "load_approvals"):
         return []
-    return cast(
-        list[dict[str, Any]], store.load_approvals(pending_only=pending_only)
-    )
+    return cast(list[dict[str, Any]], store.load_approvals(pending_only=pending_only))
 
 
 @approvals_app.command("list")

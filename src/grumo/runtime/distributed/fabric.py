@@ -308,9 +308,7 @@ class RuntimeFabric:
         self._ensure_collection()
         raw = None
         if self._native_collections():
-            record = self._native.get_record(
-                _LEASE_COLLECTION, work_id.encode("utf-8")
-            )
+            record = self._native.get_record(_LEASE_COLLECTION, work_id.encode("utf-8"))
             if record is not None:
                 raw = record[1]
         if raw is None:

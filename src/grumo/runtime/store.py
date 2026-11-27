@@ -85,9 +85,7 @@ class StoreConfig:
             "repair_torn_tail",
             "max_bytes",
         }
-        provider = (
-            data.get("provider") or os.getenv("GRUMO_STORE_PROVIDER") or "grumo"
-        )
+        provider = data.get("provider") or os.getenv("GRUMO_STORE_PROVIDER") or "grumo"
         path = data.get("path") or os.getenv("GRUMO_STORE_PATH") or DEFAULT_STORE_PATH
         enabled_value = (
             data["enabled"] if "enabled" in data else os.getenv("GRUMO_STORE_ENABLED")
@@ -326,9 +324,7 @@ class GrumoStoreProvider:
             # integrity verification as deferred until shutdown/recovery.
             if self.opened and "already open by another writer" in str(exc):
                 file_bytes = self._path.stat().st_size
-                within_limit = (
-                    self._max_bytes is None or file_bytes <= self._max_bytes
-                )
+                within_limit = self._max_bytes is None or file_bytes <= self._max_bytes
                 details = {
                     "exists": True,
                     "file_bytes": file_bytes,

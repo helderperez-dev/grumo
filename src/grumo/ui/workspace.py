@@ -272,8 +272,12 @@ class TreeView(Component):
     ) -> None:
         unavailable = disabled or read_only or loading or bool(error)
 
-        select_binding = bind_event(on_select) if on_select and not unavailable else None
-        expand_binding = bind_event(on_expand) if on_expand and not unavailable else None
+        select_binding = (
+            bind_event(on_select) if on_select and not unavailable else None
+        )
+        expand_binding = (
+            bind_event(on_expand) if on_expand and not unavailable else None
+        )
         collapse_binding = (
             bind_event(on_collapse) if on_collapse and not unavailable else None
         )
@@ -293,7 +297,11 @@ class TreeView(Component):
         else:
             has_active = any(node._contains_active() for node in nodes)
             focus_index = next(
-                (index for index, node in enumerate(nodes) if not node._is_unavailable()),
+                (
+                    index
+                    for index, node in enumerate(nodes)
+                    if not node._is_unavailable()
+                ),
                 None,
             )
             if focus_index is None and not has_active:
@@ -304,7 +312,9 @@ class TreeView(Component):
                     select_binding,
                     expand_binding,
                     collapse_binding,
-                    focusable=not unavailable and not has_active and index == focus_index,
+                    focusable=not unavailable
+                    and not has_active
+                    and index == focus_index,
                 )
                 for index, node in enumerate(nodes)
             )
@@ -747,7 +757,9 @@ class MenubarMenu:
     def render_menu(self) -> Component:
         trigger_id = _ws_id("menubar-trigger")
         content_id = _ws_id("menubar-content")
-        unavailable = self.disabled or self.read_only or self.loading or bool(self.error)
+        unavailable = (
+            self.disabled or self.read_only or self.loading or bool(self.error)
+        )
         if unavailable:
             for item in self.items:
                 item.attrs["disabled"] = True
@@ -940,7 +952,9 @@ class DockItem:
         self.error = error
 
     def render_item(self, index: int) -> Component:
-        unavailable = self.disabled or self.read_only or self.loading or bool(self.error)
+        unavailable = (
+            self.disabled or self.read_only or self.loading or bool(self.error)
+        )
         attrs: dict[str, Any] = {
             "type": "button",
             "aria_label": self.label,
@@ -1174,7 +1188,9 @@ class MasterItem:
             copy.append(_MasterItemSummary(self.summary))
         content.append(_MasterItemCopy(*copy))
 
-        unavailable = self.disabled or self.read_only or self.loading or bool(self.error)
+        unavailable = (
+            self.disabled or self.read_only or self.loading or bool(self.error)
+        )
         attrs: dict[str, Any] = {
             "type": "button",
             "role": "option",

@@ -49,9 +49,9 @@ def test_identity_store_persists_all_runtime_identity_kinds(tmp_path: Path) -> N
         1,
         b"json",
     )
-    assert runtime.provider.native.get_record(
-        b"runtime.identity", b"user:1"
-    ) is not None
+    assert (
+        runtime.provider.native.get_record(b"runtime.identity", b"user:1") is not None
+    )
 
     assert [item.id for item in store.list()] == [
         "agent:planner",
@@ -88,7 +88,10 @@ def test_identity_codec_reads_legacy_and_rejects_future_schema(tmp_path: Path) -
         native.put(store._key(identity.id), json.dumps(legacy).encode("utf-8"))
         assert store.get(identity.id).id == identity.id
         store.save(identity)
-        assert native.get_record(b"runtime.identity", identity.id.encode("utf-8")) is not None
+        assert (
+            native.get_record(b"runtime.identity", identity.id.encode("utf-8"))
+            is not None
+        )
         assert native.get(store._key(identity.id)) is None
 
         future = dict(legacy)

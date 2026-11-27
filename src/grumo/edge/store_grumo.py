@@ -88,15 +88,13 @@ class GrumoStoreDeviceStore(InMemoryDeviceStore):
         if not self._native_collections(self._native):
             return
         for collection in _COLLECTIONS.values():
-            self._native.create_collection(
-                collection, schema_version=1, codec=b"json"
-            )
+            self._native.create_collection(collection, schema_version=1, codec=b"json")
 
     def _put_json(self, prefix: bytes, key: str, value: dict[str, Any]) -> None:
         record = {**value, _SCHEMA_KEY: _SCHEMA_VERSION}
-        encoded = json.dumps(
-            record, sort_keys=True, separators=(",", ":")
-        ).encode("utf-8")
+        encoded = json.dumps(record, sort_keys=True, separators=(",", ":")).encode(
+            "utf-8"
+        )
         collection = _COLLECTIONS.get(prefix)
         if collection is not None and self._native_collections(self._native):
             self._native.upsert_record(collection, key.encode("utf-8"), encoded)
@@ -117,7 +115,9 @@ class GrumoStoreDeviceStore(InMemoryDeviceStore):
         collection = _COLLECTIONS.get(prefix)
         seen: set[str] = set()
         if collection is not None and self._native_collections(self._native):
-            for raw_key, raw_value, _indexes in self._native.scan_collection(collection):
+            for raw_key, raw_value, _indexes in self._native.scan_collection(
+                collection
+            ):
                 key = bytes(raw_key).decode("utf-8")
                 seen.add(key)
                 yield key, bytes(raw_value)
@@ -193,8 +193,12 @@ class GrumoStoreDeviceStore(InMemoryDeviceStore):
         self._hydrate_records(
             _ENROLLMENT, self._enrollments, DeviceEnrollment.from_dict, "enrollment_id"
         )
-        self._hydrate_records(_SESSION, self._sessions, DeviceSession.from_dict, "session_id")
-        self._hydrate_records(_EFFECT, self._effects, self._delivery_from_dict, "effect_id")
+        self._hydrate_records(
+            _SESSION, self._sessions, DeviceSession.from_dict, "session_id"
+        )
+        self._hydrate_records(
+            _EFFECT, self._effects, self._delivery_from_dict, "effect_id"
+        )
         for key, _raw in self._scan(_SEEN):
             self._seen_messages.add(key)
         for key, raw in self._scan(_RESPONSE):

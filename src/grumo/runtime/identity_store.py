@@ -66,12 +66,19 @@ class GrumoStoreIdentityStore:
         """Return whether this binding supports native collection records."""
         return all(
             hasattr(store, method)
-            for method in ("create_collection", "upsert_record", "get_record", "scan_collection")
+            for method in (
+                "create_collection",
+                "upsert_record",
+                "get_record",
+                "scan_collection",
+            )
         )
 
     def _ensure_collection(self, store: Any) -> None:
         if self._native_collections(store):
-            store.create_collection(_COLLECTION, schema_version=_SCHEMA_VERSION, codec=b"json")
+            store.create_collection(
+                _COLLECTION, schema_version=_SCHEMA_VERSION, codec=b"json"
+            )
 
     @property
     def path(self) -> Any:
@@ -114,16 +121,18 @@ class GrumoStoreIdentityStore:
                 identity_id = bytes(key).decode("utf-8")
                 identity = Identity.from_record(self._decode(identity_id, bytes(raw)))
                 identities_by_id[identity.id] = identity
-        identities_by_id.update({
-            identity.id: identity
-            for identity in (
-            Identity.from_record(
-                self._decode(key[len(_PREFIX) :].decode("utf-8"), bytes(raw))
-            )
-            for key, raw in store.scan_prefix(_PREFIX)
-            )
-            if identity.id not in identities_by_id
-        })
+        identities_by_id.update(
+            {
+                identity.id: identity
+                for identity in (
+                    Identity.from_record(
+                        self._decode(key[len(_PREFIX) :].decode("utf-8"), bytes(raw))
+                    )
+                    for key, raw in store.scan_prefix(_PREFIX)
+                )
+                if identity.id not in identities_by_id
+            }
+        )
         identities = list(identities_by_id.values())
         if kind is not None:
             identities = [identity for identity in identities if identity.kind is kind]
@@ -135,7 +144,9 @@ class GrumoStoreIdentityStore:
         deleted = False
         if self._native_collections(store):
             self._ensure_collection(store)
-            deleted = bool(store.delete_record(_COLLECTION, identity_id.encode("utf-8")))
+            deleted = bool(
+                store.delete_record(_COLLECTION, identity_id.encode("utf-8"))
+            )
         legacy = store.get(self._key(identity_id))
         if legacy is not None:
             tx = store.transaction()

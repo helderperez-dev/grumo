@@ -89,7 +89,7 @@ def test_native_store_object_metadata_rejects_malformed_json():
 
         def get_object(self, object_id):
             assert object_id == b"metadata-id"
-            return b"[\"not\", \"metadata\"]"
+            return b'["not", "metadata"]'
 
     store = GrumoStoreObjectStore()
     store._native = lambda: FakeStore()

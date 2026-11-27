@@ -136,10 +136,14 @@ def _behavior_cases() -> tuple[tuple[str, object], ...]:
 
     def callback(*_args: object, **_kwargs: object) -> None:
         return None
+
     return (
         ("Input.disabled", ui.Input(on_change=callback, disabled=True)),
         ("Switch.loading", ui.Switch(on_change=callback, loading=True)),
-        ("ListBox.error", ui.ListBox(ui.ListOption("One"), on_select=callback, error=True)),
+        (
+            "ListBox.error",
+            ui.ListBox(ui.ListOption("One"), on_select=callback, error=True),
+        ),
         ("MenuItem.error", ui.MenuItem("Delete", on_select=callback, error=True)),
         ("Action.error", ui.Action("Delete", on_select=callback, error=True)),
         (
@@ -188,7 +192,9 @@ def _collection_state_cases() -> tuple[tuple[str, object, str, str], ...]:
         ),
         (
             "DescriptionList.error",
-            ui.DescriptionList(ui.DescriptionItem("Name", "stale"), error="Unavailable"),
+            ui.DescriptionList(
+                ui.DescriptionItem("Name", "stale"), error="Unavailable"
+            ),
             "stale",
             "data-vd-error-state",
         ),
@@ -204,7 +210,9 @@ def _validate_behavior_cases() -> list[str]:
             violations.append(f"{name}: runtime state case failed: {error}")
             continue
         if "data-vd-event-" in rendered:
-            violations.append(f"{name}: unavailable control retained a client event binding")
+            violations.append(
+                f"{name}: unavailable control retained a client event binding"
+            )
     return violations
 
 

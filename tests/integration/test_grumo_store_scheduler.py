@@ -170,7 +170,9 @@ def test_store_scheduler_preserves_management_surface(monkeypatch):
     assert record["task_type"] == "email.send"
     assert json.loads(record["payload"]) == {"x": 1}
     assert record["active"] == 1
-    metadata_raw = native.kv[next(key for key in native.kv if key.startswith(b"grumo:scheduler:meta:"))]
+    metadata_raw = native.kv[
+        next(key for key in native.kv if key.startswith(b"grumo:scheduler:meta:"))
+    ]
     assert json.loads(metadata_raw)["_schema_version"] == 1
 
     assert [item["id"] for item in store.list_all()] == ["s1"]
@@ -224,13 +226,18 @@ def test_native_scheduler_metadata_collection_survives_restart(tmp_path):
     now = datetime.now(UTC) + timedelta(minutes=1)
     try:
         store = GrumoStoreScheduleStore()
-        store.create("native-persisted", "persisted", "at", now.isoformat(), now, "work")
+        store.create(
+            "native-persisted", "persisted", "at", now.isoformat(), now, "work"
+        )
         assert runtime.provider.native.collection_definition(
             b"runtime.scheduler_metadata"
         ) == (1, b"json")
-        assert runtime.provider.native.get_record(
-            b"runtime.scheduler_metadata", b"native-persisted"
-        ) is not None
+        assert (
+            runtime.provider.native.get_record(
+                b"runtime.scheduler_metadata", b"native-persisted"
+            )
+            is not None
+        )
     finally:
         bind_active_runtime_store(None)
         runtime.stop()

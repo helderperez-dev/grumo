@@ -141,9 +141,7 @@ def _decode_execution(raw: str) -> Execution:
     if isinstance(version, bool) or not isinstance(version, int):
         raise ValueError("execution persistence schema version must be an integer")
     if version > _SCHEMA_VERSION:
-        raise ValueError(
-            f"unsupported execution persistence schema version: {version}"
-        )
+        raise ValueError(f"unsupported execution persistence schema version: {version}")
     return Execution.model_validate(payload)
 
 

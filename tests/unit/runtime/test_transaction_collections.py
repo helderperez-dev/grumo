@@ -39,7 +39,9 @@ class _CollectionNative:
     def __init__(self) -> None:
         self.records: dict[bytes, dict[bytes, bytes]] = {}
 
-    def create_collection(self, collection: bytes, *, schema_version: int, codec: bytes) -> None:
+    def create_collection(
+        self, collection: bytes, *, schema_version: int, codec: bytes
+    ) -> None:
         self.records.setdefault(collection, {})
 
     def upsert_record(
@@ -81,9 +83,14 @@ def test_outbox_collection_fallback_is_atomic_and_dispatchable() -> None:
     dispatcher = OutboxDispatcher(runtime)
     assert dispatcher.pending() == [message]
     published: list[tuple[str, dict, dict]] = []
-    assert dispatcher.dispatch(
-        lambda topic, payload, metadata: published.append((topic, payload, metadata))
-    ) == 1
+    assert (
+        dispatcher.dispatch(
+            lambda topic, payload, metadata: published.append(
+                (topic, payload, metadata)
+            )
+        )
+        == 1
+    )
     assert published == [("order.created", {"order_id": "42"}, {})]
     assert dispatcher.pending() == []
     assert b"collection-event" in native.records[b"runtime.outbox_delivered"]

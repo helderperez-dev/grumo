@@ -181,7 +181,9 @@ class MeshNetwork:
             intent = Intent(name=f"mesh:{event}", params={"payload": payload})
 
             async def compute(
-                ctx: Any, _handler: Callable[..., Any] = handler, _payload: Any = payload
+                ctx: Any,
+                _handler: Callable[..., Any] = handler,
+                _payload: Any = payload,
             ) -> Any:
                 if inspect.iscoroutinefunction(_handler):
                     return await _handler(_payload)

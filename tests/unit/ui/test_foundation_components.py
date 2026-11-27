@@ -139,7 +139,7 @@ def test_breadcrumb_item_state_contract_blocks_unavailable_navigation(adapter):
     assert 'aria-busy="true"' in html
     assert 'aria-invalid="true"' in html
     assert 'data-vd-error="Unavailable"' in html
-    assert "href=\"/settings\"" not in html
+    assert 'href="/settings"' not in html
 
 
 def test_button_group_has_group_semantics_and_layout(adapter):

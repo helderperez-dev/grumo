@@ -53,7 +53,9 @@ def validate_object_key(key: str) -> str:
     if any(unicodedata.category(char) in {"Cc", "Cf"} for char in normalized):
         raise ValueError("object key must not contain control or format characters")
     if any(segment in {"", ".", ".."} for segment in normalized.split("/")):
-        raise ValueError("object key must not contain empty, dot, or traversal segments")
+        raise ValueError(
+            "object key must not contain empty, dot, or traversal segments"
+        )
     return normalized
 
 

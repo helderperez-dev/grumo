@@ -40,7 +40,9 @@ async def test_metrics_projects_sanitized_active_store_health(monkeypatch):
     assert summary["store_health"]["details"]["native_health"]["queue_ready"] == 3
     assert "store_id" not in summary["store_health"]["details"]["native_health"]
 
-    assert summary["store_health"]["details"]["native_health"]["metrics"]["commits"] == 7
+    assert (
+        summary["store_health"]["details"]["native_health"]["metrics"]["commits"] == 7
+    )
     assert "must-not-be-exported" not in repr(summary["store_health"])
 
 

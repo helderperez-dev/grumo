@@ -19,7 +19,9 @@ def _major(version: str) -> int:
     return int(match.group(1))
 
 
-def _validate_entry(entry: dict[str, object], current_major: int, seen: set[str]) -> list[str]:
+def _validate_entry(
+    entry: dict[str, object], current_major: int, seen: set[str]
+) -> list[str]:
     errors: list[str] = []
     surface = entry.get("surface")
     status = entry.get("status")

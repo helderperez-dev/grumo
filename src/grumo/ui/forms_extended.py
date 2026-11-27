@@ -18,8 +18,12 @@ EventHandler = Callable[..., Any] | str
 
 
 def _apply_extended_state(
-    attrs: dict[str, Any], *, disabled: bool, read_only: bool,
-    loading: bool, error: bool | str
+    attrs: dict[str, Any],
+    *,
+    disabled: bool,
+    read_only: bool,
+    loading: bool,
+    error: bool | str,
 ) -> bool:
     """Apply shared state attributes and return whether activation is unavailable."""
     unavailable = disabled or read_only or loading or bool(error)

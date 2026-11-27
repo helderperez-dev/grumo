@@ -244,7 +244,9 @@ async def _reaper() -> None:
         except asyncio.CancelledError:
             break
         except Exception as exc:
-            logger.error("Worker lease reaper failed: error_type=%s", type(exc).__name__)
+            logger.error(
+                "Worker lease reaper failed: error_type=%s", type(exc).__name__
+            )
         await asyncio.sleep(5.0)
 
 

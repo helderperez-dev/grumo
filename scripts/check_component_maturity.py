@@ -121,19 +121,27 @@ def _validate_component_families(classes: set[str]) -> None:  # noqa: C901 - sch
         preferred = family.get("preferred")
         alternatives = family.get("alternatives")
         guidance = family.get("guidance")
-        if not all(isinstance(value, str) and value for value in (name, preferred, guidance)):
+        if not all(
+            isinstance(value, str) and value for value in (name, preferred, guidance)
+        ):
             raise SystemExit("component families require name, preferred, and guidance")
         if preferred not in classes:
-            raise SystemExit(f"component family preferred API is not exported: {preferred}")
+            raise SystemExit(
+                f"component family preferred API is not exported: {preferred}"
+            )
         if not isinstance(alternatives, list) or not alternatives:
             raise SystemExit(f"component family has no alternatives: {name}")
         for alternative in alternatives:
             if alternative not in classes:
-                raise SystemExit(f"component family alternative is not exported: {alternative}")
+                raise SystemExit(
+                    f"component family alternative is not exported: {alternative}"
+                )
             if alternative == preferred:
                 raise SystemExit(f"component family repeats preferred API: {name}")
             if alternative in seen:
-                raise SystemExit(f"component appears in multiple overlap families: {alternative}")
+                raise SystemExit(
+                    f"component appears in multiple overlap families: {alternative}"
+                )
             seen.add(alternative)
 
 
@@ -143,7 +151,9 @@ def _validate_stable_documentation(manifest: dict[str, object]) -> None:
     entries = docs.get("components")
     stable = set(manifest.get("stable", []))
     if not isinstance(entries, dict) or set(entries) != stable:
-        raise SystemExit("stable component documentation must cover exactly the stable tier")
+        raise SystemExit(
+            "stable component documentation must cover exactly the stable tier"
+        )
     required = ("summary", "example", "do", "dont", "accessibility", "site_route")
     for name, entry in entries.items():
         if not isinstance(entry, dict) or any(
