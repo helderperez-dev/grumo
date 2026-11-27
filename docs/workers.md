@@ -14,7 +14,7 @@ is **not** an in-memory `asyncio.Queue` and is **not** SQLite.
 ## Minimal task
 
 ```python
-from grumo.workers import task
+from grumo.runtime.scheduling.tasks import task
 
 
 @task(retries=3, timeout=30)
@@ -28,7 +28,7 @@ await sync_crm(42)
 ## Durable queue worker
 
 ```python
-from grumo.workers.queue import enqueue, queue
+from grumo.runtime.scheduling.workers import enqueue, queue
 
 
 @queue("send-email")
@@ -97,7 +97,7 @@ across the background boundary.
 ## Explicit Redis adapter
 
 ```bash
-pip install "grumo-framework[redis]"
+pip install "grumo[redis]"
 ```
 
 ```toml
@@ -122,7 +122,7 @@ select it. It is not the fresh-app queue default.
 ## Runtime Store ownership
 
 `GrumoStoreQueue` acquires/reuses the Runtime-owned Store. It does not open a
-second writer to the same `.vstore` file. App shutdown resets cached queue
+second writer to the same `.grumo` file. App shutdown resets cached queue
 handles so a later Runtime lifecycle cannot retain a stale closed Store.
 
 ## Current guarantees
