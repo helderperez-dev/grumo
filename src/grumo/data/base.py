@@ -8,7 +8,7 @@ from collections.abc import Callable
 from typing import Any, cast, get_type_hints
 
 from grumo.security.redaction import redact_string
-from grumo.storage.database import GrumoDatabase, Migration, SQLiteDatabase
+from grumo.storage.database import GrumoDatabase, Migration
 
 _logger = logging.getLogger("grumo.data")
 
@@ -33,7 +33,7 @@ def _report_data_fallback(operation: str, error: Exception) -> None:
 
 
 _db_connection = None
-_database: SQLiteDatabase | None = None
+_database: GrumoDatabase | None = None
 _migration_health: dict[str, Any] = {
     "status": "unknown",
     "current_version": None,
@@ -48,7 +48,7 @@ def _clear_cascades() -> None:
     _cascades.clear()
 
 
-def _active_adapter() -> SQLiteDatabase | None:
+def _active_adapter() -> GrumoDatabase | None:
     """The active database adapter (``None`` before ``init_db``)."""
     return _database
 
