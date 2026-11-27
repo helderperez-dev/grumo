@@ -82,11 +82,13 @@ jobs:
           uv pip install --python /tmp/grumo-wheel-check/bin/python dist/*.whl
           /tmp/grumo-wheel-check/bin/python -c "import grumo, grumo_store, importlib.util; from importlib.metadata import version; assert version('grumo') == grumo.__version__; assert importlib.util.find_spec('voodoo') is None; assert importlib.util.find_spec('voodoo_store') is None"
           /tmp/grumo-wheel-check/bin/grumo --help
+          /tmp/grumo-wheel-check/bin/python -c "import importlib.util; from grumo.data.base import migration_health; assert importlib.util.find_spec('aiosqlite') is None; assert migration_health()['status'] == 'unknown'"
 
           uv venv --python 3.12 /tmp/grumo-sdist-check
           uv pip install --python /tmp/grumo-sdist-check/bin/python dist/*.tar.gz
           /tmp/grumo-sdist-check/bin/python -c "import grumo, grumo_store, importlib.util; from importlib.metadata import version; assert version('grumo') == grumo.__version__; assert importlib.util.find_spec('voodoo') is None; assert importlib.util.find_spec('voodoo_store') is None"
           /tmp/grumo-sdist-check/bin/grumo --help
+          /tmp/grumo-sdist-check/bin/python -c "import importlib.util; from grumo.data.base import migration_health; assert importlib.util.find_spec('aiosqlite') is None; assert migration_health()['status'] == 'unknown'"
       - uses: actions/upload-artifact@v4
         with:
           name: grumo-python-distributions
