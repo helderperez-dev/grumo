@@ -111,11 +111,11 @@ from grumo.runtime import Execution, ExecutionStatus
 AI is one form of Compute — never a fundamental primitive.
 
 ```python
-from grumo.primitives import ComputeParticipant
+from grumo.primitives import ComputeKind, ComputeSpec
 
-ai = ComputeParticipant(name="gpt-4", kind="ai", capabilities=["reason"])
-tool = ComputeParticipant(name="search", kind="tool", capabilities=["net.fetch"])
-human = ComputeParticipant(name="approver", kind="human", capabilities=["approve"])
+ai = ComputeSpec.reasoning(provider="openai", model="gpt-4")
+tool = ComputeSpec(kind=ComputeKind.SEARCH)
+human = ComputeSpec.human()
 ```
 
 Compute participants:
