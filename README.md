@@ -187,7 +187,7 @@ RuntimeStore
 ```
 
 The default path is **local-first and single-writer**. PostgreSQL, SQLite,
-Redis, S3-compatible object storage and OpenTelemetry remain explicit adapters
+Redis and S3-compatible object storage remain explicit adapters
 or integrations for workloads that need them; they are not silent defaults.
 
 Store owns durable mechanics. Runtime owns semantics, authority and
@@ -246,7 +246,7 @@ src/grumo/
 ├── edge/          physical/external participant boundary
 ├── protocol/      language-neutral semantic contracts
 ├── ai/            native Agent/provider/tool semantics
-├── integrations/  MCP, provider SDK and OpenTelemetry integrations
+├── integrations/  MCP and provider SDK integrations
 ├── observability/ traces, metrics and runtime inspection
 ├── data/          Store-first Model API
 ├── storage/       infrastructure contracts
@@ -426,7 +426,7 @@ ambiguous external or physical effects must not be blindly reissued.
 | World | Entity, Relationship, Observation, WorldModel |
 | Edge | device identity/session/effects/ACK/evidence flows |
 | Observability | execution lineage, traces, metrics and inspection |
-| Infrastructure | PostgreSQL, SQLite, Redis, S3 and OpenTelemetry adapters/integrations |
+| Infrastructure | PostgreSQL, SQLite, Redis and S3 adapters |
 
 ## Installation options
 
@@ -438,7 +438,7 @@ pip install grumo
 pip install "grumo[ai]"
 
 # External infrastructure adapters
-pip install "grumo[postgres,redis,s3,otel]"
+pip install "grumo[postgres,redis,s3]"
 
 # Explicit SQLite adapter
 pip install "grumo[sqlite]"
