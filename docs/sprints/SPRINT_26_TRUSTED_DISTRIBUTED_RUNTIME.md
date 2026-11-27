@@ -7,7 +7,7 @@
 ## Outcome
 
 Sprint 26 turned Mesh from an event/RPC transport with a privileged remote-call
-path into a governed distributed execution boundary that preserves Voodoo's
+path into a governed distributed execution boundary that preserves Grumo's
 single-Runtime model.
 
 The implemented remote path is now:

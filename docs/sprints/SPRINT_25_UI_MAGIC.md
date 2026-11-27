@@ -1,15 +1,15 @@
-# Sprint 25 — Voodoo UI Magic
+# Sprint 25 — Grumo UI Magic
 
 > Status: Complete
 > Completed: 2026-09-13
-> Theme: Python expresses intent; Voodoo owns browser mechanics.
-> Purpose: Make Voodoo application development feel unusually elegant while the default visual result remains exceptionally polished.
+> Theme: Python expresses intent; Grumo owns browser mechanics.
+> Purpose: Make Grumo application development feel unusually elegant while the default visual result remains exceptionally polished.
 
 ## Product thesis
 
-Voodoo UI must hide incidental browser complexity without hiding application meaning.
+Grumo UI must hide incidental browser complexity without hiding application meaning.
 
-A developer should write Python that describes **what the interface is and what should happen**. Voodoo should decide how events are transported, how state invalidates rendered regions, how DOM patches are applied, how navigation preserves context, how accessibility metadata is emitted, and how the design system creates a coherent visual result.
+A developer should write Python that describes **what the interface is and what should happen**. Grumo should decide how events are transported, how state invalidates rendered regions, how DOM patches are applied, how navigation preserves context, how accessibility metadata is emitted, and how the design system creates a coherent visual result.
 
 The target feeling is:
 
@@ -50,7 +50,7 @@ There must be:
 ## Architectural laws
 
 1. **Python callables are the event API.** String event names remain compatibility-only.
-2. **No inline JavaScript in component output.** Components emit semantic `data-vd-*` bindings; the Voodoo client runtime uses delegated listeners.
+2. **No inline JavaScript in component output.** Components emit semantic `data-vd-*` bindings; the Grumo client runtime uses delegated listeners.
 3. **State invalidates UI automatically.** Dependencies are discovered during rendering and re-discovered after every rerender.
 4. **Navigation is soft by default.** Internal links update history and replace the relevant page region without a browser reload.
 5. **The DOM is an implementation detail.** Developers should not need element IDs for ordinary interactions.
@@ -107,7 +107,7 @@ async def inspect(event: UIEvent):
 
 ### Implementation
 
-- Add opaque event binding IDs managed by Voodoo.
+- Add opaque event binding IDs managed by Grumo.
 - Register callables by binding identity, not public function name.
 - Components render `data-vd-event-*` attributes instead of inline JS.
 - Add delegated browser event handling for click/input/change/submit/keydown.
@@ -122,7 +122,7 @@ async def inspect(event: UIEvent):
 Button("Run", on_click=run)
 ```
 
-renders no `onclick=` attribute and invokes `run` over the Voodoo transport.
+renders no `onclick=` attribute and invokes `run` over the Grumo transport.
 
 ## 25.2 — Reactive render graph
 
@@ -136,7 +136,7 @@ Make state changes feel immediate and require no reload or manual binding.
 - Rebind dependencies atomically after render.
 - Deduplicate rerenders occurring in the same event-loop tick.
 - Avoid rerender storms when multiple State cells change in one handler.
-- Introduce explicit reactive regions so Voodoo can patch smaller subtrees than `root`.
+- Introduce explicit reactive regions so Grumo can patch smaller subtrees than `root`.
 - Preserve backward-compatible page-level automatic tracking.
 - Add safe batching API internally; ordinary developers should not need it.
 - Add tests for conditional dependencies:
@@ -169,8 +169,8 @@ Internal navigation should not reload the page.
 
 ### Implementation
 
-- Intercept same-origin Voodoo links.
-- Fetch/render target page through a Voodoo partial-page contract.
+- Intercept same-origin Grumo links.
+- Fetch/render target page through a Grumo partial-page contract.
 - Patch the root/content region.
 - `history.pushState` and `popstate` support.
 - Preserve ordinary browser semantics for modifier-click, target, download and external URLs.
@@ -213,7 +213,7 @@ Make component code read like a small, coherent language.
 - Form
 - Link
 
-## 25.6 — Voodoo Design System 2
+## 25.6 — Grumo Design System 2
 
 ### Goal
 
@@ -263,9 +263,9 @@ Implement/rework reusable Layer 2 components from the constitution:
 
 Every component requires behavior, state, accessibility and responsive tests, not only snapshot appearance.
 
-## 25.8 — Voodoo system components
+## 25.8 — Grumo system components
 
-Create Layer 3 components that make Voodoo operational systems visibly distinct:
+Create Layer 3 components that make Grumo operational systems visibly distinct:
 
 - RuntimeStatus
 - AgentStatus
@@ -285,7 +285,7 @@ These components must consume canonical runtime concepts rather than invent UI-o
 
 ### Goal
 
-Prove that Voodoo feels magical in real application code.
+Prove that Grumo feels magical in real application code.
 
 Build a small first-party acceptance application demonstrating:
 
@@ -335,8 +335,8 @@ The final milestone was merged through PR #40 after Ruff format, Ruff lint, Pyth
 The API should converge toward code that feels inevitable:
 
 ```python
-from voodoo import App, page, state
-from voodoo.ui import Button, Heading, Page, Stack, Text
+from grumo import App, page, state
+from grumo.ui import Button, Heading, Page, Stack, Text
 
 app = App()
 count = state(0)
@@ -350,7 +350,7 @@ async def increment():
 def home():
     return Page(
         Stack(
-            Heading("Voodoo"),
+            Heading("Grumo"),
             Text(f"Count: {count.get()}"),
             Button("Increment", on_click=increment),
         )
@@ -360,6 +360,6 @@ def home():
 app.run()
 ```
 
-Voodoo owns the WebSocket event ID, payload transport, dependency tracking, rerender scheduling, DOM patch, focus restoration, styling, accessibility and interaction feedback.
+Grumo owns the WebSocket event ID, payload transport, dependency tracking, rerender scheduling, DOM patch, focus restoration, styling, accessibility and interaction feedback.
 
 That invisible machinery is the product.

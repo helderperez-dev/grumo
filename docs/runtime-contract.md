@@ -2,14 +2,14 @@
 
 > **Status:** Architecture Freeze
 > **Date:** 2026-03-15
-> **Purpose:** Definitive semantics of the Voodoo runtime core primitives.
+> **Purpose:** Definitive semantics of the Grumo runtime core primitives.
 > After this document is accepted, treat the runtime core as frozen.
 
 ---
 
-## What is Voodoo?
+## What is Grumo?
 
-**Voodoo is a durable execution runtime for building adaptive applications
+**Grumo is a durable execution runtime for building adaptive applications
 and autonomous operational systems.**
 
 Web applications, APIs, agents, background workers, realtime systems, MCP
@@ -40,7 +40,7 @@ Identity, and their participation in Executions.
 **State is the durable system truth.**
 
 ```python
-from voodoo.primitives import State
+from grumo.primitives import State
 
 state = State(entity_id="user:42", data={"name": "Alice"})
 ```
@@ -55,7 +55,7 @@ state = State(entity_id="user:42", data={"name": "Alice"})
 **Intent is a named desire to produce an effect.**
 
 ```python
-from voodoo.primitives import Intent
+from grumo.primitives import Intent
 
 intent = Intent("qualify_customer", customer_id=123)
 ```
@@ -69,7 +69,7 @@ intent = Intent("qualify_customer", customer_id=123)
 **Capability is the ability and authorization to produce an effect.**
 
 ```python
-from voodoo.primitives import Capability
+from grumo.primitives import Capability
 
 cap = Capability(name="customers:write", scope="tenant:acme")
 ```
@@ -90,7 +90,7 @@ Sensitive capabilities are denied by default:
 is one.**
 
 ```python
-from voodoo.runtime import Execution, ExecutionStatus
+from grumo.runtime import Execution, ExecutionStatus
 
 # 9 implemented states:
 # created → authorized → running → completed
@@ -111,7 +111,7 @@ from voodoo.runtime import Execution, ExecutionStatus
 AI is one form of Compute — never a fundamental primitive.
 
 ```python
-from voodoo.primitives import ComputeParticipant
+from grumo.primitives import ComputeParticipant
 
 ai = ComputeParticipant(name="gpt-4", kind="ai", capabilities=["reason"])
 tool = ComputeParticipant(name="search", kind="tool", capabilities=["net.fetch"])
@@ -130,7 +130,7 @@ Compute participants:
 **Effect is a change produced by an execution.**
 
 ```python
-from voodoo.primitives import Effect, EffectStatus
+from grumo.primitives import Effect, EffectStatus
 
 effect = Effect(
     name="send_email",
@@ -319,7 +319,7 @@ Every execution carries a `trace_id` that propagates through:
 > **Amendment to the Architecture Freeze** — distinguishes the **Core
 > Runtime Contract** (frozen above) from **External Integration
 > Contracts** (versioned boundaries). The Edge Protocol is the first
-> such external contract: `voodoo-edge/v1`. Future protocol versions
+> such external contract: `grumo-edge/v1`. Future protocol versions
 > must be additive or explicitly versioned; V1 clients must never be
 > silently broken.
 
@@ -350,10 +350,10 @@ model — no second architecture:
 ### Edge concepts (NOT new core primitives)
 
 The following are **conceptual contracts / boundary types** in
-`voodoo.edge`, deliberately outside the frozen core: Device Identity,
+`grumo.edge`, deliberately outside the frozen core: Device Identity,
 Device Session (transport state — not an Entity, not an Execution),
 Transport (HTTP/MQTT — interchangeable carriers of the same envelope),
-Protocol Message (`voodoo-edge/v1` envelope), Acknowledgement
+Protocol Message (`grumo-edge/v1` envelope), Acknowledgement
 (effect delivery confirmation), Synchronization (state versioning +
 reconciliation).
 
@@ -366,13 +366,13 @@ are claimed on any transport.
 ### Where it lives
 
 ```
-src/voodoo/edge/   — models, store, auth, protocol, gateway, transports, simulator
+src/grumo/edge/   — models, store, auth, protocol, gateway, transports, simulator
 docs/edge/         — overview, protocol, http, mqtt, security, lifecycle,
                      state-synchronization, reliability, simulator
 ```
 
 Edge is **disabled by default**; enabling it is pure configuration
-(`[edge]` block / `VOODOO_EDGE_*`). Applications that never enable it
+(`[edge]` block / `GRUMO_EDGE_*`). Applications that never enable it
 are unaffected (zero overhead — no broker, gateway, or device tables).
 
 ---
@@ -399,4 +399,4 @@ If those questions cannot be answered convincingly, do not add it to core.
 - [Agents](agents.md)
 - [Primitives](primitives.md)
 - [Architecture Review](architecture-review-v2.5.md)
-- [Voodoo Edge](edge/overview.md) · [Edge Protocol](edge/protocol.md)
+- [Grumo Edge](edge/overview.md) · [Edge Protocol](edge/protocol.md)

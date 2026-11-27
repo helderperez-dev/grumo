@@ -6,7 +6,7 @@
 > **Live checkpoint (2026-10-10):** The cross-repository production plan is
 > **112 complete / 36 open**. The repository-level checklist below is the
 > original Sprint 30 scope; implementation evidence is maintained in the root
-> `VOODOO_PRODUCTION_READINESS_PLAN.md` and `VOODOO_STATUS.md`. Local gates are
+> `GRUMO_PRODUCTION_READINESS_PLAN.md` and `GRUMO_STATUS.md`. Local gates are
 > green (Framework **2,388 passed, 133 skipped, 2 warnings**; Store Python
 > **82 passed**; Site **421 passed**; release contract passing). Remaining
 > unchecked work is limited to
@@ -20,13 +20,13 @@ uses the same export for its hosted audit and dependency SBOM.
 
 ## Goal
 
-Certify the existing Voodoo architecture for a precise first production
+Certify the existing Grumo architecture for a precise first production
 profile instead of expanding the framework surface.
 
 Production Profile 1 supports:
 
 - one application-owned Runtime process;
-- one live local Voodoo Store writer;
+- one live local Grumo Store writer;
 - multiple isolated authenticated browser sessions;
 - durable local data, work, events, objects and Runtime state;
 - tested backup, destructive restore, upgrade and rollback procedures.
@@ -85,8 +85,8 @@ distributed consensus, global transactions or global exactly-once execution.
 ### 30.3 Public API and scaffold convergence
 
 - [x] Generated public API manifest and executable documentation imports.
-- [x] `voodoo new` as the one scaffold engine.
-- [x] `voodoo create` temporary warning alias to that same engine.
+- [x] `grumo new` as the one scaffold engine.
+- [x] `grumo create` temporary warning alias to that same engine.
 - [x] Canonical versioned template vendored for offline creation.
 - [x] Cross-repository template parity and generated-application smoke tests.
 - [x] Current command, import, version and Design System truth in every current guide (historical changelogs/reviews retain their original release context).
@@ -121,7 +121,7 @@ distributed consensus, global transactions or global exactly-once execution.
 
 ### 30.7 Release and operations
 
-- [x] Full-package mypy ratchet to zero. `uv run mypy src/voodoo --no-incremental --show-error-codes` passes with zero errors.
+- [x] Full-package mypy ratchet to zero. `uv run mypy src/grumo --no-incremental --show-error-codes` passes with zero errors.
 - [x] Risk-weighted coverage gates (focused risk-path contract passes for auth/security, events, state, Store adapters, scheduling and providers).
 - [x] Build once, test the exact wheel and source distribution artifacts, then publish (workflow contract enforced; hosted execution remains).
 - [ ] Trusted publishing, checksums, SBOM and artifact attestations.

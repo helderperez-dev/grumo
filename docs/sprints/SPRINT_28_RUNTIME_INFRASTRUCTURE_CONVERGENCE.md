@@ -6,11 +6,11 @@
 
 ## Purpose
 
-Sprint 28 makes Voodoo's local-first infrastructure model operational and gives the
-same application semantics a governed path from one local Runtime to multiple Voodoo
+Sprint 28 makes Grumo's local-first infrastructure model operational and gives the
+same application semantics a governed path from one local Runtime to multiple Grumo
 Nodes.
 
-> **Scaling a Voodoo application must change deployment topology, not application architecture.**
+> **Scaling a Grumo application must change deployment topology, not application architecture.**
 
 The one-node default is now:
 
@@ -18,7 +18,7 @@ The one-node default is now:
 Application
     |
     v
-Voodoo Runtime
+Grumo Runtime
     |
     +-- Identity / Capability / Policy
     +-- Data / Jobs / Scheduler / Events / Objects
@@ -26,7 +26,7 @@ Voodoo Runtime
     +-- Edge / World / Agency
     |
     v
-application.vstore
+application.grumo
 ```
 
 The multi-node model is:
@@ -35,7 +35,7 @@ The multi-node model is:
                          Application
                              |
                              v
-                       Voodoo Runtime
+                       Grumo Runtime
                              |
           Identity -> Capability + Policy -> Execution
                              |
@@ -53,12 +53,12 @@ are Runtime semantics; Sprint 28 does not turn Store files into a distributed da
 
 ## Architectural laws preserved
 
-1. One Voodoo Runtime and one canonical `Execution` lifecycle.
-2. Voodoo Store is the zero-configuration local durable provider.
+1. One Grumo Runtime and one canonical `Execution` lifecycle.
+2. Grumo Store is the zero-configuration local durable provider.
 3. Store owns durable mechanics; Runtime owns semantics, authority and intelligence.
 4. Identity belongs to Runtime; persistence never grants authority.
 5. SQLite/PostgreSQL/Redis/S3 remain explicit adapters.
-6. Application APIs do not expose `voodoo_store` implementation types.
+6. Application APIs do not expose `grumo_store` implementation types.
 7. One-node applications require no mandatory external infrastructure.
 8. Multi-node topology does not require application rewrites.
 9. Distributed ownership precedes distributed storage/replication.
@@ -72,7 +72,7 @@ are Runtime semantics; Sprint 28 does not turn Store files into a distributed da
 | Slice | Goal | State |
 |---|---|---|
 | 28.1 | Runtime Store provider/lifecycle foundation | **DONE** |
-| 28.2 | Voodoo Store as zero-config default | **DONE** |
+| 28.2 | Grumo Store as zero-config default | **DONE** |
 | 28.3 | Data/Model -> Store Collections/indexes/transactions | **DONE** |
 | 28.4 | Jobs/Queues -> Store native durable work | **DONE** |
 | 28.5 | Scheduler/Cron/Triggers -> Store | **DONE** for released 0.2.2 contract |
@@ -101,23 +101,23 @@ The default configuration remains equivalent to:
 
 ```toml
 [store]
-provider = "voodoo"
-path = ".voodoo/application.vstore"
+provider = "grumo"
+path = ".grumo/application.grumo"
 
 [database]
-provider = "voodoo"
+provider = "grumo"
 
 [queue]
-provider = "voodoo"
+provider = "grumo"
 
 [events]
-provider = "voodoo"
+provider = "grumo"
 
 [objects]
-provider = "voodoo"
+provider = "grumo"
 ```
 
-`voodoo-store>=0.2.2,<0.3` is the released integration line used by this sprint.
+`grumo-store>=0.2.2,<0.3` is the released integration line used by this sprint.
 There is no silent SQLite fallback when the default Store path is unavailable or lacks
 required capabilities.
 
@@ -176,7 +176,7 @@ capabilities do not automatically become Runtime Capability grants.
 Collection/state mutation + Outbox intent
                   |
                   v
-       one application.vstore commit
+       one application.grumo commit
                   |
                   v
         at-least-once dispatcher
@@ -214,7 +214,7 @@ They are JSON-Schema exportable and do not expose Python Runtime internals.
 ## Edge convergence
 
 Edge no longer introduces a hidden SQLite database on the Store-first Runtime path.
-`VoodooStoreDeviceStore` shares the Runtime-owned `application.vstore` for devices,
+`GrumoStoreDeviceStore` shares the Runtime-owned `application.grumo` for devices,
 credentials, enrollments, sessions, durable effect deliveries, replay/idempotency state
 and cached responses. `SQLiteDeviceStore` remains an explicit compatibility adapter.
 
@@ -222,10 +222,10 @@ and cached responses. `SQLiteDeviceStore` remains an explicit compatibility adap
 
 PostgreSQL, SQLite, Redis and S3 contract suites remain green. An explicit provider
 override changes infrastructure mechanics for that domain; it does not create another
-Identity, Capability, Policy or Execution model. Migration is operator-controlled; Voodoo
+Identity, Capability, Policy or Execution model. Migration is operator-controlled; Grumo
 does not silently import legacy production data during startup.
 
-Operational CLI under `voodoo fabric` includes `status`, `health`, `verify`, `join` and
+Operational CLI under `grumo fabric` includes `status`, `health`, `verify`, `join` and
 `backup`.
 
 ## Post-closure usability audit
@@ -234,12 +234,12 @@ After architectural closure, Sprint 28 was audited again from the perspective of
 new user rather than relying only on subsystem tests. That audit found and corrected
 several release-blocking DX/documentation defects:
 
-- `voodoo create` still described SQLite/local filesystem/in-memory queue defaults;
+- `grumo create` still described SQLite/local filesystem/in-memory queue defaults;
 - the generated project used a nonexistent `@app.on_startup` API;
 - the generated project used the obsolete `state(name, initial)` call shape;
 - the scaffold used reactive UI state and a `.booted` marker as a durability demo instead
   of Store-backed business data;
-- public docs still taught `voodoo new` and SQLite-first behavior;
+- public docs still taught `grumo new` and SQLite-first behavior;
 - deployment docs recommended multiple ASGI workers against one local state path,
   violating the one-writer Store law;
 - contributor/coding-agent instructions still encoded old provider defaults.
@@ -250,7 +250,7 @@ current reactive-state API. It contains no fake startup hook or filesystem boot 
 Two release-gate smoke tests were added:
 
 1. **Fresh generated project test** — runs the actual scaffold in a clean subprocess,
-   starts its App, requests `/`, verifies `.voodoo/application.vstore` is created, then
+   starts its App, requests `/`, verifies `.grumo/application.grumo` is created, then
    launches a second process and confirms Model data is still present.
 2. **Cross-domain Store journey** — persists Model data, a Queue Job, an Event and a
    canonical Execution to one Store, closes it completely, reopens the same file and
@@ -307,7 +307,7 @@ Sprint 28 closes with:
 13. executable fresh-user scaffold and restart/reopen release gates;
 14. full supported CI/type/security gates green.
 
-> **Sprint 28 turns Voodoo from a runtime that can use infrastructure into a runtime
+> **Sprint 28 turns Grumo from a runtime that can use infrastructure into a runtime
 > that provides coherent application infrastructure by default and can grow from one
 > local node into a governed fabric without pushing distributed-systems complexity into
 > application code.**
