@@ -1,6 +1,6 @@
-"""Acceptance gates for Voodoo's default visual language."""
+"""Acceptance gates for Grumo's default visual language."""
 
-from voodoo.ui import (
+from grumo.ui import (
     Badge,
     Button,
     Card,
@@ -14,12 +14,12 @@ from voodoo.ui import (
     Text,
     ThemeToggle,
 )
-from voodoo.ui.rendering import render_page
-from voodoo.ui.styles.system import generate_design_system_css
-from voodoo.ui.styles.theme import default_theme
+from grumo.ui.rendering import render_page
+from grumo.ui.styles.system import generate_design_system_css
+from grumo.ui.styles.theme import default_theme
 
 
-def test_design_system_exposes_voodoo_brand_and_light_dark_surfaces() -> None:
+def test_design_system_exposes_grumo_brand_and_light_dark_surfaces() -> None:
     css = generate_design_system_css(default_theme)
 
     assert "--vd-brand: #7c3aed" in css
@@ -30,7 +30,7 @@ def test_design_system_exposes_voodoo_brand_and_light_dark_surfaces() -> None:
     assert "--vd-focus-ring:" in css
 
 
-def test_primary_actions_use_voodoo_brand_not_monochrome_fill() -> None:
+def test_primary_actions_use_grumo_brand_not_monochrome_fill() -> None:
     css = generate_design_system_css(default_theme)
 
     assert ".vd-button--primary" in css
@@ -89,7 +89,7 @@ def test_full_page_includes_design_system_layer() -> None:
         Page(
             Container(
                 Card(
-                    Heading("Hello, Voodoo", level=1),
+                    Heading("Hello, Grumo", level=1),
                     Text("One Runtime. One local Store.", tone="muted"),
                     Button("Get Started", variant="primary"),
                 )
@@ -97,7 +97,7 @@ def test_full_page_includes_design_system_layer() -> None:
         )
     )
 
-    assert "Voodoo Design System 4" in html
+    assert "Grumo Design System 4" in html
     assert "--vd-brand: #7c3aed" in html
     assert "vd-button--primary" in html
     assert "vd-card" in html
@@ -108,8 +108,8 @@ def test_design_system_is_the_final_framework_visual_layer() -> None:
 
     product = html.index("/* Reusable product patterns */")
     extended = html.index("/* Extended UI components */")
-    system = html.index("/* Canonical Voodoo runtime/system concepts */")
-    convergence = html.index("/* Voodoo Design System 4 — final convergence layer */")
+    system = html.index("/* Canonical Grumo runtime/system concepts */")
+    convergence = html.index("/* Grumo Design System 4 — final convergence layer */")
     project = html.index("/* Project theme customization — always wins */")
 
     assert product < extended < system < convergence < project

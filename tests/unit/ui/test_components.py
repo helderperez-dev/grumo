@@ -1,7 +1,7 @@
 import pytest
 
-from voodoo.adapters import TailwindAdapter
-from voodoo.components import (
+from grumo.adapters import TailwindAdapter
+from grumo.components import (
     Button,
     Card,
     ChatBox,
@@ -12,7 +12,7 @@ from voodoo.components import (
     Table,
     Text,
 )
-from voodoo.ui.styles import current_adapter, set_style_adapter
+from grumo.ui.styles import current_adapter, set_style_adapter
 
 
 @pytest.fixture(autouse=True)
@@ -25,7 +25,7 @@ def _use_tailwind_adapter():
 
 class TestIcon:
     def test_renders_curated_svg(self):
-        from voodoo.ui import Icon
+        from grumo.ui import Icon
 
         icon = Icon("send")
         html = icon.render()
@@ -35,13 +35,13 @@ class TestIcon:
         assert "M22 2 11 13" in html
 
     def test_unknown_icon_renders_placeholder(self):
-        from voodoo.ui import Icon
+        from grumo.ui import Icon
 
         html = Icon("does-not-exist").render()
         assert "<circle" in html
 
     def test_size_and_label(self):
-        from voodoo.ui import Icon
+        from grumo.ui import Icon
 
         assert 'width="32"' in Icon("bot", size="xl").render()
         labeled = Icon("trash", label="Delete").render()
@@ -51,14 +51,14 @@ class TestIcon:
 
 class TestMarkdown:
     def test_headings_and_paragraph(self):
-        from voodoo.ui import Markdown
+        from grumo.ui import Markdown
 
         html = Markdown("# Title\n\nBody text").render()
         assert "<h1>Title</h1>" in html
         assert "<p>Body text</p>" in html
 
     def test_bold_italic_code(self):
-        from voodoo.ui import Markdown
+        from grumo.ui import Markdown
 
         html = Markdown("**b** *i* `c`").render()
         assert "<strong>b</strong>" in html
@@ -66,28 +66,28 @@ class TestMarkdown:
         assert "<code>c</code>" in html
 
     def test_fenced_code_block_escapes_html(self):
-        from voodoo.ui import Markdown
+        from grumo.ui import Markdown
 
         html = Markdown("```python\n<div>x</div>\n```").render()
         assert "<pre><code" in html
         assert "&lt;div&gt;" in html
 
     def test_raw_html_is_escaped(self):
-        from voodoo.ui import Markdown
+        from grumo.ui import Markdown
 
         html = Markdown("<script>alert(1)</script>").render()
         assert "<script>" not in html
         assert "&lt;script&gt;" in html
 
     def test_lists(self):
-        from voodoo.ui import Markdown
+        from grumo.ui import Markdown
 
         html = Markdown("- a\n- b\n\n1. one\n2. two").render()
         assert "<ul><li>a</li><li>b</li></ul>" in html
         assert "<ol><li>one</li><li>two</li></ol>" in html
 
     def test_links_only_http(self):
-        from voodoo.ui import Markdown
+        from grumo.ui import Markdown
 
         html = Markdown("[x](https://ok.dev)").render()
         assert '<a href="https://ok.dev"' in html
@@ -97,19 +97,19 @@ class TestMarkdown:
 
 class TestChatPrimitives:
     def test_message_list_renders_children(self):
-        from voodoo.ui import MessageList
+        from grumo.ui import MessageList
 
         ml = MessageList("hello")
         html = ml.render()
         assert "hello" in html
 
     def test_chat_message_role_modifier(self):
-        from voodoo.adapters.voodoo_css import VoodooCSSAdapter
-        from voodoo.ui import ChatMessage
-        from voodoo.ui.styles import set_style_adapter
+        from grumo.adapters.grumo_css import GrumoCSSAdapter
+        from grumo.ui import ChatMessage
+        from grumo.ui.styles import set_style_adapter
 
         original = current_adapter()
-        set_style_adapter(VoodooCSSAdapter())
+        set_style_adapter(GrumoCSSAdapter())
         try:
             html = ChatMessage("hi", role="assistant").render()
             assert "vd-chat-message--assistant" in html
@@ -117,7 +117,7 @@ class TestChatPrimitives:
             set_style_adapter(original)
 
     def test_streaming_text_caret(self):
-        from voodoo.ui import StreamingText
+        from grumo.ui import StreamingText
 
         streaming = StreamingText("part").render()
         assert "vd-caret" in streaming
@@ -125,7 +125,7 @@ class TestChatPrimitives:
         assert "vd-caret" not in done
 
     def test_composer_wires_enter_send(self):
-        from voodoo.ui import Composer
+        from grumo.ui import Composer
 
         html = Composer(on_send="send_message", placeholder="Ask…").render()
         assert 'data-vd-enter-send="send_message"' in html
@@ -133,7 +133,7 @@ class TestChatPrimitives:
         assert 'data-vd-enter-send-trigger="send_message"' in html
 
     def test_sidebar_renders(self):
-        from voodoo.ui import Sidebar
+        from grumo.ui import Sidebar
 
         html = Sidebar("Chats").render()
         assert "Chats" in html
@@ -170,7 +170,7 @@ def test_input_uses_semantic_event_binding():
 
 
 def test_legacy_choice_controls_suppress_unavailable_events():
-    from voodoo.ui.library import Checkbox, Radio
+    from grumo.ui.library import Checkbox, Radio
 
     checkbox = Checkbox(
         "Accept",
@@ -261,8 +261,8 @@ def test_table_state_rows_are_semantic_and_exclusive():
 
 
 def test_auth_components():
-    from voodoo.auth import AuthUser
-    from voodoo.components import AuthGuard, LoginForm, RegisterForm, UserBadge
+    from grumo.auth import AuthUser
+    from grumo.components import AuthGuard, LoginForm, RegisterForm, UserBadge
 
     login_form = LoginForm(action="/login", csrf_token="csrf_123")
     rendered_login = login_form.render()
@@ -282,7 +282,7 @@ def test_auth_components():
 
     user = AuthUser(
         id=1,
-        email="admin@voodoo.dev",
+        email="admin@grumo.dev",
         username="admin",
         role="admin",
         is_authenticated=True,
@@ -299,7 +299,7 @@ def test_auth_components():
     assert "Secret Vault" in guard_ok.render()
 
     user_viewer = AuthUser(
-        id=2, email="viewer@voodoo.dev", role="viewer", is_authenticated=True
+        id=2, email="viewer@grumo.dev", role="viewer", is_authenticated=True
     )
     guard_fail = AuthGuard("Secret Vault", user=user_viewer, required_roles=["admin"])
     assert "Access restricted" in guard_fail.render()

@@ -1,5 +1,5 @@
-from voodoo.adapters.voodoo_css import VoodooCSSAdapter
-from voodoo.ui import (
+from grumo.adapters.grumo_css import GrumoCSSAdapter
+from grumo.ui import (
     Button,
     Field,
     Form,
@@ -10,13 +10,13 @@ from voodoo.ui import (
     Switch,
     Tooltip,
 )
-from voodoo.ui.rendering import render_page
-from voodoo.ui.styles import current_adapter, set_style_adapter
+from grumo.ui.rendering import render_page
+from grumo.ui.styles import current_adapter, set_style_adapter
 
 
 def _with_native_adapter():
     original = current_adapter()
-    set_style_adapter(VoodooCSSAdapter())
+    set_style_adapter(GrumoCSSAdapter())
     return original
 
 
@@ -41,7 +41,7 @@ def test_field_wires_label_hint_and_error_accessibly():
 
 
 def test_input_group_state_contract_propagates_to_wrapped_control():
-    from voodoo.ui import InputGroup
+    from grumo.ui import InputGroup
 
     original = _with_native_adapter()
     try:
@@ -84,7 +84,7 @@ def test_field_state_contract_propagates_to_native_control():
 
 
 def test_field_associates_labels_with_nested_native_controls():
-    from voodoo.ui import InputGroup
+    from grumo.ui import InputGroup
 
     original = _with_native_adapter()
     try:
@@ -205,8 +205,8 @@ def test_native_render_includes_design_system_layer():
     original = _with_native_adapter()
     try:
         html = render_page(Button("Deploy", loading=True))
-        assert "Voodoo Design System 4" in html
-        assert "Voodoo Design System 4 — Theme contract" in html
+        assert "Grumo Design System 4" in html
+        assert "Grumo Design System 4 — Theme contract" in html
         assert "--vd-control-height-md" in html
         assert "prefers-reduced-motion" in html
         assert 'data-vd-loading="true"' in html

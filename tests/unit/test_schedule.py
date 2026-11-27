@@ -5,8 +5,8 @@ from datetime import UTC, datetime
 
 import pytest
 
-from voodoo.primitives.time import TimeSpec
-from voodoo.schedule import Scheduler, _next_cron
+from grumo.primitives.time import TimeSpec
+from grumo.schedule import Scheduler, _next_cron
 
 
 class _Queue:

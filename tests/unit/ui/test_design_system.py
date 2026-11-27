@@ -1,6 +1,6 @@
 """Design system tests — Sprint 15.
 
-Pin the Voodoo CSS adapter's layout parity, full stylesheet coverage, and the
+Pin the Grumo CSS adapter's layout parity, full stylesheet coverage, and the
 light/dark/system theme mode plumbing introduced in Sprint 15. These tests
 ensure the default (zero-config) render path produces world-class, semantic
 output without hardcoded Tailwind utility classes.
@@ -10,9 +10,9 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo.adapters import VoodooCSSAdapter
-from voodoo.adapters.voodoo_css import generate_component_css
-from voodoo.ui import (
+from grumo.adapters import GrumoCSSAdapter
+from grumo.adapters.grumo_css import generate_component_css
+from grumo.ui import (
     Badge,
     Button,
     Card,
@@ -25,9 +25,9 @@ from voodoo.ui import (
     Text,
     set_style_adapter,
 )
-from voodoo.ui.rendering import _get_client_js, render_page
-from voodoo.ui.styles import current_adapter
-from voodoo.ui.styles.theme import Theme, set_theme
+from grumo.ui.rendering import _get_client_js, render_page
+from grumo.ui.styles import current_adapter
+from grumo.ui.styles.theme import Theme, set_theme
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -35,10 +35,10 @@ from voodoo.ui.styles.theme import Theme, set_theme
 
 
 @pytest.fixture
-def voodoo_css_adapter():
-    """Use VoodooCSSAdapter (the default) for these tests."""
+def grumo_css_adapter():
+    """Use GrumoCSSAdapter (the default) for these tests."""
     original = current_adapter()
-    set_style_adapter(VoodooCSSAdapter())
+    set_style_adapter(GrumoCSSAdapter())
     yield
     set_style_adapter(original)
 
@@ -46,7 +46,7 @@ def voodoo_css_adapter():
 @pytest.fixture(autouse=True)
 def _restore_theme():
     """Restore the global default theme after each test (no cross-test leak)."""
-    from voodoo.ui.styles.theme import default_theme
+    from grumo.ui.styles.theme import default_theme
 
     original = default_theme
     yield
@@ -58,7 +58,7 @@ def _restore_theme():
 # ---------------------------------------------------------------------------
 
 
-def test_flex_layout_classes(voodoo_css_adapter):
+def test_flex_layout_classes(grumo_css_adapter):
     flex = Flex(
         "a",
         "b",
@@ -80,7 +80,7 @@ def test_flex_layout_classes(voodoo_css_adapter):
         assert cls in html
 
 
-def test_grid_layout_classes(voodoo_css_adapter):
+def test_grid_layout_classes(grumo_css_adapter):
     grid = Grid("a", "b", "c", cols="3", gap="md")
     html = grid.render()
     assert "vd-grid" in html
@@ -88,7 +88,7 @@ def test_grid_layout_classes(voodoo_css_adapter):
     assert "vd-grid--gap-md" in html
 
 
-def test_container_classes(voodoo_css_adapter):
+def test_container_classes(grumo_css_adapter):
     centered = Container("x", size="sm").render()
     assert "vd-container--sm" in centered
     assert "vd-container--centered" in centered
@@ -97,7 +97,7 @@ def test_container_classes(voodoo_css_adapter):
     assert "vd-container--centered" not in uncentered
 
 
-def test_page_classes(voodoo_css_adapter):
+def test_page_classes(grumo_css_adapter):
     padded = Page("x", size="lg", pad=True).render()
     assert "vd-page--lg" in padded
     assert "vd-page--pad" in padded
@@ -106,7 +106,7 @@ def test_page_classes(voodoo_css_adapter):
     assert "vd-page--pad" not in flush
 
 
-def test_stack_defaults_to_vertical(voodoo_css_adapter):
+def test_stack_defaults_to_vertical(grumo_css_adapter):
     stack = Stack("a", "b", gap="lg").render()
     assert "vd-flex--col" in stack
     assert "vd-flex--gap-lg" in stack
@@ -145,7 +145,7 @@ def test_generate_component_css_covers_components():
         assert expected in css
 
 
-def test_scaffold_components_render_semantic(voodoo_css_adapter):
+def test_scaffold_components_render_semantic(grumo_css_adapter):
     """A mini showcase mirrors the generated scaffold and stays semantic."""
     page = Page(
         Stack(
@@ -180,7 +180,7 @@ def test_scaffold_components_render_semantic(voodoo_css_adapter):
     ("mode", "expected_class"),
     [("dark", "dark"), ("light", "light"), ("system", "system")],
 )
-def test_render_page_html_class_respects_mode(voodoo_css_adapter, mode, expected_class):
+def test_render_page_html_class_respects_mode(grumo_css_adapter, mode, expected_class):
     set_theme(Theme(mode=mode))
     html = render_page(Text("hi"))
     assert f'class="{expected_class}"' in html
@@ -188,9 +188,9 @@ def test_render_page_html_class_respects_mode(voodoo_css_adapter, mode, expected
     assert 'class="dark dark"' not in html
 
 
-def test_render_page_includes_theme_init_script(voodoo_css_adapter):
+def test_render_page_includes_theme_init_script(grumo_css_adapter):
     html = render_page(Text("hi"))
-    assert "voodoo_theme" in html
+    assert "grumo_theme" in html
     assert "prefers-color-scheme" in html
     assert 'document.documentElement.classList.toggle("dark"' in html
 
@@ -198,4 +198,4 @@ def test_render_page_includes_theme_init_script(voodoo_css_adapter):
 def test_client_js_exposes_set_theme():
     js = _get_client_js()
     assert "setTheme" in js
-    assert "voodoo_theme" in js
+    assert "grumo_theme" in js

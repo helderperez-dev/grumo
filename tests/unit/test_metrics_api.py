@@ -5,8 +5,8 @@ from types import SimpleNamespace
 
 import pytest
 
-from voodoo.observability.api import get_metrics, get_metrics_prometheus
-from voodoo.observability.store import telemetry_store
+from grumo.observability.api import get_metrics, get_metrics_prometheus
+from grumo.observability.store import telemetry_store
 
 
 @pytest.mark.asyncio
@@ -18,9 +18,9 @@ async def test_prometheus_metrics_endpoint_is_bounded_and_scrapeable(monkeypatch
     assert response.media_type.startswith("text/plain")
     assert response.charset == "utf-8"
     body = response.body.decode()
-    assert 'voodoo_metrics_info{version="1"} 1' in body
-    assert "# TYPE voodoo_requests_total counter" in body
-    assert "voodoo_requests_total 7" in body
+    assert 'grumo_metrics_info{version="1"} 1' in body
+    assert "# TYPE grumo_requests_total counter" in body
+    assert "grumo_requests_total 7" in body
     assert "recent_traces" not in body
 
 
@@ -30,14 +30,14 @@ async def test_prometheus_metrics_skip_non_finite_samples(monkeypatch):
     monkeypatch.setitem(telemetry_store.metrics, "bad_inf", math.inf)
     response = await get_metrics_prometheus()
     body = response.body.decode()
-    assert "voodoo_bad_nan" not in body
-    assert "voodoo_bad_inf" not in body
+    assert "grumo_bad_nan" not in body
+    assert "grumo_bad_inf" not in body
 
 
 @pytest.mark.asyncio
 async def test_metrics_projects_sanitized_active_store_health(monkeypatch):
     fake_health = SimpleNamespace(
-        provider="voodoo",
+        provider="grumo",
         opened=True,
         verified=True,
         details={
@@ -50,7 +50,7 @@ async def test_metrics_projects_sanitized_active_store_health(monkeypatch):
     )
     fake_runtime = SimpleNamespace(health=lambda: fake_health)
     monkeypatch.setattr(
-        "voodoo.runtime.store.get_active_runtime_store", lambda: fake_runtime
+        "grumo.runtime.store.get_active_runtime_store", lambda: fake_runtime
     )
 
     summary = await get_metrics()
@@ -59,15 +59,15 @@ async def test_metrics_projects_sanitized_active_store_health(monkeypatch):
 
     response = await get_metrics_prometheus()
     body = response.body.decode()
-    assert "voodoo_store_health_details_native_health_queue_ready 3" in body
-    assert "voodoo_store_health_details_native_health_metrics_commits 7" in body
+    assert "grumo_store_health_details_native_health_queue_ready 3" in body
+    assert "grumo_store_health_details_native_health_metrics_commits 7" in body
     assert "must-not-be-exported" not in body
 
 
 @pytest.mark.asyncio
 async def test_metrics_json_drops_paths_and_non_numeric_health_payloads(monkeypatch):
     fake_health = SimpleNamespace(
-        provider="voodoo",
+        provider="grumo",
         opened=True,
         verified=True,
         details={
@@ -79,7 +79,7 @@ async def test_metrics_json_drops_paths_and_non_numeric_health_payloads(monkeypa
         },
     )
     monkeypatch.setattr(
-        "voodoo.runtime.store.get_active_runtime_store",
+        "grumo.runtime.store.get_active_runtime_store",
         lambda: SimpleNamespace(health=lambda: fake_health),
     )
 

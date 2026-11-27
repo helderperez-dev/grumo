@@ -2,16 +2,16 @@
 
 import pytest
 
-from voodoo.ui import Brand
-from voodoo.ui.brand import BRAND_CSS
-from voodoo.ui.rendering import render_page
+from grumo.ui import Brand
+from grumo.ui.brand import BRAND_CSS
+from grumo.ui.rendering import render_page
 
 
 def test_brand_preserves_child_based_api():
-    html = Brand("Voodoo", href="/home").render()
+    html = Brand("Grumo", href="/home").render()
 
     assert 'href="/home"' in html
-    assert ">Voodoo</a>" in html
+    assert ">Grumo</a>" in html
     assert "vd-brand-logo" not in html
 
 
@@ -19,14 +19,14 @@ def test_brand_renders_theme_specific_assets_without_generic_img_style():
     html = Brand(
         light="/logo-black.png",
         dark="/logo-white.png",
-        alt="Voodoo",
+        alt="Grumo",
         width=160,
         href="/",
     ).render()
 
     assert 'src="/logo-black.png"' in html
     assert 'src="/logo-white.png"' in html
-    assert 'alt="Voodoo"' in html
+    assert 'alt="Grumo"' in html
     assert 'width="160"' in html
     assert "vd-brand-logo--light" in html
     assert "vd-brand-logo--dark" in html
@@ -44,7 +44,7 @@ def test_brand_single_asset_is_shared_by_both_themes():
 
 def test_brand_rejects_children_in_image_mode():
     with pytest.raises(ValueError, match="cannot be combined"):
-        Brand("Voodoo", light="/logo.svg")
+        Brand("Grumo", light="/logo.svg")
 
 
 def test_brand_css_switches_assets_and_removes_radius():

@@ -8,9 +8,9 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo.adapters import VoodooCSSAdapter
-from voodoo.adapters.voodoo_css import generate_component_css
-from voodoo.ui import (
+from grumo.adapters import GrumoCSSAdapter
+from grumo.adapters.grumo_css import generate_component_css
+from grumo.ui import (
     BackLink,
     Brand,
     Chip,
@@ -28,30 +28,30 @@ from voodoo.ui import (
     ThemeToggle,
     set_style_adapter,
 )
-from voodoo.ui.styles import current_adapter
-from voodoo.ui.styles.theme import Theme, set_theme
+from grumo.ui.styles import current_adapter
+from grumo.ui.styles.theme import Theme, set_theme
 
 
 @pytest.fixture
-def voodoo_css_adapter():
+def grumo_css_adapter():
     original = current_adapter()
-    set_style_adapter(VoodooCSSAdapter())
+    set_style_adapter(GrumoCSSAdapter())
     yield
     set_style_adapter(original)
 
 
 @pytest.fixture(autouse=True)
 def _restore_theme():
-    from voodoo.ui.styles.theme import default_theme
+    from grumo.ui.styles.theme import default_theme
 
     original = default_theme
     yield
     set_theme(original)
 
 
-def test_navbar_and_navlink(voodoo_css_adapter):
+def test_navbar_and_navlink(grumo_css_adapter):
     html = Navbar(
-        Brand("Voodoo"),
+        Brand("Grumo"),
         NavLink("Home", href="/", active=True),
         NavLink("Docs", href="/docs"),
     ).render()
@@ -62,13 +62,13 @@ def test_navbar_and_navlink(voodoo_css_adapter):
     assert "vd-nav-link--active" in html
 
 
-def test_navbar_not_sticky(voodoo_css_adapter):
+def test_navbar_not_sticky(grumo_css_adapter):
     html = Navbar(Brand("V"), sticky=False).render()
     assert "vd-navbar" in html
     assert "vd-navbar--sticky" not in html
 
 
-def test_theme_toggle_uses_framework_action_without_inline_js(voodoo_css_adapter):
+def test_theme_toggle_uses_framework_action_without_inline_js(grumo_css_adapter):
     html = ThemeToggle().render()
     assert "vd-theme-toggle" in html
     assert 'data-vd-action="toggle-theme"' in html
@@ -78,14 +78,14 @@ def test_theme_toggle_uses_framework_action_without_inline_js(voodoo_css_adapter
     assert "vd-theme-toggle-moon" in html
 
 
-def test_hero_pagehero_eyebrow_chip(voodoo_css_adapter):
+def test_hero_pagehero_eyebrow_chip(grumo_css_adapter):
     assert "vd-hero" in Hero("x").render()
     assert "vd-page-hero" in PageHero("x").render()
     assert "vd-eyebrow" in Eyebrow("New").render()
     assert "vd-chip" in Chip("beta").render()
 
 
-def test_codeblock_escapes_html(voodoo_css_adapter):
+def test_codeblock_escapes_html(grumo_css_adapter):
     html = CodeBlock("<script>alert(1)</script>", language="html").render()
     assert "vd-code-block" in html
     assert "&lt;script&gt;" in html
@@ -93,7 +93,7 @@ def test_codeblock_escapes_html(voodoo_css_adapter):
     assert 'data-language="html"' in html
 
 
-def test_stats_and_stat(voodoo_css_adapter):
+def test_stats_and_stat(grumo_css_adapter):
     html = Stats(Stat("99.99%", "Uptime"), Stat("12ms", "Latency"), cols=2).render()
     assert "vd-stats" in html
     assert "vd-stats--cols-2" in html
@@ -103,7 +103,7 @@ def test_stats_and_stat(voodoo_css_adapter):
     assert "99.99%" in html
 
 
-def test_cta_backlink_featurecard_linkarrow(voodoo_css_adapter):
+def test_cta_backlink_featurecard_linkarrow(grumo_css_adapter):
     assert "vd-cta-band" in CTABand("x").render()
     assert "vd-back-link" in BackLink("Back", href="/").render()
     assert "vd-feature-card" in FeatureCard("x").render()

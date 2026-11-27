@@ -1,4 +1,4 @@
-from voodoo.ui import (
+from grumo.ui import (
     Action,
     Button,
     Calendar,
