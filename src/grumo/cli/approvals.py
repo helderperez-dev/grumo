@@ -1,14 +1,14 @@
-"""voodoo approvals — decide pending human approvals from any machine.
+"""grumo approvals — decide pending human approvals from any machine.
 
 Sprint 18: human approval is an execution state that survives process
 death. This CLI reads and decides approvals directly from the durable
-canonical execution store (Voodoo Store by default), so a decision can be made on any
+canonical execution store (Grumo Store by default), so a decision can be made on any
 machine — the waiting execution resumes on whichever worker picks it up.
 
-    voodoo approvals list [--pending] [--json]
-    voodoo approvals show <execution-id> [--json]
-    voodoo approvals approve <execution-id> [--by NAME] [--note TEXT]
-    voodoo approvals deny <execution-id> [--by NAME] [--reason TEXT]
+    grumo approvals list [--pending] [--json]
+    grumo approvals show <execution-id> [--json]
+    grumo approvals approve <execution-id> [--by NAME] [--note TEXT]
+    grumo approvals deny <execution-id> [--by NAME] [--reason TEXT]
 
 With ``--app`` (e.g. ``main:app``) the application module is imported
 first so registered participants (agents, workflows) re-register and the
@@ -24,7 +24,7 @@ from typing import Any, cast
 
 import typer
 
-from voodoo.cli import terminal
+from grumo.cli import terminal
 
 approvals_app = typer.Typer(
     name="approvals",
@@ -36,11 +36,11 @@ approvals_app = typer.Typer(
 
 def _resolve_store(store_path: str | None) -> tuple[Any, str]:
     """Return canonical execution storage unless a legacy path is explicit."""
-    from voodoo.cli.context import acquire_execution_store
-    from voodoo.runtime.persistence import JSONFileExecutionStore
-    from voodoo.storage.execution import SQLiteExecutionStore
+    from grumo.cli.context import acquire_execution_store
+    from grumo.runtime.persistence import JSONFileExecutionStore
+    from grumo.storage.execution import SQLiteExecutionStore
 
-    explicit = store_path or os.environ.get("VOODOO_EXECUTION_STORE")
+    explicit = store_path or os.environ.get("GRUMO_EXECUTION_STORE")
     if explicit is None:
         return acquire_execution_store()
     if Path(explicit).suffix == ".jsonl":
@@ -79,7 +79,7 @@ def list_approvals(
     store_path: str = typer.Option(
         None,
         "--store",
-        help="Legacy execution-store path; default uses application.vstore",
+        help="Legacy execution-store path; default uses application.grumo",
     ),
     app_str: str = typer.Option(
         None, "--app", help="App instance (e.g. main:app) to import first"
@@ -125,7 +125,7 @@ def show_approval(
     store_path: str = typer.Option(
         None,
         "--store",
-        help="Legacy execution-store path; default uses application.vstore",
+        help="Legacy execution-store path; default uses application.grumo",
     ),
     json_mode: bool = typer.Option(
         False, "--json", help="Machine-readable JSON output"
@@ -182,7 +182,7 @@ def _decide(
     json_mode: bool,
 ) -> None:
     """Shared approve/deny path: recover waiting executions, then decide."""
-    from voodoo.runtime.execution.engine import engine as runtime_engine
+    from grumo.runtime.execution.engine import engine as runtime_engine
 
     store, resolved = _resolve_store(store_path)
     runtime_engine.use_store(store)
@@ -203,7 +203,7 @@ def _decide(
         else:
             terminal.error(
                 f"approval for execution '{execution_id}' not found",
-                hint="check the execution id with 'voodoo inspect executions'",
+                hint="check the execution id with 'grumo inspect executions'",
             )
         raise typer.Exit(1)
 
@@ -246,7 +246,7 @@ def approve_cmd(
     store_path: str = typer.Option(
         None,
         "--store",
-        help="Legacy execution-store path; default uses application.vstore",
+        help="Legacy execution-store path; default uses application.grumo",
     ),
     app_str: str = typer.Option(
         None, "--app", help="App instance (e.g. main:app) to import first"
@@ -275,7 +275,7 @@ def deny_cmd(
     store_path: str = typer.Option(
         None,
         "--store",
-        help="Legacy execution-store path; default uses application.vstore",
+        help="Legacy execution-store path; default uses application.grumo",
     ),
     app_str: str = typer.Option(
         None, "--app", help="App instance (e.g. main:app) to import first"

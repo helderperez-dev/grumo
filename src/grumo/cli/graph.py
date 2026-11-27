@@ -1,4 +1,4 @@
-"""Inspect the semantic Voodoo Application Graph."""
+"""Inspect the semantic Grumo Application Graph."""
 
 from __future__ import annotations
 
@@ -6,8 +6,8 @@ import json
 
 import typer
 
-from voodoo.cli.inspect import _load_app
-from voodoo.runtime.application_graph import build_application_graph
+from grumo.cli.inspect import _load_app
+from grumo.runtime.application_graph import build_application_graph
 
 
 def graph(
@@ -16,7 +16,7 @@ def graph(
         False, "--json", help="Output machine-readable JSON"
     ),
 ) -> None:
-    """Show the semantic structure Voodoo knows about the application."""
+    """Show the semantic structure Grumo knows about the application."""
     app = _load_app(app_str)
     application_graph = build_application_graph(app)
     data = application_graph.snapshot()
@@ -25,7 +25,7 @@ def graph(
         typer.echo(json.dumps(data, indent=2, sort_keys=True))
         return
 
-    typer.echo("Voodoo Application Graph")
+    typer.echo("Grumo Application Graph")
     typer.echo("")
     for node in data["nodes"]:
         if node["kind"] == "application":

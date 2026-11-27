@@ -6,31 +6,31 @@ from pathlib import Path
 
 import typer
 
-from voodoo.cli import terminal
+from grumo.cli import terminal
 
 
 def dev(
     app_str: str = typer.Argument(
         None,
-        help="App instance to run (e.g., main:app). Defaults to main:app if main.py exists, otherwise voodoo.core:app",
+        help="App instance to run (e.g., main:app). Defaults to main:app if main.py exists, otherwise grumo.core:app",
     ),
     port: int = typer.Option(8000, help="Port to run the server on"),
 ) -> None:
     """
-    Start the Voodoo development server.
+    Start the Grumo development server.
     """
-    # Auto-discover app: prefer main:app for backward compat, fall back to voodoo.core:app
+    # Auto-discover app: prefer main:app for backward compat, fall back to grumo.core:app
     if app_str is None:
         if Path("main.py").exists():
             app_str = "main:app"
         else:
-            app_str = "voodoo.core:app"
+            app_str = "grumo.core:app"
 
     module_name = app_str.split(":")[0]
 
     # Resolve the module either as a local file/dir (e.g. main.py) or as an
-    # importable installed package (e.g. voodoo.core). Folder-based routing
-    # projects have no main.py and rely on the bundled voodoo.core:app fallback.
+    # importable installed package (e.g. grumo.core). Folder-based routing
+    # projects have no main.py and rely on the bundled grumo.core:app fallback.
     module_path = Path(module_name.replace(".", "/") + ".py")
     module_dir = Path(module_name.replace(".", "/"))
     local_exists = module_path.exists() or (
@@ -48,14 +48,14 @@ def dev(
     if not local_exists and not importable:
         terminal.error(
             f"Could not find module '{module_name}'",
-            hint="run from inside a voodoo project, or use 'voodoo new <name>' to create one",
+            hint="run from inside a grumo project, or use 'grumo new <name>' to create one",
         )
         raise typer.Exit(1)
 
-    import voodoo
+    import grumo
 
-    ver = getattr(voodoo, "__version__", "unknown")
-    from voodoo.config import config as _cfg
+    ver = getattr(grumo, "__version__", "unknown")
+    from grumo.config import config as _cfg
 
     host = _cfg.host
     display_host = "localhost" if host in ("0.0.0.0", "::", "") else host
@@ -91,8 +91,8 @@ def dev(
     env = os.environ.copy()
     # NOTE: do NOT inject the CLI's own `sys.path` into PYTHONPATH. When the CLI
     # runs from a bundled install (Homebrew, uv tool) its site-packages contain a
-    # DIFFERENT voodoo version than the project's `.venv`; prepending those paths
-    # shadows the project's installed voodoo and serves stale code. `python -m
+    # DIFFERENT grumo version than the project's `.venv`; prepending those paths
+    # shadows the project's installed grumo and serves stale code. `python -m
     # uvicorn` already places the cwd on sys.path, so local `main.py`/`app.py`
     # modules resolve without any PYTHONPATH manipulation.
     env["WEBSOCKETS_MAX_LINE_LENGTH"] = "8388608"
@@ -124,7 +124,7 @@ def dev(
 
 def _print_runtime_banner() -> None:
     """Print runtime providers and state (Sprint 22)."""
-    from voodoo.config import get_config
+    from grumo.config import get_config
 
     cfg = get_config()
 
@@ -134,7 +134,7 @@ def _print_runtime_banner() -> None:
     terminal.muted(f"  {cfg.store.path}")
 
     db_provider = cfg.database.provider.lower()
-    if db_provider != "voodoo":
+    if db_provider != "grumo":
         terminal.status("database", db_provider)
 
     terminal.status("queue", cfg.queue.provider.lower())
@@ -142,7 +142,7 @@ def _print_runtime_banner() -> None:
 
     # Agent runtime
     try:
-        from voodoo.ai.providers import _PROVIDER_CLASSES
+        from grumo.ai.providers import _PROVIDER_CLASSES
 
         providers = list(_PROVIDER_CLASSES.keys())
         terminal.status("agents", ", ".join(providers) if providers else "none")
@@ -154,7 +154,7 @@ def _print_runtime_banner() -> None:
 
     # Registered workers
     try:
-        from voodoo.runtime.scheduling.workers import _workers
+        from grumo.runtime.scheduling.workers import _workers
 
         worker_names = list(_workers.keys())
         if worker_names:

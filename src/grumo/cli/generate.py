@@ -6,8 +6,8 @@ from pathlib import Path
 import typer
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
-from voodoo.cli import terminal
-from voodoo.security.redaction import redact_string
+from grumo.cli import terminal
+from grumo.security.redaction import redact_string
 
 
 def generate(
@@ -17,9 +17,9 @@ def generate(
     description: str = typer.Argument(..., help="What should the AI generate?"),
 ) -> None:
     """
-    AI-powered generation of Voodoo components using LLMs.
+    AI-powered generation of Grumo components using LLMs.
     """
-    from voodoo.ai.providers import get_provider
+    from grumo.ai.providers import get_provider
 
     # Check for API keys (support OpenRouter or OpenAI)
     api_key = os.getenv("OPENROUTER_API_KEY") or os.getenv("OPENAI_API_KEY")
@@ -36,7 +36,7 @@ def generate(
 
     # Resolve through the provider abstraction (no direct SDK use). For
     # OpenRouter the model id keeps the provider's ``vendor/model`` slug.
-    model = os.getenv("VOODOO_MODELS_DEFAULT")
+    model = os.getenv("GRUMO_MODELS_DEFAULT")
     if not model:
         model = "openai:openai/gpt-4o" if base_url else "openai:gpt-4o"
     provider = get_provider(model, api_key=api_key, base_url=base_url)
@@ -59,8 +59,8 @@ def generate(
             )
 
             prompt = f"""
-            You are an expert Voodoo Framework developer. Voodoo is a modern Python framework built on Starlette and Pydantic.
-            Generate a Voodoo `{component}` based on this description: "{description}".
+            You are an expert Grumo Framework developer. Grumo is a modern Python framework built on Starlette and Pydantic.
+            Generate a Grumo `{component}` based on this description: "{description}".
 
             Only output the raw Python code. Do not include markdown code blocks (no ```python).
             Do not include explanations. Just the raw code.

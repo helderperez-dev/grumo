@@ -1,4 +1,4 @@
-"""voodoo executions — inspect canonical durable execution history."""
+"""grumo executions — inspect canonical durable execution history."""
 
 from __future__ import annotations
 
@@ -7,8 +7,8 @@ from typing import Any
 
 import typer
 
-from voodoo.cli import terminal
-from voodoo.security.redaction import redact_string
+from grumo.cli import terminal
+from grumo.security.redaction import redact_string
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +22,7 @@ executions_app = typer.Typer(
 
 def _get_store() -> Any:
     """Return the configured execution store through the CLI Runtime context."""
-    from voodoo.cli.context import acquire_execution_store
+    from grumo.cli.context import acquire_execution_store
 
     try:
         return acquire_execution_store()
@@ -30,7 +30,7 @@ def _get_store() -> Any:
         logger.warning(
             "execution store acquisition failed error=%s", redact_string(str(error))
         )
-        from voodoo.config import get_config
+        from grumo.config import get_config
 
         return None, str(get_config().store.path)
 
@@ -199,12 +199,12 @@ def list_events(
 @executions_app.command("import-jsonl")
 def import_jsonl(
     source: str = typer.Argument(
-        ..., help="Path to the legacy .voodoo/executions.jsonl file"
+        ..., help="Path to the legacy .grumo/executions.jsonl file"
     ),
     json_mode: bool = typer.Option(False, "--json", help="Machine-readable JSON"),
 ) -> None:
     """Migrate legacy JSONL execution records into canonical execution storage."""
-    from voodoo.runtime.persistence import JSONFileExecutionStore
+    from grumo.runtime.persistence import JSONFileExecutionStore
 
     store, store_path = _get_store()
     if store is None:

@@ -1,4 +1,4 @@
-"""voodoo agents — list and inspect agents from application persistence."""
+"""grumo agents — list and inspect agents from application persistence."""
 
 from __future__ import annotations
 
@@ -7,8 +7,8 @@ from typing import Any
 
 import typer
 
-from voodoo.cli import terminal
-from voodoo.security.redaction import redact_string
+from grumo.cli import terminal
+from grumo.security.redaction import redact_string
 
 logger = logging.getLogger(__name__)
 
@@ -21,8 +21,8 @@ agents_app = typer.Typer(
 
 
 def _get_registry() -> Any:
-    """Return the application agent registry (Voodoo Store by default)."""
-    from voodoo.cli.context import acquire_agent_registry
+    """Return the application agent registry (Grumo Store by default)."""
+    from grumo.cli.context import acquire_agent_registry
 
     try:
         registry, _store_path = acquire_agent_registry()
@@ -105,7 +105,7 @@ def show_agent(
             terminal.blank()
             terminal.error(
                 f"agent '{agent_id}' not found",
-                hint="run 'voodoo agents list' to choose an available agent",
+                hint="run 'grumo agents list' to choose an available agent",
             )
             return
 

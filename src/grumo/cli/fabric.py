@@ -1,4 +1,4 @@
-"""Operational CLI for the local Runtime Store and Voodoo Node fabric."""
+"""Operational CLI for the local Runtime Store and Grumo Node fabric."""
 
 from __future__ import annotations
 
@@ -8,20 +8,20 @@ from typing import Annotated
 
 import typer
 
-from voodoo.runtime.distributed import NodeAdvertisement, VoodooStoreMembershipStore
-from voodoo.runtime.identity import (
+from grumo.runtime.distributed import NodeAdvertisement, GrumoStoreMembershipStore
+from grumo.runtime.identity import (
     AuthenticationEvidence,
     Identity,
     IdentityKind,
     Principal,
 )
-from voodoo.runtime.store import RuntimeStore, StoreConfig, VoodooStoreProvider
+from grumo.runtime.store import RuntimeStore, StoreConfig, GrumoStoreProvider
 
-fabric_app = typer.Typer(help="Inspect and operate the local Voodoo Runtime fabric.")
+fabric_app = typer.Typer(help="Inspect and operate the local Grumo Runtime fabric.")
 
 
 def _config() -> StoreConfig:
-    from voodoo.config import get_config
+    from grumo.config import get_config
 
     return StoreConfig.from_mapping(get_config().store.model_dump())
 
@@ -45,7 +45,7 @@ def status() -> None:
             f"store={report.provider} path={report.path} "
             f"opened={report.opened} verified={report.verified}"
         )
-        membership = VoodooStoreMembershipStore(runtime)
+        membership = GrumoStoreMembershipStore(runtime)
         members = membership.list(include_left=True)
         if not members:
             typer.echo("members=0")
@@ -63,7 +63,7 @@ def status() -> None:
 @fabric_app.command("health")
 def health() -> None:
     """Verify the configured application Store and print its health projection."""
-    provider = VoodooStoreProvider(_config().path)
+    provider = GrumoStoreProvider(_config().path)
     report = provider.health()
     typer.echo(
         f"provider={report.provider} path={report.path} "
@@ -81,7 +81,7 @@ def verify() -> None:
 
 @fabric_app.command("join")
 def join(
-    node_id: Annotated[str, typer.Argument(help="Stable Voodoo Node identity.")],
+    node_id: Annotated[str, typer.Argument(help="Stable Grumo Node identity.")],
     capability: Annotated[list[str] | None, typer.Option("--capability", "-c")] = None,
     service: Annotated[list[str] | None, typer.Option("--service", "-s")] = None,
     owner: Annotated[list[str] | None, typer.Option("--owner")] = None,
@@ -98,11 +98,11 @@ def join(
             identity=Identity(id=node_id, kind=IdentityKind.NODE),
             evidence=(
                 AuthenticationEvidence(
-                    method="cli-local", subject=node_id, issuer="voodoo"
+                    method="cli-local", subject=node_id, issuer="grumo"
                 ),
             ),
         )
-        member = VoodooStoreMembershipStore(runtime).join(
+        member = GrumoStoreMembershipStore(runtime).join(
             principal,
             NodeAdvertisement(
                 capabilities=tuple(capability or ()),
@@ -135,7 +135,7 @@ def backup(
         raise typer.Exit(code=1)
     destination.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(source, destination)
-    report = VoodooStoreProvider(destination).health()
+    report = GrumoStoreProvider(destination).health()
     if not report.verified:
         destination.unlink(missing_ok=True)
         typer.echo("Backup verification failed", err=True)

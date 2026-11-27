@@ -5,25 +5,25 @@ from typing import Any
 
 import typer
 
-from voodoo.cli import terminal
-from voodoo.config import get_config
-from voodoo.security.redaction import redact_string
+from grumo.cli import terminal
+from grumo.config import get_config
+from grumo.security.redaction import redact_string
 
-_logger = logging.getLogger("voodoo.cli.doctor")
+_logger = logging.getLogger("grumo.cli.doctor")
 
 
 def _doctor_snapshot() -> dict[str, Any]:
     """Return side-effect-free diagnostics suitable for automation."""
-    from voodoo.cli.status import _application_snapshot
+    from grumo.cli.status import _application_snapshot
 
     cfg = get_config()
     modules: dict[str, str] = {}
     for name, label in (
-        ("voodoo.mesh", "mesh"),
-        ("voodoo.integrations.mcp", "mcp"),
-        ("voodoo.ai", "ai"),
-        ("voodoo.runtime.scheduling", "workers"),
-        ("voodoo.observability", "observability"),
+        ("grumo.mesh", "mesh"),
+        ("grumo.integrations.mcp", "mcp"),
+        ("grumo.ai", "ai"),
+        ("grumo.runtime.scheduling", "workers"),
+        ("grumo.observability", "observability"),
     ):
         try:
             importlib.import_module(name)
@@ -37,31 +37,31 @@ def _doctor_snapshot() -> dict[str, Any]:
             modules[label] = "not found"
 
     legacy_candidates = (
-        Path(".voodoo/state/data.db"),
-        Path(".voodoo/state/schedules.db"),
-        Path(".voodoo/state/agents.db"),
+        Path(".grumo/state/data.db"),
+        Path(".grumo/state/schedules.db"),
+        Path(".grumo/state/agents.db"),
     )
     legacy_files = [str(path) for path in legacy_candidates if path.exists()]
-    ai_dir = Path(".voodoo/ai")
+    ai_dir = Path(".grumo/ai")
 
     return {
         "application": _application_snapshot(),
         "project": {
             "root": str(Path.cwd()),
-            "config": "voodoo.toml" if Path("voodoo.toml").exists() else None,
+            "config": "grumo.toml" if Path("grumo.toml").exists() else None,
             "app_directory": Path("app").is_dir(),
         },
         "integrity": {
             "legacy_sqlite": legacy_files,
             "store_first_clean": (
-                cfg.database.provider.lower() != "voodoo" or not legacy_files
+                cfg.database.provider.lower() != "grumo" or not legacy_files
             ),
         },
         "auth": {
             "secret": (
                 "warning"
                 if cfg.auth.secret_key
-                == "dev-secret-key-change-in-production-voodoo-2026"
+                == "dev-secret-key-change-in-production-grumo-2026"
                 else "ready"
             )
         },
@@ -84,10 +84,10 @@ def _print_capability_matrix() -> None:
     """Print active providers and their declared capability matrix (spec §9).
 
     Renders one row per registered adapter implementation. This gives
-    ``voodoo doctor`` an honest, per-provider view of what the runtime
+    ``grumo doctor`` an honest, per-provider view of what the runtime
     guarantees.
     """
-    from voodoo.adapters.capabilities import (
+    from grumo.adapters.capabilities import (
         CacheCapabilities,
         DatabaseCapabilities,
         EventBusCapabilities,
@@ -98,7 +98,7 @@ def _print_capability_matrix() -> None:
     # Default local providers (Sprints 1–7). Declared statically so ``doctor``
     # stays side-effect free: it never opens a connection or creates files.
     # PostgreSQL (Sprint 10) is an optional server backend behind the same
-    # VoodooDatabase protocol.
+    # GrumoDatabase protocol.
     providers = (
         DatabaseCapabilities(
             "sqlite",
@@ -193,11 +193,11 @@ def _doctor_modules() -> None:
 
     terminal.heading("modules")
     modules = [
-        ("voodoo.mesh", "mesh"),
-        ("voodoo.integrations.mcp", "mcp"),
-        ("voodoo.ai", "ai provider"),
-        ("voodoo.runtime.scheduling", "workers"),
-        ("voodoo.observability", "observability"),
+        ("grumo.mesh", "mesh"),
+        ("grumo.integrations.mcp", "mcp"),
+        ("grumo.ai", "ai provider"),
+        ("grumo.runtime.scheduling", "workers"),
+        ("grumo.observability", "observability"),
     ]
     for name, label in modules:
         try:
@@ -218,7 +218,7 @@ def _doctor_queue() -> None:
     terminal.heading("queue")
 
     async def check() -> tuple[int, int]:
-        from voodoo.runtime.scheduling.workers import _get_queue, _workers
+        from grumo.runtime.scheduling.workers import _get_queue, _workers
 
         depth = 0
         try:
@@ -244,7 +244,7 @@ def _doctor_queue() -> None:
 def _doctor_optional_services(cfg: object) -> None:
     terminal.heading("schedules")
     try:
-        from voodoo.cli.context import acquire_schedule_store
+        from grumo.cli.context import acquire_schedule_store
 
         schedule_store, store_path = acquire_schedule_store()
         try:
@@ -261,7 +261,7 @@ def _doctor_optional_services(cfg: object) -> None:
 
     terminal.heading("otel")
     try:
-        from voodoo.integrations.otel import is_available
+        from grumo.integrations.otel import is_available
 
         terminal.status("otlp exporter", "active" if is_available() else "off")
     except Exception as error:
@@ -273,10 +273,10 @@ def _doctor_optional_services(cfg: object) -> None:
 
 def _doctor_ai_kit() -> None:
     terminal.heading("ai kit")
-    ai_dir = Path(".voodoo/ai")
+    ai_dir = Path(".grumo/ai")
     ready = ai_dir.exists() and (ai_dir / "README.md").exists()
     terminal.status("context", "ready" if ready else "not found")
-    terminal.muted("  .voodoo/ai/" if ready else "  run 'voodoo ai init' to generate")
+    terminal.muted("  .grumo/ai/" if ready else "  run 'grumo ai init' to generate")
 
 
 def doctor(
@@ -289,7 +289,7 @@ def doctor(
     """Run environment and configuration diagnostics."""
     import os
 
-    from voodoo import __version__ as ver
+    from grumo import __version__ as ver
 
     cfg = get_config()
 
@@ -304,14 +304,14 @@ def doctor(
     terminal.heading("environment")
     terminal.status(
         "mode",
-        "production" if os.getenv("VOODOO_ENV") == "production" else "development",
+        "production" if os.getenv("GRUMO_ENV") == "production" else "development",
     )
     terminal.muted(
-        "  set VOODOO_ENV=production to enforce production security defaults"
-        if os.getenv("VOODOO_ENV") != "production"
+        "  set GRUMO_ENV=production to enforce production security defaults"
+        if os.getenv("GRUMO_ENV") != "production"
         else "  production security defaults active"
     )
-    terminal.status("voodoo", "ready")
+    terminal.status("grumo", "ready")
     terminal.muted(f"  v{ver}")
 
     # ── Runtime ─────────────────────────────────────
@@ -319,9 +319,9 @@ def doctor(
 
     # Canonical application Store
     try:
-        from voodoo.runtime.store import VoodooStoreProvider
+        from grumo.runtime.store import GrumoStoreProvider
 
-        report = VoodooStoreProvider(cfg.store.path).health()
+        report = GrumoStoreProvider(cfg.store.path).health()
         terminal.status("store", "ready" if report.verified else "not found")
         terminal.muted(f"  {cfg.store.provider} ({cfg.store.path})")
     except Exception as error:
@@ -330,23 +330,23 @@ def doctor(
         )
         terminal.status("store", "unavailable")
 
-    if cfg.database.provider.lower() == "voodoo":
+    if cfg.database.provider.lower() == "grumo":
         legacy_candidates = (
-            Path(".voodoo/state/data.db"),
-            Path(".voodoo/state/schedules.db"),
-            Path(".voodoo/state/agents.db"),
+            Path(".grumo/state/data.db"),
+            Path(".grumo/state/schedules.db"),
+            Path(".grumo/state/agents.db"),
         )
         legacy_files = [path for path in legacy_candidates if path.exists()]
         terminal.status("legacy sqlite", "clean" if not legacy_files else "warning")
         if legacy_files:
             terminal.warning(
-                "Legacy SQLite state exists while the application uses Voodoo Store."
+                "Legacy SQLite state exists while the application uses Grumo Store."
             )
             for path in legacy_files:
                 terminal.muted(f"  {path}")
 
     # External SQL is reported only when explicitly selected.
-    if cfg.database.provider.lower() != "voodoo":
+    if cfg.database.provider.lower() != "grumo":
         db_path = cfg.database.path or cfg.database.url or cfg.db_path
         ready = db_path == ":memory:" or bool(db_path and Path(db_path).exists())
         if cfg.database.provider.lower() in {"postgres", "postgresql"}:
@@ -371,7 +371,7 @@ def doctor(
     terminal.muted(f"  {cfg.models.default}")
 
     # Auth secret
-    if cfg.auth.secret_key != "dev-secret-key-change-in-production-voodoo-2026":
+    if cfg.auth.secret_key != "dev-secret-key-change-in-production-grumo-2026":
         terminal.status("auth", "ready")
     else:
         terminal.status("auth", "warning")

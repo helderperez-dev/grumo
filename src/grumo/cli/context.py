@@ -1,4 +1,4 @@
-"""Canonical Store-first operational context for Voodoo CLI commands.
+"""Canonical Store-first operational context for Grumo CLI commands.
 
 CLI commands must observe the same application infrastructure contract as the
 Runtime. The default path opens exactly one application RuntimeStore and binds
@@ -13,9 +13,9 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Any
 
-from voodoo.config import VoodooConfig, get_config
-from voodoo.data.store_backend import bind_runtime_store
-from voodoo.runtime.store import (
+from grumo.config import GrumoConfig, get_config
+from grumo.data.store_backend import bind_runtime_store
+from grumo.runtime.store import (
     RuntimeStore,
     StoreConfig,
     activate_runtime_store,
@@ -25,9 +25,9 @@ from voodoo.runtime.store import (
 
 @dataclass(slots=True)
 class CLIApplicationContext:
-    """Operational view of the current Voodoo application."""
+    """Operational view of the current Grumo application."""
 
-    config: VoodooConfig
+    config: GrumoConfig
     runtime_store: RuntimeStore
 
     @property
@@ -37,25 +37,25 @@ class CLIApplicationContext:
     def execution_store(self) -> Any:
         """Return the configured execution store.
 
-        Voodoo Store is the default. SQLite/PostgreSQL are compatibility
+        Grumo Store is the default. SQLite/PostgreSQL are compatibility
         adapters and are imported only when the user explicitly selects them.
         """
         provider = self.config.database.provider.strip().lower()
-        if provider == "voodoo":
-            from voodoo.storage.execution import VoodooStoreExecutionStore
+        if provider == "grumo":
+            from grumo.storage.execution import GrumoStoreExecutionStore
 
-            return VoodooStoreExecutionStore()
+            return GrumoStoreExecutionStore()
         if provider == "sqlite":
-            from voodoo.storage.execution import SQLiteExecutionStore
+            from grumo.storage.execution import SQLiteExecutionStore
 
             path = self.config.database.path or self.config.db_path
             if not path:
                 raise RuntimeError(
-                    "database.provider='sqlite' requires database.path or VOODOO_DB_PATH"
+                    "database.provider='sqlite' requires database.path or GRUMO_DB_PATH"
                 )
             return SQLiteExecutionStore(path)
         if provider in {"postgres", "postgresql"}:
-            from voodoo.storage.execution import PostgresExecutionStore
+            from grumo.storage.execution import PostgresExecutionStore
 
             url = self.config.database.url or self.config.db_path
             if not url:
@@ -65,51 +65,51 @@ class CLIApplicationContext:
             return PostgresExecutionStore(url)
         raise RuntimeError(
             f"Unknown execution provider {self.config.database.provider!r}. "
-            "Use 'voodoo' (default), 'sqlite', or 'postgres'."
+            "Use 'grumo' (default), 'sqlite', or 'postgres'."
         )
 
     def schedule_store(self) -> Any:
-        from voodoo.storage.scheduler import create_schedule_store
+        from grumo.storage.scheduler import create_schedule_store
 
         return create_schedule_store()
 
     def object_store(self) -> Any:
         provider = self.config.objects.provider.strip().lower()
-        if provider == "voodoo":
-            from voodoo.storage.objects import VoodooStoreObjectStore
+        if provider == "grumo":
+            from grumo.storage.objects import GrumoStoreObjectStore
 
-            return VoodooStoreObjectStore()
+            return GrumoStoreObjectStore()
         if provider == "local":
-            from voodoo.storage.objects import LocalObjectStore
+            from grumo.storage.objects import LocalObjectStore
 
-            return LocalObjectStore(self.config.objects.base_dir or ".voodoo/objects")
+            return LocalObjectStore(self.config.objects.base_dir or ".grumo/objects")
         if provider == "s3":
-            from voodoo.storage.objects import S3ObjectStore
+            from grumo.storage.objects import S3ObjectStore
 
             return S3ObjectStore()
         raise RuntimeError(
             f"Unknown object provider {self.config.objects.provider!r}. "
-            "Use 'voodoo' (default), 'local', or 's3'."
+            "Use 'grumo' (default), 'local', or 's3'."
         )
 
     def agent_registry(self) -> Any:
         provider = self.config.database.provider.strip().lower()
-        if provider == "voodoo":
-            from voodoo.agents.registry import VoodooStoreAgentRegistry
+        if provider == "grumo":
+            from grumo.agents.registry import GrumoStoreAgentRegistry
 
-            return VoodooStoreAgentRegistry()
+            return GrumoStoreAgentRegistry()
         if provider == "sqlite":
-            from voodoo.agents.registry import SQLiteAgentRegistry
+            from grumo.agents.registry import SQLiteAgentRegistry
 
             base = self.config.database.path or self.config.db_path
             if not base:
                 raise RuntimeError(
-                    "database.provider='sqlite' requires database.path or VOODOO_DB_PATH"
+                    "database.provider='sqlite' requires database.path or GRUMO_DB_PATH"
                 )
             path = base.replace("data.db", "agents.db")
             return SQLiteAgentRegistry(path)
         raise RuntimeError(
-            "Agent registry currently supports the default Voodoo Store or an "
+            "Agent registry currently supports the default Grumo Store or an "
             "explicit SQLite compatibility adapter."
         )
 

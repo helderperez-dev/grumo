@@ -35,9 +35,9 @@ def cli_secret_key(
     ),
 ) -> None:
     """
-    Generate a cryptographically secure secret key for VOODOO_SECRET_KEY.
+    Generate a cryptographically secure secret key for GRUMO_SECRET_KEY.
     """
-    from voodoo.auth import generate_secret_key
+    from grumo.auth import generate_secret_key
 
     key = generate_secret_key(length)
     if raw:
@@ -45,7 +45,7 @@ def cli_secret_key(
         return
     console.print(
         Panel(
-            f"[bold green]{key}[/bold green]\n\n[dim]Add this to your .env file:[/dim]\n[cyan]VOODOO_SECRET_KEY={key}[/cyan]",
+            f"[bold green]{key}[/bold green]\n\n[dim]Add this to your .env file:[/dim]\n[cyan]GRUMO_SECRET_KEY={key}[/cyan]",
             title="🔑 Generated Secret Key",
             border_style="green",
         )
@@ -59,7 +59,7 @@ def cli_hash_password(
     """
     Generate a PBKDF2-HMAC-SHA256 hash for a given password.
     """
-    from voodoo.auth import hash_password
+    from grumo.auth import hash_password
 
     hashed = hash_password(password)
     console.print(
@@ -80,7 +80,7 @@ def cli_generate_key(
     """
     Generate a new API key and its SHA-256 hash.
     """
-    from voodoo.auth import generate_api_key
+    from grumo.auth import generate_api_key
 
     raw_key, key_hash = generate_api_key(prefix)
     console.print(
@@ -111,8 +111,8 @@ def cli_create_user(
     """
     Create a new user directly in the database.
     """
-    from voodoo.auth import User
-    from voodoo.security import validate_password_strength
+    from grumo.auth import User
+    from grumo.security import validate_password_strength
 
     is_valid, err = validate_password_strength(password)
     if not is_valid:

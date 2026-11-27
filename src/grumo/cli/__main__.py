@@ -1,3 +1,3 @@
-from voodoo.cli import app
+from grumo.cli import app
 
 app()
