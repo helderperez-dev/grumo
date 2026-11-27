@@ -15,22 +15,22 @@
 | **Type checker** | `mypy --strict` (not part of `just lint`) |
 | **Test runner** | `pytest` (`asyncio_mode = "auto"`) |
 | **Quality gate** | `just format && just lint && just test` |
-| **Version** | `src/voodoo/__init__.py` → `__version__` |
+| **Version** | `src/grumo/__init__.py` → `__version__` |
 | **Release** | `just release X.Y.Z` (triggers GitHub Actions) |
 
 ---
 
 ## Project Identity
 
-Voodoo is a **programmable runtime for adaptive applications and operational systems** — not merely a web framework. Web applications, APIs, agents, background tasks, realtime systems, MCP integrations, human workflows, distributed systems, and physical systems are different manifestations of one runtime that converge on **Execution**. It is built on Starlette, Uvicorn, Pydantic, Voodoo Store, and standard Python `asyncio`. The runtime is **zero-config by default** with one local `.voodoo/application.vstore`; PostgreSQL, SQLite, Redis, S3 and provider SDKs remain explicit/optional adapters.
+Grumo is a **programmable runtime for adaptive applications and operational systems** — not merely a web framework. Web applications, APIs, agents, background tasks, realtime systems, MCP integrations, human workflows, distributed systems, and physical systems are different manifestations of one runtime that converge on **Execution**. It is built on Starlette, Uvicorn, Pydantic, Grumo Store, and standard Python `asyncio`. The runtime is **zero-config by default** with one local `.grumo/application.grumo`; PostgreSQL, SQLite, Redis, S3 and provider SDKs remain explicit/optional adapters.
 
-**Current version:** See `src/voodoo/__init__.py` → `__version__`.
+**Current version:** See `src/grumo/__init__.py` → `__version__`.
 
 ---
 
 ## Runtime Model
 
-- **Voodoo is a programmable runtime, not merely a web framework.** Web is one manifestation of the runtime.
+- **Grumo is a programmable runtime, not merely a web framework.** Web is one manifestation of the runtime.
 - **AI is one form of Compute** — never a fundamental primitive. Do not make AI mandatory.
 - **Agents are entities** capable of holding capabilities and executing intents.
 - **Converge on Execution** — workers, tasks, tools, MCP operations, HTTP operations, humans, and physical devices should be represented as Executions whenever semantically appropriate. Do not create duplicate execution models.
@@ -45,7 +45,7 @@ Voodoo is a **programmable runtime for adaptive applications and operational sys
 
 ## Architectural Invariants (Never Violate)
 
-1. **Zero-infra local dev** — The default install must never require external services. Voodoo Store is the default durable substrate for data, jobs, scheduling, events, objects and Runtime state.
+1. **Zero-infra local dev** — The default install must never require external services. Grumo Store is the default durable substrate for data, jobs, scheduling, events, objects and Runtime state.
 2. **No new required dependencies** — Provider SDKs live in optional extras (`[ai]`, `[postgres]`, `[s3]`, `[redis]`). The base install stays minimal.
 3. **Capability-based adapters** — Every infrastructure adapter implements a Protocol and declares boolean capability flags. Never use enums for capabilities.
 4. **Contract tests are immutable** — The mixin contract suites in `tests/contracts/` must pass unchanged against every adapter implementation.
@@ -73,7 +73,7 @@ Voodoo is a **programmable runtime for adaptive applications and operational sys
 
 ### Error Handling
 
-- Use the structured error hierarchy in `voodoo.core.errors` (`VoodooError` base → specific subclasses).
+- Use the structured error hierarchy in `grumo.core.errors` (`GrumoError` base → specific subclasses).
 - Broad exception handling must be explicit, scoped, and logged when appropriate. Do not add source `# noqa` suppressions to bypass lint failures.
 - Never swallow exceptions silently.
 
@@ -190,7 +190,7 @@ Structured prompts for common tasks:
 ## File Organization
 
 ```
-src/voodoo/
+src/grumo/
 ├── __init__.py          # Small 3.x application happy path + __version__
 ├── core/                # App facade, lifecycle, events, state, errors
 ├── primitives/          # Foundational runtime concepts
@@ -223,9 +223,9 @@ src/voodoo/
 └── status.py            # health endpoint
 ```
 
-Removed 2.x namespaces such as `voodoo.workers`, `voodoo.queue`,
-`voodoo.telemetry`, `voodoo.mcp`, `voodoo.tools`, `voodoo.agent`,
-`voodoo.api` and `voodoo.theme` must not be recreated. See
+Removed 2.x namespaces such as `grumo.workers`, `grumo.queue`,
+`grumo.telemetry`, `grumo.mcp`, `grumo.tools`, `grumo.agent`,
+`grumo.api` and `grumo.theme` must not be recreated. See
 `docs/public-api-3.md`.
 
 ---
@@ -236,7 +236,7 @@ Removed 2.x namespaces such as `voodoo.workers`, `voodoo.queue`,
 2. **PostgreSQL dict rows** — psycopg returns dict-like rows, so use `row["col"]` not `row[0]`.
 3. **Test env vars** — `os.environ["VAR"]` at module level runs BEFORE skip markers. Always use `os.environ.get(...)`.
 4. **`_protocol_check`** — Place Protocol compliance checks at file BOTTOM under `if TYPE_CHECKING:`.
-5. **Queue handler registry** — Handlers register at import time. Queue/task orchestration is owned by `voodoo.runtime.scheduling`; test resets must clear runtime state without recreating removed `voodoo.workers` ownership.
-6. **mypy is NOT in `just lint`** — Ruff is the lint gate. Run `uv run mypy src/voodoo` separately for type checking.
+5. **Queue handler registry** — Handlers register at import time. Queue/task orchestration is owned by `grumo.runtime.scheduling`; test resets must clear runtime state without recreating removed `grumo.workers` ownership.
+6. **mypy is NOT in `just lint`** — Ruff is the lint gate. Run `uv run mypy src/grumo` separately for type checking.
 7. **WAL mode** — `SQLiteExecutionStore` uses WAL mode with `busy_timeout=5000` for concurrent access.
-8. **`voodoo.toml`/`voodoo.yaml`** — Config precedence: explicit file > `VOODOO_*` env vars > local defaults.
+8. **`grumo.toml`/`grumo.yaml`** — Config precedence: explicit file > `GRUMO_*` env vars > local defaults.

@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-Voodoo is actively developed and the latest release on `main` is always
+Grumo is actively developed and the latest release on `main` is always
 the supported version. Security fixes are backported to the most recent
 minor release line.
 
@@ -15,11 +15,11 @@ minor release line.
 
 **Do not open a public GitHub issue for security vulnerabilities.**
 
-If you discover a security vulnerability in Voodoo, please report it
+If you discover a security vulnerability in Grumo, please report it
 responsibly:
 
 1. **Email:** **contact@helderperez.com** with the subject
-   `[SECURITY] Voodoo — <brief description>`.
+   `[SECURITY] Grumo — <brief description>`.
 2. **Include:**
    - A description of the vulnerability and its potential impact
    - Steps to reproduce (proof of concept, if possible)
@@ -43,7 +43,7 @@ we will explain why.
 
 ## Security Features
 
-Voodoo includes development-safe defaults and a fail-closed production profile:
+Grumo includes development-safe defaults and a fail-closed production profile:
 
 - **CSRF Protection** — Enabled automatically in production; non-cookie
   exemptions require authentication validated by `AuthMiddleware`
@@ -66,24 +66,24 @@ Voodoo includes development-safe defaults and a fail-closed production profile:
 
 ### Production hardening checklist
 
-Before deploying Voodoo to production:
+Before deploying Grumo to production:
 
-- [ ] Set `VOODOO_SECRET_KEY` to a cryptographically secure random value
-      (`voodoo auth secret-key` generates one)
-- [ ] Set `VOODOO_ENV=production` (disables debug mode)
-- [ ] Configure `VOODOO_CORS_ORIGINS` only when cross-origin access is needed
+- [ ] Set `GRUMO_SECRET_KEY` to a cryptographically secure random value
+      (`grumo auth secret-key` generates one)
+- [ ] Set `GRUMO_ENV=production` (disables debug mode)
+- [ ] Configure `GRUMO_CORS_ORIGINS` only when cross-origin access is needed
 - [ ] Set a restrictive Content-Security-Policy
 - [ ] Keep HSTS and CSRF enabled (production startup rejects disabling them)
 - [ ] Configure rate limiting for sensitive endpoints
 - [ ] Use HTTPS (terminate TLS at a reverse proxy or load balancer)
-- [ ] Set `VOODOO_TOKEN_EXPIRY` to an appropriate value for your app
+- [ ] Set `GRUMO_TOKEN_EXPIRY` to an appropriate value for your app
 - [ ] Review and restrict database permissions
-- [ ] Install `voodoo-framework[secrets]` before using `LocalSecretStore`; it
+- [ ] Install `grumo[secrets]` before using `LocalSecretStore`; it
       never falls back to plaintext
 
 ## Dependency Security
 
-Voodoo's dependencies are pinned in `uv.lock`. To audit for known
+Grumo's dependencies are pinned in `uv.lock`. To audit for known
 vulnerabilities:
 
 ```bash

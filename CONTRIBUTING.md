@@ -86,7 +86,7 @@ in the canonical owner and keep facades thin.
 The primary semantic domains are:
 
 ```text
-src/voodoo/
+src/grumo/
 ├── core/
 ├── primitives/
 ├── protocol/
@@ -151,7 +151,7 @@ Do not introduce vendor imports into `core`, `runtime`, `primitives`,
 ## Public API and compatibility
 
 `grumo.__init__` exposes the intentionally small application API backed by
-`voodoo.__init__`. Advanced imports remain in `voodoo.*` in Grumo 1.0. Advanced APIs belong to their
+`grumo.__init__`. Advanced imports remain in `grumo.*` in Grumo 1.0. Advanced APIs belong to their
 semantic owners.
 
 Before moving or removing a public symbol:
