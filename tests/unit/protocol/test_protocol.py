@@ -1,4 +1,4 @@
-"""Tests for voodoo.protocol — round-trip serialization and JSON Schema export.
+"""Tests for grumo.protocol — round-trip serialization and JSON Schema export.
 
 Sprint 21: Protocol schemas & versioning.
 """
@@ -10,7 +10,7 @@ from datetime import UTC, datetime
 
 import pytest
 
-from voodoo.protocol import (
+from grumo.protocol import (
     PROTOCOL_ENTITIES,
     SCHEMA_VERSION,
     AgentEntity,
@@ -295,8 +295,8 @@ class TestJsonSchemaExport:
         for name, schema in schemas.items():
             assert "$schema" in schema, f"{name} missing $schema"
             assert "$id" in schema, f"{name} missing $id"
-            assert "x-voodoo-schema-version" in schema, f"{name} missing version"
-            assert schema["x-voodoo-schema-version"] == SCHEMA_VERSION
+            assert "x-grumo-schema-version" in schema, f"{name} missing version"
+            assert schema["x-grumo-schema-version"] == SCHEMA_VERSION
 
     def test_export_json_string_is_valid_json(self) -> None:
         json_str = export_json_schemas_json()

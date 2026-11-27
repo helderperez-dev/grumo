@@ -4,8 +4,8 @@ import asyncio
 
 import pytest
 
-from voodoo.edge.errors import TransportError
-from voodoo.edge.mqtt import EdgeMQTTTransport
+from grumo.edge.errors import TransportError
+from grumo.edge.mqtt import EdgeMQTTTransport
 
 
 @pytest.mark.asyncio

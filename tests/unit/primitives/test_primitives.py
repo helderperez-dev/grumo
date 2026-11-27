@@ -1,10 +1,10 @@
-"""Tests for the Voodoo architectural primitives."""
+"""Tests for the Grumo architectural primitives."""
 
 from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from voodoo.primitives import (
+from grumo.primitives import (
     Capability,
     ComputeKind,
     ComputeSpec,

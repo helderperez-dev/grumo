@@ -6,8 +6,8 @@ import asyncio
 
 import pytest
 
-from voodoo.ai.tools.registry import ToolRegistry, ToolSpec, build_spec
-from voodoo.integrations.mcp import MCPServer
+from grumo.ai.tools.registry import ToolRegistry, ToolSpec, build_spec
+from grumo.integrations.mcp import MCPServer
 
 # ---------------------------------------------------------------------------
 # Fixtures

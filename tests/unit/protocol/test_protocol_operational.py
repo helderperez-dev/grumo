@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
-from voodoo.protocol import (
+from grumo.protocol import (
     Entity,
     Goal,
     GoalRun,
@@ -92,5 +92,5 @@ def test_schema_export_includes_post_sprint_24_runtime_semantics() -> None:
         "RemoteExecutionOutcome",
     ):
         assert name in schemas
-        assert schemas[name]["x-voodoo-schema-version"] >= 1
-        assert schema_for(name)["$id"].startswith("urn:voodoo:protocol:")
+        assert schemas[name]["x-grumo-schema-version"] >= 1
+        assert schema_for(name)["$id"].startswith("urn:grumo:protocol:")

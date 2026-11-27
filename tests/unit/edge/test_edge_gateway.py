@@ -4,19 +4,19 @@ from __future__ import annotations
 
 import pytest
 
-from voodoo.edge.auth import create_enrollment
-from voodoo.edge.errors import (
+from grumo.edge.auth import create_enrollment
+from grumo.edge.errors import (
     AuthenticationFailedError,
     AuthorizationFailedError,
     DeviceIdMismatchError,
     EffectNotFoundError,
     InvalidStateVersionError,
 )
-from voodoo.edge.gateway import DeviceGateway
-from voodoo.edge.models import DeviceStatus, TransportKind
-from voodoo.edge.protocol import EdgeMessageType, make_message
-from voodoo.edge.store import InMemoryDeviceStore
-from voodoo.runtime.execution.engine import ExecutionEngine
+from grumo.edge.gateway import DeviceGateway
+from grumo.edge.models import DeviceStatus, TransportKind
+from grumo.edge.protocol import EdgeMessageType, make_message
+from grumo.edge.store import InMemoryDeviceStore
+from grumo.runtime.execution.engine import ExecutionEngine
 
 # ---------------------------------------------------------------------------
 # Fixture — enrolled device + authenticated gateway
@@ -114,7 +114,7 @@ class TestGatewayAuth:
         """Heartbeat = telemetry only (EDGE §21, §30)."""
         gateway, store, engine = await _make_gateway()
         device_id, credential = await _enrolled_device(gateway)
-        from voodoo.edge.auth import authenticate_device
+        from grumo.edge.auth import authenticate_device
 
         ctx, _ = await authenticate_device(gateway.store, credential)
         before = len(engine.executions)
@@ -137,7 +137,7 @@ class TestEventIdempotency:
     async def test_duplicate_message_id_is_idempotent(self):
         gateway, store, engine = await _make_gateway()
         device_id, credential = await _enrolled_device(gateway)
-        from voodoo.edge.auth import authenticate_device
+        from grumo.edge.auth import authenticate_device
 
         ctx, _ = await authenticate_device(gateway.store, credential)
 
@@ -167,7 +167,7 @@ class TestStateSync:
     async def _ctx_gateway(self):
         gateway, store, _ = await _make_gateway()
         device_id, credential = await _enrolled_device(gateway)
-        from voodoo.edge.auth import authenticate_device
+        from grumo.edge.auth import authenticate_device
 
         ctx, _ = await authenticate_device(gateway.store, credential)
         return gateway, ctx
@@ -227,7 +227,7 @@ class TestEffects:
     async def test_submit_and_ack_full_cycle(self):
         gateway, store, _ = await _make_gateway()
         device_id, credential = await _enrolled_device(gateway)
-        from voodoo.edge.auth import authenticate_device
+        from grumo.edge.auth import authenticate_device
 
         ctx, _ = await authenticate_device(gateway.store, credential)
 
@@ -292,7 +292,7 @@ class TestEffects:
     async def test_unknown_effect_ack_rejected(self):
         gateway, store, _ = await _make_gateway()
         device_id, credential = await _enrolled_device(gateway)
-        from voodoo.edge.auth import authenticate_device
+        from grumo.edge.auth import authenticate_device
 
         ctx, _ = await authenticate_device(gateway.store, credential)
         ack = make_message(
@@ -347,8 +347,8 @@ class TestSessions:
     async def test_disconnect_keeps_entity_reconnect_no_duplicate(self):
         gateway, store, _ = await _make_gateway()
         device_id, credential = await _enrolled_device(gateway)
-        from voodoo.edge.auth import authenticate_device
-        from voodoo.edge.models import DeviceStatus
+        from grumo.edge.auth import authenticate_device
+        from grumo.edge.models import DeviceStatus
 
         ctx, session = await authenticate_device(gateway.store, credential)
         await gateway.disconnect(session.session_id)
@@ -381,7 +381,7 @@ class TestObservability:
     async def test_mesh_events_emitted_and_trace_propagated(self):
         """Device lifecycle emits namespaced mesh events; trace_id flows
         through message → event (EDGE §51)."""
-        from voodoo.mesh import mesh
+        from grumo.mesh import mesh
 
         captured: list[tuple[str, dict]] = []
         original = mesh.broadcast
@@ -430,7 +430,7 @@ class TestIdentityValidation:
         """A message claiming a different device_id is rejected (EDGE §77)."""
         gateway, store, _ = await _make_gateway()
         device_id, credential = await _enrolled_device(gateway)
-        from voodoo.edge.auth import authenticate_device
+        from grumo.edge.auth import authenticate_device
 
         ctx, _ = await authenticate_device(gateway.store, credential)
 
@@ -451,7 +451,7 @@ class TestIdentityValidation:
         """A message with the correct device_id is accepted."""
         gateway, store, _ = await _make_gateway()
         device_id, credential = await _enrolled_device(gateway)
-        from voodoo.edge.auth import authenticate_device
+        from grumo.edge.auth import authenticate_device
 
         ctx, _ = await authenticate_device(gateway.store, credential)
 
@@ -471,7 +471,7 @@ class TestIdentityValidation:
         """A message with no device_id uses the context's device."""
         gateway, store, _ = await _make_gateway()
         device_id, credential = await _enrolled_device(gateway)
-        from voodoo.edge.auth import authenticate_device
+        from grumo.edge.auth import authenticate_device
 
         ctx, _ = await authenticate_device(gateway.store, credential)
 
@@ -587,7 +587,7 @@ class TestEffectLifecycle:
             payload={},
         )
         await store.claim_effect(device_id, "fx-4")
-        from voodoo.edge.protocol import EdgeMessageType, make_message
+        from grumo.edge.protocol import EdgeMessageType, make_message
 
         ack = make_message(
             EdgeMessageType.EFFECT_ACK,
@@ -633,7 +633,7 @@ class TestEffectRetry:
 
     async def test_retry_resets_to_pending(self):
         store = InMemoryDeviceStore()
-        from voodoo.edge.store import EffectDelivery
+        from grumo.edge.store import EffectDelivery
 
         d = EffectDelivery(
             "fx-r1", "ex-1", "dev-1", "relay.fan.control", {}, max_retries=3
@@ -648,7 +648,7 @@ class TestEffectRetry:
 
     async def test_retry_exceeds_max_goes_to_delivery_failed(self):
         store = InMemoryDeviceStore()
-        from voodoo.edge.store import EffectDelivery
+        from grumo.edge.store import EffectDelivery
 
         d = EffectDelivery(
             "fx-r2", "ex-1", "dev-1", "relay.fan.control", {}, max_retries=2
@@ -663,7 +663,7 @@ class TestEffectRetry:
 
     async def test_retry_rejects_non_delivering(self):
         store = InMemoryDeviceStore()
-        from voodoo.edge.store import EffectDelivery
+        from grumo.edge.store import EffectDelivery
 
         d = EffectDelivery("fx-r3", "ex-1", "dev-1", "relay.fan.control", {})
         store._effects["fx-r3"] = d
@@ -689,9 +689,9 @@ class TestEffectRetry:
 
     async def test_max_retries_from_config(self):
         """submit_effect reads max_effect_retries from config."""
-        from voodoo.config import EdgeConfig, VoodooConfig
+        from grumo.config import EdgeConfig, GrumoConfig
 
-        cfg = VoodooConfig()
+        cfg = GrumoConfig()
         cfg.edge = EdgeConfig(enabled=True, max_effect_retries=5)
         store = InMemoryDeviceStore()
         gateway = DeviceGateway(store, config=cfg)
@@ -737,7 +737,7 @@ class TestEffectExecutionBinding:
             payload={},
         )
         await store.claim_effect(device_id, "fx-b2")
-        from voodoo.edge.protocol import EdgeMessageType, make_message
+        from grumo.edge.protocol import EdgeMessageType, make_message
 
         ack = make_message(
             EdgeMessageType.EFFECT_ACK,
@@ -759,7 +759,7 @@ class TestResponseReplay:
     async def test_duplicate_replays_original_response(self):
         gateway, store, _ = await _make_gateway()
         device_id, credential = await _enrolled_device(gateway)
-        from voodoo.edge.auth import authenticate_device
+        from grumo.edge.auth import authenticate_device
 
         ctx, _ = await authenticate_device(gateway.store, credential)
         msg = _event_msg(device_id, "motion.detected", message_id="msg_replay_1")
@@ -773,7 +773,7 @@ class TestResponseReplay:
     async def test_stored_response_persisted(self):
         gateway, store, _ = await _make_gateway()
         device_id, credential = await _enrolled_device(gateway)
-        from voodoo.edge.auth import authenticate_device
+        from grumo.edge.auth import authenticate_device
 
         ctx, _ = await authenticate_device(gateway.store, credential)
         msg = make_message(
@@ -794,7 +794,7 @@ class TestResponseReplay:
         """Telemetry event duplicates also get replayed responses."""
         gateway, store, _ = await _make_gateway()
         device_id, credential = await _enrolled_device(gateway)
-        from voodoo.edge.auth import authenticate_device
+        from grumo.edge.auth import authenticate_device
 
         ctx, _ = await authenticate_device(gateway.store, credential)
         msg = _event_msg(device_id, "heartbeat", message_id="msg_replay_3")
@@ -810,7 +810,7 @@ class TestStateReconciliation:
     async def test_stale_state_raises_with_current_version(self):
         gateway, store, _ = await _make_gateway()
         device_id, credential = await _enrolled_device(gateway)
-        from voodoo.edge.auth import authenticate_device
+        from grumo.edge.auth import authenticate_device
 
         ctx, _ = await authenticate_device(gateway.store, credential)
         # First sync at version 5.
@@ -834,7 +834,7 @@ class TestStateReconciliation:
     async def test_newer_state_accepted(self):
         gateway, store, _ = await _make_gateway()
         device_id, credential = await _enrolled_device(gateway)
-        from voodoo.edge.auth import authenticate_device
+        from grumo.edge.auth import authenticate_device
 
         ctx, _ = await authenticate_device(gateway.store, credential)
         msg1 = make_message(
@@ -889,7 +889,7 @@ class TestReconnect:
         assert sess2.session_id in gateway._contexts
 
     async def test_reconnect_emits_connected_event(self):
-        from voodoo.mesh import mesh
+        from grumo.mesh import mesh
 
         captured: list[tuple[str, dict]] = []
         original = mesh.broadcast
@@ -948,7 +948,7 @@ class TestDisconnectLifecycle:
         assert sess.session_id not in gateway._contexts
 
     async def test_disconnect_emits_event(self):
-        from voodoo.mesh import mesh
+        from grumo.mesh import mesh
 
         captured: list[tuple[str, dict]] = []
         original = mesh.broadcast

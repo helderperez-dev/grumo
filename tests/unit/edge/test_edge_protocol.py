@@ -6,12 +6,12 @@ import json
 
 import pytest
 
-from voodoo.edge.errors import (
+from grumo.edge.errors import (
     InvalidMessageError,
     InvalidProtocolVersionError,
     error_response,
 )
-from voodoo.edge.protocol import (
+from grumo.edge.protocol import (
     PROTOCOL_VERSION,
     EdgeMessage,
     EdgeMessageType,
