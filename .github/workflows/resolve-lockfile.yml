@@ -1,4 +1,4 @@
-name: Resolve migration lockfile
+name: Prepare migration formatting
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  resolve:
+  format:
     if: github.event_name == 'workflow_dispatch' || github.head_ref == 'grumo/native-identity'
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -17,31 +17,30 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: astral-sh/setup-uv@v5
-      - name: Resolve dependencies from package registry
-        run: uv lock --python 3.12
-      - name: Verify resolved lockfile
+      - name: Install locked dependencies
+        run: uv sync --locked --python 3.12 --all-extras --dev
+      - name: Format Python sources
         run: |
-          uv lock --check --python 3.12
-          python - <<'PY'
-          import tomllib
-          from pathlib import Path
-          lock = tomllib.loads(Path("uv.lock").read_text())
-          stores = [p for p in lock["package"] if p["name"] == "grumo-store"]
-          assert stores and all(p["version"].split(".")[0] == "2" for p in stores)
-          assert all(p["source"].get("registry") == "https://pypi.org/simple" for p in stores)
-          PY
-      - name: Emit verified lockfile for repository update
+          uv run --locked --python 3.12 ruff format .
+          uv run --locked --python 3.12 ruff format --check .
+      - name: Capture formatting-only changes
         run: |
+          git diff --binary -- '*.py' > /tmp/grumo-format.patch
+          git diff --stat
           python - <<'PY'
-          import base64
+          import base64, json, subprocess
           from pathlib import Path
-          data = base64.b64encode(Path("uv.lock").read_bytes()).decode("ascii")
-          for offset in range(0, len(data), 4096):
-              print("LOCKFILE_CHUNK:" + data[offset:offset + 4096])
+          names = subprocess.check_output(["git", "diff", "--name-only", "-z", "--", "*.py"]).decode().split("\0")
+          for name in filter(None, names):
+              data = base64.b64encode(Path(name).read_bytes()).decode("ascii")
+              for offset in range(0, len(data), 4096):
+                  print("FORMAT_CHUNK:" + json.dumps([name, offset, data[offset:offset + 4096]], separators=(",", ":")))
           PY
       - uses: actions/upload-artifact@v4
         with:
-          name: grumo-resolved-lockfile
-          path: uv.lock
+          name: grumo-format-patch
+          path: /tmp/grumo-format.patch
           if-no-files-found: error
