@@ -298,17 +298,10 @@ class TelemetryStore:
     # -- span model (OTel-compatible) ----------------------------------
 
     def record_span(self, span: Span) -> None:
-        """Store a completed span in the ring buffer and forward to OTLP if active."""
+        """Store a completed span in the native ring buffer."""
         self.metrics["spans"].append(span.to_dict())
         if len(self.metrics["spans"]) > 1000:
             self.metrics["spans"].pop(0)
-        # Forward to OTLP exporter if available (lazy import to avoid circular deps).
-        try:
-            from grumo.integrations.otel import export_span
-
-            export_span(span)
-        except Exception as error:
-            _report_observability_failure("export_span", error)
 
     @contextmanager
     def start_span(
