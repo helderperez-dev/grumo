@@ -22,16 +22,16 @@ jobs:
       - name: Install published CLI
         shell: bash
         run: |
-          uv tool install --python 3.12 grumo==2.0.0
-          uv tool run --from grumo==2.0.0 --python 3.12 grumo version
-          uv tool run --from grumo==2.0.0 --python 3.12 grumo new smoke-app --no-install
+          uv tool install --python 3.12 grumo==2.0.1
+          uv tool run --from grumo==2.0.1 --python 3.12 grumo version
+          uv tool run --from grumo==2.0.1 --python 3.12 grumo new smoke-app --no-install
           test -f smoke-app/pyproject.toml
       - name: Verify isolated tool and project dependency
         shell: bash
         run: |
           uv init --bare --python 3.12 smoke-project
           cd smoke-project
-          uv add 'grumo==2.0.0'
+          uv add 'grumo==2.0.1'
           uv run grumo --help
-          uv run python -c 'import grumo, grumo_store; from importlib.metadata import version; assert grumo.__version__ == version("grumo") == "2.0.0"; assert grumo_store.__version__ == version("grumo-store"); assert grumo_store.__version__.split(".")[0] == "2"'
+          uv run python -c 'import grumo, grumo_store; from importlib.metadata import version; assert grumo.__version__ == version("grumo") == "2.0.1"; assert grumo_store.__version__ == version("grumo-store"); assert grumo_store.__version__.split(".")[0] == "2"'
           uv tool uninstall grumo
